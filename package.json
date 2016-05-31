@@ -2,6 +2,7 @@
   "name": "collection-store",
   "version": "0.0.1",
   "description": "very flexible collection for in-memory operations with flexble indexing",
+  "main": "dist/index.js",
   "scripts": {
     "test": "gulp",
     "lint": "gulp lint",
