@@ -4,6 +4,7 @@ import del  from 'del';
 import glob  from 'glob';
 import path  from 'path';
 import {Instrumenter} from 'isparta';
+import babel from 'gulp-babel';
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
 import source  from 'vinyl-source-stream';
@@ -157,7 +158,7 @@ function babelify(...preset) {
 }
 
 function node6() {
-  return babelify('es2015-node6', 'stage-0', 'react');
+  return babelify('es2015-node6', 'stage-0');
 }
 
 // Remove the built files
