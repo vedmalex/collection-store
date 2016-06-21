@@ -246,7 +246,7 @@ export default class CollectionBase {
       } = indexList[key];
 
       if (typeof gen == 'function') {
-        this.genCache[get.toString()] = gen;
+        this.genCache[gen.toString()] = gen;
         gen = gen.toString();
       }
 
