@@ -1,8 +1,14 @@
-import CollectionBase from './collection';
+import CollectionBase, { Item, CollectionConfig } from './collection';
 import fs from 'fs-extra';
 
-export default class CollectionFile extends CollectionBase {
-  constructor(config) {
+export interface CollectionConfigNode<T> extends CollectionConfig<T>{
+  format: string
+}
+
+export default class CollectionFile<T extends Item> extends CollectionBase<T> {
+  file: string
+
+  constructor(config?: Partial<CollectionConfigNode<T>>) {
     super(config);
     this.file = config.format || `${this.model}.json`;
   }
