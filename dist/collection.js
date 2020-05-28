@@ -6,12 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.List = exports.autoTimestamp = exports.autoIncIdGen = void 0;
 const timeparse_1 = __importDefault(require("timeparse"));
 function autoIncIdGen(item, model, list) {
-    return list.counter.toString();
+    return list.counter;
 }
 exports.autoIncIdGen = autoIncIdGen;
 ;
 function autoTimestamp(item, model, list) {
-    return Date.now().toString();
+    return Date.now();
 }
 exports.autoTimestamp = autoTimestamp;
 ;
@@ -84,7 +84,7 @@ class CollectionBase {
             auto: true,
             gen: 'autoIncIdGen',
         }, idGen = 'autoIncIdGen', auto = true, indexList, } = config;
-        let Id;
+        let Id = typeof id == "string" ? { name: id } : id;
         if ('string' == typeof id) {
             Id = {
                 name: id,

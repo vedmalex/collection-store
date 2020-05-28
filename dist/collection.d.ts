@@ -1,5 +1,5 @@
-export declare function autoIncIdGen<T>(item: T, model: string, list: List<T>): string;
-export declare function autoTimestamp<T>(item: T, model: string, list: List<T>): string;
+export declare function autoIncIdGen<T>(item: T, model: string, list: List<T>): number;
+export declare function autoTimestamp<T>(item: T, model: string, list: List<T>): number;
 export interface StoredList<T> {
     hash: {
         [key: string]: T;
@@ -51,7 +51,7 @@ export interface StoredData<T extends Item> {
     id: string;
     ttl?: number;
 }
-export declare type IdGeneratorFunction<T extends Item> = (item: T, model: string, list: List<T>) => string;
+export declare type IdGeneratorFunction<T extends Item> = (item: T, model: string, list: List<T>) => any;
 export interface IdType<T extends Item> {
     name: string;
     auto: boolean;
