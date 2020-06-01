@@ -21,7 +21,7 @@ describe('hreplacer', () => {
       let k: string = ''
       expect(() => {
         for (let item of list.keys) {
-          k+= item
+          k += item
         }
         expect(k).toBe('01234')
       }).not.toThrow()
@@ -45,6 +45,16 @@ describe('hreplacer', () => {
       c1.load();
       expect(c1.list.length).toBe(4);
 
+    });
+
+    it('didn\'t exists after ttl-ends', (done) => {
+      let c1 = new Collection({ name: 'items' });
+      c1.load();
+      setTimeout(() => {
+        expect(c1.find({ age: 12 }).length).toBe(0);
+        expect(c1.findById(0)).toBe(undefined);
+        done();
+      }, 300);
     });
 
     it('didn\'t exists after ttl-ends', (done) => {

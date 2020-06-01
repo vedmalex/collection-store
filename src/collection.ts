@@ -1,5 +1,6 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse';
+import _ from 'lodash'
 
 export function autoIncIdGen<T>(item: T, model: string, list: List<T>) {
   return list.counter;
@@ -46,7 +47,9 @@ export class List<T> implements StoredList<T> {
 
   push(...items) {
     items.forEach((item) => {
-      this.hash[this._counter++, this._count++] = item;
+      this.hash[this._counter] = item;
+      this._counter++;
+      this._count++;
     });
     return this._count;
   }
@@ -86,6 +89,9 @@ export class List<T> implements StoredList<T> {
       _counter: this._counter,
       hash: this.hash,
     };
+  }
+  toArray(): Array<T> {
+    return this.keys.map(k => this.hash[k])
   }
 }
 
@@ -141,7 +147,7 @@ export default class CollectionBase<T extends Item> {
   removes: Array<(item: T, i: any) => void>
   ensures: Array<() => void>
   indexDefs: { [name: string]: IndexDef }
-  genCache: { [key: string]: IdGeneratorFunction<T>}
+  genCache: { [key: string]: IdGeneratorFunction<T> }
 
   constructor(config?: Partial<CollectionConfig<T>>) {
     let {
@@ -157,7 +163,7 @@ export default class CollectionBase<T extends Item> {
       indexList,
     } = config;
 
-    let Id: Partial<IdType<T>> = typeof id == "string" ? {name: id} : id;
+    let Id: Partial<IdType<T>> = typeof id == "string" ? { name: id } : id;
 
     if ('string' == typeof id) {
       Id = {
@@ -345,7 +351,7 @@ export default class CollectionBase<T extends Item> {
         }
       };
 
-      let ensureValue = (item:T) => {
+      let ensureValue = (item: T) => {
         let value = item[key];
         if ((value == null) && auto) {
           item[key] = value = this.genCache[gen](item, this.model, this.list);
@@ -488,19 +494,23 @@ export default class CollectionBase<T extends Item> {
   }
 
   findById(id) {
-    return this.list.get(this.indexes[this.id][id]);
+    const result = this.list.get(this.indexes[this.id][id])
+    return this.returnOneIfValid(result)
   }
 
   findBy(key, id) {
+    let result;
     if (this.indexDefs.hasOwnProperty(key)) {
       if (this.indexDefs[key].unique) {
-        return [this.list.get(this.indexes[key][id])];
+        result = [this.list.get(this.indexes[key][id])];
       } else {
         if (this.indexes[key].hasOwnProperty(id)) {
-          return (this.indexes[key][id] as Array<number>).map((i) => this.list.get(i));
+          result = (this.indexes[key][id] as Array<number>).map((i) => this.list.get(i));
         }
       }
     }
+
+    return this.returnOneIfValid(result);
   }
 
   find(condition) {
@@ -508,9 +518,8 @@ export default class CollectionBase<T extends Item> {
     this._traverse(condition, (i, cur) => {
       result.push(cur);
       return true;
-    });
-
-    return result;
+    })
+    return this.returnListIfValid(result);
   }
 
   findOne(condition) {
@@ -518,7 +527,54 @@ export default class CollectionBase<T extends Item> {
     this._traverse(condition, (i, cur) => {
       result = cur;
     });
-    return result;
+    return this.returnOneIfValid(result);
+  }
+
+  isValidTTL(item: Item) {
+    if (item.__ttltime) {
+      let now = Date.now();
+      return (now - item.__ttltime) <= this.ttl
+    } else {
+      return true;
+    }
+  }
+
+  returnOneIfValid(result: T) {
+    if(result){
+      let invalidate = false
+
+      if (result && !this.isValidTTL(result)) {
+        invalidate = true;
+      }
+      if (invalidate) {
+        setImmediate(() => {
+          this.ensureTTL()
+        })
+      }
+      return invalidate ? undefined : result;
+    } else {
+      return result;
+    }
+  }
+
+  returnListIfValid(items: Array<T>) {
+    let invalidate = false
+
+    let result = items.filter(i => {
+      if (this.isValidTTL(i)) {
+        return true;
+      } else {
+        invalidate = true;
+        return false
+      }
+    });
+
+    if (invalidate) {
+      setImmediate(() => {
+        this.ensureTTL()
+      })
+    }
+    return invalidate ? result : items;
   }
 
   update(condition, update) {
