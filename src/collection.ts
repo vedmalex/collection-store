@@ -510,7 +510,7 @@ export default class CollectionBase<T extends Item> {
       }
     }
 
-    return this.returnOneIfValid(result);
+    return this.returnListIfValid(result);
   }
 
   find(condition) {
