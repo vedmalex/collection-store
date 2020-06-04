@@ -1,6 +1,6 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse';
-import _ from 'lodash'
+import _, { Primitive } from 'lodash'
 
 export function autoIncIdGen<T>(item: T, model: string, list: List<T>) {
   return list.counter;
@@ -249,33 +249,34 @@ export default class CollectionBase<T extends Item> {
     this.ensureIndexes();
   }
 
-  __restore(): StoredData<T> {
-    throw new Error('not implemented');
+  __restore(): Promise<StoredData<T>> {
+    return Promise.reject('not implemented')
   }
-  __store(obj) {
-    throw new Error('not implemented');
+  __store(obj): Promise<void> {
+    return Promise.reject('not implemented')
   }
 
-  load() {
-    let stored = this.__restore();
-    if (stored) {
-      let { indexes, list, indexDefs, id, ttl } = stored;
-      this.list.load(list);
-      this.indexDefs = indexDefs;
-      this.id = id;
-      this.ttl = ttl;
+  load(): Promise<void> {
+    return this.__restore().then(stored => {
+      if (stored) {
+        let { indexes, list, indexDefs, id, ttl } = stored;
+        this.list.load(list);
+        this.indexDefs = indexDefs;
+        this.id = id;
+        this.ttl = ttl;
 
-      this.inserts = [];
-      this.removes = [];
-      this.updates = [];
-      this.ensures = [];
+        this.inserts = [];
+        this.removes = [];
+        this.updates = [];
+        this.ensures = [];
 
-      this.indexes = {};
-      this._buildIndex(indexDefs);
-      this.indexes = indexes;
-      this.ensureIndexes();
-    }
-    this.ensureTTL();
+        this.indexes = {};
+        this._buildIndex(indexDefs);
+        this.indexes = indexes;
+        this.ensureIndexes();
+      }
+      this.ensureTTL();
+    });
   }
 
   ensureTTL() {
@@ -292,8 +293,8 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
-  persist() {
-    this.__store({
+  persist():Promise<void> {
+    return this.__store({
       list: this.list.persist(),
       indexes: this.indexes,
       indexDefs: this.indexDefs,
@@ -540,7 +541,7 @@ export default class CollectionBase<T extends Item> {
   }
 
   returnOneIfValid(result: T) {
-    if(result){
+    if (result) {
       let invalidate = false
 
       if (result && !this.isValidTTL(result)) {

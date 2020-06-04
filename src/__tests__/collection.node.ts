@@ -7,6 +7,12 @@ interface ChildItem extends Item {
   age: string
 }
 
+function setTimer(ms) {
+  return new Promise(res => {
+    setTimeout(res, ms)
+  })
+}
+
 describe('hreplacer', () => {
 
   describe('list', () => {
@@ -31,72 +37,67 @@ describe('hreplacer', () => {
 
   describe('collectionTTL', () => {
 
-    beforeEach(() => {
+    beforeEach(async () => {
       let c1 = new Collection({ name: 'items', ttl: '100ms', id: 'name' });
       c1.create({ name: 'Some', age: 12 });
       c1.create({ name: 'Another', age: 13 });
       c1.create({ name: 'SomeOneElse', age: 12 });
       c1.create({ name: 'Anybody', age: 12 });
-      c1.persist();
+      await c1.persist();
     });
 
-    it('exists before ttl-ends', () => {
+    it('exists before ttl-ends', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      await c1.load()
       expect(c1.list.length).toBe(4);
-
     });
 
-    it('didn\'t exists after ttl-ends', (done) => {
+    it('didn\'t exists after ttl-ends', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
-      setTimeout(() => {
-        expect(c1.find({ age: 12 }).length).toBe(0);
-        expect(c1.findById(0)).toBe(undefined);
-        done();
-      }, 300);
+      await c1.load();
+      await setTimer(300);
+      expect(c1.find({ age: 12 }).length).toBe(0);
+      expect(c1.findById(0)).toBe(undefined);
     });
 
-    it('didn\'t exists after ttl-ends', (done) => {
+    it('didn\'t exists after ttl-ends', async () => {
       let c1 = new Collection({ name: 'items' });
-      setTimeout(() => {
-        c1.load();
-        expect(c1.list.length).toBe(0);
-        c1.create({ name: 'Some', age: 12 });
-        c1.create({ name: 'Another', age: 13 });
-        c1.create({ name: 'SomeOneElse', age: 12 });
-        c1.create({ name: 'Anybody', age: 12 });
-        c1.persist();
-        expect(c1.list.length).toBe(4);
-        done();
-      }, 300);
+      await setTimer(300)
+      await c1.load();
+      expect(c1.list.length).toBe(0);
+      c1.create({ name: 'Some', age: 12 });
+      c1.create({ name: 'Another', age: 13 });
+      c1.create({ name: 'SomeOneElse', age: 12 });
+      c1.create({ name: 'Anybody', age: 12 });
+      await c1.persist();
+      expect(c1.list.length).toBe(4);
     });
   });
 
   describe('collection', () => {
 
-    beforeEach(() => {
+    beforeEach(async () => {
       let c1 = new Collection({ name: 'items' });
       c1.create({ name: 'Some', age: 12 });
       c1.create({ name: 'Another', age: 13 });
       c1.create({ name: 'SomeOneElse', age: 12 });
       c1.create({ name: 'Anybody', age: 12 });
-      c1.persist();
+      await c1.persist();
     });
 
     it('default autoinc works', () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      c1.load().then(_ => {
+        expect(c1.list.get(0).id).toBe(0);
+        expect(c1.list.get(1).id).toBe(1);
+        expect(c1.list.get(2).id).toBe(2);
+        expect(c1.list.get(3).id).toBe(3);
 
-      expect(c1.list.get(0).id).toBe(0);
-      expect(c1.list.get(1).id).toBe(1);
-      expect(c1.list.get(2).id).toBe(2);
-      expect(c1.list.get(3).id).toBe(3);
-
-      expect(c1.indexes.id[0]).toBe(0);
-      expect(c1.indexes.id[1]).toBe(1);
-      expect(c1.indexes.id[2]).toBe(2);
-      expect(c1.indexes.id[3]).toBe(3);
+        expect(c1.indexes.id[0]).toBe(0);
+        expect(c1.indexes.id[1]).toBe(1);
+        expect(c1.indexes.id[2]).toBe(2);
+        expect(c1.indexes.id[3]).toBe(3);
+      });
     });
 
     it('has different configurations', () => {
@@ -141,8 +142,9 @@ describe('hreplacer', () => {
 
     it('has unique index', () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
-      expect(() => c1.push({ id: 0, name: 'some' })).toThrow();
+      c1.load().then(_ => {
+        expect(() => c1.push({ id: 0, name: 'some' })).toThrow();
+      });
     });
 
     it('must have constructor', () => {
@@ -154,7 +156,6 @@ describe('hreplacer', () => {
     });
 
     it('creates item', () => {
-
       let c1 = new Collection({ name: 'items0' });
       // c1.load();
       c1.create({ name: 'Some', age: 12 });
@@ -165,41 +166,41 @@ describe('hreplacer', () => {
 
     });
 
-    it('resets the collection, not the storage', () => {
+    it('resets the collection, not the storage', async () => {
       let c1 = new Collection({ name: 'items8' });
       c1.create({ name: 'Some', age: 12 });
       c1.create({ name: 'Another', age: 13 });
       c1.create({ name: 'SomeOneElse', age: 12 });
       c1.create({ name: 'Anybody', age: 12 });
-      c1.persist();
+      await c1.persist();
       expect(c1.list.length).toBe(4);
       expect(Object.keys(c1.indexes.id).length).toBe(4);
       c1.reset();
       expect(c1.list.length).toBe(0);
       expect(Object.keys(c1.indexes.id).length).toBe(0);
-      c1.load();
+      await c1.load()
       expect(c1.list.length).toBe(4);
       expect(Object.keys(c1.indexes.id).length).toBe(4);
       c1.reset();
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.list.length).toBe(0);
       expect(Object.keys(c1.indexes.id).length).toBe(0);
     });
 
-    it('allow update key fields', () => {
+    it('allow update key fields', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      await c1.load()
       expect(c1.list.length).toBe(4);
       c1.update({ id: 0, age: 12 }, { id: 10, class: 5 });
-      c1.persist();
+      await c1.persist();
       expect(c1.findById(0)).toBe(undefined);
       expect(c1.findById(10)).not.toBe(undefined);
     });
 
-    it('find findOne findById', () => {
+    it('find findOne findById', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      await c1.load()
       expect(c1.list.length).toBe(4);
       expect(c1.find({ age: 12 }).length).toBe(3);
       expect(c1.find({ age: 13 }).length).toBe(1);
@@ -209,59 +210,59 @@ describe('hreplacer', () => {
       expect(c1.findById(1)).toMatchObject({ name: 'Another', age: 13, id: 1 });
     });
 
-    it('update undateOne updateWithId', () => {
+    it('update undateOne updateWithId', async () => {
       let c1 = new Collection<ChildItem>({ name: 'items' });
-      c1.load();
+      await c1.load();
       expect(c1.list.length).toBe(4);
       c1.update({ age: 12 }, { class: 5 });
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.find({ class: 5 }).length).toBe(3);
       c1.update({ age: 13 }, { class: 6 });
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.find({ class: 6 }).length).toBe(1);
       c1.updateWithId(0, { name: '!!!' });
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.findById(0).name).toBe('!!!');
     });
 
-    it('remove removeOne removeWithId', () => {
+    it('remove removeOne removeWithId', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      await c1.load();
       expect(c1.list.length).toBe(4);
       c1.removeOne({ age: 12 });
       expect(c1.list.length).toBe(3);
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.find({ age: 12 }).length).toBe(2);
       c1.remove(i => i.age == 12);
       expect(c1.list.length).toBe(1);
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.find({ age: 12 }).length).toBe(0);
       expect(c1.find(i => i.age = 13).length).toBe(1);
       c1.removeWithId(1);
-      c1.persist();
-      c1.load();
+      await c1.persist();
+      await c1.load();
       expect(c1.find(i => i.age = 13).length).toBe(0);
     });
 
-    it('continue id after removing and etc', () => {
+    it('continue id after removing and etc', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
+      await c1.load();
       c1.removeWithId(3);
       c1.removeWithId(1);
       let nv = c1.create({ age: 100, class: 100 });
       expect(nv.id).toBe(4);
-      c1.persist();
+      await c1.persist();
     });
 
   });
 
   describe('collection indexes', () => {
-    beforeEach(() => {
+    beforeEach( async () => {
       let c1 = new Collection({
         name: 'items', id: '_id', indexList: [{
           key: 'name',
@@ -278,13 +279,13 @@ describe('hreplacer', () => {
       c1.create({ name: 'Anybody', age: 13 });
       c1.create({ name: 'Anybody', age: 1 });
       c1.create({ name: 'Anybody', age: 12 });
-      c1.persist();
+      await c1.persist();
     });
 
-    it('restore all collection state', () => {
+    it('restore all collection state', async () => {
       let c1 = new Collection({ name: 'items' });
       expect(c1.id).toBe('id');
-      c1.load();
+      await c1.load();
       expect(c1.id).toBe('_id');
       expect(c1.indexDefs.id).toBe(undefined);
       expect(c1.indexDefs._id).not.toBe(undefined);
@@ -296,21 +297,17 @@ describe('hreplacer', () => {
       expect(c1.indexes.age).not.toBe(undefined);
     });
 
-    it('findBy index keys', () => {
+    it('findBy index keys', async () => {
       let c1 = new Collection({ name: 'items' });
-      c1.load();
-
+      await c1.load()
       let byName = c1.findBy('name', 'Anybody');
       expect(byName.length).toBe(3);
       let byAge = c1.findBy('age', 12);
       expect(byAge.length).toBe(3);
       let byId = c1.findBy('_id', 1);
       expect(byId.length).toBe(1);
-
     });
-
   });
-
 });
 
 // доделать тесты для node + web и можно делать проект...
