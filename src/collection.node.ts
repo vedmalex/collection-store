@@ -7,7 +7,7 @@ const writeJSON = util.promisify(fs.writeJSON)
 
 
 export interface CollectionConfigNode<T> extends CollectionConfig<T> {
-  format: string
+  path: string
 }
 
 export default class CollectionFile<T extends Item> extends CollectionBase<T> {
@@ -15,7 +15,7 @@ export default class CollectionFile<T extends Item> extends CollectionBase<T> {
 
   constructor(config?: Partial<CollectionConfigNode<T>>) {
     super(config);
-    this.file = config.format || `${this.model}.json`;
+    this.file = config.path || `${this.model}.json`;
   }
   async __restore() {
     await fs.ensureFile(this.file)
