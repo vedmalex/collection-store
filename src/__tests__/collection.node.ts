@@ -60,7 +60,7 @@ describe('hreplacer', () => {
       expect(c1.findById(0)).toBe(undefined);
     });
 
-    it('didn\'t exists after ttl-ends', async () => {
+    it('didn\'t exists after ttl-ends without re-loading', async () => {
       let c1 = new Collection({ name: 'items' });
       await setTimer(300)
       await c1.load();

@@ -256,27 +256,26 @@ export default class CollectionBase<T extends Item> {
     return Promise.reject('not implemented')
   }
 
-  load(): Promise<void> {
-    return this.__restore().then(stored => {
-      if (stored) {
-        let { indexes, list, indexDefs, id, ttl } = stored;
-        this.list.load(list);
-        this.indexDefs = indexDefs;
-        this.id = id;
-        this.ttl = ttl;
+  async load(): Promise<void> {
+    const stored = await this.__restore()
+    if (stored) {
+      let { indexes, list, indexDefs, id, ttl } = stored;
+      this.list.load(list);
+      this.indexDefs = indexDefs;
+      this.id = id;
+      this.ttl = ttl;
 
-        this.inserts = [];
-        this.removes = [];
-        this.updates = [];
-        this.ensures = [];
+      this.inserts = [];
+      this.removes = [];
+      this.updates = [];
+      this.ensures = [];
 
-        this.indexes = {};
-        this._buildIndex(indexDefs);
-        this.indexes = indexes;
-        this.ensureIndexes();
-      }
-      this.ensureTTL();
-    });
+      this.indexes = {};
+      this._buildIndex(indexDefs);
+      this.indexes = indexes;
+      this.ensureIndexes();
+    }
+    this.ensureTTL();
   }
 
   ensureTTL() {
@@ -293,8 +292,8 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
-  persist():Promise<void> {
-    return this.__store({
+ async persist(): Promise<void> {
+    await this.__store({
       list: this.list.persist(),
       indexes: this.indexes,
       indexDefs: this.indexDefs,

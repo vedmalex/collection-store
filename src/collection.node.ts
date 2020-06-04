@@ -17,19 +17,18 @@ export default class CollectionFile<T extends Item> extends CollectionBase<T> {
     super(config);
     this.file = config.format || `${this.model}.json`;
   }
-  __restore() {
-    return fs.ensureFile(this.file)
-      .then(_ => fs.readFileSync(this.file))
-      .then(result => {
-        if (result && result.toString()) {
-          return JSON.parse(result.toString());
-        }
-      })
+  async __restore() {
+    await fs.ensureFile(this.file)
+    const result = await fs.readFileSync(this.file)
+    if (result && result.length > 0) {
+      return JSON.parse(result.toString());
+    }
   }
-  __store(obj) {
-    return fs.ensureFile(this.file)
-      .then(_ => fs.writeJSON(this.file, obj, {
-        spaces: 2
-      }))
+
+  async __store(obj) {
+    await fs.ensureFile(this.file)
+    await fs.writeJSON(this.file, obj, {
+      spaces: 2
+    })
   }
 }
