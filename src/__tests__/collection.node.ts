@@ -292,11 +292,11 @@ describe('hreplacer', () => {
     });
     c1.create({ name: 'Some', age: 12, pass: 1 });
     c1.create({ name: 'Another', age: 13, pass: 2 });
-    c1.create({ name: 'Another', age: 12 , pass: 3});
+    c1.create({ name: 'Another', age: 12, pass: 3 });
     c1.create({ name: 'SomeOneElse', age: 11, pass: 4 });
-    c1.create({ name: 'SomeOneElse', age: 14 , pass: 5});
+    c1.create({ name: 'SomeOneElse', age: 14, pass: 5 });
     c1.create({ name: 'Anybody', age: 13 });
-    c1.create({ name: 'Anybody' , pass: 6});
+    c1.create({ name: 'Anybody', pass: 6 });
     c1.create({ name: 'Anybody', age: 12 });
     await c1.persist();
     return new Collection({ name, path: fn })
