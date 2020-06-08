@@ -1,6 +1,6 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse';
-import _, { Primitive } from 'lodash'
+import _ from 'lodash'
 
 export function autoIncIdGen<T>(item: T, model: string, list: List<T>) {
   return list.counter;
@@ -292,7 +292,7 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
- async persist(): Promise<void> {
+  async persist(): Promise<void> {
     await this.__store({
       list: this.list.persist(),
       indexes: this.indexes,
@@ -493,12 +493,12 @@ export default class CollectionBase<T extends Item> {
     return res;
   }
 
-  findById(id) {
+  findById(id): T {
     const result = this.list.get(this.indexes[this.id][id])
     return this.returnOneIfValid(result)
   }
 
-  findBy(key, id) {
+  findBy(key, id): Array<T> {
     let result;
     if (this.indexDefs.hasOwnProperty(key)) {
       if (this.indexDefs[key].unique) {
@@ -513,7 +513,7 @@ export default class CollectionBase<T extends Item> {
     return this.returnListIfValid(result);
   }
 
-  find(condition) {
+  find(condition): Array<T> {
     const result = [];
     this._traverse(condition, (i, cur) => {
       result.push(cur);
@@ -522,7 +522,7 @@ export default class CollectionBase<T extends Item> {
     return this.returnListIfValid(result);
   }
 
-  findOne(condition) {
+  findOne(condition): T {
     let result;
     this._traverse(condition, (i, cur) => {
       result = cur;
@@ -530,16 +530,20 @@ export default class CollectionBase<T extends Item> {
     return this.returnOneIfValid(result);
   }
 
-  isValidTTL(item: Item) {
-    if (item.__ttltime) {
-      let now = Date.now();
-      return (now - item.__ttltime) <= this.ttl
+  isValidTTL(item?: T) {
+    if (item) {
+      if (item.__ttltime) {
+        let now = Date.now();
+        return (now - item.__ttltime) <= this.ttl
+      } else {
+        return true;
+      }
     } else {
-      return true;
+      return false;
     }
   }
 
-  returnOneIfValid(result: T) {
+  returnOneIfValid(result?: T) {
     if (result) {
       let invalidate = false
 
@@ -547,9 +551,11 @@ export default class CollectionBase<T extends Item> {
         invalidate = true;
       }
       if (invalidate) {
-        setImmediate(() => {
-          this.ensureTTL()
-        })
+        if(this.ttl && this.list.length > 0){
+          setImmediate(() => {
+            this.ensureTTL()
+          })
+        }
       }
       return invalidate ? undefined : result;
     } else {
@@ -570,11 +576,13 @@ export default class CollectionBase<T extends Item> {
     });
 
     if (invalidate) {
-      setImmediate(() => {
-        this.ensureTTL()
-      })
+      if(this.ttl && this.list.length > 0){
+        setImmediate(() => {
+          this.ensureTTL()
+        })
+      }
     }
-    return invalidate ? result : items;
+    return invalidate ? result : result;
   }
 
   update(condition, update) {
