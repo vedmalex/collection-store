@@ -161,7 +161,7 @@ export default class CollectionBase<T extends Item> {
       idGen = 'autoIncIdGen',
       auto = true,
       indexList,
-    } = config;
+    } = config ?? {};
 
     let Id: Partial<IdType<T>> = typeof id == "string" ? { name: id } : id;
 
@@ -342,12 +342,13 @@ export default class CollectionBase<T extends Item> {
       }
 
       let validate = (value) => {
-        if (required && value == null) {
-          throw new Error(`value for index ${key} is required, but ${value} is met`);
-        }
-
-        if (unique && this.indexes.hasOwnProperty(key) && this.indexes[key].hasOwnProperty(value)) {
-          throw new Error(`unique index ${key} already contains value ${value}`);
+        if (!(sparse && value == null)) {
+          if (required && value == null) {
+            throw new Error(`value for index ${key} is required, but ${value} is met`);
+          }
+          if (unique && this.indexes.hasOwnProperty(key) && this.indexes[key].hasOwnProperty(value)) {
+            throw new Error(`unique index ${key} already contains value ${value}`);
+          }
         }
       };
 
@@ -381,7 +382,7 @@ export default class CollectionBase<T extends Item> {
         this.updates.push((ov, nv, i) => {
           let valueOld = ensureValue(ov);
           let valueNew = getValue(nv);
-          if (valueNew !== undefined && valueNew !== null) {
+          if (valueNew != null) {
             validate(valueNew);
             if (valueOld !== valueNew) {
               delete this.indexes[key][valueOld];
@@ -410,7 +411,7 @@ export default class CollectionBase<T extends Item> {
         this.updates.push((ov, nv, i) => {
           let valueOld = ensureValue(ov);
           let valueNew = getValue(nv);
-          if (valueNew !== undefined && valueNew !== null) {
+          if (valueNew != null) {
             validate(valueNew);
             if (valueOld !== valueNew) {
               let items = this.indexes[key][valueOld] as Array<number>;
@@ -436,7 +437,9 @@ export default class CollectionBase<T extends Item> {
   prepareIndexInsert(val) {
     let result = this.inserts.map(item => item(val));
     return (i) => {
-      result.forEach(f => f(i));
+      result
+        .filter(f => typeof f == "function")
+        .forEach(f => f(i));
     };
   }
 
@@ -551,7 +554,7 @@ export default class CollectionBase<T extends Item> {
         invalidate = true;
       }
       if (invalidate) {
-        if(this.ttl && this.list.length > 0){
+        if (this.ttl && this.list.length > 0) {
           setImmediate(() => {
             this.ensureTTL()
           })
@@ -576,7 +579,7 @@ export default class CollectionBase<T extends Item> {
     });
 
     if (invalidate) {
-      if(this.ttl && this.list.length > 0){
+      if (this.ttl && this.list.length > 0) {
         setImmediate(() => {
           this.ensureTTL()
         })

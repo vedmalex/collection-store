@@ -1,0 +1,52 @@
+{
+  "list": {
+    "_count": 4,
+    "_counter": 4,
+    "hash": {
+      "0": {
+        "name": "!!!",
+        "age": 12,
+        "id": 0,
+        "class": 5
+      },
+      "1": {
+        "name": "Another",
+        "age": 13,
+        "id": 1,
+        "class": 6
+      },
+      "2": {
+        "name": "SomeOneElse",
+        "age": 12,
+        "id": 2,
+        "class": 5
+      },
+      "3": {
+        "name": "Anybody",
+        "age": 12,
+        "id": 3,
+        "class": 5
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 3
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "gen": "autoIncIdGen",
+      "sparse": false,
+      "required": true
+    }
+  },
+  "id": "id",
+  "ttl": false
+}

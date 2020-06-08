@@ -17,12 +17,10 @@ export default class CollectionFile<T extends Item> extends CollectionBase<T> {
     super(config);
     this.file = config.path || `${this.model}.json`;
   }
+
   async __restore() {
     await fs.ensureFile(this.file)
-    const result = await fs.readFileSync(this.file)
-    if (result && result.length > 0) {
-      return JSON.parse(result.toString());
-    }
+    return fs.readJSON(this.file)
   }
 
   async __store(obj) {
