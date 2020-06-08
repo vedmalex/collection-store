@@ -28,3 +28,4 @@ Thumbs.db
 .env
 
 tsconfig.tsbuildinfo
+/src/__tests__/*.json
