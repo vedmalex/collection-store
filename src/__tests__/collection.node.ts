@@ -47,6 +47,13 @@ describe('hreplacer', () => {
     });
   });
 
+  describe('indexLoader', async ()=>{
+    it('loads empty file', async ()=>{
+      let c1 = new Collection({name:"loaded", path: fileName('loaded')})
+      await c1.load()
+    })
+  })
+
   const loadCoolectionTTL = async (name) => {
     const fn = fileName(name)
     let c1 = new Collection({ name, ttl: '100ms', id: 'name', path: fn });
@@ -57,6 +64,8 @@ describe('hreplacer', () => {
     await c1.persist();
     return new Collection({ name, path: fn })
   }
+
+
 
   describe('collectionTTL', () => {
     it('exists before ttl-ends', async () => {

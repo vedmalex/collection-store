@@ -257,23 +257,27 @@ export default class CollectionBase<T extends Item> {
   }
 
   async load(): Promise<void> {
-    const stored = await this.__restore()
-    if (stored) {
-      let { indexes, list, indexDefs, id, ttl } = stored;
-      this.list.load(list);
-      this.indexDefs = indexDefs;
-      this.id = id;
-      this.ttl = ttl;
+    try {
+      const stored = await this.__restore()
+      if (stored) {
+        let { indexes, list, indexDefs, id, ttl } = stored;
+        this.list.load(list);
+        this.indexDefs = indexDefs;
+        this.id = id;
+        this.ttl = ttl;
 
-      this.inserts = [];
-      this.removes = [];
-      this.updates = [];
-      this.ensures = [];
+        this.inserts = [];
+        this.removes = [];
+        this.updates = [];
+        this.ensures = [];
 
-      this.indexes = {};
-      this._buildIndex(indexDefs);
-      this.indexes = indexes;
-      this.ensureIndexes();
+        this.indexes = {};
+        this._buildIndex(indexDefs);
+        this.indexes = indexes;
+        this.ensureIndexes();
+      }
+    } catch (e) {
+
     }
     this.ensureTTL();
   }
