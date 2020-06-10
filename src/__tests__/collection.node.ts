@@ -47,9 +47,9 @@ describe('hreplacer', () => {
     });
   });
 
-  describe('indexLoader', async ()=>{
-    it('loads empty file', async ()=>{
-      let c1 = new Collection({name:"loaded", path: fileName('loaded')})
+  describe('indexLoader', () => {
+    it('loads empty file', async () => {
+      let c1 = new Collection({ name: "loaded", path: fileName('loaded') })
       await c1.load()
     })
   })
@@ -337,6 +337,91 @@ describe('hreplacer', () => {
       let byId = c1.findBy('_id', 1);
       expect(byId.length).toBe(1);
     });
+
+    it('findBy unique index keys', async () => {
+      let c1 = await loadCoolectionIndexes('items-indexes')
+      await c1.load()
+      let byName = c1.findBy('pass', 1);
+      c1.removeWithId(byName[0]["_id"])
+      c1.create({ name: 'Some', age: 12, pass: 1 });
+      expect((byName[0] as any).name).toBe('Some');
+      c1.persist()
+    });
+
+    it('complex sample', async () => {
+      const c1 = new Collection({
+        name: 'DeviceMapping',
+        indexList: [
+          { key: "DeviceId", required: true, unique: true, sparse:true },
+          { key: 'Username', required: true, unique: false }
+        ],
+        path: fileName('device-mapping')
+      })
+      expect(Object.keys(c1.indexes.id).length).toBe(0)
+      expect(Object.keys(c1.indexes.DeviceId).length).toBe(0)
+      expect(Object.keys(c1.indexes.Username).length).toBe(0)
+      await c1.persist()
+
+      c1.create({DeviceId: '111222', Username:'testuser01'})
+
+      expect(Object.keys(c1.indexes.id).length).toBe(1)
+      expect(c1.indexes.id[0]).toBe(0)
+      expect(Object.keys(c1.indexes.DeviceId).length).toBe(1)
+      expect(c1.indexes.DeviceId[111222]).toBe(0)
+      expect(Object.keys(c1.indexes.Username).length).toBe(1)
+      expect(c1.indexes.Username['testuser01'][0]).toBe(0)
+
+      await c1.persist()
+
+      c1.create({DeviceId: '1112221', Username:'testuser01'})
+
+      expect(Object.keys(c1.indexes.id).length).toBe(2)
+      expect(c1.indexes.id[0]).toBe(0)
+      expect(c1.indexes.id[1]).toBe(1)
+      expect(Object.keys(c1.indexes.DeviceId).length).toBe(2)
+      expect(c1.indexes.DeviceId[111222]).toBe(0)
+      expect(c1.indexes.DeviceId[1112221]).toBe(1)
+      expect(Object.keys(c1.indexes.Username).length).toBe(1)
+      expect(c1.indexes.Username['testuser01'][0]).toBe(0)
+      expect(c1.indexes.Username['testuser01'][1]).toBe(1)
+
+      await c1.persist()
+
+      const item = c1.findBy('DeviceId', '111222')
+
+      c1.removeWithId(item[0].id)
+
+      await c1.persist()
+
+      expect(Object.keys(c1.indexes.id).length).toBe(1)
+      expect(c1.indexes.id[0]).toBeUndefined()
+      expect(c1.indexes.id[1]).toBe(1)
+      expect(Object.keys(c1.indexes.DeviceId).length).toBe(1)
+      expect(c1.indexes.DeviceId[111222]).toBeUndefined()
+      expect(c1.indexes.DeviceId[1112221]).toBe(1)
+      expect(Object.keys(c1.indexes.Username).length).toBe(1)
+      expect(c1.indexes.Username['testuser01'][0]).toBe(1)
+
+      c1.create({DeviceId: '111222', Username:'testuser01'})
+
+      expect(Object.keys(c1.indexes.id).length).toBe(2)
+      expect(c1.indexes.id[0]).toBeUndefined()
+      expect(c1.indexes.id[1]).toBe(1)
+      expect(c1.indexes.id[2]).toBe(2)
+      expect(Object.keys(c1.indexes.DeviceId).length).toBe(2)
+      expect(c1.indexes.DeviceId[111222]).toBe(2)
+      expect(c1.indexes.DeviceId[1112221]).toBe(1)
+      expect(Object.keys(c1.indexes.Username).length).toBe(1)
+      expect(c1.indexes.Username['testuser01'][0]).toBe(1)
+      expect(c1.indexes.Username['testuser01'][1]).toBe(2)
+
+      await c1.persist()
+
+      const new_item = c1.findBy('DeviceId', '111222')
+      expect(new_item.length).toBe(1)
+      expect(new_item[0].id).toBe(2)
+    })
+
   });
 });
 

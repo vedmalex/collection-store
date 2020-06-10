@@ -1,10 +1,5 @@
 import CollectionBase, { Item, CollectionConfig } from './collection';
 import fs from 'fs-extra';
-import util from 'util';
-
-const ensureFile = util.promisify(fs.ensureFile)
-const writeJSON = util.promisify(fs.writeJSON)
-
 
 export interface CollectionConfigNode<T> extends CollectionConfig<T> {
   path: string

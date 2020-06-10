@@ -457,8 +457,8 @@ export default class CollectionBase<T extends Item> {
 
   push(item) {
     let insert = this.prepareIndexInsert(item);
-    let index = this.list.push(item) - 1;
-    insert(index);
+    this.list.push(item);
+    insert(this.list.counter - 1);
   }
 
   _traverse(condition, action) {
@@ -492,10 +492,7 @@ export default class CollectionBase<T extends Item> {
   }
 
   create(item): T {
-    let res = {} as T;
-    for (let m in item) {
-      res[m] = item[m];
-    }
+    let res = {...item} as T;
     this.push(res);
     return res;
   }
