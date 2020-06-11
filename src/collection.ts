@@ -503,7 +503,7 @@ export default class CollectionBase<T extends Item> {
   }
 
   findBy(key, id): Array<T> {
-    let result;
+    let result = [];
     if (this.indexDefs.hasOwnProperty(key)) {
       if (this.indexDefs[key].unique) {
         result = [this.list.get(this.indexes[key][id])];
@@ -567,7 +567,7 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
-  returnListIfValid(items: Array<T>) {
+  returnListIfValid(items?: Array<T>) {
     let invalidate = false
 
     let result = items.filter(i => {
