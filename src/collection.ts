@@ -296,7 +296,25 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
+  cleanupIndexes(){
+    Object.keys(this.indexDefs).forEach(i => {
+      let index = this.indexDefs[i];
+      if (!index.unique) {
+        let entries = this.indexes[index.key];
+        Object.keys(entries).forEach(key=>{
+          let entry = entries[key]
+          if(Array.isArray(entry)){
+            if(entry.length  == 0){
+              delete entries[key]
+            }
+          }
+        })
+      }
+    })
+  }
+
   async persist(): Promise<void> {
+    this.cleanupIndexes()
     await this.__store({
       list: this.list.persist(),
       indexes: this.indexes,
@@ -428,7 +446,7 @@ export default class CollectionBase<T extends Item> {
         this.removes.push((item, i) => {
           let items = this.indexes[key][item[key]] as Array<number>;
           items.splice(items.indexOf(i), 1);
-          if(items.length == 0){
+          if (items.length == 0) {
             delete this.indexes[key][item[key]]
           }
         });
@@ -494,7 +512,7 @@ export default class CollectionBase<T extends Item> {
   }
 
   create(item): T {
-    let res = {...item} as T;
+    let res = { ...item } as T;
     this.push(res);
     return res;
   }
