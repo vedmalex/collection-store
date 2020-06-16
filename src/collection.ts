@@ -428,8 +428,10 @@ export default class CollectionBase<T extends Item> {
         this.removes.push((item, i) => {
           let items = this.indexes[key][item[key]] as Array<number>;
           items.splice(items.indexOf(i), 1);
+          if(items.length == 0){
+            delete this.indexes[key][item[key]]
+          }
         });
-
       }
     }
   }

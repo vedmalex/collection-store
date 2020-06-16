@@ -78,6 +78,7 @@ describe('hreplacer', () => {
       let c1 = await loadCoolectionTTL('items-ttl')
       await c1.load();
       await setTimer(300);
+      await c1.persist();
       expect(c1.find({ age: 12 }).length).toBe(0);
       expect(c1.findById(0)).toBe(undefined);
     });
