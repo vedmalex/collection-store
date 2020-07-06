@@ -11,12 +11,13 @@ import { IdGeneratorFunction } from './IdGeneratorFunction';
 import { IdType } from './IdType';
 import { CollectionConfig } from './CollectionConfig';
 import AdapterFile from './adapter-fs';
-
+import { CronJob } from 'cron'
 export default class Collection<T extends Item> {
+  cronJob?: CronJob
   storage: StorageAdapter<T>;
   ttl: number;
   /** cron tab time */
-  rotate: number;
+  rotate: string;
   model: string;
   id: string;
   auto: boolean;
@@ -30,7 +31,7 @@ export default class Collection<T extends Item> {
   indexDefs: { [name: string]: IndexDef }
   genCache: { [key: string]: IdGeneratorFunction<T> }
 
-  clone() {
+  clone(withData?: boolean) {
     let collection = new Collection<T>({ name: this.model, adapter: this.storage.clone() })
 
     collection.indexDefs = this.indexDefs
@@ -45,7 +46,9 @@ export default class Collection<T extends Item> {
     collection.indexes = {};
     collection._buildIndex(collection.indexDefs);
     collection.ensureIndexes();
-    // this.list.toArray().forEach(i => collection.push(i))
+    if (withData) {
+      this.list.toArray().forEach(i => collection.push(i))
+    }
     return collection;
   }
   constructor(config?: Partial<CollectionConfig<T>>) {
@@ -61,8 +64,16 @@ export default class Collection<T extends Item> {
       idGen = 'autoIncIdGen',
       auto = true,
       indexList,
-      adapter = new AdapterFile()
+      path,
+      adapter = new AdapterFile(path)
     } = config ?? {};
+
+    if (rotate) {
+      this.cronJob = new CronJob(rotate, () => {
+        this.doRotate()
+      })
+      this.cronJob.start();
+    }
 
     this.storage = adapter.init(this)
     let Id: Partial<IdType<T>> = typeof id == "string" ? { name: id } : id;
@@ -95,7 +106,7 @@ export default class Collection<T extends Item> {
     }
 
     this.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false;
-    this.rotate = (typeof rotate == 'string' ? tp(rotate) : rotate) || false;
+    this.rotate = rotate;
     this.model = name;
     this.id = Id.name;
     this.auto = Id.auto;
@@ -187,7 +198,6 @@ export default class Collection<T extends Item> {
       // throw e
     }
     this.ensureTTL();
-    this.ensureRotate();
   }
 
   ensureTTL() {
@@ -204,20 +214,11 @@ export default class Collection<T extends Item> {
     }
   }
 
-  ensureRotate() {
-    if (this.rotate) {
-      // ensure that all object are actuated with time
-      let now = Date.now();
-      let collection;
-      for (let i of this.list.keys) {
-        let item = this.list.get(i);
-        if ((now - item.__timestamp) >= this.rotate) {
-          if (!collection) {
-            new Collection<T>()
-          }
-          this.removeWithId(item[this.id]);
-        }
-      }
+  doRotate() {
+    if (this.list.length > 0) {
+      let collection = this.clone(true)
+      collection.persist(`${this.model}${(new Date()).toUTCString()}`)
+      this.reset();
       this.persist();
     }
   }
@@ -231,7 +232,7 @@ export default class Collection<T extends Item> {
           let entry = entries[key]
           if (Array.isArray(entry)) {
             if (entry.length == 0) {
-              delete entries[key]
+              unset(entries, key)
             }
           }
         })
@@ -337,14 +338,14 @@ export default class Collection<T extends Item> {
           if (valueNew != null) {
             validate(valueNew);
             if (valueOld !== valueNew) {
-              delete this.indexes[key][valueOld];
+              unset(this.indexes[key], valueOld)
               this.indexes[key][valueNew] = i;
             }
           }
         });
 
         this.removes.push((item, i) => {
-          delete this.indexes[key][get(item, key)];
+          unset(this.indexes[key], get(item, key));
         });
 
       } else {
@@ -380,7 +381,7 @@ export default class Collection<T extends Item> {
           if (items) {
             items.splice(items.indexOf(i), 1);
             if (items.length == 0) {
-              delete this.indexes[key][get(item, key)]
+              unset(this.indexes[key], get(item, key))
             }
           }
         });

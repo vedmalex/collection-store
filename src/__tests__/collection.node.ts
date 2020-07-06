@@ -37,7 +37,11 @@ describe('collection clone', () => {
     let clone = c1.clone()
     c1.list.toArray().forEach(i => clone.push(i))
     clone.persist('another')
-    // не работает как мне надо проверить!!!
+  })
+  it("rotate", async () => {
+    let c1 = await loadCoolectionTTL('clone')
+    await c1.load();
+    c1.doRotate();
   })
 })
 
