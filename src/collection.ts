@@ -1,141 +1,22 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse';
-import _ from 'lodash'
+import _, { get, set, unset } from 'lodash'
+import { autoIncIdGen } from './autoIncIdGen';
+import { autoTimestamp } from './autoTimestamp';
+import { StorageAdapter } from './StorageAdapter';
+import { List } from './List';
+import { IndexDef } from './IndexDef';
+import { Item } from './Item';
+import { IdGeneratorFunction } from './IdGeneratorFunction';
+import { IdType } from './IdType';
+import { CollectionConfig } from './CollectionConfig';
+import AdapterFile from './adapter-fs';
 
-export function autoIncIdGen<T>(item: T, model: string, list: List<T>) {
-  return list.counter;
-};
-
-export function autoTimestamp<T>(item: T, model: string, list: List<T>) {
-  return Date.now();
-};
-
-export interface StoredList<T> {
-  hash: { [key: string]: T }
-  _counter: number
-  _count: number
-}
-
-export class List<T> implements StoredList<T> {
-  hash: { [key: string]: T } = {}
-  _counter: number = 0
-  _count: number = 0
-
-  constructor(stored?: StoredList<T>) {
-    if (stored) {
-      this.load(stored)
-    }
-  }
-
-  get(key) {
-    return this.hash[key];
-  }
-
-  get counter() {
-    return this._counter;
-  }
-
-  get length() {
-    return this._count;
-  }
-
-  set length(len) {
-    if (len === 0) {
-      this.reset();
-    }
-  }
-
-  push(...items) {
-    items.forEach((item) => {
-      this.hash[this._counter] = item;
-      this._counter++;
-      this._count++;
-    });
-    return this._count;
-  }
-
-  remove(i) {
-    let result = this.hash[i];
-    delete this.hash[i];
-    this._count--;
-    return result;
-  }
-
-  reset() {
-    this._count = 0;
-    this._counter = 0;
-    this.hash = {};
-  }
-
-  [Symbol.iterator]() {
-    let self = this;
-    return (function* () { yield* self.keys; })();
-  }
-
-  get keys() {
-    return Object.keys(this.hash);
-  }
-
-  load(obj: StoredList<T>): List<T> {
-    this.hash = obj.hash;
-    this._count = obj._count;
-    this._counter = obj._counter;
-    return this
-  }
-
-  persist(): StoredList<T> {
-    return {
-      _count: this._count,
-      _counter: this._counter,
-      hash: this.hash,
-    };
-  }
-  toArray(): Array<T> {
-    return this.keys.map(k => this.hash[k])
-  }
-}
-
-export interface IndexDef {
-  key: string
-  auto?: boolean
-  unique?: boolean
-  sparse?: boolean
-  required?: boolean
-  gen?: string
-}
-
-export interface Item {
-  __ttltime?: number
-  id?: number
-}
-
-export interface StoredData<T extends Item> {
-  list: StoredList<T>
-  indexes: { [index: string]: { [key: string]: number | Array<number> } }
-  indexDefs: { [name: string]: IndexDef }
-  id: string
-  ttl?: number
-}
-
-export type IdGeneratorFunction<T extends Item> = (item: T, model: string, list: List<T>) => any
-
-export interface IdType<T extends Item> {
-  name: string;
-  auto: boolean;
-  gen: IdGeneratorFunction<T> | string
-}
-
-export interface CollectionConfig<T extends Item> {
-  ttl: string | number | boolean
-  name: string
-  id: string | Partial<IdType<T>>
-  idGen: string | IdGeneratorFunction<T>
-  auto: boolean
-  indexList: Array<IndexDef>
-}
-
-export default class CollectionBase<T extends Item> {
+export default class Collection<T extends Item> {
+  storage: StorageAdapter<T>;
   ttl: number;
+  /** cron tab time */
+  rotate: number;
   model: string;
   id: string;
   auto: boolean;
@@ -149,9 +30,28 @@ export default class CollectionBase<T extends Item> {
   indexDefs: { [name: string]: IndexDef }
   genCache: { [key: string]: IdGeneratorFunction<T> }
 
+  clone() {
+    let collection = new Collection<T>({ name: this.model, adapter: this.storage.clone() })
+
+    collection.indexDefs = this.indexDefs
+    collection.id = this.id
+    collection.ttl = this.ttl
+
+    collection.inserts = [];
+    collection.removes = [];
+    collection.updates = [];
+    collection.ensures = [];
+
+    collection.indexes = {};
+    collection._buildIndex(collection.indexDefs);
+    collection.ensureIndexes();
+    // this.list.toArray().forEach(i => collection.push(i))
+    return collection;
+  }
   constructor(config?: Partial<CollectionConfig<T>>) {
     let {
       ttl,
+      rotate,
       name,
       id = {
         name: 'id',
@@ -161,8 +61,10 @@ export default class CollectionBase<T extends Item> {
       idGen = 'autoIncIdGen',
       auto = true,
       indexList,
+      adapter = new AdapterFile()
     } = config ?? {};
 
+    this.storage = adapter.init(this)
     let Id: Partial<IdType<T>> = typeof id == "string" ? { name: id } : id;
 
     if ('string' == typeof id) {
@@ -193,6 +95,7 @@ export default class CollectionBase<T extends Item> {
     }
 
     this.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false;
+    this.rotate = (typeof rotate == 'string' ? tp(rotate) : rotate) || false;
     this.model = name;
     this.id = Id.name;
     this.auto = Id.auto;
@@ -229,6 +132,17 @@ export default class CollectionBase<T extends Item> {
       });
     }
 
+    if (this.rotate) {
+      defIndex.push({
+        key: '__timestamp',
+        auto: true,
+        gen: 'autoTimestamp',
+        unique: false,
+        sparse: false,
+        required: true,
+      });
+    }
+
     this._buildIndex(defIndex.concat(indexList || []).reduce((prev, curr) => {
       prev[curr.key] = {
         key: curr.key,
@@ -249,16 +163,9 @@ export default class CollectionBase<T extends Item> {
     this.ensureIndexes();
   }
 
-  __restore(): Promise<StoredData<T>> {
-    return Promise.reject('not implemented')
-  }
-  __store(obj): Promise<void> {
-    return Promise.reject('not implemented')
-  }
-
-  async load(): Promise<void> {
+  async load(name?: string): Promise<void> {
     try {
-      const stored = await this.__restore()
+      const stored = await this.storage.restore(name)
       if (stored) {
         let { indexes, list, indexDefs, id, ttl } = stored;
         this.list.load(list);
@@ -277,9 +184,10 @@ export default class CollectionBase<T extends Item> {
         this.ensureIndexes();
       }
     } catch (e) {
-
+      // throw e
     }
     this.ensureTTL();
+    this.ensureRotate();
   }
 
   ensureTTL() {
@@ -296,15 +204,33 @@ export default class CollectionBase<T extends Item> {
     }
   }
 
-  cleanupIndexes(){
+  ensureRotate() {
+    if (this.rotate) {
+      // ensure that all object are actuated with time
+      let now = Date.now();
+      let collection;
+      for (let i of this.list.keys) {
+        let item = this.list.get(i);
+        if ((now - item.__timestamp) >= this.rotate) {
+          if (!collection) {
+            new Collection<T>()
+          }
+          this.removeWithId(item[this.id]);
+        }
+      }
+      this.persist();
+    }
+  }
+
+  cleanupIndexes() {
     Object.keys(this.indexDefs).forEach(i => {
       let index = this.indexDefs[i];
       if (!index.unique) {
         let entries = this.indexes[index.key];
-        Object.keys(entries).forEach(key=>{
+        Object.keys(entries).forEach(key => {
           let entry = entries[key]
-          if(Array.isArray(entry)){
-            if(entry.length  == 0){
+          if (Array.isArray(entry)) {
+            if (entry.length == 0) {
               delete entries[key]
             }
           }
@@ -313,15 +239,19 @@ export default class CollectionBase<T extends Item> {
     })
   }
 
-  async persist(): Promise<void> {
-    this.cleanupIndexes()
-    await this.__store({
+  store() {
+    return {
       list: this.list.persist(),
       indexes: this.indexes,
       indexDefs: this.indexDefs,
       id: this.id,
       ttl: this.ttl,
-    });
+    }
+  }
+
+  async persist(name?: string): Promise<void> {
+    this.cleanupIndexes()
+    await this.storage.store(name);
   }
 
   restoreIndex() {
@@ -375,15 +305,15 @@ export default class CollectionBase<T extends Item> {
       };
 
       let ensureValue = (item: T) => {
-        let value = item[key];
+        let value = get(item, key);
         if ((value == null) && auto) {
-          item[key] = value = this.genCache[gen](item, this.model, this.list);
+          set(item, key, value = this.genCache[gen](item, this.model, this.list));
         }
         return value;
       };
 
       let getValue = (item) => {
-        return item[key];
+        return get(item, key);
       };
 
       this.ensures.push(() => {
@@ -414,7 +344,7 @@ export default class CollectionBase<T extends Item> {
         });
 
         this.removes.push((item, i) => {
-          delete this.indexes[key][item[key]];
+          delete this.indexes[key][get(item, key)];
         });
 
       } else {
@@ -437,17 +367,21 @@ export default class CollectionBase<T extends Item> {
             validate(valueNew);
             if (valueOld !== valueNew) {
               let items = this.indexes[key][valueOld] as Array<number>;
-              items.splice(items.indexOf(i), 1);
-              items.push(i);
+              if (items) {
+                items.splice(items.indexOf(i), 1);
+                items.push(i);
+              }
             }
           }
         });
 
         this.removes.push((item, i) => {
-          let items = this.indexes[key][item[key]] as Array<number>;
-          items.splice(items.indexOf(i), 1);
-          if (items.length == 0) {
-            delete this.indexes[key][item[key]]
+          let items = this.indexes[key][get(item, key)] as Array<number>;
+          if (items) {
+            items.splice(items.indexOf(i), 1);
+            if (items.length == 0) {
+              delete this.indexes[key][get(item, key)]
+            }
           }
         });
       }
@@ -518,7 +452,7 @@ export default class CollectionBase<T extends Item> {
   }
 
   findById(id): T {
-    const result = this.list.get(this.indexes[this.id][id])
+    const result = this.list.get(this.indexes[this.id][id] as number | string)
     return this.returnOneIfValid(result)
   }
 
@@ -526,7 +460,7 @@ export default class CollectionBase<T extends Item> {
     let result = [];
     if (this.indexDefs.hasOwnProperty(key)) {
       if (this.indexDefs[key].unique) {
-        result = [this.list.get(this.indexes[key][id])];
+        result = [this.list.get(this.indexes[key][id] as number | string)];
       } else {
         if (this.indexes[key].hasOwnProperty(id)) {
           result = (this.indexes[key][id] as Array<number>).map((i) => this.list.get(i));
@@ -535,6 +469,10 @@ export default class CollectionBase<T extends Item> {
     }
 
     return this.returnListIfValid(result);
+  }
+
+  query(filter) {
+
   }
 
   find(condition): Array<T> {
@@ -631,13 +569,11 @@ export default class CollectionBase<T extends Item> {
   updateWithId(id, update) {
     let result = this.findById(id);
     this.updateIndex(result, update, id);
-    for (let u in update) {
-      result[u] = update[u];
-    }
+    _.assign(result, update)
   }
 
   removeWithId(id) {
-    let i = this.indexes[this.id][id];
+    let i = this.indexes[this.id][id] as number | string;
     let cur = this.list.get(i);
     if (~i && cur) {
       this.removeIndex(cur, i);

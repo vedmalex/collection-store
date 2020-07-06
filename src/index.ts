@@ -1,6 +1,9 @@
-import Collection from './collection.node';
-import CollectionBase, {List} from './collection';
+import AdapterFile from './adapter-fs';
+import AdapterLocalStorage from './adapter-ls';
+import Collection from './collection';
+import { List } from "./List";
 
-export {Collection};
-export {CollectionBase};
-export {List};
+export { AdapterFile }
+export { AdapterLocalStorage }
+export { Collection };
+export { List };
