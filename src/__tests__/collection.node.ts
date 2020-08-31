@@ -41,7 +41,7 @@ describe('collection clone', () => {
   it("rotate", async () => {
     let c1 = await loadCoolectionTTL('clone')
     await c1.load();
-    c1.doRotate();
+    // c1.doRotate();
   })
 })
 
@@ -116,7 +116,7 @@ describe('collectionTTL', () => {
 
 const loadCoolection = async <T extends Item>(name): Promise<Collection<T>> => {
   const fn = fileName(name)
-  let c1 = new Collection({ name, adapter: new AdapterFs(fn) , indexList:[{key:"address.state", sparse:true}]});
+  let c1 = new Collection({ name, adapter: new AdapterFs(fn), indexList: [{ key: "address.state", sparse: true }] });
   c1.create({ name: 'Some', age: 12 });
   c1.create({ name: 'Another', age: 13 });
   c1.create({ name: 'SomeOneElse', age: 12 });
@@ -144,14 +144,14 @@ describe('collection', () => {
 
     let col1 = new Collection({ name: 'testOne', id: 'name', auto: false });
 
-    expect({ id: col1.id, auto: col1.auto, gen: col1.indexDefs.name.gen }).toMatchObject({
-      id: 'name', auto: false, gen: 'autoIncIdGen'
+    expect(col1.store().indexDefs["name"]).toMatchObject({
+      key: 'name', auto: false, gen: 'autoIncIdGen'
     });
 
     let col11 = new Collection({ name: 'testOne' });
 
-    expect({ id: col11.id, auto: col11.auto, gen: col11.indexDefs.id.gen }).toMatchObject({
-      id: 'id', auto: true, gen: 'autoIncIdGen'
+    expect(col11.store().indexDefs["id"]).toMatchObject({
+      key: 'id', auto: true, gen: 'autoIncIdGen'
     });
 
     let gen2 = (item, model, initial) => {
@@ -164,8 +164,8 @@ describe('collection', () => {
       idGen: gen2
     });
 
-    expect({ id: col2.id, auto: col2.auto, gen: col2.indexDefs.name.gen }).toMatchObject({
-      id: 'name', auto: true, gen: gen2.toString()
+    expect(col2.store().indexDefs["name"]).toMatchObject({
+      key: 'name', auto: true, gen: gen2.toString()
     });
 
     let col3 = new Collection({ name: 'testThree', id: 'name', auto: false });
@@ -174,8 +174,8 @@ describe('collection', () => {
 
     let col4 = new Collection({ name: 'testFour', id: { name: 'name', auto: false } });
 
-    expect({ id: col4.id, auto: col4.auto, gen: col4.indexDefs.name.gen }).toMatchObject({
-      id: 'name', auto: false, gen: 'autoIncIdGen'
+    expect(col4.store().indexDefs["name"]).toMatchObject({
+      key: 'name', auto: false, gen: 'autoIncIdGen'
     });
   });
 
@@ -306,8 +306,10 @@ describe('collection', () => {
 const loadCoolectionIndexes = async <T extends Item>(name): Promise<Collection<T>> => {
   const fn = fileName(name)
   let c1 = new Collection({
-    name: 'items', id: '_id', indexList: [{
+    name: 'items', id: '_id',
+    indexList: [{
       key: 'name',
+      process: (value: string) => value.toLowerCase()
     }, {
       key: 'age',
       sparse: true
@@ -317,17 +319,18 @@ const loadCoolectionIndexes = async <T extends Item>(name): Promise<Collection<T
       sparse: true
     }, {
       key: "address.state"
-    }
+    },
+    { key: "middleName", ignoreCase: true }
     ], adapter: new AdapterFs(fn)
   });
-  c1.create({ name: 'Some', age: 12, pass: 1, address: { state: 'NY' } });
-  c1.create({ name: 'Another', age: 13, pass: 2, address: { state: 'NJ' } });
-  c1.create({ name: 'Another', age: 12, pass: 3, address: { state: 'WA' } });
-  c1.create({ name: 'SomeOneElse', age: 11, pass: 4, address: { state: 'DE' } });
-  c1.create({ name: 'SomeOneElse', age: 14, pass: 5, address: { state: 'WI' } });
-  c1.create({ name: 'Anybody', age: 13, address: { state: 'CA' } });
+  c1.create({ name: 'Some', age: 12, pass: 1, address: { state: 'NY' } , middleName: 'Jay'});
+  c1.create({ name: 'Another', age: 13, pass: 2, address: { state: 'NJ' } , middleName: 'Nathan'});
+  c1.create({ name: 'Another', age: 12, pass: 3, address: { state: 'WA' } , middleName: 'NATHAN'});
+  c1.create({ name: 'SomeOneElse', age: 11, pass: 4, address: { state: 'DE' } , middleName: 'NaThan'});
+  c1.create({ name: 'SomeOneElse', age: 14, pass: 5, address: { state: 'WI' } , middleName: 'nathaN'});
+  c1.create({ name: 'Anybody', age: 13, address: { state: 'CA' } , middleName: 'Joe'});
   c1.create({ name: 'Anybody', pass: 6 });
-  c1.create({ name: 'Anybody', age: 12, address: { state: 'NY' } });
+  c1.create({ name: 'Anybody', age: 12, address: { state: 'NY' } , middleName: 'Jim'});
   await c1.persist();
   return new Collection({ name, adapter: new AdapterFs(fn) })
 }
@@ -347,6 +350,20 @@ describe('collection indexes', () => {
     expect(c1.indexes.name).not.toBe(undefined);
     expect(c1.indexes.age).not.toBe(undefined);
   });
+
+  it('uses process to find Value', async () => {
+    let c1 = await loadCoolectionIndexes('items-indexes')
+    await c1.load()
+    let byName = c1.findBy('name', 'anybody');
+    expect(byName.length).toBe(3);
+  })
+
+  it('ignoreCase', async () => {
+    let c1 = await loadCoolectionIndexes('items-indexes')
+    await c1.load()
+    let byName = c1.findBy('middleName', 'nathan');
+    expect(byName.length).toBe(4);
+  })
 
   it('findBy index keys', async () => {
     let c1 = await loadCoolectionIndexes('items-indexes')

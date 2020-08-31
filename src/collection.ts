@@ -5,15 +5,17 @@ import { autoIncIdGen } from './autoIncIdGen';
 import { autoTimestamp } from './autoTimestamp';
 import { StorageAdapter } from './StorageAdapter';
 import { List } from './List';
-import { IndexDef } from './IndexDef';
+import { IndexDef, IndexStored } from './IndexDef';
 import { Item } from './Item';
 import { IdGeneratorFunction } from './IdGeneratorFunction';
 import { IdType } from './IdType';
 import { CollectionConfig } from './CollectionConfig';
 import AdapterFile from './adapter-fs';
 import { CronJob } from 'cron'
+import { Dictionary } from './hash';
 export default class Collection<T extends Item> {
   cronJob?: CronJob
+  onRotate: () => void
   storage: StorageAdapter<T>;
   ttl: number;
   /** cron tab time */
@@ -28,8 +30,8 @@ export default class Collection<T extends Item> {
   updates: Array<(ov: T, nv: T, i: any) => void>
   removes: Array<(item: T, i: any) => void>
   ensures: Array<() => void>
-  indexDefs: { [name: string]: IndexDef }
-  genCache: { [key: string]: IdGeneratorFunction<T> }
+  indexDefs: Dictionary<IndexDef<T>>
+  genCache: Dictionary<IdGeneratorFunction<T>>
 
   clone(withData?: boolean) {
     let collection = new Collection<T>({ name: this.model, adapter: this.storage.clone() })
@@ -65,12 +67,19 @@ export default class Collection<T extends Item> {
       auto = true,
       indexList,
       path,
-      adapter = new AdapterFile(path)
+      adapter = new AdapterFile(path),
+      onRotate,
     } = config ?? {};
 
+    if (typeof idGen == 'function') {
+      idGen = idGen.toString()
+    }
+
     if (rotate) {
+      this.onRotate = onRotate
       this.cronJob = new CronJob(rotate, () => {
         this.doRotate()
+        this.onRotate()
       })
       this.cronJob.start();
     }
@@ -81,8 +90,8 @@ export default class Collection<T extends Item> {
     if ('string' == typeof id) {
       Id = {
         name: id,
-        auto: (typeof auto != 'undefined') ? auto : true,
-        gen: idGen || 'autoIncIdGen',
+        auto: auto != null ? auto : true,
+        gen: idGen,
       };
 
     } else if (id instanceof Function) {
@@ -93,12 +102,12 @@ export default class Collection<T extends Item> {
       Id.name = 'id';
     }
 
-    if (Id.auto) {
-      Id.auto = (auto == null) ? auto : true;
-    }
+    // if (Id.auto) {
+    //   Id.auto = (auto == null) ? auto : true;
+    // }
 
     if (Id.gen == null) {
-      Id.gen = idGen || 'autoIncIdGen';
+      Id.gen = idGen;
     }
 
     if (!name) {
@@ -123,10 +132,10 @@ export default class Collection<T extends Item> {
       autoTimestamp: autoTimestamp,
     };
 
-    let defIndex: IndexDef[] = [{
+    let defIndex: IndexDef<T>[] = [{
       key: this.id,
       auto: this.auto,
-      gen: typeof Id.gen == 'function' ? Id.gen.toString() : Id.gen,
+      gen: typeof Id.gen == 'function' ? Id.gen : (this.genCache[Id.gen] ? this.genCache[Id.gen] : eval(Id.gen)),
       unique: true,
       sparse: false,
       required: true,
@@ -136,7 +145,7 @@ export default class Collection<T extends Item> {
       defIndex.push({
         key: '__ttltime',
         auto: true,
-        gen: 'autoTimestamp',
+        gen: this.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
@@ -147,7 +156,7 @@ export default class Collection<T extends Item> {
       defIndex.push({
         key: '__timestamp',
         auto: true,
-        gen: 'autoTimestamp',
+        gen: this.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
@@ -159,12 +168,14 @@ export default class Collection<T extends Item> {
         key: curr.key,
         auto: curr.auto || false,
         unique: curr.unique || false,
-        gen: curr.gen || 'autoIncIdGen',
+        gen: curr.gen || (curr.auto ? this.genCache['autoIncIdGen'] : undefined),
         sparse: curr.sparse || false,
         required: curr.required || false,
+        ignoreCase: curr.ignoreCase,
+        process: curr.process
       };
       return prev;
-    }, {} as IndexDef[]));
+    }, {} as Dictionary<IndexDef<T>>));
     this.ensureIndexes();
   }
 
@@ -180,7 +191,7 @@ export default class Collection<T extends Item> {
       if (stored) {
         let { indexes, list, indexDefs, id, ttl } = stored;
         this.list.load(list);
-        this.indexDefs = indexDefs;
+        this.indexDefs = this.restoreIndex(indexDefs);
         this.id = id;
         this.ttl = ttl;
 
@@ -190,7 +201,7 @@ export default class Collection<T extends Item> {
         this.ensures = [];
 
         this.indexes = {};
-        this._buildIndex(indexDefs);
+        this._buildIndex(this.indexDefs);
         this.indexes = indexes;
         this.ensureIndexes();
       }
@@ -244,7 +255,7 @@ export default class Collection<T extends Item> {
     return {
       list: this.list.persist(),
       indexes: this.indexes,
-      indexDefs: this.indexDefs,
+      indexDefs: this.storeIndex(this.indexDefs),
       id: this.id,
       ttl: this.ttl,
     }
@@ -255,26 +266,77 @@ export default class Collection<T extends Item> {
     await this.storage.store(name);
   }
 
-  restoreIndex() {
-    for (let key in this.indexDefs) {
-      let gen = this.indexDefs[key].gen;
-      this.genCache[gen] = eval(gen);
+  restoreIndex(input: Dictionary<IndexStored>): Dictionary<IndexDef<T>> {
+    return _.map(input, (index) => {
+      return this.restoreIndexDef(index)
+    }).reduce((res, cur) => {
+      res[cur.key] = cur;
+      return res;
+    }, {})
+  }
+
+  storeIndex(input: Dictionary<IndexDef<T>>): Dictionary<IndexStored> {
+    return _.map(input, (index) => {
+      return this.storeIndexDef(index)
+    }).reduce((res, cur) => {
+      res[cur.key] = cur;
+      return res;
+    }, {})
+  }
+
+  storeIndexDef<T>(input: IndexDef<T>): IndexStored {
+    let { key,
+      auto,
+      unique,
+      sparse,
+      required, ignoreCase } = input
+    return {
+      key,
+      auto,
+      unique,
+      sparse,
+      required,
+      ignoreCase,
+      process: ignoreCase ? undefined : (input.process ? input.process.toString() : undefined),
+      gen: input.gen ? (this.genCache[input.gen.name] ? input.gen.name : input.gen.toString()) : undefined
     }
   }
 
-  _buildIndex(indexList) {
+  restoreIndexDef<T>(input: IndexStored): IndexDef<T> {
+    let { key,
+      auto,
+      unique,
+      sparse,
+      required, ignoreCase } = input
+    return {
+      key,
+      auto,
+      unique,
+      sparse,
+      required,
+      ignoreCase,
+      process: ignoreCase ? undefined : (input.process ? eval(input.process) : undefined),
+      gen: input.gen ? (this.genCache[input.gen] ? this.genCache[input.gen] : eval(input.gen)) : undefined
+    }
+  }
+
+  _buildIndex(indexList: Dictionary<IndexDef<T>>) {
     for (let key in indexList) {
       let {
         auto = false,
         unique = false,
-        gen = 'autoIncIdGen',
+        gen,
         sparse = false,
         required = false,
+        ignoreCase,
+        process,
       } = indexList[key];
 
-      if (typeof gen == 'function') {
-        this.genCache[gen.toString()] = gen;
-        gen = gen.toString();
+      if (auto && !gen) {
+        gen = this.genCache['autoIncIdGen']
+      }
+      if (ignoreCase) {
+        process = (value: any) => value?.toString ? value.toString().toLowerCase() : value;
       }
 
       if (!key) {
@@ -288,6 +350,8 @@ export default class Collection<T extends Item> {
         gen,
         sparse,
         required,
+        ignoreCase,
+        process,
       };
 
       if (this.indexes.hasOwnProperty(key)) {
@@ -308,13 +372,20 @@ export default class Collection<T extends Item> {
       let ensureValue = (item: T) => {
         let value = get(item, key);
         if ((value == null) && auto) {
-          set(item, key, value = this.genCache[gen](item, this.model, this.list));
+          set(item, key, value = gen(item, this.model, this.list));
+        }
+        if (process) {
+          value = process(value)
         }
         return value;
       };
 
       let getValue = (item) => {
-        return get(item, key);
+        let value = get(item, key);
+        if (process) {
+          value = process(value)
+        }
+        return value;
       };
 
       this.ensures.push(() => {
@@ -453,11 +524,19 @@ export default class Collection<T extends Item> {
   }
 
   findById(id): T {
+    let { process } = this.indexDefs[this.id]
+    if (process) {
+      id = process(id)
+    }
     const result = this.list.get(this.indexes[this.id][id] as number | string)
     return this.returnOneIfValid(result)
   }
 
   findBy(key, id): Array<T> {
+    let { process } = this.indexDefs[key]
+    if (process) {
+      id = process(id)
+    }
     let result = [];
     if (this.indexDefs.hasOwnProperty(key)) {
       if (this.indexDefs[key].unique) {
