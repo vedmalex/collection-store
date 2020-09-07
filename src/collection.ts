@@ -23,7 +23,7 @@ export default class Collection<T extends Item> {
   model: string;
   id: string;
   auto: boolean;
-  indexes: { [index: string]: { [key: string]: number | object | Array<number> } }
+  indexes: { [index: string]: { [key: string]: number | Array<number> } }
   list: List<T>
 
   inserts: Array<(item: T) => (i: number) => void>
@@ -537,17 +537,24 @@ export default class Collection<T extends Item> {
     if (process) {
       id = process(id)
     }
+
     let result = [];
     if (this.indexDefs.hasOwnProperty(key)) {
-      if (this.indexDefs[key].unique) {
-        result = [this.list.get(this.indexes[key][id] as number | string)];
+      result.push(...this.getIndexedValue(key, id));
+    }
+    return this.returnListIfValid(result);
+  }
+
+  private getIndexedValue(key: any, value: any) {
+    let result = [];
+    if (this.indexes[key]?.hasOwnProperty(value)) {
+      let index = this.indexes[key][value];
+      if (Array.isArray(index)) {
+        (this.indexes[key][value] as Array<number>).forEach((i) => result.push(this.list.get(i)));
       } else {
-        if (this.indexes[key].hasOwnProperty(id)) {
-          result = (this.indexes[key][id] as Array<number>).map((i) => this.list.get(i));
-        }
+        result.push(this.list.get(index));
       }
     }
-
     return this.returnListIfValid(result);
   }
 
