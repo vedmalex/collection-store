@@ -79,7 +79,9 @@ export default class Collection<T extends Item> {
       this.onRotate = onRotate
       this.cronJob = new CronJob(rotate, () => {
         this.doRotate()
-        this.onRotate()
+        if(typeof this.onRotate === "function"){
+          this.onRotate()
+        }
       })
       this.cronJob.start();
     }
