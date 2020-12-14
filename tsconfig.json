@@ -14,13 +14,9 @@
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "es2020",
-      "DOM"
-    ],
-    "types": [
-      "node"
-    ],
+    "isolatedModules": true,
+    "lib": ["es2020", "DOM"],
+    "types": ["node"],
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./dist",
@@ -29,11 +25,6 @@
     "experimentalDecorators": true,
     "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/__tests__",
-    "**/__mocks__"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["**/__tests__", "**/__mocks__"]
 }

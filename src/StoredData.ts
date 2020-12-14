@@ -6,7 +6,7 @@ import { Dictionary } from './hash';
 export interface StoredData<T extends Item> {
   list: StoredList<T>;
   indexes: Dictionary<Dictionary<number | Array<number>>>;
-  indexDefs: Dictionary<IndexStored>;
+  indexDefs: Dictionary<IndexStored<T>>;
   id: string;
   ttl?: number;
   rotate?: number;

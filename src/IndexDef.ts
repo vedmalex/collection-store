@@ -2,7 +2,7 @@ import { IdGeneratorFunction } from './IdGeneratorFunction';
 import { Item } from './Item';
 
 export interface IndexDef<T extends Item> {
-  key: string;
+  key: keyof T;
   auto?: boolean;
   unique?: boolean;
   sparse?: boolean;
@@ -12,8 +12,8 @@ export interface IndexDef<T extends Item> {
   process?: (value: any) => any
 }
 
-export interface IndexStored {
-  key: string;
+export interface IndexStored<T extends Item> {
+  key: keyof T;
   auto?: boolean;
   unique?: boolean;
   sparse?: boolean;

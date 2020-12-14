@@ -67,7 +67,7 @@ export default class Collection<T extends Item> {
       auto = true,
       indexList,
       path,
-      adapter = new AdapterFile(path),
+      adapter = new AdapterFile<T>(path),
       onRotate,
     } = config ?? {};
 
@@ -166,7 +166,7 @@ export default class Collection<T extends Item> {
     }
 
     this._buildIndex(defIndex.concat(indexList || []).reduce((prev, curr) => {
-      prev[curr.key] = {
+      prev[curr.key as string] = {
         key: curr.key,
         auto: curr.auto || false,
         unique: curr.unique || false,
@@ -240,7 +240,7 @@ export default class Collection<T extends Item> {
     Object.keys(this.indexDefs).forEach(i => {
       let index = this.indexDefs[i];
       if (!index.unique) {
-        let entries = this.indexes[index.key];
+        let entries = this.indexes[index.key as string];
         Object.keys(entries).forEach(key => {
           let entry = entries[key]
           if (Array.isArray(entry)) {
@@ -268,25 +268,25 @@ export default class Collection<T extends Item> {
     await this.storage.store(name);
   }
 
-  restoreIndex(input: Dictionary<IndexStored>): Dictionary<IndexDef<T>> {
+  restoreIndex(input: Dictionary<IndexStored<T>>): Dictionary<IndexDef<T>> {
     return _.map(input, (index) => {
       return this.restoreIndexDef(index)
     }).reduce((res, cur) => {
-      res[cur.key] = cur;
+      res[cur.key  as string] = cur;
       return res;
     }, {})
   }
 
-  storeIndex(input: Dictionary<IndexDef<T>>): Dictionary<IndexStored> {
+  storeIndex(input: Dictionary<IndexDef<T>>): Dictionary<IndexStored<T>> {
     return _.map(input, (index) => {
       return this.storeIndexDef(index)
     }).reduce((res, cur) => {
-      res[cur.key] = cur;
+      res[cur.key as string] = cur;
       return res;
     }, {})
   }
 
-  storeIndexDef<T>(input: IndexDef<T>): IndexStored {
+  storeIndexDef<T>(input: IndexDef<T>): IndexStored<T> {
     let { key,
       auto,
       unique,
@@ -304,7 +304,7 @@ export default class Collection<T extends Item> {
     }
   }
 
-  restoreIndexDef<T>(input: IndexStored): IndexDef<T> {
+  restoreIndexDef<T>(input: IndexStored<T>): IndexDef<T> {
     let { key,
       auto,
       unique,
@@ -534,8 +534,8 @@ export default class Collection<T extends Item> {
     return this.returnOneIfValid(result)
   }
 
-  findBy(key, id): Array<T> {
-    let { process } = this.indexDefs[key]
+  findBy(key:keyof T, id): Array<T> {
+    let { process } = this.indexDefs[key as string]
     if (process) {
       id = process(id)
     }
@@ -547,12 +547,12 @@ export default class Collection<T extends Item> {
     return this.returnListIfValid(result);
   }
 
-  private getIndexedValue(key: any, value: any) {
+  private getIndexedValue(key: keyof T, value: any) {
     let result = [];
-    if (this.indexes[key]?.hasOwnProperty(value)) {
-      let index = this.indexes[key][value];
+    if (this.indexes[key as string]?.hasOwnProperty(value)) {
+      let index = this.indexes[key as string][value];
       if (Array.isArray(index)) {
-        (this.indexes[key][value] as Array<number>).forEach((i) => result.push(this.list.get(i)));
+        (this.indexes[key as string][value] as Array<number>).forEach((i) => result.push(this.list.get(i)));
       } else {
         result.push(this.list.get(index));
       }
