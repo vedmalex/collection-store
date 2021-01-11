@@ -1,9 +1,9 @@
-import Collection from './collection';
-import { CollectionConfig } from "./CollectionConfig";
-import { Item } from "./Item";
-import fs from 'fs-extra';
+import Collection from './collection'
+import { CollectionConfig } from './CollectionConfig'
+import { Item } from './Item'
+import fs from 'fs-extra'
 import pathLib from 'path'
-import { StorageAdapter } from './StorageAdapter';
+import { StorageAdapter } from './StorageAdapter'
 
 export interface CollectionConfigNode<T> extends CollectionConfig<T> {
   path: string
@@ -22,17 +22,17 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   init(collection: Collection<T>) {
     this.collection = collection
     if (!this.file) {
-      this.file = `${collection.model}.json`;
+      this.file = `${collection.model}.json`
     }
     return this
   }
 
   async restore(name?: string) {
-    let path = this.file;
+    let path = this.file
     if (name) {
       let p = pathLib.parse(this.file)
-      p.name = name;
-      delete p.base;
+      p.name = name
+      delete p.base
       path = pathLib.format(p)
     }
     await fs.ensureFile(path)
@@ -40,16 +40,16 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   }
 
   async store(name: string) {
-    let path = this.file;
+    let path = this.file
     if (name) {
       let p = pathLib.parse(this.file)
-      p.name = name;
-      delete p.base;
+      p.name = name
+      delete p.base
       path = pathLib.format(p)
     }
     await fs.ensureFile(path)
     await fs.writeJSON(path, this.collection.store(), {
-      spaces: 2
+      spaces: 2,
     })
   }
 }
