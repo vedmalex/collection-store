@@ -1,0 +1,168 @@
+{
+  "list": {
+    "_count": 8,
+    "_counter": 8,
+    "hash": {
+      "0": {
+        "id": 0,
+        "name": "alex",
+        "age": 42,
+        "ssn": "000-0000-000001",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962465358
+      },
+      "1": {
+        "id": 1,
+        "name": "jame",
+        "age": 45,
+        "ssn": "000-0000-000002",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962466372
+      },
+      "2": {
+        "id": 2,
+        "name": "mark",
+        "age": 30,
+        "ssn": "000-0000-000003",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962466992
+      },
+      "3": {
+        "id": 3,
+        "name": "simon",
+        "age": 24,
+        "ssn": "000-0000-00004",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962467464
+      },
+      "4": {
+        "id": 4,
+        "name": "jason",
+        "age": 19,
+        "ssn": "000-0000-000005",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962468085
+      },
+      "5": {
+        "id": 5,
+        "name": "jim",
+        "age": 18,
+        "ssn": "000-0000-000006",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962468690
+      },
+      "6": {
+        "id": 6,
+        "name": "jach",
+        "age": 29,
+        "ssn": "000-0000-000007",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962469247
+      },
+      "7": {
+        "id": 7,
+        "name": "monika",
+        "age": 30,
+        "ssn": "000-0000-000008",
+        "page": "http://ya.ru",
+        "__ttltime": 1612962469667
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "unique": false,
+      "root": {
+        "t": 32,
+        "isEmpty": false,
+        "size": 8,
+        "children": [],
+        "id": 0,
+        "leaf": true,
+        "keys": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "key_num": 8,
+        "min": 0,
+        "max": 7,
+        "pointers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "isFull": false,
+        "errors": []
+      }
+    },
+    "__ttltime": {
+      "t": 32,
+      "unique": false,
+      "root": {
+        "t": 32,
+        "isEmpty": false,
+        "size": 8,
+        "children": [],
+        "id": 0,
+        "leaf": true,
+        "keys": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "key_num": 8,
+        "min": 0,
+        "max": 7,
+        "pointers": [
+          1612962465358,
+          1612962466372,
+          1612962466992,
+          1612962467464,
+          1612962468085,
+          1612962468690,
+          1612962469247,
+          1612962469667
+        ],
+        "isFull": false,
+        "errors": []
+      }
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "__ttltime": {
+      "key": "__ttltime",
+      "auto": true,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "gen": "autoTimestamp"
+    }
+  },
+  "id": "id",
+  "ttl": 30000
+}

@@ -1,11 +1,11 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse'
-import _, { get, set, unset } from 'lodash'
+import _, { unset } from 'lodash'
 import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
 import { StorageAdapter } from './StorageAdapter'
 import { List } from './List'
-import { IndexDef, IndexStored, Paths } from './IndexDef'
+import { IndexDef, Paths } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
@@ -13,24 +13,54 @@ import { CollectionConfig } from './CollectionConfig'
 import AdapterFile from './adapter-fs'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
+import { BPlusTree, query } from 'b-pl-tree'
+import { traverse } from './collection/traverse'
+import { prepare_index_insert } from './collection/prepare_index_insert'
+import { update_index } from './collection/update_index'
+import { ensure_ttl } from './collection/ensure_ttl'
+import { remove_index } from './collection/remove_index'
+import { build_index } from './collection/build_index'
+import { ensure_indexes } from './collection/ensure_indexes'
+import { get_indexed_value } from './collection/get_indexed_value'
+import { return_list_if_valid } from './collection/return_list_if_valid'
+import { return_one_if_valid } from './collection/return_one_if_valid'
+import { restore_index } from './collection/restore_index'
+import { deserialize_indexes } from './collection/deserialize_indexes'
+import { serialize_indexes } from './collection/serialize_indexes'
+import { store_index } from './collection/store_index'
+import { do_rotate_log } from './collection/do_rotate_log'
+
+export const ttl_key = '__ttltime'
 export default class Collection<T extends Item> {
   cronJob?: CronJob
   onRotate: () => void
+
   storage: StorageAdapter<T>
+  /** ttl for collection in ms */
   ttl: number
   /** cron tab time */
   rotate: string
+  /** model name */
   model: string
+  /** field that is used for identity */
   id: string
+  /** is autioincrement */
   auto: boolean
-  indexes: { [index: string]: { [key: string]: number | Array<number> } }
+  /**indexes */
+  indexes: { [index: string]: BPlusTree<number, number> }
+  /** main storage */
   list: List<T>
-
+  /** actions in insert */
   inserts: Array<(item: T) => (i: number) => void>
+  /** actions in update */
   updates: Array<(ov: T, nv: T, i: any) => void>
+  /** actions in remove */
   removes: Array<(item: T, i: any) => void>
+  /** actions in ensure */
   ensures: Array<() => void>
+  /** index definition */
   indexDefs: Dictionary<IndexDef<T>>
+  /** unique generators */
   genCache: Dictionary<IdGeneratorFunction<T>>
 
   clone(withData?: boolean) {
@@ -49,14 +79,15 @@ export default class Collection<T extends Item> {
     collection.ensures = []
 
     collection.indexes = {}
-    collection._buildIndex(collection.indexDefs)
-    collection.ensureIndexes()
+    build_index(collection, collection.indexDefs)
+    ensure_indexes(collection)
     if (withData) {
       this.list.toArray().forEach((i) => collection.push(i))
     }
     return collection
   }
-  constructor(config?: Partial<CollectionConfig<T>>) {
+
+  constructor(config?: CollectionConfig<T>) {
     let {
       ttl,
       rotate,
@@ -81,7 +112,7 @@ export default class Collection<T extends Item> {
     if (rotate) {
       this.onRotate = onRotate
       this.cronJob = new CronJob(rotate, () => {
-        this.doRotate()
+        do_rotate_log(this)
         if (typeof this.onRotate === 'function') {
           this.onRotate()
         }
@@ -115,7 +146,7 @@ export default class Collection<T extends Item> {
     }
 
     if (!name) {
-      throw new Error('must Have Model Name as "model" prop in config')
+      throw new Error('must Have Model Name as "name" prop in config')
     }
 
     this.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
@@ -154,7 +185,7 @@ export default class Collection<T extends Item> {
 
     if (this.ttl) {
       defIndex.push({
-        key: '__ttltime',
+        key: ttl_key,
         auto: true,
         gen: this.genCache['autoTimestamp'],
         unique: false,
@@ -165,7 +196,7 @@ export default class Collection<T extends Item> {
 
     if (this.rotate) {
       defIndex.push({
-        key: '__timestamp',
+        key: ttl_key,
         auto: true,
         gen: this.genCache['autoTimestamp'],
         unique: false,
@@ -174,7 +205,8 @@ export default class Collection<T extends Item> {
       })
     }
 
-    this._buildIndex(
+    build_index(
+      this,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
         prev[curr.key as string] = {
           key: curr.key,
@@ -190,13 +222,13 @@ export default class Collection<T extends Item> {
         return prev
       }, {} as Dictionary<IndexDef<T>>),
     )
-    this.ensureIndexes()
+    ensure_indexes(this)
   }
 
   reset() {
     this.list.length = 0
     this.indexes = {}
-    this.ensureIndexes()
+    ensure_indexes(this)
   }
 
   async load(name?: string): Promise<void> {
@@ -205,7 +237,7 @@ export default class Collection<T extends Item> {
       if (stored) {
         let { indexes, list, indexDefs, id, ttl } = stored
         this.list.load(list)
-        this.indexDefs = this.restoreIndex(indexDefs)
+        this.indexDefs = restore_index(indexDefs)
         this.id = id
         this.ttl = ttl
 
@@ -215,342 +247,35 @@ export default class Collection<T extends Item> {
         this.ensures = []
 
         this.indexes = {}
-        this._buildIndex(this.indexDefs)
-        this.indexes = indexes
-        this.ensureIndexes()
+        build_index(this, this.indexDefs)
+
+        this.indexes = deserialize_indexes(indexes)
+        ensure_indexes(this)
       }
     } catch (e) {
       // throw e
     }
-    this.ensureTTL()
-  }
-
-  ensureTTL() {
-    if (this.ttl) {
-      // ensure that all object are actuated with time
-      let now = Date.now()
-      for (let i of this.list.keys) {
-        let item = this.list.get(i)
-        if (now - item.__ttltime >= this.ttl) {
-          this.removeWithId(item[this.id])
-        }
-      }
-      this.persist()
-    }
-  }
-
-  doRotate() {
-    if (this.list.length > 0) {
-      let collection = this.clone(true)
-      collection.persist(`${this.model}${new Date().toUTCString()}`)
-      this.reset()
-      this.persist()
-    }
-  }
-
-  cleanupIndexes() {
-    Object.keys(this.indexDefs).forEach((i) => {
-      let index = this.indexDefs[i]
-      if (!index.unique) {
-        let entries = this.indexes[index.key as string]
-        Object.keys(entries).forEach((key) => {
-          let entry = entries[key]
-          if (Array.isArray(entry)) {
-            if (entry.length == 0) {
-              unset(entries, key)
-            }
-          }
-        })
-      }
-    })
+    ensure_ttl(this)
   }
 
   store() {
     return {
       list: this.list.persist(),
-      indexes: this.indexes,
-      indexDefs: this.storeIndex(this.indexDefs),
+      indexes: serialize_indexes(this.indexes),
+      indexDefs: store_index(this.indexDefs),
       id: this.id,
       ttl: this.ttl,
     }
   }
 
   async persist(name?: string): Promise<void> {
-    this.cleanupIndexes()
     await this.storage.store(name)
   }
 
-  restoreIndex(input: Dictionary<IndexStored<T>>): Dictionary<IndexDef<T>> {
-    return _.map(input, (index) => {
-      return this.restoreIndexDef(index)
-    }).reduce((res, cur) => {
-      res[cur.key as string] = cur
-      return res
-    }, {})
-  }
-
-  storeIndex(input: Dictionary<IndexDef<T>>): Dictionary<IndexStored<T>> {
-    return _.map(input, (index) => {
-      return this.storeIndexDef(index)
-    }).reduce((res, cur) => {
-      res[cur.key as string] = cur
-      return res
-    }, {})
-  }
-
-  storeIndexDef<T>(input: IndexDef<T>): IndexStored<T> {
-    let { key, auto, unique, sparse, required, ignoreCase } = input
-    return {
-      key,
-      auto,
-      unique,
-      sparse,
-      required,
-      ignoreCase,
-      process: ignoreCase
-        ? undefined
-        : input.process
-        ? input.process.toString()
-        : undefined,
-      gen: input.gen
-        ? this.genCache[input.gen.name]
-          ? input.gen.name
-          : input.gen.toString()
-        : undefined,
-    }
-  }
-
-  restoreIndexDef<T>(input: IndexStored<T>): IndexDef<T> {
-    let {
-      key,
-      type = 'string',
-      auto,
-      unique,
-      sparse,
-      required,
-      ignoreCase,
-    } = input
-    return {
-      key,
-      type,
-      auto,
-      unique,
-      sparse,
-      required,
-      ignoreCase,
-      process: ignoreCase
-        ? undefined
-        : input.process
-        ? eval(input.process)
-        : undefined,
-      gen: input.gen
-        ? this.genCache[input.gen]
-          ? this.genCache[input.gen]
-          : eval(input.gen)
-        : undefined,
-    }
-  }
-
-  _buildIndex(indexList: Dictionary<IndexDef<T>>) {
-    for (let key in indexList) {
-      let {
-        auto = false,
-        unique = false,
-        gen,
-        sparse = false,
-        required = false,
-        ignoreCase,
-        process,
-      } = indexList[key]
-
-      if (auto && !gen) {
-        gen = this.genCache['autoIncIdGen']
-      }
-      if (ignoreCase) {
-        process = (value: any) =>
-          value?.toString ? value.toString().toLowerCase() : value
-      }
-
-      if (!key) {
-        throw new Error(`key is required field for index`)
-      }
-
-      this.indexDefs[key] = {
-        key,
-        auto,
-        unique,
-        gen,
-        sparse,
-        required,
-        ignoreCase,
-        process,
-      }
-
-      if (this.indexes.hasOwnProperty(key)) {
-        throw new Error(`index with key ${key} already exists`)
-      }
-
-      let validate = (value) => {
-        if (!(sparse && value == null)) {
-          if (required && value == null) {
-            throw new Error(
-              `value for index ${key} is required, but ${value} is met`,
-            )
-          }
-          if (
-            unique &&
-            this.indexes.hasOwnProperty(key) &&
-            this.indexes[key].hasOwnProperty(value)
-          ) {
-            throw new Error(
-              `unique index ${key} already contains value ${value}`,
-            )
-          }
-        }
-      }
-
-      let ensureValue = (item: T) => {
-        let value = get(item, key)
-        if (value == null && auto) {
-          set(item, key, (value = gen(item, this.model, this.list)))
-        }
-        if (process) {
-          value = process(value)
-        }
-        return value
-      }
-
-      let getValue = (item) => {
-        let value = get(item, key)
-        if (process) {
-          value = process(value)
-        }
-        return value
-      }
-
-      this.ensures.push(() => {
-        if (!this.indexes.hasOwnProperty(key)) {
-          this.indexes[key] = {}
-        }
-      })
-
-      if (unique) {
-        this.inserts.push((item) => {
-          let value = ensureValue(item)
-          validate(value)
-          if (!(sparse && value == null)) {
-            return (i) => (this.indexes[key][value] = i)
-          }
-        })
-
-        this.updates.push((ov, nv, i) => {
-          let valueOld = ensureValue(ov)
-          let valueNew = getValue(nv)
-          if (valueNew != null) {
-            validate(valueNew)
-            if (valueOld !== valueNew) {
-              unset(this.indexes[key], valueOld)
-              this.indexes[key][valueNew] = i
-            }
-          }
-        })
-
-        this.removes.push((item, i) => {
-          unset(this.indexes[key], get(item, key))
-        })
-      } else {
-        this.inserts.push((item) => {
-          let value = ensureValue(item)
-          validate(value)
-          if (!(sparse && value == null)) {
-            if (!this.indexes[key].hasOwnProperty(value)) {
-              this.indexes[key][value] = []
-            }
-            return (i) => (this.indexes[key][value] as Array<number>).push(i)
-          }
-        })
-
-        this.updates.push((ov, nv, i) => {
-          let valueOld = ensureValue(ov)
-          let valueNew = getValue(nv)
-          if (valueNew != null) {
-            validate(valueNew)
-            if (valueOld !== valueNew) {
-              let items = this.indexes[key][valueOld] as Array<number>
-              if (items) {
-                items.splice(items.indexOf(i), 1)
-                items.push(i)
-              }
-            }
-          }
-        })
-
-        this.removes.push((item, i) => {
-          let items = this.indexes[key][get(item, key)] as Array<number>
-          if (items) {
-            items.splice(items.indexOf(i), 1)
-            if (items.length == 0) {
-              unset(this.indexes[key], get(item, key))
-            }
-          }
-        })
-      }
-    }
-  }
-
-  ensureIndexes() {
-    this.ensures.forEach((ensure) => ensure())
-  }
-
-  prepareIndexInsert(val) {
-    let result = this.inserts.map((item) => item(val))
-    return (i) => {
-      result.filter((f) => typeof f == 'function').forEach((f) => f(i))
-    }
-  }
-
-  updateIndex(ov, nv, i) {
-    this.updates.forEach((item) => item(ov, nv, i))
-  }
-
-  removeIndex(val, i) {
-    this.removes.forEach((item) => item(val, i))
-  }
-
   push(item) {
-    let insert = this.prepareIndexInsert(item)
+    let insert = prepare_index_insert(this, item)
     this.list.push(item)
     insert(this.list.counter - 1)
-  }
-
-  _traverse(condition: Partial<T> | ((T) => boolean), action) {
-    let condFunction = condition instanceof Function
-    const count = condFunction ? 1 : Object.keys(condition).length
-
-    for (let i of this.list.keys) {
-      let mc = 0
-      let current = this.list.get(i)
-      if (condition instanceof Function) {
-        let comp = condition(current)
-        if (comp) {
-          mc++
-        }
-      } else {
-        for (let m in condition) {
-          if (condition[m] == current[m]) {
-            mc++
-          } else {
-            break
-          }
-        }
-      }
-      if (mc == count) {
-        let next = action(i, current)
-        if (!next) {
-          break
-        }
-      }
-    }
   }
 
   create(item: T): T {
@@ -565,7 +290,7 @@ export default class Collection<T extends Item> {
       id = process(id)
     }
     const result = this.list.get(this.indexes[this.id][id] as number | string)
-    return this.returnOneIfValid(result)
+    return return_one_if_valid(this, result)
   }
 
   findBy(key: Paths<T>, id): Array<T> {
@@ -576,103 +301,33 @@ export default class Collection<T extends Item> {
 
     let result = []
     if (this.indexDefs.hasOwnProperty(key)) {
-      result.push(...this.getIndexedValue(key, id))
+      result.push(...get_indexed_value(this, key, id))
     }
-    return this.returnListIfValid(result)
-  }
-
-  private getIndexedValue(key: Paths<T>, value: any) {
-    let result = []
-    if (this.indexes[key as string]?.hasOwnProperty(value)) {
-      let index = this.indexes[key as string][value]
-      if (Array.isArray(index)) {
-        ;(this.indexes[key as string][value] as Array<number>).forEach((i) =>
-          result.push(this.list.get(i)),
-        )
-      } else {
-        result.push(this.list.get(index))
-      }
-    }
-    return this.returnListIfValid(result)
+    return return_list_if_valid(this, result)
   }
 
   query(filter) {}
 
   find(condition): Array<T> {
     const result = []
-    this._traverse(condition, (i, cur) => {
+    traverse(this, condition, (i, cur) => {
       result.push(cur)
       return true
     })
-    return this.returnListIfValid(result)
+    return return_list_if_valid(this, result)
   }
 
   findOne(condition): T {
     let result
-    this._traverse(condition, (i, cur) => {
+    traverse(this, condition, (i, cur) => {
       result = cur
     })
-    return this.returnOneIfValid(result)
-  }
-
-  isValidTTL(item?: T) {
-    if (item) {
-      if (item.__ttltime) {
-        let now = Date.now()
-        return now - item.__ttltime <= this.ttl
-      } else {
-        return true
-      }
-    } else {
-      return false
-    }
-  }
-
-  returnOneIfValid(result?: T) {
-    if (result) {
-      let invalidate = false
-
-      if (result && !this.isValidTTL(result)) {
-        invalidate = true
-      }
-      if (invalidate) {
-        if (this.ttl && this.list.length > 0) {
-          setImmediate(() => {
-            this.ensureTTL()
-          })
-        }
-      }
-      return invalidate ? undefined : result
-    } else {
-      return result
-    }
-  }
-
-  returnListIfValid(items?: Array<T>) {
-    let invalidate = false
-
-    let result = items.filter((i) => {
-      if (this.isValidTTL(i)) {
-        return true
-      } else {
-        invalidate = true
-        return false
-      }
-    })
-
-    if (invalidate) {
-      if (this.ttl && this.list.length > 0) {
-        setImmediate(() => {
-          this.ensureTTL()
-        })
-      }
-    }
-    return invalidate ? result : result
+    return return_one_if_valid(this, result)
   }
 
   update(condition, update: Partial<T>) {
-    this._traverse(condition, (i, cur) => {
-      this.updateIndex(cur, update, i)
+    traverse(this, condition, (i, cur) => {
+      update_index(this, cur, update, i)
       for (let u in update) {
         cur[u] = update[u]
       }
@@ -681,8 +336,8 @@ export default class Collection<T extends Item> {
   }
 
   updateOne(condition, update: Partial<T>) {
-    this._traverse(condition, (i, cur) => {
-      this.updateIndex(cur, update, i)
+    traverse(this, condition, (i, cur) => {
+      update_index(this, cur, update, i)
       for (let u in update) {
         cur[u] = update[u]
       }
@@ -691,7 +346,7 @@ export default class Collection<T extends Item> {
 
   updateWithId(id, update: Partial<T>) {
     let result = this.findById(id)
-    this.updateIndex(result, update, id)
+    update_index(this, result, update, id)
     _.assign(result, update)
   }
 
@@ -699,25 +354,23 @@ export default class Collection<T extends Item> {
     let i = this.indexes[this.id][id] as number | string
     let cur = this.list.get(i)
     if (~i && cur) {
-      this.removeIndex(cur, i)
+      remove_index(this, cur, i)
       this.list.remove(i)
     }
   }
 
   remove(condition) {
-    this._traverse(condition, (i, cur) => {
-      this.removeIndex(cur, i)
+    traverse(this, condition, (i, cur) => {
+      remove_index(this, cur, i)
       this.list.remove(i)
       return true
     })
   }
 
   removeOne(condition) {
-    this._traverse(condition, (i, cur) => {
-      this.removeIndex(cur, i)
+    traverse(this, condition, (i, cur) => {
+      remove_index(this, cur, i)
       this.list.remove(i)
     })
   }
 }
-
-// возможно не работает TTL не удаляются значения индекса.
