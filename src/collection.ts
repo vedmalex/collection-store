@@ -5,7 +5,7 @@ import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
 import { StorageAdapter } from './StorageAdapter'
 import { List } from './List'
-import { IndexDef, Paths } from './IndexDef'
+import { IndexDef, Paths, keyType } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
@@ -13,7 +13,7 @@ import { CollectionConfig } from './CollectionConfig'
 import AdapterFile from './adapter-fs'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
-import { BPlusTree, query } from 'b-pl-tree'
+import { BPlusTree, query, ValueType } from 'b-pl-tree'
 import { traverse } from './collection/traverse'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
@@ -47,7 +47,7 @@ export default class Collection<T extends Item> {
   /** is autioincrement */
   auto: boolean
   /**indexes */
-  indexes: { [index: string]: BPlusTree<number, number> }
+  indexes: { [index: string]: BPlusTree<ValueType, number> }
   /** main storage */
   list: List<T>
   /** actions in insert */
@@ -170,6 +170,7 @@ export default class Collection<T extends Item> {
     let defIndex: Array<IndexDef<T>> = [
       {
         key: this.id,
+        // type: 'number',
         auto: this.auto,
         gen:
           typeof Id.gen == 'function'
@@ -272,7 +273,7 @@ export default class Collection<T extends Item> {
     await this.storage.store(name)
   }
 
-  push(item) {
+  push(item: T) {
     let insert = prepare_index_insert(this, item)
     this.list.push(item)
     insert(this.list.counter - 1)
@@ -306,7 +307,7 @@ export default class Collection<T extends Item> {
     return return_list_if_valid(this, result)
   }
 
-  query(filter) {}
+  where(field: Paths<T>, op: '') {}
 
   find(condition): Array<T> {
     const result = []

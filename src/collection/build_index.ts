@@ -93,7 +93,8 @@ export function build_index<T extends Item>(
       let value = ensureValue(item)
       validate(value)
       if (!(sparse && value == null)) {
-        return (i) => collection.indexes[key].insert(i, value)
+        return (i) =>
+          collection.indexes[key].insert(value !== undefined ? value : null, i)
       }
     })
 
@@ -104,7 +105,10 @@ export function build_index<T extends Item>(
         validate(valueNew)
         if (valueOld !== valueNew) {
           collection.indexes[key].remove(valueOld)
-          collection.indexes[key].insert(valueNew, i)
+          collection.indexes[key].insert(
+            valueNew !== undefined ? valueNew : null,
+            i,
+          )
         }
       } else {
         collection.indexes[key].remove(valueOld)

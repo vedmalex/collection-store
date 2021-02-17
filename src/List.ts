@@ -1,3 +1,4 @@
+import { ValueType } from 'b-pl-tree'
 import { get } from 'lodash'
 import { StoredList } from './StoredList'
 
@@ -12,8 +13,8 @@ export class List<T> implements StoredList<T> {
     }
   }
 
-  get(key: string | number) {
-    return get(this.hash, key)
+  get(key: ValueType) {
+    return get(this.hash, String(key))
   }
 
   get counter() {

@@ -9,7 +9,7 @@ export type Join<K, P> = K extends string | number
 
 export type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...0[]]
 
-export type Paths<T, D extends number = 2> = [D] extends [never]
+export type Paths<T, D extends number = 3> = [D] extends [never]
   ? never
   : T extends object
   ? {
@@ -27,7 +27,7 @@ export type Leaves<T, D extends number = 1> = [D] extends [never]
 
 export interface IndexDef<T extends Item> {
   key: string | Paths<T>
-  type?: keyType
+  // type?: keyType
   auto?: boolean
   unique?: boolean
   sparse?: boolean
@@ -46,7 +46,7 @@ export type keyType =
   | 'undefined'
 export interface IndexStored<T extends Item> {
   key: string | Paths<T>
-  type?: keyType
+  // type?: keyType
   auto?: boolean
   unique?: boolean
   sparse?: boolean

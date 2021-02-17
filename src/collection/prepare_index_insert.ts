@@ -3,7 +3,7 @@ import Collection from '../collection'
 
 export function prepare_index_insert<T extends Item>(
   collection: Collection<T>,
-  val,
+  val: T,
 ) {
   let result = collection.inserts.map((item) => item(val))
   return (i) => {
