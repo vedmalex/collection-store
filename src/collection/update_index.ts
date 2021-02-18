@@ -7,5 +7,5 @@ export function update_index<T extends Item>(
   nv,
   i,
 ) {
-  this.updates.forEach((item) => item(ov, nv, i))
+  collection.updates.forEach((item) => item(ov, nv, i))
 }

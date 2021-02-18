@@ -3,7 +3,7 @@ import { Paths } from './IndexDef'
 import { query, UnaryCondition } from './filter'
 import { UnaryFunction } from 'b-pl-tree'
 type Person = {
-  id: number
+  id?: number
   name: string
   age: number
   ssn: string
@@ -45,7 +45,7 @@ let data = new Collection<Person>({
 const addPerson = (inp: Person) => data.push(inp)
 
 addPerson({
-  id: 0,
+  // id: 0,
   name: 'alex',
   age: 42,
   ssn: '000-0000-000001',
@@ -57,7 +57,7 @@ addPerson({
   },
 })
 addPerson({
-  id: 1,
+  // id: 1,
   name: 'jame',
   age: 45,
   ssn: '000-0000-000002',
@@ -93,7 +93,7 @@ addPerson({
   },
 })
 addPerson({
-  id: 4,
+  // id: 4,
   name: 'jason',
   age: 19,
   ssn: '000-0000-000005',
@@ -128,7 +128,7 @@ addPerson({
   },
 })
 addPerson({
-  id: 7,
+  // id: 7,
   name: 'monika',
   age: 30,
   ssn: '000-0000-000008',
@@ -144,12 +144,15 @@ console.log(data.findBy('id', 7))
 
 // смотреть формирование запроса
 
-const q = query({
+const q = {
   age: { $in: [30, 29] },
   address: { home: '54481', appart: '5c', city: 'Los Angeles' },
-})
+}
+
+const q1 = query(q)
 
 console.log(data.find(q))
+console.log(data.find(q1))
 
 const q2 = query(
   {

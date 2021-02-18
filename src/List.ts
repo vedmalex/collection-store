@@ -2,7 +2,16 @@ import { ValueType } from 'b-pl-tree'
 import { get } from 'lodash'
 import { StoredList } from './StoredList'
 
-export class List<T> implements StoredList<T> {
+export interface IList<T> {
+  get(key: ValueType): Promise<T>
+  set(key: ValueType, item: T): Promise<T>
+  delete(key: ValueType): Promise<T>
+  reset(): void
+  readonly counter: number
+  readonly length: number
+}
+
+export class List<T> implements StoredList<T>, IList<T> {
   hash: { [key: string]: T } = {}
   _counter: number = 0
   _count: number = 0
@@ -13,7 +22,7 @@ export class List<T> implements StoredList<T> {
     }
   }
 
-  get(key: ValueType) {
+  async get(key: ValueType) {
     return get(this.hash, String(key))
   }
 
@@ -31,18 +40,16 @@ export class List<T> implements StoredList<T> {
     }
   }
 
-  push(...items) {
-    items.forEach((item) => {
-      this.hash[this._counter] = item
-      this._counter++
-      this._count++
-    })
-    return this._count
+  async set(key: ValueType, item: T) {
+    this.hash[this._counter] = item
+    this._counter++
+    this._count++
+    return item
   }
 
-  remove(i) {
-    let result = this.hash[i]
-    delete this.hash[i]
+  async delete(i: ValueType) {
+    let result = this.hash[i.toString()]
+    delete this.hash[i.toString()]
     this._count--
     return result
   }
@@ -64,7 +71,7 @@ export class List<T> implements StoredList<T> {
     return Object.keys(this.hash)
   }
 
-  load(obj: StoredList<T>): List<T> {
+  load(obj: StoredList<T>): IList<T> {
     this.hash = obj.hash
     this._count = obj._count
     this._counter = obj._counter

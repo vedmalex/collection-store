@@ -1,6 +1,10 @@
 import { IndexDef, IndexStored } from '../IndexDef'
+import Collection from '../collection'
 
-export function restore_index_def<T>(input: IndexStored<T>): IndexDef<T> {
+export function restore_index_def<T>(
+  collection: Collection<T>,
+  input: IndexStored<T>,
+): IndexDef<T> {
   let { key, auto, unique, sparse, required, ignoreCase } = input
   return {
     key,
@@ -15,8 +19,8 @@ export function restore_index_def<T>(input: IndexStored<T>): IndexDef<T> {
       ? eval(input.process)
       : undefined,
     gen: input.gen
-      ? this.genCache[input.gen]
-        ? this.genCache[input.gen]
+      ? collection.genCache[input.gen]
+        ? collection.genCache[input.gen]
         : eval(input.gen)
       : undefined,
   }

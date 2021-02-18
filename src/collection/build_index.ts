@@ -1,9 +1,12 @@
-import { get, set } from 'lodash'
+import { get } from 'lodash'
 import { IndexDef } from '../IndexDef'
 import { Item } from '../Item'
 import { Dictionary } from '../hash'
-import { BPlusTree } from 'b-pl-tree'
+import { BPlusTree, ValueType } from 'b-pl-tree'
 import Collection from '../collection'
+import { ensure_indexed_value } from './ensure_indexed_value'
+import { get_value } from './get_value'
+import { validate_indexed_value } from './validate_indexed_value'
 
 export function build_index<T extends Item>(
   collection: Collection<T>,
@@ -47,42 +50,6 @@ export function build_index<T extends Item>(
       throw new Error(`index with key ${key} already exists`)
     }
 
-    let validate = (value) => {
-      if (!(sparse && value == null)) {
-        if (required && value == null) {
-          throw new Error(
-            `value for index ${key} is required, but ${value} is met`,
-          )
-        }
-        if (
-          unique &&
-          collection.indexes.hasOwnProperty(key) &&
-          collection.indexes[key].find(value).length > 0
-        ) {
-          throw new Error(`unique index ${key} already contains value ${value}`)
-        }
-      }
-    }
-
-    let ensureValue = (item: T) => {
-      let value = get(item, key)
-      if (value == null && auto) {
-        set(item, key, (value = gen(item, collection.model, collection.list)))
-      }
-      if (process) {
-        value = process(value)
-      }
-      return value
-    }
-
-    let getValue = (item) => {
-      let value = get(item, key)
-      if (process) {
-        value = process(value)
-      }
-      return value
-    }
-
     collection.ensures.push(() => {
       if (!collection.indexes.hasOwnProperty(key)) {
         collection.indexes[key] = new BPlusTree<any, number>()
@@ -90,24 +57,57 @@ export function build_index<T extends Item>(
     })
 
     collection.inserts.push((item) => {
-      let value = ensureValue(item)
-      validate(value)
+      let value = ensure_indexed_value(
+        item,
+        key,
+        collection,
+        gen,
+        auto,
+        process,
+      )
+      const [valid, message] = validate_indexed_value(
+        collection,
+        value,
+        key,
+        sparse,
+        required,
+        unique,
+      )
+      if (!valid) throw new Error(message)
       if (!(sparse && value == null)) {
-        return (i) =>
-          collection.indexes[key].insert(value !== undefined ? value : null, i)
+        return (record_link: ValueType) =>
+          collection.indexes[key].insert(
+            value !== undefined ? value : null,
+            record_link,
+          )
       }
     })
 
-    collection.updates.push((ov, nv, i: number) => {
-      let valueOld = ensureValue(ov)
-      let valueNew = getValue(nv)
+    collection.updates.push((ov, nv, index_payload: number) => {
+      let valueOld = ensure_indexed_value(
+        ov,
+        key,
+        collection,
+        gen,
+        auto,
+        process,
+      )
+      let valueNew = get_value(nv, key, process)
       if (valueNew != null) {
-        validate(valueNew)
+        const [valid, message] = validate_indexed_value(
+          collection,
+          valueNew,
+          key,
+          sparse,
+          required,
+          unique,
+        )
+        if (!valid) throw new Error(message)
         if (valueOld !== valueNew) {
           collection.indexes[key].remove(valueOld)
           collection.indexes[key].insert(
             valueNew !== undefined ? valueNew : null,
-            i,
+            index_payload,
           )
         }
       } else {
@@ -115,7 +115,7 @@ export function build_index<T extends Item>(
       }
     })
 
-    collection.removes.push((item, i) => {
+    collection.removes.push((item) => {
       collection.indexes[key].remove(get(item, key))
     })
   }

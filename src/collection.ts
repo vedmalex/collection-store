@@ -29,6 +29,7 @@ import { deserialize_indexes } from './collection/deserialize_indexes'
 import { serialize_indexes } from './collection/serialize_indexes'
 import { store_index } from './collection/store_index'
 import { do_rotate_log } from './collection/do_rotate_log'
+import { ensure_indexed_value } from './collection/ensure_indexed_value'
 
 export const ttl_key = '__ttltime'
 export default class Collection<T extends Item> {
@@ -47,15 +48,15 @@ export default class Collection<T extends Item> {
   /** is autioincrement */
   auto: boolean
   /**indexes */
-  indexes: { [index: string]: BPlusTree<ValueType, number> }
+  indexes: { [index: string]: BPlusTree<any, any> }
   /** main storage */
   list: List<T>
   /** actions in insert */
-  inserts: Array<(item: T) => (i: number) => void>
+  inserts: Array<(item: T) => (index_payload: any) => void>
   /** actions in update */
-  updates: Array<(ov: T, nv: T, i: any) => void>
+  updates: Array<(ov: T, nv: T, index_payload: any) => void>
   /** actions in remove */
-  removes: Array<(item: T, i: any) => void>
+  removes: Array<(item: T) => void>
   /** actions in ensure */
   ensures: Array<() => void>
   /** index definition */
@@ -238,7 +239,7 @@ export default class Collection<T extends Item> {
       if (stored) {
         let { indexes, list, indexDefs, id, ttl } = stored
         this.list.load(list)
-        this.indexDefs = restore_index(indexDefs)
+        this.indexDefs = restore_index(this, indexDefs)
         this.id = id
         this.ttl = ttl
 
@@ -263,7 +264,7 @@ export default class Collection<T extends Item> {
     return {
       list: this.list.persist(),
       indexes: serialize_indexes(this.indexes),
-      indexDefs: store_index(this.indexDefs),
+      indexDefs: store_index(this, this.indexDefs),
       id: this.id,
       ttl: this.ttl,
     }
@@ -274,9 +275,10 @@ export default class Collection<T extends Item> {
   }
 
   push(item: T) {
-    let insert = prepare_index_insert(this, item)
-    this.list.push(item)
-    insert(this.list.counter - 1)
+    let insert_indexed_values = prepare_index_insert(this, item)
+    const id = item[this.id]
+    this.list.set(id, item)
+    insert_indexed_values(id)
   }
 
   create(item: T): T {
@@ -285,12 +287,14 @@ export default class Collection<T extends Item> {
     return res
   }
 
-  findById(id): T {
+  async findById(id): Promise<T> {
     let { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
     }
-    const result = this.list.get(this.indexes[this.id][id] as number | string)
+    const result = await this.list.get(
+      this.indexes[this.id][id] as number | string,
+    )
     return return_one_if_valid(this, result)
   }
 
@@ -311,7 +315,7 @@ export default class Collection<T extends Item> {
 
   find(condition): Array<T> {
     const result = []
-    traverse(this, condition, (i, cur) => {
+    traverse(this, condition, (cur) => {
       result.push(cur)
       return true
     })
@@ -355,23 +359,23 @@ export default class Collection<T extends Item> {
     let i = this.indexes[this.id][id] as number | string
     let cur = this.list.get(i)
     if (~i && cur) {
-      remove_index(this, cur, i)
-      this.list.remove(i)
+      remove_index(this, cur)
+      this.list.delete(i)
     }
   }
 
   remove(condition) {
     traverse(this, condition, (i, cur) => {
-      remove_index(this, cur, i)
-      this.list.remove(i)
+      remove_index(this, cur)
+      this.list.delete(i)
       return true
     })
   }
 
   removeOne(condition) {
     traverse(this, condition, (i, cur) => {
-      remove_index(this, cur, i)
-      this.list.remove(i)
+      remove_index(this, cur)
+      this.list.delete(i)
     })
   }
 }

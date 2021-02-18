@@ -4,7 +4,7 @@ import Collection, { ttl_key } from '../collection'
 
 export function ensure_ttl<T extends Item>(collection: Collection<T>) {
   if (collection.ttl) {
-    collection.indexes
+    // collection.indexes
     // ensure that all object are actuated with time
     let now = Date.now()
     // индекс по TTL
