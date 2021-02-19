@@ -7,15 +7,14 @@ import { ValueType } from 'b-pl-tree'
 export async function traverse<T extends Item>(
   collection: Collection<T>,
   condition: Partial<T> | ((T) => boolean),
-  action: (index: ValueType, item: T) => void | boolean,
+  action: (item: T) => Promise<void | boolean>,
 ) {
   if (typeof condition == 'object') condition = query(condition)
 
-  for (let i of collection.list) {
-    let current = await collection.list.get(i)
+  for await (let current of collection.list) {
     if (condition(current)) {
       // stop when action didn't return anything
-      let next = action(i, current)
+      let next = await action(current)
       if (!next) {
         break
       }

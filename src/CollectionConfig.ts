@@ -3,11 +3,13 @@ import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
 import { StorageAdapter } from './StorageAdapter'
+import { IList } from './List'
 
 export interface CollectionConfig<T extends Item> {
   ttl?: string | number | boolean
   /** crontab format */
   rotate?: string
+  list?: IList<T>
   onRotate?: () => void
   name: string
   id?: string | Partial<IdType<T>>

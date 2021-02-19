@@ -5,7 +5,7 @@ import { Dictionary } from './hash'
 import { PortableBPlusTree } from 'b-pl-tree/types/types/PortableBPlusTree'
 
 export interface StoredData<T extends Item> {
-  list: StoredList<T>
+  list: StoredList
   indexes: Dictionary<PortableBPlusTree<any, number>>
   indexDefs: Dictionary<IndexStored<T>>
   id: string
