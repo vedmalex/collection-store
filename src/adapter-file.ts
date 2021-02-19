@@ -3,7 +3,7 @@ import { CollectionConfig } from './CollectionConfig'
 import { Item } from './Item'
 import fs from 'fs-extra'
 import pathLib from 'path'
-import { StorageAdapter } from './StorageAdapter'
+import { StorageAdapter } from './interfaces/StorageAdapter'
 
 export interface CollectionConfigNode<T> extends CollectionConfig<T> {
   path: string

@@ -3,14 +3,15 @@ import tp from 'timeparse'
 import _ from 'lodash'
 import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
-import { StorageAdapter } from './StorageAdapter'
-import { IList, List } from './List'
+import { StorageAdapter } from './interfaces/StorageAdapter'
+import { List } from './adapters/List'
+import { IList } from './interfaces/IList'
 import { IndexDef, Paths, keyType } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
 import { CollectionConfig } from './CollectionConfig'
-import AdapterFile from './adapter-fs'
+import AdapterFS from './adapter-fs'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
 import { BPlusTree, query, ValueType } from 'b-pl-tree'
@@ -67,7 +68,7 @@ export default class Collection<T extends Item> {
     let collection = new Collection<T>({
       name: this.model,
       adapter: this.storage.clone(),
-      list: this.list.clone(),
+      list: await this.list.clone(),
     })
 
     collection.indexDefs = this.indexDefs
@@ -99,8 +100,8 @@ export default class Collection<T extends Item> {
       auto = true,
       indexList,
       path,
-      list = new List<T>(),
-      adapter = new AdapterFile<T>(path),
+      list = new List<T>() as IList<T>,
+      adapter = new AdapterFS<T>(path),
       onRotate,
     } = config ?? {}
 
@@ -119,7 +120,6 @@ export default class Collection<T extends Item> {
       this.cronJob.start()
     }
 
-    this.storage = adapter.init(this)
     let Id: Partial<IdType<T>> = typeof id == 'string' ? { name: id } : id
 
     if ('string' == typeof id) {
@@ -151,10 +151,11 @@ export default class Collection<T extends Item> {
     this.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
     this.rotate = rotate
     this.model = name
+    this.storage = adapter.init(this)
     this.id = Id.name
     this.auto = Id.auto
     this.indexes = {}
-    this.list = list
+    this.list = list.init(this)
     this.indexDefs = {}
     this.inserts = []
     this.removes = []
@@ -296,7 +297,6 @@ export default class Collection<T extends Item> {
     return return_one_if_valid(this, result)
   }
 
-  // TODO: не будет работать
   async findBy(key: Paths<T>, id): Promise<Array<T>> {
     let { process } = this.indexDefs[key as string]
     if (process) {
@@ -355,7 +355,8 @@ export default class Collection<T extends Item> {
   }
 
   async removeWithId(id) {
-    let i = this.indexes[this.id][id] as number | string
+    // не совсем работает удаление
+    let i = this.indexes[this.id].findFirst(id)
     let cur = await this.list.get(i)
     if (~i && cur) {
       remove_index(this, cur)

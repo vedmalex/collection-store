@@ -5,7 +5,7 @@ export function serialize_indexes(
   indexes: Dictionary<BPlusTree<any, ValueType>>,
 ) {
   return Object.keys(indexes).reduce((res, cur) => {
-    res[cur] = indexes[cur].toJSON()
+    res[cur] = BPlusTree.serialize(indexes[cur])
     return res
   }, {})
 }

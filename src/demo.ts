@@ -1,54 +1,60 @@
 import Collection from './collection'
-import { Paths } from './IndexDef'
 import { query, UnaryCondition } from './filter'
-import { UnaryFunction } from 'b-pl-tree'
-import { List } from './List'
-const run = async () => {
-  type Person = {
-    id?: number
-    name: string
-    age: number
-    ssn: string
-    address: {
-      appart?:
-        | {
-            stage: string
-            place: string
-          }
-        | string
-      home: string
-      city: string
-    }
-    page: string
+import { FileStorage } from './adapters/FileStorage'
+import { CollectionConfig } from './CollectionConfig'
+
+type Person = {
+  id?: number
+  name: string
+  age: number
+  ssn: string
+  address: {
+    appart?:
+      | {
+          stage: string
+          place: string
+        }
+      | string
+    home: string
+    city: string
   }
+  page: string
+}
 
-  let data = new Collection<Person>({
-    name: 'Person',
-    ttl: '30s',
-    list: new List(),
-    indexList: [
-      {
-        key: 'name',
-      },
-      {
-        key: 'age',
-      },
-      {
-        key: 'address.home',
-      },
-      {
-        key: 'address.city',
-      },
-      {
-        key: 'address.appart',
-      },
-    ],
-  })
+const collection_config: CollectionConfig<Person> = {
+  name: 'Person',
+  ttl: '30',
+  // list: new List(),
+  list: new FileStorage<Person, string>(),
+  indexList: [
+    {
+      key: 'name',
+    },
+    {
+      key: 'ssn',
+      unique: true,
+    },
+    {
+      key: 'age',
+    },
+    {
+      key: 'address.home',
+    },
+    {
+      key: 'address.city',
+    },
+    {
+      key: 'address.appart',
+    },
+  ],
+}
 
+const run = async () => {
   const addPerson = async (inp: Person) => await data.push(inp)
+  let data = new Collection<Person>(collection_config)
 
   await addPerson({
-    // id: 0,
+    id: 0,
     name: 'alex',
     age: 42,
     ssn: '000-0000-000001',
@@ -60,7 +66,7 @@ const run = async () => {
     },
   })
   await addPerson({
-    // id: 1,
+    id: 1,
     name: 'jame',
     age: 45,
     ssn: '000-0000-000002',
@@ -96,7 +102,7 @@ const run = async () => {
     },
   })
   await addPerson({
-    // id: 4,
+    id: 4,
     name: 'jason',
     age: 19,
     ssn: '000-0000-000005',
@@ -131,7 +137,7 @@ const run = async () => {
     },
   })
   await addPerson({
-    // id: 7,
+    id: 7,
     name: 'monika',
     age: 30,
     ssn: '000-0000-000008',
@@ -187,6 +193,17 @@ const run = async () => {
    */
 
   debugger
+  await data.persist()
 }
 
-run().then((_) => console.log('done'))
+// run().then((_) => console.log('done'))
+
+const persistence = async () => {
+  let data = new Collection<Person>(collection_config)
+  await data.load()
+  console.log(await data.findBy('id', 7))
+}
+
+persistence().then((_) => console.log('done'))
+
+// TODO: смотреть TTL

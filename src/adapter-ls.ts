@@ -1,12 +1,8 @@
 import Collection from './collection'
 import { CollectionConfig } from './CollectionConfig'
-import { StoredData } from './StoredData'
+import { StoredData } from './adapters/StoredData'
 import { Item } from './Item'
-import { StorageAdapter } from './StorageAdapter'
-
-export interface CollectionConfigWeb<T> extends CollectionConfig<T> {
-  storage: Storage
-}
+import { StorageAdapter } from './interfaces/StorageAdapter'
 
 export default class AdapterLocalStorage<T extends Item>
   implements StorageAdapter<T> {

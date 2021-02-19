@@ -1,5 +1,5 @@
-import Collection from './collection'
-import { StoredData } from './StoredData'
+import Collection from '../collection'
+import { StoredData } from '../adapters/StoredData'
 
 export interface StorageAdapter<T> {
   restore(name?: string): Promise<StoredData<T>>

@@ -2,8 +2,8 @@ import { IndexDef } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
-import { StorageAdapter } from './StorageAdapter'
-import { IList } from './List'
+import { StorageAdapter } from './interfaces/StorageAdapter'
+import { IList } from './interfaces/IList'
 
 export interface CollectionConfig<T extends Item> {
   ttl?: string | number | boolean
