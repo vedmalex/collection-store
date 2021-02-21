@@ -116,7 +116,17 @@ export function build_index<T extends Item>(
     })
 
     collection.removes.push((item) => {
-      collection.indexes[key].remove(get(item, key))
+      console.log(
+        key,
+        collection.indexes[key].removeSpecific(
+          get(item, key) ?? null,
+          (pointer) =>
+            key != collection.id ? pointer == item[collection.id] : true,
+        ),
+      )
     })
   }
 }
+
+// удалять и обновлять по первичноу ключу, на который есть ссылка
+// надо искать по ключу и проверять через each соответствие значения и только после этого передавать на удаление

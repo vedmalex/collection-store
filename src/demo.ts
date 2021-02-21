@@ -23,7 +23,7 @@ type Person = {
 
 const collection_config: CollectionConfig<Person> = {
   name: 'Person',
-  ttl: '30',
+  ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
   indexList: [
@@ -196,14 +196,4 @@ const run = async () => {
   await data.persist()
 }
 
-// run().then((_) => console.log('done'))
-
-const persistence = async () => {
-  let data = new Collection<Person>(collection_config)
-  await data.load()
-  console.log(await data.findBy('id', 7))
-}
-
-persistence().then((_) => console.log('done'))
-
-// TODO: смотреть TTL
+run().then((_) => console.log('done'))

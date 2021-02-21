@@ -107,6 +107,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     if (await this.folder_exists) {
       const value = this.tree.findFirst(key)
       const item = await fs.readJSON(this.get_path(value))
+      this.tree.remove(key)
       await fs.unlink(this.get_path(value))
       return item
     } else {

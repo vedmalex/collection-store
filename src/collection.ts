@@ -256,7 +256,7 @@ export default class Collection<T extends Item> {
     } catch (e) {
       // throw e
     }
-    ensure_ttl(this)
+    await ensure_ttl(this)
   }
 
   store() {

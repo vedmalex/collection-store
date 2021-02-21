@@ -12,6 +12,6 @@ export function prepare_index_insert<T extends Item>(
 ) {
   let result = collection.inserts.map((item) => item(val))
   return (i) => {
-    result.filter((f) => typeof f == 'function').forEach((f) => f(i))
+    result.forEach((f) => f(i))
   }
 }
