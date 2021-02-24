@@ -5,10 +5,6 @@ import fs from 'fs-extra'
 import pathLib from 'path'
 import { StorageAdapter } from './interfaces/StorageAdapter'
 
-export interface CollectionConfigNode<T> extends CollectionConfig<T> {
-  path: string
-}
-
 export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   file: string
   collection: Collection<T>

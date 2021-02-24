@@ -17,5 +17,4 @@ export interface CollectionConfig<T extends Item> {
   auto?: boolean
   indexList?: Array<IndexDef<T>>
   adapter?: StorageAdapter<T>
-  path?: string
 }

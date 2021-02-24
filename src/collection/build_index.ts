@@ -16,12 +16,12 @@ export function build_index<T extends Item>(
     const {
       auto = false,
       unique = false,
-      gen,
       sparse = false,
       required = false,
       ignoreCase,
-      process,
     } = indexList[key]
+
+    let { gen, process } = indexList[key]
 
     if (auto && !gen) {
       gen = collection.genCache['autoIncIdGen']

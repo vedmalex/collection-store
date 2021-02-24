@@ -74,14 +74,14 @@ export default class Collection<T extends Item> {
         auto: true,
         gen: 'autoIncIdGen',
       },
-      idGen = 'autoIncIdGen',
       auto = true,
       indexList,
-      path,
       list = new List<T>() as IList<T>,
       adapter = new AdapterFS<T>(),
       onRotate,
     } = config ?? {}
+
+    let { idGen = 'autoIncIdGen' } = config ?? {}
 
     if (typeof idGen == 'function') {
       idGen = idGen.toString()
