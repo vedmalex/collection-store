@@ -50,8 +50,8 @@ const collection_config: CollectionConfig<Person> = {
 }
 
 const run = async () => {
-  const addPerson = async (inp: Person) => await data.push(inp)
-  let data = new Collection<Person>(collection_config)
+  const addPerson = async (inp: Person) => data.push(inp)
+  const data = new Collection<Person>(collection_config)
 
   await addPerson({
     id: 0,

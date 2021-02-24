@@ -22,7 +22,7 @@ export default class AdapterFS<T extends Item> implements StorageAdapter<T> {
   async restore(name?: string) {
     let path = this.file
     if (name) {
-      let p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.file)
       p.name = name
       delete p.base
       path = pathLib.format(p)
@@ -34,7 +34,7 @@ export default class AdapterFS<T extends Item> implements StorageAdapter<T> {
   async store(name: string) {
     let path = this.file
     if (name) {
-      let p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.file)
       p.name = name
       delete p.base
       path = pathLib.format(p)

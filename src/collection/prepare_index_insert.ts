@@ -10,7 +10,7 @@ export function prepare_index_insert<T extends Item>(
   collection: Collection<T>,
   val: T,
 ) {
-  let result = collection.inserts.map((item) => item(val))
+  const result = collection.inserts.map((item) => item(val))
   return (i) => {
     result.forEach((f) => f(i))
   }

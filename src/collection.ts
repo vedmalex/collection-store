@@ -65,7 +65,7 @@ export default class Collection<T extends Item> {
   genCache: Dictionary<IdGeneratorFunction<T>>
 
   constructor(config?: CollectionConfig<T>) {
-    let {
+    const {
       ttl,
       rotate,
       name,
@@ -145,7 +145,7 @@ export default class Collection<T extends Item> {
       autoTimestamp: autoTimestamp,
     }
 
-    let defIndex: Array<IndexDef<T>> = [
+    const defIndex: Array<IndexDef<T>> = [
       {
         key: this.id,
         // type: 'number',
@@ -214,7 +214,7 @@ export default class Collection<T extends Item> {
     try {
       const stored = await this.storage.restore(name)
       if (stored) {
-        let { indexes, list, indexDefs, id, ttl } = stored
+        const { indexes, list, indexDefs, id, ttl } = stored
         this.list.load(list)
         this.indexDefs = restore_index(this, indexDefs)
         this.id = id
@@ -252,7 +252,7 @@ export default class Collection<T extends Item> {
   }
 
   async push(item: T) {
-    let insert_indexed_values = prepare_index_insert(this, item)
+    const insert_indexed_values = prepare_index_insert(this, item)
     const id = item[this.id]
     const res = await this.list.set(id, item)
     insert_indexed_values(id)
@@ -260,12 +260,12 @@ export default class Collection<T extends Item> {
   }
 
   async create(item: T): Promise<T> {
-    let res = { ...item } as T
+    const res = { ...item } as T
     return await this.push(res)
   }
 
   async findById(id): Promise<T> {
-    let { process } = this.indexDefs[this.id]
+    const { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
     }
@@ -276,12 +276,12 @@ export default class Collection<T extends Item> {
   }
 
   async findBy(key: Paths<T>, id): Promise<Array<T>> {
-    let { process } = this.indexDefs[key as string]
+    const { process } = this.indexDefs[key as string]
     if (process) {
       id = process(id)
     }
 
-    let result = []
+    const result = []
     if (this.indexDefs.hasOwnProperty(key)) {
       result.push(...(await get_indexed_value(this, key, id)))
     }
@@ -321,7 +321,7 @@ export default class Collection<T extends Item> {
   }
 
   async updateWithId(id, update: Partial<T>): Promise<T> {
-    let result = await this.findById(id)
+    const result = await this.findById(id)
     update_index(this, result, update, id)
     this.list.set(id, _.assign(result, update))
     return result
@@ -329,11 +329,11 @@ export default class Collection<T extends Item> {
 
   async removeWithId(id: ValueType): Promise<T> {
     // не совсем работает удаление
-    let i = this.indexes[this.id].findFirst(id)
-    let cur = await this.list.get(i)
+    const i = this.indexes[this.id].findFirst(id)
+    const cur = await this.list.get(i)
     if (~i && cur) {
       remove_index(this, cur)
-      return await this.list.delete(i)
+      return this.list.delete(i)
     }
   }
 

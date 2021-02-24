@@ -48,7 +48,7 @@ const collection_config: CollectionConfig<Person> = {
   ],
 }
 const persistence = async () => {
-  let data = new Collection<Person>(collection_config)
+  const data = new Collection<Person>(collection_config)
   await data.load()
   console.log(await data.findBy('id', 7))
 }

@@ -6,7 +6,7 @@ export function store_index_def<T extends Item>(
   collection: Collection<T>,
   input: IndexDef<T>,
 ): IndexStored<T> {
-  let { key, auto, unique, sparse, required, ignoreCase } = input
+  const { key, auto, unique, sparse, required, ignoreCase } = input
   return {
     key,
     auto,

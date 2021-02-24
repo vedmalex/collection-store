@@ -32,14 +32,14 @@ const fileName = (name) => {
 
 describe('collection clone', () => {
   it('clone', async () => {
-    let c1 = await loadCoolectionTTL('clone')
+    const c1 = await loadCoolectionTTL('clone')
     await c1.load()
-    let clone = c1.clone()
+    const clone = c1.clone()
     c1.list.toArray().forEach((i) => clone.push(i))
     clone.persist('another')
   })
   it('rotate', async () => {
-    let c1 = await loadCoolectionTTL('clone')
+    const c1 = await loadCoolectionTTL('clone')
     await c1.load()
     // c1.doRotate();
   })
@@ -47,7 +47,7 @@ describe('collection clone', () => {
 
 describe('list', () => {
   it('run', () => {
-    let list = new List()
+    const list = new List()
     list.push({ obje: 1 })
     list.push({ obje: 2 })
     list.push({ obje: 3 })
@@ -56,7 +56,7 @@ describe('list', () => {
 
     let k: string = ''
     expect(() => {
-      for (let item of list.keys) {
+      for (const item of list.keys) {
         k += item
       }
       expect(k).toBe('01234')
@@ -66,7 +66,7 @@ describe('list', () => {
 
 describe('indexLoader', () => {
   it('loads empty file', async () => {
-    let c1 = new Collection({
+    const c1 = new Collection({
       name: 'loaded',
       adapter: new AdapterFs(fileName('loaded')),
     })
@@ -76,7 +76,7 @@ describe('indexLoader', () => {
 
 const loadCoolectionTTL = async (name) => {
   const fn = fileName(name)
-  let c1 = new Collection({
+  const c1 = new Collection({
     name,
     ttl: '100ms',
     id: 'name',
@@ -92,13 +92,13 @@ const loadCoolectionTTL = async (name) => {
 
 describe('collectionTTL', () => {
   it('exists before ttl-ends', async () => {
-    let c1 = await loadCoolectionTTL('items-ttl')
+    const c1 = await loadCoolectionTTL('items-ttl')
     await c1.load()
     expect(c1.list.length).toBe(4)
   })
 
   it("didn't exists after ttl-ends", async () => {
-    let c1 = await loadCoolectionTTL('items-ttl')
+    const c1 = await loadCoolectionTTL('items-ttl')
     await c1.load()
     await setTimer(300)
     await c1.persist()
@@ -107,7 +107,7 @@ describe('collectionTTL', () => {
   })
 
   it("didn't exists after ttl-ends without re-loading", async () => {
-    let c1 = await loadCoolectionTTL('items-ttl')
+    const c1 = await loadCoolectionTTL('items-ttl')
     await setTimer(300)
     await c1.load()
     expect(c1.list.length).toBe(0)
@@ -122,7 +122,7 @@ describe('collectionTTL', () => {
 
 const loadCoolection = async <T extends Item>(name): Promise<Collection<T>> => {
   const fn = fileName(name)
-  let c1 = new Collection({
+  const c1 = new Collection({
     name,
     adapter: new AdapterFs(fn),
     indexList: [{ key: 'address.state', sparse: true }],
@@ -137,7 +137,7 @@ const loadCoolection = async <T extends Item>(name): Promise<Collection<T>> => {
 
 describe('collection', () => {
   it('default autoinc works', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     await c1.load()
     expect(c1.list.get(0).id).toBe(0)
     expect(c1.list.get(1).id).toBe(1)
@@ -151,7 +151,7 @@ describe('collection', () => {
   })
 
   it('has different configurations', () => {
-    let col1 = new Collection({ name: 'testOne', id: 'name', auto: false })
+    const col1 = new Collection({ name: 'testOne', id: 'name', auto: false })
 
     expect(col1.store().indexDefs['name']).toMatchObject({
       key: 'name',
@@ -159,7 +159,7 @@ describe('collection', () => {
       gen: 'autoIncIdGen',
     })
 
-    let col11 = new Collection({ name: 'testOne' })
+    const col11 = new Collection({ name: 'testOne' })
 
     expect(col11.store().indexDefs['id']).toMatchObject({
       key: 'id',
@@ -167,11 +167,11 @@ describe('collection', () => {
       gen: 'autoIncIdGen',
     })
 
-    let gen2 = (item, model, initial) => {
+    const gen2 = (item, model, initial) => {
       return item.name + model + initial
     }
 
-    let col2 = new Collection({
+    const col2 = new Collection({
       name: 'testTwo',
       id: 'name',
       idGen: gen2,
@@ -183,11 +183,11 @@ describe('collection', () => {
       gen: gen2.toString(),
     })
 
-    let col3 = new Collection({ name: 'testThree', id: 'name', auto: false })
+    const col3 = new Collection({ name: 'testThree', id: 'name', auto: false })
 
     expect(() => col3.push({ some: 1, other: 2 })).toThrow()
 
-    let col4 = new Collection({
+    const col4 = new Collection({
       name: 'testFour',
       id: { name: 'name', auto: false },
     })
@@ -200,7 +200,7 @@ describe('collection', () => {
   })
 
   it('has unique index', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     await c1.load()
     expect(() => c1.push({ id: 0, name: 'some' })).toThrow()
   })
@@ -208,13 +208,13 @@ describe('collection', () => {
   it('must have constructor', () => {
     expect(() => new Collection()).toThrow()
     expect(() => new Collection({ name: 'name' })).not.toThrow()
-    let collection = new Collection({ name: 'SomeName' })
+    const collection = new Collection({ name: 'SomeName' })
     expect(collection.list.length).toBe(0)
     expect(Object.keys(collection.indexes.id).length).toBe(0)
   })
 
   it('creates item', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     // await c1.load();
     c1.create({ name: 'Some', age: 12 })
     await c1.persist()
@@ -224,7 +224,7 @@ describe('collection', () => {
   })
 
   it('resets the collection, not the storage', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     c1.create({ name: 'Some', age: 12 })
     c1.create({ name: 'Another', age: 13 })
     c1.create({ name: 'SomeOneElse', age: 12 })
@@ -246,7 +246,7 @@ describe('collection', () => {
   })
 
   it('allow update key fields', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     await c1.load()
     expect(c1.list.length).toBe(4)
     c1.update({ id: 0, age: 12 }, { id: 10, class: 5 })
@@ -256,7 +256,7 @@ describe('collection', () => {
   })
 
   it('find findOne findById', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     // let c1 = new Collection({ name: 'items' });
     await c1.load()
     expect(c1.list.length).toBe(4)
@@ -277,7 +277,7 @@ describe('collection', () => {
   })
 
   it('update undateOne updateWithId', async () => {
-    let c1 = await loadCoolection<ChildItem>('items-noTTL')
+    const c1 = await loadCoolection<ChildItem>('items-noTTL')
     // let c1 = new Collection<ChildItem>({ name: 'items' });
     await c1.load()
     expect(c1.list.length).toBe(4)
@@ -297,7 +297,7 @@ describe('collection', () => {
   })
 
   it('remove removeOne removeWithId', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     // let c1 = new Collection({ name: 'items' });
     await c1.load()
     expect(c1.list.length).toBe(4)
@@ -319,12 +319,12 @@ describe('collection', () => {
   })
 
   it('continue id after removing and etc', async () => {
-    let c1 = await loadCoolection('items-noTTL')
+    const c1 = await loadCoolection('items-noTTL')
     // let c1 = new Collection({ name: 'items' });
     await c1.load()
     c1.removeWithId(3)
     c1.removeWithId(1)
-    let nv = c1.create({ age: 100, class: 100 })
+    const nv = c1.create({ age: 100, class: 100 })
     expect(nv.id).toBe(4)
     await c1.persist()
   })
@@ -334,7 +334,7 @@ const loadCoolectionIndexes = async <T extends Item>(
   name,
 ): Promise<Collection<T>> => {
   const fn = fileName(name)
-  let c1 = new Collection({
+  const c1 = new Collection({
     name: 'items',
     id: '_id',
     indexList: [
@@ -412,7 +412,7 @@ const loadCoolectionIndexes = async <T extends Item>(
 
 describe('collection indexes', () => {
   it('restore all collection state', async () => {
-    let c1 = await loadCoolectionIndexes('items-indexes')
+    const c1 = await loadCoolectionIndexes('items-indexes')
     expect(c1.id).toBe('id')
     await c1.load()
     expect(c1.id).toBe('_id')
@@ -427,34 +427,34 @@ describe('collection indexes', () => {
   })
 
   it('uses process to find Value', async () => {
-    let c1 = await loadCoolectionIndexes('items-indexes')
+    const c1 = await loadCoolectionIndexes('items-indexes')
     await c1.load()
-    let byName = c1.findBy('name', 'anybody')
+    const byName = c1.findBy('name', 'anybody')
     expect(byName.length).toBe(3)
   })
 
   it('ignoreCase', async () => {
-    let c1 = await loadCoolectionIndexes('items-indexes')
+    const c1 = await loadCoolectionIndexes('items-indexes')
     await c1.load()
-    let byName = c1.findBy('middleName', 'nathan')
+    const byName = c1.findBy('middleName', 'nathan')
     expect(byName.length).toBe(4)
   })
 
   it('findBy index keys', async () => {
-    let c1 = await loadCoolectionIndexes('items-indexes')
+    const c1 = await loadCoolectionIndexes('items-indexes')
     await c1.load()
-    let byName = c1.findBy('name', 'Anybody')
+    const byName = c1.findBy('name', 'Anybody')
     expect(byName.length).toBe(3)
-    let byAge = c1.findBy('age', 12)
+    const byAge = c1.findBy('age', 12)
     expect(byAge.length).toBe(3)
-    let byId = c1.findBy('_id', 1)
+    const byId = c1.findBy('_id', 1)
     expect(byId.length).toBe(1)
   })
 
   it('findBy unique index keys', async () => {
-    let c1 = await loadCoolectionIndexes('items-indexes')
+    const c1 = await loadCoolectionIndexes('items-indexes')
     await c1.load()
-    let byName = c1.findBy('pass', 1)
+    const byName = c1.findBy('pass', 1)
     c1.removeWithId(byName[0]['_id'])
     c1.create({ name: 'Some', age: 12, pass: 1 })
     expect((byName[0] as any).name).toBe('Some')

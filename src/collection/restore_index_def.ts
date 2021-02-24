@@ -5,7 +5,7 @@ export function restore_index_def<T>(
   collection: Collection<T>,
   input: IndexStored<T>,
 ): IndexDef<T> {
-  let { key, auto, unique, sparse, required, ignoreCase } = input
+  const { key, auto, unique, sparse, required, ignoreCase } = input
   return {
     key,
     auto,

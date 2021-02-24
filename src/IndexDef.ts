@@ -7,11 +7,11 @@ export type Join<K, P> = K extends string | number
     : never
   : never
 
-export type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...0[]]
+export type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...Array<0>]
 
 export type Paths<T, D extends number = 3> = [D] extends [never]
   ? never
-  : T extends object
+  : T extends { [key: string]: unknown }
   ? {
       [K in keyof T]-?: K extends string | number
         ? `${K}` | Join<K, Paths<T[K], Prev[D]>>
@@ -21,7 +21,7 @@ export type Paths<T, D extends number = 3> = [D] extends [never]
 
 export type Leaves<T, D extends number = 1> = [D] extends [never]
   ? never
-  : T extends object
+  : T extends { [key: string]: unknown }
   ? { [K in keyof T]-?: Join<K, Leaves<T[K], Prev[D]>> }[keyof T]
   : ''
 

@@ -49,7 +49,7 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async delete(i: ValueType) {
-    let result = this.hash[i.toString()]
+    const result = this.hash[i.toString()]
     delete this.hash[i.toString()]
     this._count--
     return result
@@ -88,7 +88,7 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async *toArray() {
-    for (let key of this.keys) {
+    for (const key of this.keys) {
       yield this.hash[key]
     }
   }

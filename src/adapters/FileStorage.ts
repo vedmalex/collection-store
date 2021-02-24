@@ -59,7 +59,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   async *toArray() {
     if (await this.exists) {
       const it = this.tree.each()(this.tree)
-      for (let path of it) {
+      for (const path of it) {
         yield await fs.readJSON(this.get_path(path.value))
       }
     } else {

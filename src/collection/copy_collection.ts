@@ -7,7 +7,7 @@ export async function copy_collection<T extends Item>(
   source: Collection<T>,
   model: string,
 ) {
-  let collection = new Collection<T>({
+  const collection = new Collection<T>({
     name: model,
     adapter: source.storage.clone(),
     list: source.list.construct(),
@@ -25,7 +25,7 @@ export async function copy_collection<T extends Item>(
   collection.indexes = {}
   build_index(collection, collection.indexDefs)
   ensure_indexes(collection)
-  for await (let item of source.list) {
+  for await (const item of source.list) {
     await collection.push(item)
   }
   await collection.persist()

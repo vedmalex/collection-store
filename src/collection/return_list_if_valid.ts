@@ -9,7 +9,7 @@ export async function return_list_if_valid<T extends Item>(
 ) {
   let invalidate = false
 
-  let result = items.filter((i) => {
+  const result = items.filter((i) => {
     if (is_valid_ttl(collection, i)) {
       return true
     } else {

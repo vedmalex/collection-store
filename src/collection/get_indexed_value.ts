@@ -8,10 +8,10 @@ export async function get_indexed_value<T extends Item>(
   key: Paths<T>,
   value: any,
 ) {
-  let result: Array<T> = []
+  const result: Array<T> = []
   if (collection.indexes[key]) {
     const keys = collection.indexes[key].find(value)
-    for (let key of keys) {
+    for (const key of keys) {
       result.push(await collection.list.get(key))
     }
   }

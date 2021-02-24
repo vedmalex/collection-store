@@ -11,10 +11,10 @@ export async function traverse<T extends Item>(
 ) {
   if (typeof condition == 'object') condition = query(condition)
 
-  for await (let current of collection.list) {
+  for await (const current of collection.list) {
     if (condition(current)) {
       // stop when action didn't return anything
-      let next = await action(current)
+      const next = await action(current)
       if (!next) {
         break
       }
@@ -29,10 +29,10 @@ export function smart_traverse<T extends Item>(
 ) {
   if (typeof condition == 'object') condition = query(condition)
 
-  for (let current of collection) {
+  for (const current of collection) {
     if (condition(current)) {
       // stop when action didn't return anything
-      let next = action(current)
+      const next = action(current)
       if (!next) {
         break
       }

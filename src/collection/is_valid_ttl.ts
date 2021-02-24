@@ -7,7 +7,7 @@ export function is_valid_ttl<T extends Item>(
 ) {
   if (item) {
     if (item[ttl_key]) {
-      let now = Date.now()
+      const now = Date.now()
       return now - item[ttl_key] <= collection.ttl
     } else {
       return true

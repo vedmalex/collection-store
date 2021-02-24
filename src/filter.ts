@@ -105,9 +105,9 @@ export function $match(value: RegExp | string, flags?: string): UnaryCondition {
 export type UnaryCondition = (v) => boolean
 
 export function $or(value: Array<{ [key: string]: UnaryCondition }>) {
-  return (val: object) => {
-    for (let condition of value) {
-      for (let prop of Object.keys(condition))
+  return (val: { [key: string]: unknown }) => {
+    for (const condition of value) {
+      for (const prop of Object.keys(condition))
         if (condition[prop](val[prop])) {
           return true
         }
@@ -116,9 +116,9 @@ export function $or(value: Array<{ [key: string]: UnaryCondition }>) {
 }
 
 export function $and(value: Array<{ [key: string]: UnaryCondition }>) {
-  return (val: object) => {
-    for (let condition of value) {
-      for (let prop of Object.keys(condition))
+  return (val: { [key: string]: unknown }) => {
+    for (const condition of value) {
+      for (const prop of Object.keys(condition))
         if (!condition[prop](val[prop])) {
           return false
         }
@@ -133,10 +133,10 @@ function build_query(
   obj: unknown,
   options?: { [op: string]: (...args: Array<any>) => UnaryCondition },
 ): UnaryCondition | { [key: string]: UnaryCondition } {
-  let res = []
+  const res = []
   if (typeof obj == 'object' && !(obj instanceof Date)) {
     const keys = Object.keys(obj)
-    for (let prop of keys) {
+    for (const prop of keys) {
       if (options?.[prop]) {
         res.push(options[prop](obj[prop]))
       } else {

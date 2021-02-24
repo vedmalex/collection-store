@@ -12,14 +12,14 @@ export interface CollectionConfigNode<T> extends CollectionConfig<T> {
 export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   file: string
   collection: Collection<T>
-  clone() {
+  clone(): AdapterFile<T> {
     return new AdapterFile<T>(this.file)
   }
   constructor(path?: string) {
     this.file = path
   }
 
-  init(collection: Collection<T>) {
+  init(collection: Collection<T>): this {
     this.collection = collection
     if (!this.file) {
       this.file = `${collection.model}.json`
@@ -27,10 +27,10 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
     return this
   }
 
-  async restore(name?: string) {
+  async restore(name?: string): Promise<any> {
     let path = this.file
     if (name) {
-      let p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.file)
       p.name = name
       delete p.base
       path = pathLib.format(p)
@@ -42,7 +42,7 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   async store(name: string) {
     let path = this.file
     if (name) {
-      let p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.file)
       p.name = name
       delete p.base
       path = pathLib.format(p)

@@ -12,8 +12,8 @@ export function build_index<T extends Item>(
   collection: Collection<T>,
   indexList: Dictionary<IndexDef<T>>,
 ) {
-  for (let key in indexList) {
-    let {
+  for (const key in indexList) {
+    const {
       auto = false,
       unique = false,
       gen,
@@ -57,7 +57,7 @@ export function build_index<T extends Item>(
     })
 
     collection.inserts.push((item) => {
-      let value = ensure_indexed_value(
+      const value = ensure_indexed_value(
         item,
         key,
         collection,
@@ -84,7 +84,7 @@ export function build_index<T extends Item>(
     })
 
     collection.updates.push((ov, nv, index_payload: number) => {
-      let valueOld = ensure_indexed_value(
+      const valueOld = ensure_indexed_value(
         ov,
         key,
         collection,
@@ -92,7 +92,7 @@ export function build_index<T extends Item>(
         auto,
         process,
       )
-      let valueNew = get_value(nv, key, process)
+      const valueNew = get_value(nv, key, process)
       if (valueNew != null) {
         const [valid, message] = validate_indexed_value(
           collection,
