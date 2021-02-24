@@ -1,6 +1,6 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse'
-import _ from 'lodash'
+import _, { result } from 'lodash'
 import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
 import { StorageAdapter } from './interfaces/StorageAdapter'
@@ -64,28 +64,6 @@ export default class Collection<T extends Item> {
   /** unique generators */
   genCache: Dictionary<IdGeneratorFunction<T>>
 
-  async clone() {
-    let collection = new Collection<T>({
-      name: this.model,
-      adapter: this.storage.clone(),
-      list: await this.list.clone(),
-    })
-
-    collection.indexDefs = this.indexDefs
-    collection.id = this.id
-    collection.ttl = this.ttl
-
-    collection.inserts = []
-    collection.removes = []
-    collection.updates = []
-    collection.ensures = []
-
-    collection.indexes = {}
-    build_index(collection, collection.indexDefs)
-    ensure_indexes(collection)
-    return collection
-  }
-
   constructor(config?: CollectionConfig<T>) {
     let {
       ttl,
@@ -101,7 +79,7 @@ export default class Collection<T extends Item> {
       indexList,
       path,
       list = new List<T>() as IList<T>,
-      adapter = new AdapterFS<T>(path),
+      adapter = new AdapterFS<T>(),
       onRotate,
     } = config ?? {}
 
@@ -226,8 +204,8 @@ export default class Collection<T extends Item> {
     ensure_indexes(this)
   }
 
-  reset() {
-    this.list.reset()
+  async reset() {
+    await this.list.reset()
     this.indexes = {}
     ensure_indexes(this)
   }
@@ -310,8 +288,6 @@ export default class Collection<T extends Item> {
     return return_list_if_valid(this, result)
   }
 
-  where(field: Paths<T>, op: '') {}
-
   async find(condition): Promise<Array<T>> {
     const result = []
     await traverse(this, condition, async (cur) => {
@@ -332,9 +308,7 @@ export default class Collection<T extends Item> {
   async update(condition, update: Partial<T>) {
     await traverse(this, condition, async (cur) => {
       update_index(this, cur, update, cur[this.id])
-      for (let u in update) {
-        cur[u] = update[u]
-      }
+      this.list.set(cur[this.id], _.assign(cur, update))
       return true
     })
   }
@@ -342,34 +316,36 @@ export default class Collection<T extends Item> {
   async updateOne(condition, update: Partial<T>) {
     await traverse(this, condition, async (cur) => {
       update_index(this, cur, update, cur[this.id])
-      for (let u in update) {
-        cur[u] = update[u]
-      }
+      this.list.set(cur[this.id], _.assign(cur, update))
     })
   }
 
-  async updateWithId(id, update: Partial<T>) {
+  async updateWithId(id, update: Partial<T>): Promise<T> {
     let result = await this.findById(id)
     update_index(this, result, update, id)
-    _.assign(result, update)
+    this.list.set(id, _.assign(result, update))
+    return result
   }
 
-  async removeWithId(id) {
+  async removeWithId(id: ValueType): Promise<T> {
     // не совсем работает удаление
     let i = this.indexes[this.id].findFirst(id)
     let cur = await this.list.get(i)
     if (~i && cur) {
       remove_index(this, cur)
-      await this.list.delete(i)
+      return await this.list.delete(i)
     }
   }
 
-  async remove(condition) {
+  async remove(condition): Promise<Array<T>> {
+    const result: Array<T> = []
     await traverse(this, condition, async (cur) => {
       remove_index(this, cur)
-      await this.list.delete(cur[this.id])
+      const res = await this.list.delete(cur[this.id])
+      result.push(res)
       return true
     })
+    return result
   }
 
   async removeOne(condition) {

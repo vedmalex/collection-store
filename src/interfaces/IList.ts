@@ -10,8 +10,10 @@ export interface IList<T extends Item> extends AsyncIterable<T> {
   reset(): Promise<void>
   persist(): StoredIList
   load(obj: StoredIList): IList<T>
+  readonly exists: Promise<boolean>
   readonly counter: number
   readonly length: number
   clone(): Promise<IList<T>>
+  construct(): IList<T>
   init(collection: Collection<T>): IList<T>
 }

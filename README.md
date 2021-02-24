@@ -106,6 +106,8 @@ https://github.com/w8r/splay-tree
 вставка элементов, с проверкой, на sparse
 если sparce, тогда нужно вставлять, если нет, то не нужно
 
-list заменить на persistence adapter
+[x]list заменить на persistence adapter
 
+rotation сделать с переносом всех файлов в другую директорию, а не просто метаданных
 
+сделать адаптер для redis

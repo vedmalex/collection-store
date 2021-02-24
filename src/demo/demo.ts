@@ -1,7 +1,7 @@
-import Collection from './collection'
-import { query, UnaryCondition } from './filter'
-import { FileStorage } from './adapters/FileStorage'
-import { CollectionConfig } from './CollectionConfig'
+import Collection from '../collection'
+import { query, UnaryCondition } from '../filter'
+import { FileStorage } from '../adapters/FileStorage'
+import { CollectionConfig } from '../CollectionConfig'
 
 type Person = {
   id?: number
@@ -23,7 +23,7 @@ type Person = {
 
 const collection_config: CollectionConfig<Person> = {
   name: 'Person',
-  ttl: '2m',
+  // ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
   indexList: [

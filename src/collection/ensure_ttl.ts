@@ -1,5 +1,5 @@
 import { Item } from '../Item'
-import { sourceGte, sourceLte } from 'b-pl-tree'
+import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
 import Collection, { ttl_key } from '../collection'
 
 export async function ensure_ttl<T extends Item>(collection: Collection<T>) {
@@ -8,7 +8,9 @@ export async function ensure_ttl<T extends Item>(collection: Collection<T>) {
     // ensure that all object are actuated with time
     let now = Date.now()
     // индекс по TTL
-    let ttl_index = sourceGte(now - collection.ttl)(collection.indexes[ttl_key])
+    let ttl_index = sourceGte<number, ValueType>(now - collection.ttl)(
+      collection.indexes[ttl_key],
+    )
     const source = [...ttl_index]
     for (let i of source) {
       // здесь проблема в том, что данные извлекаются по очереди

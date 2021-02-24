@@ -1,7 +1,7 @@
-import Collection from './collection'
-import { query, UnaryCondition } from './filter'
-import { FileStorage } from './adapters/FileStorage'
-import { CollectionConfig } from './CollectionConfig'
+import Collection from '../collection'
+import { FileStorage } from '../adapters/FileStorage'
+import { CollectionConfig } from '../CollectionConfig'
+import { copy_collection } from '../collection/copy_collection'
 
 type Person = {
   id?: number
@@ -23,7 +23,7 @@ type Person = {
 
 const collection_config: CollectionConfig<Person> = {
   name: 'Person',
-  ttl: '2m',
+  // ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
   indexList: [
@@ -52,6 +52,9 @@ const persistence = async () => {
   let data = new Collection<Person>(collection_config)
   await data.load()
   console.log(await data.findBy('id', 7))
+  const copy = await copy_collection(data, 'Person-backup')
+  // работа с курсорами для перемещения, не совсем то, что надо, нужно удалять и обновлять данные пачками
+  await copy.persist()
 }
 
 // не все удаляется

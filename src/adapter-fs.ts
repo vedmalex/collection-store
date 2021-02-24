@@ -6,20 +6,16 @@ import pathLib from 'path'
 import { StorageAdapter } from './interfaces/StorageAdapter'
 
 export default class AdapterFS<T extends Item> implements StorageAdapter<T> {
-  file: string
+  get file(): string {
+    return pathLib.join(this.collection.model, 'metadata.json')
+  }
   collection: Collection<T>
   clone() {
-    return new AdapterFS<T>(this.file)
-  }
-  constructor(path?: string) {
-    this.file = path
+    return new AdapterFS<T>()
   }
 
   init(collection: Collection<T>) {
     this.collection = collection
-    if (!this.file) {
-      this.file = pathLib.join(collection.model, 'metadata.json')
-    }
     return this
   }
 

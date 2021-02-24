@@ -10,12 +10,8 @@ export class List<T extends Item> implements IList<T> {
   _counter: number = 0
   _count: number = 0
   collection: Collection<T>
+  exists: Promise<boolean> = Promise.resolve(true)
 
-  constructor(stored?: StoredIList) {
-    if (stored) {
-      this.load(stored)
-    }
-  }
   init(collection: Collection<T>): IList<T> {
     this.collection = collection
     return this as IList<T>
@@ -58,7 +54,6 @@ export class List<T extends Item> implements IList<T> {
     this._count--
     return result
   }
-
   async reset() {
     this._count = 0
     this._counter = 0
@@ -74,6 +69,10 @@ export class List<T extends Item> implements IList<T> {
     this._count = obj._count
     this._counter = obj._counter
     return this
+  }
+
+  construct() {
+    return new List<T>()
   }
 
   persist(): StoredIList {

@@ -13,21 +13,25 @@ export class FileStorage<T extends Item, K extends ValueType>
   // таким образом данные всегда будут свежими... если нет другого читателя писателя файлов
   // можно использовать библиотеку для монитроинга за файлами
   tree: BPlusTree<string, K> = new BPlusTree(32, true)
-  folder: string
-  private folder_exists: Promise<boolean>
+  get folder(): string {
+    return this.collection.model
+  }
+  exists: Promise<boolean>
   collection: Collection<T>
+  construct() {
+    return new FileStorage<T, K>()
+  }
 
   init(collection: Collection<T>): IList<T> {
     this.collection = collection
-    this.folder = collection.model
-    this.folder_exists = fs
-      .ensureDir(collection.model)
+    this.exists = fs
+      .ensureDir(this.folder)
       .then((_) => true)
       .catch((_) => false)
     return this
   }
   async clone(): Promise<IList<T>> {
-    if (this.folder_exists.then()) {
+    if (this.exists) {
       const res = new FileStorage<T, K>()
       BPlusTree.deserialize(res.tree, BPlusTree.serialize(this.tree))
       return res
@@ -38,14 +42,12 @@ export class FileStorage<T extends Item, K extends ValueType>
   persist(): StoredIList {
     return {
       counter: this._counter,
-      folder: this.folder,
       tree: BPlusTree.serialize(this.tree),
     }
   }
 
   load(obj: StoredIList): IList<T> {
     this._counter = obj.counter
-    this.folder = obj.folder
     BPlusTree.deserialize(this.tree, obj.tree)
     return this
   }
@@ -55,8 +57,8 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
 
   async *toArray() {
-    const it = this.tree.each()(this.tree)
-    if (await this.folder_exists) {
+    if (await this.exists) {
+      const it = this.tree.each()(this.tree)
       for (let path of it) {
         yield await fs.readJSON(this.get_path(path.value))
       }
@@ -78,15 +80,19 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
 
   async reset(): Promise<void> {
-    if (await this.folder_exists) {
+    if (await this.exists) {
       await fs.remove(this.folder)
       this.tree.reset()
+      this.exists = fs
+        .ensureDir(this.folder)
+        .then((_) => true)
+        .catch((_) => false)
     } else {
       throw new Error('folder not found')
     }
   }
   async get(key: K): Promise<T> {
-    if (await this.folder_exists) {
+    if (await this.exists) {
       return await fs.readJSON(this.get_path(this.tree.findFirst(key)))
     } else {
       throw new Error('folder not found')
@@ -94,8 +100,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
 
   async set(key: K, item: T): Promise<T> {
-    if (await this.folder_exists) {
-      // this._counter++
+    if (await this.exists) {
       await fs.writeJSON(this.set_path(key), item)
       this.tree.insert(key, this.key_filename(key))
       return item
@@ -104,7 +109,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     }
   }
   async delete(key: K): Promise<T> {
-    if (await this.folder_exists) {
+    if (await this.exists) {
       const value = this.tree.findFirst(key)
       const item = await fs.readJSON(this.get_path(value))
       this.tree.remove(key)
@@ -114,6 +119,7 @@ export class FileStorage<T extends Item, K extends ValueType>
       throw new Error('folder not found')
     }
   }
+
   _counter: number = 0
   get counter(): number {
     return this._counter
