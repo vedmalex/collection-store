@@ -83,12 +83,28 @@ export class List<T extends Item> implements IList<T> {
     }
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<T> {
-    return this.toArray()
+  get forward(): AsyncIterable<T> {
+    return {
+      [Symbol.asyncIterator]() {
+        return this.toArray()
+      },
+    }
+  }
+  get backward(): AsyncIterable<T> {
+    return {
+      [Symbol.asyncIterator]() {
+        return this.toArrayReverse()
+      },
+    }
   }
 
   async *toArray() {
     for (const key of this.keys) {
+      yield this.hash[key]
+    }
+  }
+  async *toArrayReverse() {
+    for (const key of this.keys.reverse()) {
       yield this.hash[key]
     }
   }

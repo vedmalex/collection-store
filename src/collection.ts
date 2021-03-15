@@ -13,7 +13,7 @@ import { CollectionConfig } from './CollectionConfig'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
 import { BPlusTree, ValueType } from 'b-pl-tree'
-import { all, first, TraverseCondition } from './collection/traverse'
+import { all, first, last, TraverseCondition } from './collection/traverse'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
 import { ensure_ttl } from './collection/ensure_ttl'
@@ -29,6 +29,8 @@ import { serialize_indexes } from './collection/serialize_indexes'
 import { store_index } from './collection/store_index'
 import { do_rotate_log } from './collection/do_rotate_log'
 import { StoredIList } from './adapters/StoredIList'
+import { get_first_indexed_value } from './collection/get_first_indexed_value'
+import { get_last_indexed_value } from './collection/get_last_indexed_value'
 
 export const ttl_key = '__ttltime'
 
@@ -40,19 +42,36 @@ export interface IDataCollection<T extends Item> {
   push(item: T): Promise<T>
   create(item: T): Promise<T>
 
+  first(): Promise<T>
+  last(): Promise<T>
+
+  oldest(): Promise<T>
+  latest(): Promise<T>
+
+  lowest(key: Paths<T>): Promise<T>
+  greatest(key: Paths<T>): Promise<T>
+
   find(condition: TraverseCondition<T>): Promise<Array<T>>
+
+  findFirst(condition: TraverseCondition<T>): Promise<T>
+  findLast(condition: TraverseCondition<T>): Promise<T>
+
   findBy(key: Paths<T>, id: ValueType): Promise<Array<T>>
-  findOne(condition: TraverseCondition<T>): Promise<T>
+  findFirstBy(key: Paths<T>, id: ValueType): Promise<T>
+  findLastBy(key: Paths<T>, id: ValueType): Promise<T>
+
   findById(id: ValueType): Promise<T>
 
   update(condition: TraverseCondition<T>, update: Partial<T>): Promise<Array<T>>
-  updateOne(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
+  updateFirst(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
+  updateLast(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
 
   updateWithId(id: ValueType, update: Partial<T>): Promise<T>
   removeWithId(id: ValueType): Promise<T>
 
   remove(condition: TraverseCondition<T>): Promise<Array<T>>
-  removeOne(condition: TraverseCondition<T>): Promise<T>
+  removeFirst(condition: TraverseCondition<T>): Promise<T>
+  removeLast(condition: TraverseCondition<T>): Promise<T>
 }
 export default class Collection<T extends Item> implements IDataCollection<T> {
   path?: string
@@ -294,7 +313,35 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async create(item: T): Promise<T> {
     const res = { ...item } as T
     const value = await this.push(res)
-    return return_one_if_valid(this, value)
+    return value
+  }
+
+  async first(): Promise<T> {
+    return (await first(this, () => true).next()).value
+  }
+
+  async last(): Promise<T> {
+    return (await last(this, () => true).next()).value
+  }
+
+  lowest(key: Paths<T>): Promise<T> {
+    return this.findFirstBy(key, this.indexes[key].min)
+  }
+
+  greatest(key: Paths<T>): Promise<T> {
+    return this.findLastBy(key, this.indexes[key].max)
+  }
+
+  oldest(): Promise<T> {
+    if (this.ttl) {
+      return this.lowest(ttl_key as any)
+    } else return this.first()
+  }
+
+  latest(): Promise<T> {
+    if (this.ttl) {
+      return this.greatest(ttl_key as any)
+    } else return this.last()
   }
 
   async findById(id: ValueType): Promise<T> {
@@ -325,6 +372,38 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
   }
 
+  async findFirstBy(key: Paths<T>, id: ValueType): Promise<T> {
+    if (this.indexDefs.hasOwnProperty(key)) {
+      const { process } = this.indexDefs[key as string]
+      if (process) {
+        id = process(id)
+      }
+
+      if (this.indexDefs.hasOwnProperty(key)) {
+        const result = await get_first_indexed_value(this, key, id)
+        return return_one_if_valid(this, result)
+      }
+    } else {
+      throw new Error(`Index for ${key} not found`)
+    }
+  }
+
+  async findLastBy(key: Paths<T>, id: ValueType): Promise<T> {
+    if (this.indexDefs.hasOwnProperty(key)) {
+      const { process } = this.indexDefs[key as string]
+      if (process) {
+        id = process(id)
+      }
+
+      if (this.indexDefs.hasOwnProperty(key)) {
+        const result = await get_last_indexed_value(this, key, id)
+        return return_one_if_valid(this, result)
+      }
+    } else {
+      throw new Error(`Index for ${key} not found`)
+    }
+  }
+
   async find(condition: TraverseCondition<T>): Promise<Array<T>> {
     const result: Array<T> = []
     for await (const item of all(this, condition)) {
@@ -333,8 +412,13 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return return_list_if_valid(this, result)
   }
 
-  async findOne(condition: TraverseCondition<T>): Promise<T> {
+  async findFirst(condition: TraverseCondition<T>): Promise<T> {
     const result: T = await (await first(this, condition).next()).value
+    return return_one_if_valid(this, result)
+  }
+
+  async findLast(condition: TraverseCondition<T>): Promise<T> {
+    const result: T = await (await last(this, condition).next()).value
     return return_one_if_valid(this, result)
   }
 
@@ -351,11 +435,23 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return return_list_if_valid<T>(this, result)
   }
 
-  async updateOne(
+  async updateFirst(
     condition: TraverseCondition<T>,
     update: Partial<T>,
   ): Promise<T> {
     const item: T = await (await first(this, condition).next()).value
+    const res = _.merge({}, item, update)
+    update_index(this, item, res, item[this.id])
+    await this.list.set(item[this.id], res)
+
+    return return_one_if_valid(this, res)
+  }
+
+  async updateLast(
+    condition: TraverseCondition<T>,
+    update: Partial<T>,
+  ): Promise<T> {
+    const item: T = await (await last(this, condition).next()).value
     const res = _.merge({}, item, update)
     update_index(this, item, res, item[this.id])
     await this.list.set(item[this.id], res)
@@ -392,8 +488,14 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return return_list_if_valid(this, result)
   }
 
-  async removeOne(condition: TraverseCondition<T>): Promise<T> {
+  async removeFirst(condition: TraverseCondition<T>): Promise<T> {
     const item: T = await (await first(this, condition).next()).value
+    remove_index(this, item)
+    await this.list.delete(item[this.id])
+    return return_one_if_valid(this, item)
+  }
+  async removeLast(condition: TraverseCondition<T>): Promise<T> {
+    const item: T = await (await last(this, condition).next()).value
     remove_index(this, item)
     await this.list.delete(item[this.id])
     return return_one_if_valid(this, item)

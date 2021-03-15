@@ -28,7 +28,7 @@ export async function copy_collection<T extends Item>(
   collection.indexes = {}
   build_index(collection, collection.indexDefs)
   await ensure_indexes(collection, false)
-  for await (const item of source.list) {
+  for await (const item of source.list.forward) {
     await collection.push(item)
   }
   await collection.persist()

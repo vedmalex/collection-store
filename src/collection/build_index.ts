@@ -124,7 +124,7 @@ export function build_index<T extends Item>(
       if (!collection.indexes.hasOwnProperty(key)) {
         collection.indexes[key] = new BPlusTree<any, number>()
         if (rebuild && collection.list.length > 0) {
-          for await (const item of collection.list) {
+          for await (const item of collection.list.forward) {
             insert(item)(item[this.id])
           }
         }

@@ -52,13 +52,36 @@ export class FileStorage<T extends Item, K extends ValueType>
     return this
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<T> {
-    return this.toArray()
+  get forward() {
+    return {
+      [Symbol.asyncIterator](): AsyncIterator<T> {
+        return this.toArray()
+      },
+    }
+  }
+
+  get backward() {
+    return {
+      [Symbol.asyncIterator](): AsyncIterator<T> {
+        return this.toArrayReverse()
+      },
+    }
   }
 
   async *toArray() {
     if (await this.exists) {
       const it = this.tree.each()(this.tree)
+      for (const path of it) {
+        yield await fs.readJSON(this.get_path(path.value))
+      }
+    } else {
+      throw new Error('folder not found')
+    }
+  }
+
+  async *toArrayReverse() {
+    if (await this.exists) {
+      const it = this.tree.each(false)(this.tree)
       for (const path of it) {
         yield await fs.readJSON(this.get_path(path.value))
       }
