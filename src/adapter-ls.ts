@@ -3,6 +3,7 @@ import { CollectionConfig } from './CollectionConfig'
 import { StoredData } from './adapters/StoredData'
 import { Item } from './Item'
 import { StorageAdapter } from './interfaces/StorageAdapter'
+import decamelize from 'decamelize'
 
 export default class AdapterLocalStorage<T extends Item>
   implements StorageAdapter<T> {
@@ -21,7 +22,11 @@ export default class AdapterLocalStorage<T extends Item>
   }
   restore(name?: string): Promise<StoredData<T>> {
     return new Promise((res, rej) => {
-      res(JSON.parse(this.storage.getItem(name ?? this.collection.model)))
+      res(
+        JSON.parse(
+          this.storage.getItem(name ?? decamelize(this.collection.model)),
+        ),
+      )
     })
   }
   store(name?: string): Promise<void> {
@@ -29,7 +34,7 @@ export default class AdapterLocalStorage<T extends Item>
       try {
         res()
         this.storage.setItem(
-          this.collection.model,
+          decamelize(this.collection.model),
           JSON.stringify(name ?? this.collection.store()),
         )
       } catch (e) {

@@ -1,5 +1,5 @@
 import Collection from './collection'
-import { CollectionConfig } from './CollectionConfig'
+import decamelize from 'decamelize'
 import { Item } from './Item'
 import fs from 'fs-extra'
 import pathLib from 'path'
@@ -9,7 +9,7 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
   file: string
   collection: Collection<T>
   clone(): AdapterFile<T> {
-    return new AdapterFile<T>(this.file)
+    return new AdapterFile<T>()
   }
   constructor(path?: string) {
     this.file = path
@@ -17,8 +17,9 @@ export default class AdapterFile<T extends Item> implements StorageAdapter<T> {
 
   init(collection: Collection<T>): this {
     this.collection = collection
+    this.file = collection.path
     if (!this.file) {
-      this.file = `${collection.model}.json`
+      this.file = `${decamelize(collection.model)}.json`
     }
     return this
   }

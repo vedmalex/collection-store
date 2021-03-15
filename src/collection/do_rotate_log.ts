@@ -7,8 +7,8 @@ export async function do_rotate_log<T extends Item>(
 ): Promise<Collection<T>> {
   if (source.list.length > 0) {
     const collection = await copy_collection(
-      source,
       `${source.model}${new Date().toUTCString()}`,
+      source,
     )
     await collection.persist()
     await source.reset()

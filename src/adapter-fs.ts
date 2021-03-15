@@ -4,18 +4,32 @@ import { Item } from './Item'
 import fs from 'fs-extra'
 import pathLib from 'path'
 import { StorageAdapter } from './interfaces/StorageAdapter'
+import decamelize from 'decamelize'
 
 export default class AdapterFS<T extends Item> implements StorageAdapter<T> {
+  path: string
   get file(): string {
-    return pathLib.join(this.collection.model, 'metadata.json')
+    return this.path
+      ? pathLib.join(
+          this.path,
+          // decamelize(this.collection.model),
+          'metadata.json',
+        )
+      : pathLib.join(decamelize(this.collection.model), 'metadata.json')
   }
   collection: Collection<T>
+  constructor(path?: string) {
+    this.path = path
+  }
   clone() {
-    return new AdapterFS<T>()
+    return new AdapterFS<T>(this.path)
   }
 
   init(collection: Collection<T>) {
     this.collection = collection
+    if (!this.path) {
+      this.path = this.collection.path
+    }
     return this
   }
 

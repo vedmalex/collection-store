@@ -1,5 +1,5 @@
 import { ValueType } from 'b-pl-tree'
-import { get } from 'lodash'
+import { get, cloneDeep } from 'lodash'
 import { StoredIList } from './StoredIList'
 import { Item } from '../Item'
 import { IList } from '../interfaces/IList'
@@ -24,7 +24,7 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async get(key: ValueType) {
-    return get(this.hash, String(key))
+    return cloneDeep(get(this.hash, String(key)))
   }
 
   get counter() {
@@ -41,8 +41,8 @@ export class List<T extends Item> implements IList<T> {
     }
   }
 
-  async set(key: ValueType, item: T) {
-    this.hash[this._counter] = item
+  async set(_key: ValueType, item: T) {
+    this.hash[this._counter] = cloneDeep(item)
     this._counter++
     this._count++
     return item

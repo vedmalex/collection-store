@@ -1,21 +1,19 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse'
-import _, { result } from 'lodash'
+import _ from 'lodash'
 import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
 import { StorageAdapter } from './interfaces/StorageAdapter'
-import { List } from './adapters/List'
 import { IList } from './interfaces/IList'
-import { IndexDef, Paths, keyType } from './IndexDef'
+import { IndexDef, IndexStored, Paths } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
 import { CollectionConfig } from './CollectionConfig'
-import AdapterFS from './adapter-fs'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
-import { BPlusTree, query, ValueType } from 'b-pl-tree'
-import { traverse } from './collection/traverse'
+import { BPlusTree, ValueType } from 'b-pl-tree'
+import { all, first, TraverseCondition } from './collection/traverse'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
 import { ensure_ttl } from './collection/ensure_ttl'
@@ -30,9 +28,34 @@ import { deserialize_indexes } from './collection/deserialize_indexes'
 import { serialize_indexes } from './collection/serialize_indexes'
 import { store_index } from './collection/store_index'
 import { do_rotate_log } from './collection/do_rotate_log'
+import { StoredIList } from './adapters/StoredIList'
 
 export const ttl_key = '__ttltime'
-export default class Collection<T extends Item> {
+
+export interface IDataCollection<T extends Item> {
+  reset(): Promise<void>
+  load(name?: string): Promise<void>
+  persist(name?: string): Promise<void>
+
+  push(item: T): Promise<T>
+  create(item: T): Promise<T>
+
+  find(condition: TraverseCondition<T>): Promise<Array<T>>
+  findBy(key: Paths<T>, id: ValueType): Promise<Array<T>>
+  findOne(condition: TraverseCondition<T>): Promise<T>
+  findById(id: ValueType): Promise<T>
+
+  update(condition: TraverseCondition<T>, update: Partial<T>): Promise<Array<T>>
+  updateOne(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
+
+  updateWithId(id: ValueType, update: Partial<T>): Promise<T>
+  removeWithId(id: ValueType): Promise<T>
+
+  remove(condition: TraverseCondition<T>): Promise<Array<T>>
+  removeOne(condition: TraverseCondition<T>): Promise<T>
+}
+export default class Collection<T extends Item> implements IDataCollection<T> {
+  path?: string
   cronJob?: CronJob
   onRotate: () => void
 
@@ -52,13 +75,13 @@ export default class Collection<T extends Item> {
   /** main storage */
   list: IList<T>
   /** actions in insert */
-  inserts: Array<(item: T) => (index_payload: any) => void>
+  inserts: Array<(item: T) => (index_payload: ValueType) => void>
   /** actions in update */
-  updates: Array<(ov: T, nv: T, index_payload: any) => void>
+  updates: Array<(ov: T, nv: T, index_payload: ValueType) => void>
   /** actions in remove */
   removes: Array<(item: T) => void>
   /** actions in ensure */
-  ensures: Array<() => void>
+  ensures: Array<(rebuild: boolean) => Promise<void>>
   /** index definition */
   indexDefs: Dictionary<IndexDef<T>>
   /** unique generators */
@@ -76,10 +99,12 @@ export default class Collection<T extends Item> {
       },
       auto = true,
       indexList,
-      list = new List<T>() as IList<T>,
-      adapter = new AdapterFS<T>(),
+      list, // = new List<T>() as IList<T>,
+      path,
+      adapter, // = new AdapterFile<T>(),
       onRotate,
     } = config ?? {}
+    this.path = path ?? './data/'
 
     let { idGen = 'autoIncIdGen' } = config ?? {}
 
@@ -201,13 +226,14 @@ export default class Collection<T extends Item> {
         return prev
       }, {} as Dictionary<IndexDef<T>>),
     )
-    ensure_indexes(this)
+    // придумать загрузку
+    ensure_indexes(this, false).then() ///??
   }
 
-  async reset() {
+  async reset(): Promise<void> {
     await this.list.reset()
     this.indexes = {}
-    ensure_indexes(this)
+    await ensure_indexes(this, false)
   }
 
   async load(name?: string): Promise<void> {
@@ -229,7 +255,7 @@ export default class Collection<T extends Item> {
         build_index(this, this.indexDefs)
 
         this.indexes = deserialize_indexes(indexes)
-        ensure_indexes(this)
+        await ensure_indexes(this, true)
       }
     } catch (e) {
       // throw e
@@ -237,7 +263,13 @@ export default class Collection<T extends Item> {
     await ensure_ttl(this)
   }
 
-  store() {
+  store(): {
+    list: StoredIList
+    indexes: { [key: string]: unknown }
+    indexDefs: Dictionary<IndexStored<T>>
+    id: string
+    ttl: number
+  } {
     return {
       list: this.list.persist(),
       indexes: serialize_indexes(this.indexes),
@@ -251,80 +283,92 @@ export default class Collection<T extends Item> {
     await this.storage.store(name)
   }
 
-  async push(item: T) {
+  async push(item: T): Promise<T> {
     const insert_indexed_values = prepare_index_insert(this, item)
     const id = item[this.id]
     const res = await this.list.set(id, item)
     insert_indexed_values(id)
-    return res
+    return return_one_if_valid(this, res)
   }
 
   async create(item: T): Promise<T> {
     const res = { ...item } as T
-    return await this.push(res)
+    const value = await this.push(res)
+    return return_one_if_valid(this, value)
   }
 
-  async findById(id): Promise<T> {
+  async findById(id: ValueType): Promise<T> {
     const { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
     }
     const result = await this.list.get(
-      this.indexes[this.id][id] as number | string,
+      this.indexes[this.id][id.toString()] as number | string,
     )
     return return_one_if_valid(this, result)
   }
 
-  async findBy(key: Paths<T>, id): Promise<Array<T>> {
-    const { process } = this.indexDefs[key as string]
-    if (process) {
-      id = process(id)
-    }
-
-    const result = []
+  async findBy(key: Paths<T>, id: ValueType): Promise<Array<T>> {
     if (this.indexDefs.hasOwnProperty(key)) {
-      result.push(...(await get_indexed_value(this, key, id)))
+      const { process } = this.indexDefs[key as string]
+      if (process) {
+        id = process(id)
+      }
+
+      const result = []
+      if (this.indexDefs.hasOwnProperty(key)) {
+        result.push(...(await get_indexed_value(this, key, id)))
+      }
+      return return_list_if_valid(this, result)
+    } else {
+      throw new Error(`Index for ${key} not found`)
+    }
+  }
+
+  async find(condition: TraverseCondition<T>): Promise<Array<T>> {
+    const result: Array<T> = []
+    for await (const item of all(this, condition)) {
+      result.push(item)
     }
     return return_list_if_valid(this, result)
   }
 
-  async find(condition): Promise<Array<T>> {
-    const result = []
-    await traverse(this, condition, async (cur) => {
-      result.push(cur)
-      return true
-    })
-    return return_list_if_valid(this, result)
-  }
-
-  async findOne(condition): Promise<T> {
-    let result
-    await traverse(this, condition, async (cur) => {
-      result = cur
-    })
+  async findOne(condition: TraverseCondition<T>): Promise<T> {
+    const result: T = await (await first(this, condition).next()).value
     return return_one_if_valid(this, result)
   }
 
-  async update(condition, update: Partial<T>) {
-    await traverse(this, condition, async (cur) => {
-      update_index(this, cur, update, cur[this.id])
-      this.list.set(cur[this.id], _.assign(cur, update))
-      return true
-    })
+  async update(
+    condition: TraverseCondition<T>,
+    update: Partial<T>,
+  ): Promise<Array<T>> {
+    const result: Array<T> = []
+    for await (const item of all(this, condition)) {
+      const res = _.merge({}, item, update)
+      update_index(this, item, res, item[this.id])
+      await this.list.set(item[this.id], res)
+    }
+    return return_list_if_valid<T>(this, result)
   }
 
-  async updateOne(condition, update: Partial<T>) {
-    await traverse(this, condition, async (cur) => {
-      update_index(this, cur, update, cur[this.id])
-      this.list.set(cur[this.id], _.assign(cur, update))
-    })
+  async updateOne(
+    condition: TraverseCondition<T>,
+    update: Partial<T>,
+  ): Promise<T> {
+    const item: T = await (await first(this, condition).next()).value
+    const res = _.merge({}, item, update)
+    update_index(this, item, res, item[this.id])
+    await this.list.set(item[this.id], res)
+
+    return return_one_if_valid(this, res)
   }
 
-  async updateWithId(id, update: Partial<T>): Promise<T> {
-    const result = await this.findById(id)
-    update_index(this, result, update, id)
-    this.list.set(id, _.assign(result, update))
-    return result
+  async updateWithId(id: ValueType, update: Partial<T>): Promise<T> {
+    const item = await this.findById(id)
+    const res = _.merge({}, item, update)
+    update_index(this, res, update, id)
+    this.list.set(id, res)
+    return return_one_if_valid(this, res)
   }
 
   async removeWithId(id: ValueType): Promise<T> {
@@ -333,25 +377,25 @@ export default class Collection<T extends Item> {
     const cur = await this.list.get(i)
     if (~i && cur) {
       remove_index(this, cur)
-      return this.list.delete(i)
+      const result = await this.list.delete(i)
+      return return_one_if_valid(this, result)
     }
   }
 
-  async remove(condition): Promise<Array<T>> {
+  async remove(condition: TraverseCondition<T>): Promise<Array<T>> {
     const result: Array<T> = []
-    await traverse(this, condition, async (cur) => {
+    for await (const cur of all(this, condition)) {
       remove_index(this, cur)
       const res = await this.list.delete(cur[this.id])
       result.push(res)
-      return true
-    })
-    return result
+    }
+    return return_list_if_valid(this, result)
   }
 
-  async removeOne(condition) {
-    await traverse(this, condition, async (cur) => {
-      remove_index(this, cur)
-      await this.list.delete(cur[this.id])
-    })
+  async removeOne(condition: TraverseCondition<T>): Promise<T> {
+    const item: T = await (await first(this, condition).next()).value
+    remove_index(this, item)
+    await this.list.delete(item[this.id])
+    return return_one_if_valid(this, item)
   }
 }

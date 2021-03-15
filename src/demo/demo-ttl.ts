@@ -1,6 +1,7 @@
 import Collection from '../collection'
 import { FileStorage } from '../adapters/FileStorage'
 import { CollectionConfig } from '../CollectionConfig'
+import AdapterFile from '../adapter-file'
 
 type Person = {
   id?: number
@@ -25,6 +26,7 @@ const collection_config: CollectionConfig<Person> = {
   // ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
+  adapter: new AdapterFile(),
   indexList: [
     {
       key: 'name',

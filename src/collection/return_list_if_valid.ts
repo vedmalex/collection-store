@@ -5,9 +5,9 @@ import { is_valid_ttl } from './is_valid_ttl'
 
 export async function return_list_if_valid<T extends Item>(
   collection: Collection<T>,
-  items?: Array<T>,
-) {
-  let invalidate = false
+  items: Array<T>,
+): Promise<Array<T>> {
+  let invalidate: boolean = false
 
   const result = items.filter((i) => {
     if (is_valid_ttl(collection, i)) {
@@ -23,5 +23,5 @@ export async function return_list_if_valid<T extends Item>(
       await ensure_ttl(collection)
     }
   }
-  return invalidate ? result : result
+  return result
 }

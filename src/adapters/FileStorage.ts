@@ -14,7 +14,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   // можно использовать библиотеку для монитроинга за файлами
   tree: BPlusTree<string, K> = new BPlusTree(32, true)
   get folder(): string {
-    return this.collection.model
+    return this.collection.path
   }
   exists: Promise<boolean>
   collection: Collection<T>

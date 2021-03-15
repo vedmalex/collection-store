@@ -4,14 +4,17 @@ import { ensure_indexes } from './ensure_indexes'
 import Collection from '../collection'
 
 export async function copy_collection<T extends Item>(
-  source: Collection<T>,
   model: string,
-) {
-  const collection = new Collection<T>({
-    name: model,
-    adapter: source.storage.clone(),
-    list: source.list.construct(),
-  })
+  source: Collection<T>,
+  dest?: Collection<T>,
+): Promise<Collection<T>> {
+  const collection =
+    dest ??
+    new Collection<T>({
+      name: model,
+      adapter: source.storage.clone(),
+      list: source.list.construct(),
+    })
 
   collection.indexDefs = source.indexDefs
   collection.id = source.id
@@ -24,7 +27,7 @@ export async function copy_collection<T extends Item>(
 
   collection.indexes = {}
   build_index(collection, collection.indexDefs)
-  ensure_indexes(collection)
+  await ensure_indexes(collection, false)
   for await (const item of source.list) {
     await collection.push(item)
   }

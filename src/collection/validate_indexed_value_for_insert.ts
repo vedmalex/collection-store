@@ -17,7 +17,7 @@ export function validate_indexed_value_for_insert<T extends Item>(
     if (
       unique &&
       collection.indexes.hasOwnProperty(key) &&
-      collection.indexes[key].find(value).length > 0
+      collection.indexes[key].findFirst(value).length > 0
     ) {
       return [false, `unique index ${key} already contains value ${value}`]
     }

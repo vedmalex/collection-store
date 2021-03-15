@@ -2,6 +2,7 @@ import Collection from '../collection'
 import { FileStorage } from '../adapters/FileStorage'
 import { CollectionConfig } from '../CollectionConfig'
 import { do_rotate_log } from '../collection/do_rotate_log'
+import AdapterFile from '../adapter-file'
 
 type Person = {
   id?: number
@@ -26,6 +27,7 @@ const collection_config: CollectionConfig<Person> = {
   // ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
+  adapter: new AdapterFile(),
   indexList: [
     {
       key: 'name',

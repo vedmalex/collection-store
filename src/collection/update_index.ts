@@ -1,11 +1,12 @@
 import { Item } from '../Item'
 import Collection from '../collection'
+import { ValueType } from 'b-pl-tree'
 
 export function update_index<T extends Item>(
   collection: Collection<T>,
-  ov,
-  nv,
-  i,
+  ov: T,
+  nv: T,
+  i: ValueType,
 ) {
   collection.updates.forEach((item) => item(ov, nv, i))
 }

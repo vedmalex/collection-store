@@ -9,12 +9,13 @@ export interface CollectionConfig<T extends Item> {
   ttl?: string | number | boolean
   /** crontab format */
   rotate?: string
-  list?: IList<T>
+  list: IList<T>
   onRotate?: () => void
   name: string
   id?: string | Partial<IdType<T>>
   idGen?: string | IdGeneratorFunction<T>
   auto?: boolean
   indexList?: Array<IndexDef<T>>
-  adapter?: StorageAdapter<T>
+  adapter: StorageAdapter<T>
+  path?: string
 }

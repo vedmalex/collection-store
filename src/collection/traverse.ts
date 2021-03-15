@@ -1,41 +1,33 @@
 import { Item } from '../Item'
 import Collection from '../collection'
 import { query } from '../filter'
-import { ValueType } from 'b-pl-tree'
+
+export type TraverseCondition<T extends Item> =
+  | { [key: string]: unknown }
+  | ((arg: T) => boolean)
 
 // возможно не работает TTL не удаляются значения индекса.
-export async function traverse<T extends Item>(
+export async function* all<T extends Item>(
   collection: Collection<T>,
-  condition: Partial<T> | ((T) => boolean),
-  action: (item: T) => Promise<void | boolean>,
-) {
+  condition: TraverseCondition<T>,
+): AsyncGenerator<T> {
   if (typeof condition == 'object') condition = query(condition)
-
   for await (const current of collection.list) {
     if (condition(current)) {
-      // stop when action didn't return anything
-      const next = await action(current)
-      if (!next) {
-        break
-      }
+      yield current
     }
   }
 }
 
-export function smart_traverse<T extends Item>(
-  collection: Iterable<T>,
-  condition: Partial<T> | ((T) => boolean),
-  action: (item: T) => void | boolean,
-) {
+export async function* first<T extends Item>(
+  collection: Collection<T>,
+  condition: TraverseCondition<T>,
+): AsyncGenerator<T> {
   if (typeof condition == 'object') condition = query(condition)
-
-  for (const current of collection) {
+  for await (const current of collection.list) {
     if (condition(current)) {
-      // stop when action didn't return anything
-      const next = action(current)
-      if (!next) {
-        break
-      }
+      yield current
+      return
     }
   }
 }

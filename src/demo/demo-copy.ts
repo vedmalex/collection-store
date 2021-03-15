@@ -2,6 +2,7 @@ import Collection from '../collection'
 import { FileStorage } from '../adapters/FileStorage'
 import { CollectionConfig } from '../CollectionConfig'
 import { copy_collection } from '../collection/copy_collection'
+import AdapterFile from '../adapter-file'
 
 type Person = {
   id?: number
@@ -26,6 +27,7 @@ const collection_config: CollectionConfig<Person> = {
   // ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
+  adapter: new AdapterFile(),
   indexList: [
     {
       key: 'name',
@@ -52,7 +54,7 @@ const persistence = async () => {
   const data = new Collection<Person>(collection_config)
   await data.load()
   console.log(await data.findBy('id', 7))
-  const copy = await copy_collection(data, 'Person-backup')
+  const copy = await copy_collection('Person-backup', data)
   // работа с курсорами для перемещения, не совсем то, что надо, нужно удалять и обновлять данные пачками
   await copy.persist()
 }

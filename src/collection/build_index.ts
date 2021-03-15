@@ -6,7 +6,8 @@ import { BPlusTree, ValueType } from 'b-pl-tree'
 import Collection from '../collection'
 import { ensure_indexed_value } from './ensure_indexed_value'
 import { get_value } from './get_value'
-import { validate_indexed_value } from './validate_indexed_value'
+import { validate_indexed_value_for_insert } from './validate_indexed_value_for_insert'
+import { validate_indexed_value_for_update } from './validate_indexed_value_for_update'
 
 export function build_index<T extends Item>(
   collection: Collection<T>,
@@ -50,13 +51,7 @@ export function build_index<T extends Item>(
       throw new Error(`index with key ${key} already exists`)
     }
 
-    collection.ensures.push(() => {
-      if (!collection.indexes.hasOwnProperty(key)) {
-        collection.indexes[key] = new BPlusTree<any, number>()
-      }
-    })
-
-    collection.inserts.push((item) => {
+    const insert = (item: T) => {
       const value = ensure_indexed_value(
         item,
         key,
@@ -65,7 +60,7 @@ export function build_index<T extends Item>(
         auto,
         process,
       )
-      const [valid, message] = validate_indexed_value(
+      const [valid, message] = validate_indexed_value_for_insert(
         collection,
         value,
         key,
@@ -81,9 +76,9 @@ export function build_index<T extends Item>(
             record_link,
           )
       }
-    })
+    }
 
-    collection.updates.push((ov, nv, index_payload: number) => {
+    const update = (ov: T, nv: T, index_payload: number) => {
       const valueOld = ensure_indexed_value(
         ov,
         key,
@@ -94,13 +89,14 @@ export function build_index<T extends Item>(
       )
       const valueNew = get_value(nv, key, process)
       if (valueNew != null) {
-        const [valid, message] = validate_indexed_value(
+        const [valid, message] = validate_indexed_value_for_update(
           collection,
           valueNew,
           key,
           sparse,
           required,
           unique,
+          ov[collection.id],
         )
         if (!valid) throw new Error(message)
         if (valueOld !== valueNew) {
@@ -113,9 +109,8 @@ export function build_index<T extends Item>(
       } else {
         collection.indexes[key].remove(valueOld)
       }
-    })
-
-    collection.removes.push((item) => {
+    }
+    const remove = (item) => {
       console.log(
         key,
         collection.indexes[key].removeSpecific(
@@ -124,7 +119,22 @@ export function build_index<T extends Item>(
             key != collection.id ? pointer == item[collection.id] : true,
         ),
       )
-    })
+    }
+    const ensure = async (rebuild: boolean) => {
+      if (!collection.indexes.hasOwnProperty(key)) {
+        collection.indexes[key] = new BPlusTree<any, number>()
+        if (rebuild && collection.list.length > 0) {
+          for await (const item of collection.list) {
+            insert(item)(item[this.id])
+          }
+        }
+      }
+    }
+
+    collection.ensures.push(ensure)
+    collection.inserts.push(insert)
+    collection.updates.push(update)
+    collection.removes.push(remove)
   }
 }
 
