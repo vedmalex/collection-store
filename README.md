@@ -120,4 +120,6 @@ https://github.com/w8r/splay-tree
 
 !!! все операции обновления делать только над копиями данных, чтобы не изменять состояние базы без явного обновления...
 
+counter для первичных ключей не обновляется!!!
+
 !!! сделать адаптер для mem-fs, redis, mongodb, gitfs, firebase, firestore, googlesheet

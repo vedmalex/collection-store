@@ -124,6 +124,7 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async set(key: K, item: T): Promise<T> {
     if (await this.exists) {
+      this._counter++
       await fs.writeJSON(this.set_path(key), item)
       this.tree.insert(key, this.key_filename(key))
       return item

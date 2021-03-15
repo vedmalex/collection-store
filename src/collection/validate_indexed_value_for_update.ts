@@ -18,7 +18,7 @@ export function validate_indexed_value_for_update<T extends Item>(
     if (
       unique &&
       collection.indexes.hasOwnProperty(key) &&
-      collection.indexes[key].findFirst(value) !== id
+      collection.indexes[key].findFirst(value) != id
     ) {
       return [false, `unique index ${key} already contains value ${value}`]
     }
