@@ -11,7 +11,7 @@ export async function get_first_indexed_value<T extends Item>(
 ): Promise<T> {
   if (collection.indexes[key]) {
     const id = collection.indexes[key].findFirst(value)
-    const result = await collection.list.get(id)
+    const result = id != null ? await collection.list.get(id) : undefined
     return return_one_if_valid(collection, result)
   }
 }

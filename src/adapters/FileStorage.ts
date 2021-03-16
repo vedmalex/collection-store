@@ -16,6 +16,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   get folder(): string {
     return this.collection.path
   }
+  constructor(private keyField?: string) {}
   exists: Promise<boolean>
   collection: Collection<T>
   construct() {
@@ -24,6 +25,9 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   init(collection: Collection<T>): IList<T> {
     this.collection = collection
+    if (this.keyField && !this.collection.indexDefs[this.keyField].unique) {
+      throw new Error(`key field ${this.keyField} is not unique`)
+    }
     this.exists = fs
       .ensureDir(this.folder)
       .then((_) => true)
@@ -41,6 +45,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
   persist(): StoredIList {
     return {
+      keyField: this.keyField,
       counter: this._counter,
       tree: BPlusTree.serialize(this.tree),
     }
@@ -48,6 +53,12 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   load(obj: StoredIList): IList<T> {
     this._counter = obj.counter
+    // prefer name that in configuration
+    this.keyField = !obj.keyField
+      ? this.keyField
+      : this.keyField
+      ? this.keyField
+      : obj.keyField
     BPlusTree.deserialize(this.tree, obj.tree)
     return this
   }
@@ -116,7 +127,8 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
   async get(key: K): Promise<T> {
     if (await this.exists) {
-      return await fs.readJSON(this.get_path(this.tree.findFirst(key)))
+      const currentKey = this.tree.findFirst(key)
+      return fs.readJSON(this.get_path(currentKey))
     } else {
       throw new Error('folder not found')
     }
@@ -125,13 +137,38 @@ export class FileStorage<T extends Item, K extends ValueType>
   async set(key: K, item: T): Promise<T> {
     if (await this.exists) {
       this._counter++
-      await fs.writeJSON(this.set_path(key), item)
-      this.tree.insert(key, this.key_filename(key))
+      // checkif exists
+      // берем новый ключ
+      const uid = this.keyField
+        ? item[this.keyField]
+          ? item[this.keyField]
+          : key
+        : key
+
+      // пишем в файл
+      await fs.writeJSON(this.set_path(uid), item)
+      // вставляем в хранилище
+      this.tree.insert(key, this.key_filename(uid))
       return item
     } else {
       throw new Error('folder not found')
     }
   }
+
+  async update(key: K, item: T): Promise<T> {
+    if (await this.exists) {
+      // checkif exists
+      // версионность
+      // ищем текущее название файла
+      const currentkey = this.tree.findFirst(key)
+      // записываем значение в файл
+      await fs.writeJSON(this.get_path(currentkey), item)
+      return item
+    } else {
+      throw new Error('folder not found')
+    }
+  }
+
   async delete(key: K): Promise<T> {
     if (await this.exists) {
       const value = this.tree.findFirst(key)

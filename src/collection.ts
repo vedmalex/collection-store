@@ -41,6 +41,7 @@ export interface IDataCollection<T extends Item> {
 
   push(item: T): Promise<T>
   create(item: T): Promise<T>
+  save(update: T): Promise<T>
 
   first(): Promise<T>
   last(): Promise<T>
@@ -177,7 +178,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     this.id = Id.name
     this.auto = Id.auto
     this.indexes = {}
-    this.list = list.init(this)
+    this.list = list
     this.indexDefs = {}
     this.inserts = []
     this.removes = []
@@ -245,6 +246,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         return prev
       }, {} as Dictionary<IndexDef<T>>),
     )
+    this.list.init(this)
     // придумать загрузку
     ensure_indexes(this, false).then() ///??
   }
@@ -314,6 +316,14 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     const res = { ...item } as T
     const value = await this.push(res)
     return value
+  }
+
+  async save(res: T): Promise<T> {
+    const id = res[this.id]
+    const item = await this.findById(id)
+    update_index(this, item, res, id)
+    await this.list.update(id, res)
+    return return_one_if_valid(this, res)
   }
 
   async first(): Promise<T> {
@@ -428,7 +438,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     for await (const item of all(this, condition)) {
       const res = _.merge({}, item, update)
       update_index(this, item, res, item[this.id])
-      await this.list.set(item[this.id], res)
+      await this.list.update(item[this.id], res)
     }
     return return_list_if_valid<T>(this, result)
   }
@@ -440,7 +450,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     const item: T = await (await first(this, condition).next()).value
     const res = _.merge({}, item, update)
     update_index(this, item, res, item[this.id])
-    await this.list.set(item[this.id], res)
+    await this.list.update(item[this.id], res)
 
     return return_one_if_valid(this, res)
   }
@@ -452,7 +462,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     const item: T = await (await last(this, condition).next()).value
     const res = _.merge({}, item, update)
     update_index(this, item, res, item[this.id])
-    await this.list.set(item[this.id], res)
+    await this.list.update(item[this.id], res)
 
     return return_one_if_valid(this, res)
   }
@@ -461,7 +471,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     const item = await this.findById(id)
     const res = _.merge({}, item, update)
     update_index(this, res, update, id)
-    this.list.set(id, res)
+    this.list.update(id, res)
     return return_one_if_valid(this, res)
   }
 

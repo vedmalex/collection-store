@@ -48,6 +48,11 @@ export class List<T extends Item> implements IList<T> {
     return item
   }
 
+  async update(_key: ValueType, item: T) {
+    this.hash[item[this.collection.id]] = cloneDeep(item)
+    return item
+  }
+
   async delete(i: ValueType) {
     const result = this.hash[i.toString()]
     delete this.hash[i.toString()]

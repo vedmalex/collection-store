@@ -7,6 +7,7 @@ export interface IList<T extends Item> {
   readonly forward: AsyncIterable<T>
   readonly backward: AsyncIterable<T>
   get(key: ValueType): Promise<T>
+  update(key: ValueType, item: T): Promise<T>
   set(key: ValueType, item: T): Promise<T>
   delete(key: ValueType): Promise<T>
   reset(): Promise<void>

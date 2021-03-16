@@ -100,14 +100,26 @@ export function build_index<T extends Item>(
         )
         if (!valid) throw new Error(message)
         if (valueOld !== valueNew) {
-          collection.indexes[key].remove(valueOld)
+          if (unique) {
+            collection.indexes[key].remove(valueOld)
+          } else {
+            collection.indexes[key].removeSpecific(valueOld, (pointer) =>
+              key != collection.id ? pointer == ov[collection.id] : true,
+            )
+          }
           collection.indexes[key].insert(
             valueNew !== undefined ? valueNew : null,
             index_payload,
           )
         }
       } else {
-        collection.indexes[key].remove(valueOld)
+        if (unique) {
+          collection.indexes[key].remove(valueOld)
+        } else {
+          collection.indexes[key].removeSpecific(valueOld, (pointer) =>
+            key != collection.id ? pointer == ov[collection.id] : true,
+          )
+        }
       }
     }
     const remove = (item) => {

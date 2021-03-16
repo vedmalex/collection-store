@@ -9,7 +9,7 @@ export type Join<K, P> = K extends string | number
 
 export type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...Array<0>]
 
-export type Paths<T, D extends number = 3> = [D] extends [never]
+export type Paths<T, D extends number = 2> = [D] extends [never]
   ? never
   : T extends { [key: string]: unknown }
   ? {

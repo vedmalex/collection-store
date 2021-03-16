@@ -10,6 +10,7 @@ export interface CollectionConfig<T extends Item> {
   /** crontab format */
   rotate?: string
   list: IList<T>
+  audit?: boolean
   onRotate?: () => void
   name: string
   id?: string | Partial<IdType<T>>
