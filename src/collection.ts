@@ -349,9 +349,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     if (process) {
       id = process(id)
     }
-    const result = await this.list.get(
-      this.indexes[this.id][id.toString()] as number | string,
-    )
+    const result = await this.list.get(this.indexes[this.id].findFirst(id))
     return return_one_if_valid(this, result)
   }
 
