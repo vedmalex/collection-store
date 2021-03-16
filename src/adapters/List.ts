@@ -42,15 +42,23 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async set(_key: ValueType, item: T) {
-    this.hash[this._counter] = cloneDeep(item)
-    this._counter++
-    this._count++
-    return item
+    if (this.collection.validator?.(item) ?? true) {
+      this.hash[this._counter] = cloneDeep(item)
+      this._counter++
+      this._count++
+      return item
+    } else {
+      throw new Error('Validation error')
+    }
   }
 
   async update(_key: ValueType, item: T) {
-    this.hash[item[this.collection.id]] = cloneDeep(item)
-    return item
+    if (this.collection.validator?.(item) ?? true) {
+      this.hash[item[this.collection.id]] = cloneDeep(item)
+      return item
+    } else {
+      throw new Error('Validation error')
+    }
   }
 
   async delete(i: ValueType) {

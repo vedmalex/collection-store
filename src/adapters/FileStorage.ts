@@ -136,20 +136,25 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async set(key: K, item: T): Promise<T> {
     if (await this.exists) {
-      this._counter++
-      // checkif exists
-      // берем новый ключ
-      const uid = this.keyField
-        ? item[this.keyField]
+      if (this.collection.validator?.(item) ?? true) {
+        this._counter++
+        // checkif exists
+        // берем новый ключ
+        const uid = this.keyField
           ? item[this.keyField]
+            ? item[this.keyField]
+            : key
           : key
-        : key
 
-      // пишем в файл
-      await fs.writeJSON(this.set_path(uid), item)
-      // вставляем в хранилище
-      this.tree.insert(key, this.key_filename(uid))
-      return item
+        // пишем в файл
+        await fs.writeJSON(this.set_path(uid), item)
+        // вставляем в хранилище
+        this.tree.insert(key, this.key_filename(uid))
+        return item
+      } else {
+        console.log(this.collection.validator?.errors)
+        throw new Error('Validation error')
+      }
     } else {
       throw new Error('folder not found')
     }
@@ -157,13 +162,18 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async update(key: K, item: T): Promise<T> {
     if (await this.exists) {
-      // checkif exists
-      // версионность
-      // ищем текущее название файла
-      const currentkey = this.tree.findFirst(key)
-      // записываем значение в файл
-      await fs.writeJSON(this.get_path(currentkey), item)
-      return item
+      if (this.collection.validator?.(item) ?? true) {
+        // checkif exists
+        // версионность
+        // ищем текущее название файла
+        const currentkey = this.tree.findFirst(key)
+        // записываем значение в файл
+        await fs.writeJSON(this.get_path(currentkey), item)
+        return item
+      } else {
+        console.log(this.collection.validator?.errors)
+        throw new Error('Validation error')
+      }
     } else {
       throw new Error('folder not found')
     }
