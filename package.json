@@ -1,6 +1,6 @@
 {
   "name": "collection-store",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "description": "very flexible collection for in-memory operations with flexble indexing",
   "main": "dist/index.js",
   "scripts": {
@@ -48,6 +48,7 @@
     "cron": "^1.8.2",
     "decamelize": "^5.0.0",
     "fs-extra": "^9.0.1",
+    "jsondiffpatch": "^0.4.1",
     "lodash": "^4.17.20",
     "timeparse": "^1.0.0"
   }

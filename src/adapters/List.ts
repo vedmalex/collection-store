@@ -1,12 +1,19 @@
 import { ValueType } from 'b-pl-tree'
-import { get, cloneDeep } from 'lodash'
+import { get, set, unset, cloneDeep } from 'lodash'
 import { StoredIList } from './StoredIList'
 import { Item } from '../Item'
 import { IList } from '../interfaces/IList'
 import Collection from '../collection'
+import { diff } from 'jsondiffpatch'
+import { entity_create, entity_update } from '../interfaces/StorageAdapter'
+import {
+  IStoredRecord,
+  is_stored_record,
+  entity_delete,
+} from '../interfaces/StorageAdapter'
 
 export class List<T extends Item> implements IList<T> {
-  hash: { [key: string]: T } = {}
+  hash: { [key: string]: T | IStoredRecord<T> } = {}
   _counter: number = 0
   _count: number = 0
   collection: Collection<T>
@@ -24,7 +31,17 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async get(key: ValueType) {
-    return cloneDeep(get(this.hash, String(key)))
+    const item = get(this.hash, String(key))
+    let result: T
+    if (is_stored_record<T>(item)) {
+      result = cloneDeep(item.data)
+      if (!this.collection.audit) {
+        set(this.hash, String(key), result)
+      }
+    } else {
+      result = cloneDeep(item)
+    }
+    return result
   }
 
   get counter() {
@@ -43,10 +60,20 @@ export class List<T extends Item> implements IList<T> {
 
   async set(_key: ValueType, item: T) {
     if (this.collection.validator?.(item) ?? true) {
-      this.hash[this._counter] = cloneDeep(item)
+      let result: T | IStoredRecord<T>
+      if (this.collection.audit) {
+        result = entity_create(
+          item[this.collection.id],
+          cloneDeep(item),
+          this.collection.validation,
+        )
+      } else {
+        result = cloneDeep(item)
+      }
+      set(this.hash, this._counter, result)
       this._counter++
       this._count++
-      return item
+      return is_stored_record(item) ? item.data : item
     } else {
       throw new Error('Validation error')
     }
@@ -54,19 +81,45 @@ export class List<T extends Item> implements IList<T> {
 
   async update(_key: ValueType, item: T) {
     if (this.collection.validator?.(item) ?? true) {
-      this.hash[item[this.collection.id]] = cloneDeep(item)
-      return item
+      let result: T = item
+      const record = get(this.hash, item[this.collection.id])
+      if (this.collection.audit) {
+        let res: T | IStoredRecord<T>
+        if (!is_stored_record(record)) {
+          res = entity_create(
+            item[this.collection.id],
+            item,
+            this.collection.validation,
+          )
+        } else {
+          res = entity_update(record, cloneDeep(item))
+        }
+        set(this.hash, item[this.collection.id], res)
+        result = res.data
+      } else {
+        set(this.hash, item[this.collection.id], cloneDeep(result))
+      }
+      return result
     } else {
       throw new Error('Validation error')
     }
   }
 
   async delete(i: ValueType) {
-    const result = this.hash[i.toString()]
-    delete this.hash[i.toString()]
-    this._count--
+    const item = get(this.hash, i.toString())
+    let result: T
+    if (is_stored_record<T>(item)) {
+      entity_delete(item)
+      result = cloneDeep(item.data)
+      this._count--
+    } else {
+      unset(this.hash, i.toString())
+      this._count--
+      result = cloneDeep(item)
+    }
     return result
   }
+
   async reset() {
     this._count = 0
     this._counter = 0
@@ -113,12 +166,12 @@ export class List<T extends Item> implements IList<T> {
 
   async *toArray() {
     for (const key of this.keys) {
-      yield this.hash[key]
+      yield get(this.hash, key)
     }
   }
   async *toArrayReverse() {
     for (const key of this.keys.reverse()) {
-      yield this.hash[key]
+      yield get(this.hash, key)
     }
   }
 }

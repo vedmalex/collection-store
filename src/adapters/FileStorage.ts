@@ -5,6 +5,14 @@ import fs from 'fs-extra'
 import pathlib from 'path'
 import { IList } from '../interfaces/IList'
 import { Collection } from 'src'
+import { diff, formatters } from 'jsondiffpatch'
+import {
+  entity_delete,
+  entity_update,
+  IStoredRecord,
+} from '../interfaces/StorageAdapter'
+import { entity_create, is_stored_record } from '../interfaces/StorageAdapter'
+import { cloneDeep } from 'lodash'
 
 export class FileStorage<T extends Item, K extends ValueType>
   implements IList<T> {
@@ -125,10 +133,19 @@ export class FileStorage<T extends Item, K extends ValueType>
       throw new Error('folder not found')
     }
   }
+
   async get(key: K): Promise<T> {
     if (await this.exists) {
-      const currentKey = this.tree.findFirst(key)
-      return fs.readJSON(this.get_path(currentKey))
+      const location = this.get_path(this.tree.findFirst(key))
+      const result: T | IStoredRecord<T> = await fs.readJSON(location)
+      if (is_stored_record(result)) {
+        if (!this.collection.audit) {
+          await fs.writeJSON(location, result)
+        }
+        return result.data
+      } else {
+        return result
+      }
     } else {
       throw new Error('folder not found')
     }
@@ -147,10 +164,22 @@ export class FileStorage<T extends Item, K extends ValueType>
           : key
 
         // пишем в файл
-        await fs.writeJSON(this.set_path(uid), item)
+
+        let result: T | IStoredRecord<T>
+        if (this.collection.audit) {
+          result = entity_create(
+            item[this.collection.id],
+            cloneDeep(item),
+            this.collection.validation,
+          )
+        } else {
+          result = cloneDeep(item)
+        }
+
+        await fs.writeJSON(this.set_path(uid), result)
         // вставляем в хранилище
         this.tree.insert(key, this.key_filename(uid))
-        return item
+        return this.collection.audit ? result.data : result
       } else {
         console.log(this.collection.validator?.errors)
         throw new Error('Validation error')
@@ -161,15 +190,32 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
 
   async update(key: K, item: T): Promise<T> {
+    // checkif exists
     if (await this.exists) {
       if (this.collection.validator?.(item) ?? true) {
-        // checkif exists
-        // версионность
         // ищем текущее название файла
-        const currentkey = this.tree.findFirst(key)
-        // записываем значение в файл
-        await fs.writeJSON(this.get_path(currentkey), item)
-        return item
+        const location = this.get_path(this.tree.findFirst(key))
+        let result: T = item
+
+        const record = await fs.readJSON(location)
+        if (this.collection.audit) {
+          let res: T | IStoredRecord<T>
+          if (!is_stored_record(record)) {
+            res = entity_create(
+              item[this.collection.id],
+              cloneDeep(item),
+              this.collection.validation,
+            )
+          } else {
+            res = entity_update(record, cloneDeep(item))
+          }
+          result = res.data
+          await fs.writeJSON(location, res)
+        } else {
+          // записываем значение в файл
+          await fs.writeJSON(location, result)
+        }
+        return result
       } else {
         console.log(this.collection.validator?.errors)
         throw new Error('Validation error')
@@ -181,11 +227,19 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async delete(key: K): Promise<T> {
     if (await this.exists) {
-      const value = this.tree.findFirst(key)
-      const item = await fs.readJSON(this.get_path(value))
+      const location = this.get_path(this.tree.findFirst(key))
+      const item = await fs.readJSON(location)
+      let result: T
+      if (is_stored_record<T>(item)) {
+        result = item.data
+        const res = entity_delete(item)
+        await fs.writeJSON(location, res)
+      } else {
+        result = item
+        await fs.unlink(location)
+      }
       this.tree.remove(key)
-      await fs.unlink(this.get_path(value))
-      return item
+      return result
     } else {
       throw new Error('folder not found')
     }

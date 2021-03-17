@@ -92,11 +92,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   id: string
   /** is autioincrement */
   auto: boolean
+  /** audit */
+  audit: boolean
   /** ajv validator */
   validation: AnySchema
   validator?: ValidateFunction<T>
-  /** defaults */
-  defaults: Partial<T>
   /**indexes */
   indexes: { [index: string]: BPlusTree<any, any> }
   /** main storage */
@@ -129,10 +129,12 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       list, // = new List<T>() as IList<T>,
       path,
       adapter, // = new AdapterFile<T>(),
-      defaults,
       validation,
+      audit,
       onRotate,
     } = config ?? {}
+
+    this.audit = !!audit
 
     if (validation) {
       this.validation = validation
@@ -193,7 +195,6 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     this.storage = adapter.init(this)
     this.id = Id.name
     this.auto = Id.auto
-    this.defaults = defaults
     this.indexes = {}
     this.list = list
     this.indexDefs = {}
@@ -323,9 +324,6 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
   async push(item: T): Promise<T> {
     // apply default once it is created
-    if (this.defaults) {
-      item = _.merge({} as T, item)
-    }
     const insert_indexed_values = prepare_index_insert(this, item)
     const id = item[this.id]
     const res = await this.list.set(id, item)
