@@ -113,8 +113,12 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   indexDefs: Dictionary<IndexDef<T>>
   /** unique generators */
   genCache: Dictionary<IdGeneratorFunction<T>>
-
-  constructor(config?: CollectionConfig<T>) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
+  static async create<T extends Item>(
+    config?: CollectionConfig<T>,
+  ): Promise<Collection<T>> {
+    const collection: Collection<T> = new Collection<T>()
     const {
       ttl,
       rotate,
@@ -134,15 +138,15 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       onRotate,
     } = config ?? {}
 
-    this.audit = !!audit
+    collection.audit = !!audit
 
     if (validation) {
-      this.validation = validation
+      collection.validation = validation
       const ajv = new Ajv({ useDefaults: true })
       addFormats(ajv)
-      this.validator = ajv.compile<T>(validation)
+      collection.validator = ajv.compile<T>(validation)
     }
-    this.path = path ?? './data/'
+    collection.path = path ?? './data/'
 
     let { idGen = 'autoIncIdGen' } = config ?? {}
 
@@ -151,14 +155,14 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
 
     if (rotate) {
-      this.onRotate = onRotate
-      this.cronJob = new CronJob(rotate, () => {
-        do_rotate_log(this)
-        if (typeof this.onRotate === 'function') {
-          this.onRotate()
+      collection.onRotate = onRotate
+      collection.cronJob = new CronJob(rotate, () => {
+        do_rotate_log(collection)
+        if (typeof collection.onRotate === 'function') {
+          collection.onRotate()
         }
       })
-      this.cronJob.start()
+      collection.cronJob.start()
     }
 
     let Id: Partial<IdType<T>> = typeof id == 'string' ? { name: id } : id
@@ -189,35 +193,35 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       throw new Error('must Have Model Name as "name" prop in config')
     }
 
-    this.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
-    this.rotate = rotate
-    this.model = name
-    this.storage = adapter.init(this)
-    this.id = Id.name
-    this.auto = Id.auto
-    this.indexes = {}
-    this.list = list
-    this.indexDefs = {}
-    this.inserts = []
-    this.removes = []
-    this.updates = []
-    this.ensures = []
+    collection.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
+    collection.rotate = rotate
+    collection.model = name
+    collection.storage = adapter.init(collection)
+    collection.id = Id.name
+    collection.auto = Id.auto
+    collection.indexes = {}
+    collection.list = list
+    collection.indexDefs = {}
+    collection.inserts = []
+    collection.removes = []
+    collection.updates = []
+    collection.ensures = []
 
-    this.genCache = {
+    collection.genCache = {
       autoIncIdGen: autoIncIdGen,
       autoTimestamp: autoTimestamp,
     }
 
     const defIndex: Array<IndexDef<T>> = [
       {
-        key: this.id,
+        key: collection.id,
         // type: 'number',
-        auto: this.auto,
+        auto: collection.auto,
         gen:
           typeof Id.gen == 'function'
             ? Id.gen
-            : this.genCache[Id.gen]
-            ? this.genCache[Id.gen]
+            : collection.genCache[Id.gen]
+            ? collection.genCache[Id.gen]
             : eval(Id.gen),
         unique: true,
         sparse: false,
@@ -225,22 +229,22 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       },
     ]
 
-    if (this.ttl) {
+    if (collection.ttl) {
       defIndex.push({
         key: ttl_key,
         auto: true,
-        gen: this.genCache['autoTimestamp'],
+        gen: collection.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
       })
     }
 
-    if (this.rotate) {
+    if (collection.rotate) {
       defIndex.push({
         key: ttl_key,
         auto: true,
-        gen: this.genCache['autoTimestamp'],
+        gen: collection.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
@@ -248,14 +252,15 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
 
     build_index(
-      this,
+      collection,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
         prev[curr.key as string] = {
           key: curr.key,
           auto: curr.auto || false,
           unique: curr.unique || false,
           gen:
-            curr.gen || (curr.auto ? this.genCache['autoIncIdGen'] : undefined),
+            curr.gen ||
+            (curr.auto ? collection.genCache['autoIncIdGen'] : undefined),
           sparse: curr.sparse || false,
           required: curr.required || false,
           ignoreCase: curr.ignoreCase,
@@ -264,9 +269,10 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         return prev
       }, {} as Dictionary<IndexDef<T>>),
     )
-    this.list.init(this)
+    collection.list.init(collection)
     // придумать загрузку
-    ensure_indexes(this, false).then() ///??
+    await ensure_indexes(collection, false) ///??
+    return collection
   }
 
   async reset(): Promise<void> {

@@ -146,11 +146,10 @@ counter для первичных ключей не обновляется!!!
   - отключает удаление, и обновление записей
 -
 
-!!! сделать адаптер для mem-fs, redis, mongodb, gitfs, firebase, firestore, googlesheet
-
 
 весионность: инкрементировать версию и записывать патч, в файл с историей
 
+готово!
 версионность:
 - добавляем поле версия
 - все изменения патчим и храним отдельным полем... в каждой сущности
@@ -177,4 +176,17 @@ counter для первичных ключей не обновляется!!!
       diff:
     }
   ]
+
+
 }
+
+полнотекстовый поиск
+  https://github.com/lucaong/minisearch
+  https://github.com/fergiemcdowall/search-index
+
+платформа для базы данных
+https://github.com/Level/levelup
+сделать levelup down совместимым
+
+
+!!! сделать адаптер для mem-fs, redis, mongodb, gitfs, firebase, firestore, googlesheet

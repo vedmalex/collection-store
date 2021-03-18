@@ -51,7 +51,7 @@ const collection_config: CollectionConfig<Person> = {
   ],
 }
 const persistence = async () => {
-  const data = new Collection<Person>(collection_config)
+  const data = await Collection.create<Person>(collection_config)
   await data.load()
   console.log(await data.findBy('id', 7))
   const copy = await copy_collection('Person-backup', data)
