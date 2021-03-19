@@ -115,6 +115,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   genCache: Dictionary<IdGeneratorFunction<T>>
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
+
   static async create<T extends Item>(
     config?: CollectionConfig<T>,
   ): Promise<Collection<T>> {

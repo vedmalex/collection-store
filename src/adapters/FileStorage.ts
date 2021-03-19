@@ -73,17 +73,13 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   get forward() {
     return {
-      [Symbol.asyncIterator](): AsyncIterator<T> {
-        return this.toArray()
-      },
+      [Symbol.asyncIterator]: () => this.toArray(),
     }
   }
 
   get backward() {
     return {
-      [Symbol.asyncIterator](): AsyncIterator<T> {
-        return this.toArrayReverse()
-      },
+      [Symbol.asyncIterator]: () => this.toArrayReverse(),
     }
   }
 

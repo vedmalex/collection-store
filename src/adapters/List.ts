@@ -13,7 +13,7 @@ import {
 } from '../interfaces/StorageAdapter'
 
 export class List<T extends Item> implements IList<T> {
-  hash: { [key: string]: T | IStoredRecord<T> } = {}
+  hash: { [key: string]: T } = {}
   _counter: number = 0
   _count: number = 0
   collection: Collection<T>
@@ -151,16 +151,12 @@ export class List<T extends Item> implements IList<T> {
 
   get forward(): AsyncIterable<T> {
     return {
-      [Symbol.asyncIterator]() {
-        return this.toArray()
-      },
+      [Symbol.asyncIterator]: () => this.toArray(),
     }
   }
   get backward(): AsyncIterable<T> {
     return {
-      [Symbol.asyncIterator]() {
-        return this.toArrayReverse()
-      },
+      [Symbol.asyncIterator]: () => this.toArrayReverse(),
     }
   }
 
