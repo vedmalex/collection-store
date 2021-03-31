@@ -132,15 +132,18 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async get(key: K): Promise<T> {
     if (await this.exists) {
-      const location = this.get_path(this.tree.findFirst(key))
-      const result: T | IStoredRecord<T> = await fs.readJSON(location)
-      if (is_stored_record(result)) {
-        if (!this.collection.audit) {
-          await fs.writeJSON(location, result)
+      const value = this.tree.findFirst(key)
+      if (value) {
+        const location = this.get_path(value)
+        const result: T | IStoredRecord<T> = await fs.readJSON(location)
+        if (is_stored_record(result)) {
+          if (!this.collection.audit) {
+            await fs.writeJSON(location, result)
+          }
+          return result.data
+        } else {
+          return result
         }
-        return result.data
-      } else {
-        return result
       }
     } else {
       throw new Error('folder not found')
@@ -223,19 +226,22 @@ export class FileStorage<T extends Item, K extends ValueType>
 
   async delete(key: K): Promise<T> {
     if (await this.exists) {
-      const location = this.get_path(this.tree.findFirst(key))
-      const item = await fs.readJSON(location)
-      let result: T
-      if (is_stored_record<T>(item)) {
-        result = item.data
-        const res = entity_delete(item)
-        await fs.writeJSON(location, res)
-      } else {
-        result = item
-        await fs.unlink(location)
+      const value = this.tree.findFirst(key)
+      if (value) {
+        const location = this.get_path(value)
+        const item = await fs.readJSON(location)
+        let result: T
+        if (is_stored_record<T>(item)) {
+          result = item.data
+          const res = entity_delete(item)
+          await fs.writeJSON(location, res)
+        } else {
+          result = item
+          await fs.unlink(location)
+        }
+        this.tree.remove(key)
+        return result
       }
-      this.tree.remove(key)
-      return result
     } else {
       throw new Error('folder not found')
     }
