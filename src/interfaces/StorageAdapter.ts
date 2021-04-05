@@ -28,6 +28,7 @@ export function is_stored_record<T extends Item>(
   item: T | IStoredRecord<T>,
 ): item is IStoredRecord<T> {
   return (
+    item &&
     item.hasOwnProperty('id') &&
     item.hasOwnProperty('version') &&
     typeof item.version == 'number' &&
