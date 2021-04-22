@@ -1,6 +1,6 @@
 {
   "name": "collection-store",
-  "version": "2.0.0-beta.8",
+  "version": "2.0.0-beta.9",
   "description": "very flexible collection for in-memory operations with flexble indexing",
   "main": "dist/index.js",
   "scripts": {

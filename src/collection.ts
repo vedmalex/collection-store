@@ -460,10 +460,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async update(
     condition: TraverseCondition<T>,
     update: Partial<T>,
+    merge: boolean = true,
   ): Promise<Array<T>> {
     const result: Array<T> = []
     for await (const item of all(this, condition)) {
-      const res = _.merge({}, item, update)
+      const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
       update_index(this, item, res, item[this.id])
       await this.list.update(item[this.id], res)
     }
@@ -473,9 +474,10 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async updateFirst(
     condition: TraverseCondition<T>,
     update: Partial<T>,
+    merge: boolean = true,
   ): Promise<T> {
     const item: T = await (await first(this, condition).next()).value
-    const res = _.merge({}, item, update)
+    const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, item, res, item[this.id])
     await this.list.update(item[this.id], res)
 
@@ -485,18 +487,23 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async updateLast(
     condition: TraverseCondition<T>,
     update: Partial<T>,
+    merge: boolean = true,
   ): Promise<T> {
     const item: T = await (await last(this, condition).next()).value
-    const res = _.merge({}, item, update)
+    const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, item, res, item[this.id])
     await this.list.update(item[this.id], res)
 
     return return_one_if_valid(this, res)
   }
 
-  async updateWithId(id: ValueType, update: Partial<T>): Promise<T> {
+  async updateWithId(
+    id: ValueType,
+    update: Partial<T>,
+    merge: boolean = true,
+  ): Promise<T> {
     const item = await this.findById(id)
-    const res = _.merge({}, item, update)
+    const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, res, update, id)
     this.list.update(id, res)
     return return_one_if_valid(this, res)
