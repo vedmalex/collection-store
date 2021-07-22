@@ -974,10 +974,10 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.0.tgz#a17b3a8ea811060e74d47d306122400ad4497ae2"
   integrity sha512-3YDiu347mtVtjpyV3u5kVqQLP242c06zwDOgpeRnybmXlYYsLbtTrUBUm8i8srONt+FWobl5aibnU1030PeeuA==
 
-b-pl-tree@^1.0.0-rc.4:
-  version "1.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/b-pl-tree/-/b-pl-tree-1.0.0-rc.4.tgz#215d4d1aff0ee7bc11ec0ee54476538ccbf69b8d"
-  integrity sha512-MYS18ARoK+2d/d3q96f0AHVJWCdRFCKpRNbz7y3wCIxwopgmts2QR2Pc493rHI2J1sR8KZpviPGgED16jMdbQw==
+b-pl-tree@^1.0.0-rc.6:
+  version "1.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/b-pl-tree/-/b-pl-tree-1.0.0-rc.6.tgz#39583b7564893074c26b787265996432b587585e"
+  integrity sha512-fxNrwpsLtTwdQrFVsak/ZpkA70qvPj10hFW2ZBEVYyT18XpDCQao6CBpqMhWZoJ1Uo9L5ljmjGRUZ1zum47DGA==
 
 babel-jest@^26.6.3:
   version "26.6.3"
