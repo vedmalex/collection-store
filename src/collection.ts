@@ -34,7 +34,7 @@ export default class Collection<T extends Item> {
   genCache: Dictionary<IdGeneratorFunction<T>>
 
   clone(withData?: boolean) {
-    let collection = new Collection<T>({
+    const collection = new Collection<T>({
       name: this.model,
       adapter: this.storage.clone(),
     })
@@ -136,7 +136,7 @@ export default class Collection<T extends Item> {
       autoTimestamp: autoTimestamp,
     }
 
-    let defIndex: Array<IndexDef<T>> = [
+    const defIndex: Array<IndexDef<T>> = [
       {
         key: this.id,
         auto: this.auto,
@@ -203,7 +203,7 @@ export default class Collection<T extends Item> {
     try {
       const stored = await this.storage.restore(name)
       if (stored) {
-        let { indexes, list, indexDefs, id, ttl } = stored
+        const { indexes, list, indexDefs, id, ttl } = stored
         this.list.load(list)
         this.indexDefs = this.restoreIndex(indexDefs)
         this.id = id
@@ -228,9 +228,9 @@ export default class Collection<T extends Item> {
   ensureTTL() {
     if (this.ttl) {
       // ensure that all object are actuated with time
-      let now = Date.now()
-      for (let i of this.list.keys) {
-        let item = this.list.get(i)
+      const now = Date.now()
+      for (const i of this.list.keys) {
+        const item = this.list.get(i)
         if (now - item.__ttltime >= this.ttl) {
           this.removeWithId(item[this.id])
         }
@@ -241,7 +241,7 @@ export default class Collection<T extends Item> {
 
   doRotate() {
     if (this.list.length > 0) {
-      let collection = this.clone(true)
+      const collection = this.clone(true)
       collection.persist(`${this.model}${new Date().toUTCString()}`)
       this.reset()
       this.persist()
@@ -250,11 +250,11 @@ export default class Collection<T extends Item> {
 
   cleanupIndexes() {
     Object.keys(this.indexDefs).forEach((i) => {
-      let index = this.indexDefs[i]
+      const index = this.indexDefs[i]
       if (!index.unique) {
-        let entries = this.indexes[index.key as string]
+        const entries = this.indexes[index.key as string]
         Object.keys(entries).forEach((key) => {
-          let entry = entries[key]
+          const entry = entries[key]
           if (Array.isArray(entry)) {
             if (entry.length == 0) {
               unset(entries, key)
@@ -299,7 +299,7 @@ export default class Collection<T extends Item> {
   }
 
   storeIndexDef<T>(input: IndexDef<T>): IndexStored<T> {
-    let { key, auto, unique, sparse, required, ignoreCase } = input
+    const { key, auto, unique, sparse, required, ignoreCase } = input
     return {
       key,
       auto,
@@ -321,7 +321,7 @@ export default class Collection<T extends Item> {
   }
 
   restoreIndexDef<T>(input: IndexStored<T>): IndexDef<T> {
-    let {
+    const {
       key,
       type = 'string',
       auto,
@@ -352,7 +352,7 @@ export default class Collection<T extends Item> {
   }
 
   _buildIndex(indexList: Dictionary<IndexDef<T>>) {
-    for (let key in indexList) {
+    for (const key in indexList) {
       let {
         auto = false,
         unique = false,
@@ -390,7 +390,7 @@ export default class Collection<T extends Item> {
         throw new Error(`index with key ${key} already exists`)
       }
 
-      let validate = (value) => {
+      const validate = (value) => {
         if (!(sparse && value == null)) {
           if (required && value == null) {
             throw new Error(
@@ -409,7 +409,7 @@ export default class Collection<T extends Item> {
         }
       }
 
-      let ensureValue = (item: T) => {
+      const ensureValue = (item: T) => {
         let value = get(item, key)
         if (value == null && auto) {
           set(item, key, (value = gen(item, this.model, this.list)))
@@ -420,7 +420,7 @@ export default class Collection<T extends Item> {
         return value
       }
 
-      let getValue = (item) => {
+      const getValue = (item) => {
         let value = get(item, key)
         if (process) {
           value = process(value)
@@ -436,7 +436,7 @@ export default class Collection<T extends Item> {
 
       if (unique) {
         this.inserts.push((item) => {
-          let value = ensureValue(item)
+          const value = ensureValue(item)
           validate(value)
           if (!(sparse && value == null)) {
             return (i) => (this.indexes[key][value] = i)
@@ -444,8 +444,8 @@ export default class Collection<T extends Item> {
         })
 
         this.updates.push((ov, nv, i) => {
-          let valueOld = ensureValue(ov)
-          let valueNew = getValue(nv)
+          const valueOld = ensureValue(ov)
+          const valueNew = getValue(nv)
           if (valueNew != null) {
             validate(valueNew)
             if (valueOld !== valueNew) {
@@ -460,7 +460,7 @@ export default class Collection<T extends Item> {
         })
       } else {
         this.inserts.push((item) => {
-          let value = ensureValue(item)
+          const value = ensureValue(item)
           validate(value)
           if (!(sparse && value == null)) {
             if (!this.indexes[key].hasOwnProperty(value)) {
@@ -471,12 +471,12 @@ export default class Collection<T extends Item> {
         })
 
         this.updates.push((ov, nv, i) => {
-          let valueOld = ensureValue(ov)
-          let valueNew = getValue(nv)
+          const valueOld = ensureValue(ov)
+          const valueNew = getValue(nv)
           if (valueNew != null) {
             validate(valueNew)
             if (valueOld !== valueNew) {
-              let items = this.indexes[key][valueOld] as Array<number>
+              const items = this.indexes[key][valueOld] as Array<number>
               if (items) {
                 items.splice(items.indexOf(i), 1)
                 items.push(i)
@@ -486,7 +486,7 @@ export default class Collection<T extends Item> {
         })
 
         this.removes.push((item, i) => {
-          let items = this.indexes[key][get(item, key)] as Array<number>
+          const items = this.indexes[key][get(item, key)] as Array<number>
           if (items) {
             items.splice(items.indexOf(i), 1)
             if (items.length == 0) {
@@ -503,7 +503,7 @@ export default class Collection<T extends Item> {
   }
 
   prepareIndexInsert(val) {
-    let result = this.inserts.map((item) => item(val))
+    const result = this.inserts.map((item) => item(val))
     return (i) => {
       result.filter((f) => typeof f == 'function').forEach((f) => f(i))
     }
@@ -518,25 +518,25 @@ export default class Collection<T extends Item> {
   }
 
   push(item) {
-    let insert = this.prepareIndexInsert(item)
+    const insert = this.prepareIndexInsert(item)
     this.list.push(item)
     insert(this.list.counter - 1)
   }
 
   _traverse(condition: Partial<T> | ((T) => boolean), action) {
-    let condFunction = condition instanceof Function
+    const condFunction = condition instanceof Function
     const count = condFunction ? 1 : Object.keys(condition).length
 
-    for (let i of this.list.keys) {
+    for (const i of this.list.keys) {
       let mc = 0
-      let current = this.list.get(i)
+      const current = this.list.get(i)
       if (condition instanceof Function) {
-        let comp = condition(current)
+        const comp = condition(current)
         if (comp) {
           mc++
         }
       } else {
-        for (let m in condition) {
+        for (const m in condition) {
           if (condition[m] == current[m]) {
             mc++
           } else {
@@ -545,7 +545,7 @@ export default class Collection<T extends Item> {
         }
       }
       if (mc == count) {
-        let next = action(i, current)
+        const next = action(i, current)
         if (!next) {
           break
         }
@@ -554,13 +554,13 @@ export default class Collection<T extends Item> {
   }
 
   create(item: T): T {
-    let res = { ...item } as T
+    const res = { ...item } as T
     this.push(res)
     return res
   }
 
   findById(id): T {
-    let { process } = this.indexDefs[this.id]
+    const { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
     }
@@ -569,12 +569,12 @@ export default class Collection<T extends Item> {
   }
 
   findBy(key: Paths<T>, id): Array<T> {
-    let { process } = this.indexDefs[key as string]
+    const { process } = this.indexDefs[key as string]
     if (process) {
       id = process(id)
     }
 
-    let result = []
+    const result = []
     if (this.indexDefs.hasOwnProperty(key)) {
       result.push(...this.getIndexedValue(key, id))
     }
@@ -582,9 +582,9 @@ export default class Collection<T extends Item> {
   }
 
   private getIndexedValue(key: Paths<T>, value: any) {
-    let result = []
+    const result = []
     if (this.indexes[key as string]?.hasOwnProperty(value)) {
-      let index = this.indexes[key as string][value]
+      const index = this.indexes[key as string][value]
       if (Array.isArray(index)) {
         ;(this.indexes[key as string][value] as Array<number>).forEach((i) =>
           result.push(this.list.get(i)),
@@ -618,7 +618,7 @@ export default class Collection<T extends Item> {
   isValidTTL(item?: T) {
     if (item) {
       if (item.__ttltime) {
-        let now = Date.now()
+        const now = Date.now()
         return now - item.__ttltime <= this.ttl
       } else {
         return true
@@ -651,7 +651,7 @@ export default class Collection<T extends Item> {
   returnListIfValid(items?: Array<T>) {
     let invalidate = false
 
-    let result = items.filter((i) => {
+    const result = items.filter((i) => {
       if (this.isValidTTL(i)) {
         return true
       } else {
@@ -673,7 +673,7 @@ export default class Collection<T extends Item> {
   update(condition, update: Partial<T>) {
     this._traverse(condition, (i, cur) => {
       this.updateIndex(cur, update, i)
-      for (let u in update) {
+      for (const u in update) {
         cur[u] = update[u]
       }
       return true
@@ -683,21 +683,21 @@ export default class Collection<T extends Item> {
   updateOne(condition, update: Partial<T>) {
     this._traverse(condition, (i, cur) => {
       this.updateIndex(cur, update, i)
-      for (let u in update) {
+      for (const u in update) {
         cur[u] = update[u]
       }
     })
   }
 
   updateWithId(id, update: Partial<T>) {
-    let result = this.findById(id)
+    const result = this.findById(id)
     this.updateIndex(result, update, id)
     _.assign(result, update)
   }
 
   removeWithId(id) {
-    let i = this.indexes[this.id][id] as number | string
-    let cur = this.list.get(i)
+    const i = this.indexes[this.id][id] as number | string
+    const cur = this.list.get(i)
     if (~i && cur) {
       this.removeIndex(cur, i)
       this.list.remove(i)
