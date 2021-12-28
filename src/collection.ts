@@ -33,6 +33,7 @@ import { get_first_indexed_value } from './collection/get_first_indexed_value'
 import { get_last_indexed_value } from './collection/get_last_indexed_value'
 import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
+import { rebuild_indexes } from './collection/rebuild_indexes'
 
 export const ttl_key = '__ttltime'
 
@@ -108,7 +109,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   /** actions in remove */
   removes: Array<(item: T) => void>
   /** actions in ensure */
-  ensures: Array<(rebuild: boolean) => Promise<void>>
+  ensures: Array<() => void>
+  rebuilds: Array<() => Promise<void>>
   /** index definition */
   indexDefs: Dictionary<IndexDef<T>>
   /** unique generators */
@@ -207,6 +209,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     collection.removes = []
     collection.updates = []
     collection.ensures = []
+    collection.rebuilds = []
 
     collection.genCache = {
       autoIncIdGen: autoIncIdGen,
@@ -252,34 +255,46 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       })
     }
 
-    build_index(
+    await build_index(
       collection,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
-        prev[curr.key as string] = {
-          key: curr.key,
-          auto: curr.auto || false,
-          unique: curr.unique || false,
-          gen:
-            curr.gen ||
-            (curr.auto ? collection.genCache['autoIncIdGen'] : undefined),
-          sparse: curr.sparse || false,
-          required: curr.required || false,
-          ignoreCase: curr.ignoreCase,
-          process: curr.process,
+        if (curr.key == '*') {
+          prev[curr.key as string] = {
+            key: '*',
+            auto: false,
+            unique: false,
+            gen: undefined,
+            sparse: false,
+            required: false,
+            ignoreCase: true,
+          }
+        } else {
+          prev[curr.key as string] = {
+            key: curr.key,
+            auto: curr.auto || false,
+            unique: curr.unique || false,
+            gen:
+              curr.gen ||
+              (curr.auto ? collection.genCache['autoIncIdGen'] : undefined),
+            sparse: curr.sparse || false,
+            required: curr.required || false,
+            ignoreCase: curr.ignoreCase,
+            process: curr.process,
+          }
         }
         return prev
       }, {} as Dictionary<IndexDef<T>>),
     )
     collection.list.init(collection)
     // придумать загрузку
-    await ensure_indexes(collection, false) ///??
+    ensure_indexes(collection) ///??
     return collection
   }
 
   async reset(): Promise<void> {
     await this.list.reset()
     this.indexes = {}
-    await ensure_indexes(this, false)
+    ensure_indexes(this)
   }
 
   async load(name?: string): Promise<void> {
@@ -301,7 +316,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         build_index(this, this.indexDefs)
 
         this.indexes = deserialize_indexes(indexes)
-        await ensure_indexes(this, true)
+        await rebuild_indexes(this)
       }
     } catch (e) {
       // throw e

@@ -10,7 +10,12 @@ export function prepare_index_insert<T extends Item>(
   collection: Collection<T>,
   val: T,
 ) {
-  const result = collection.inserts.map((item) => item(val))
+  const result = []
+  // for is used to provide dynamic indexes add on create
+  for (let i = 0; i < collection.inserts?.length; i += 1) {
+    result.push(collection.inserts[i](val))
+  }
+
   return (i) => {
     result.forEach((f) => f?.(i))
   }

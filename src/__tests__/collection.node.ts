@@ -1,6 +1,6 @@
 import 'jest'
 import { Item } from '../Item'
-import { List } from '../List'
+import { List } from '../adapters/List'
 import AdapterFs from '../adapter-fs'
 import Collection from '../collection'
 
@@ -334,7 +334,7 @@ const loadCoolectionIndexes = async <T extends Item>(
   name,
 ): Promise<Collection<T>> => {
   const fn = fileName(name)
-  const c1 = new Collection({
+  const c1 = await Collection.create({
     name: 'items',
     id: '_id',
     indexList: [
@@ -356,58 +356,63 @@ const loadCoolectionIndexes = async <T extends Item>(
       },
       { key: 'middleName', ignoreCase: true },
     ],
+    list: new List(),
     adapter: new AdapterFs(fn),
   })
-  c1.create({
+  await c1.create({
     name: 'Some',
     age: 12,
     pass: 1,
     address: { state: 'NY' },
     middleName: 'Jay',
   })
-  c1.create({
+  await c1.create({
     name: 'Another',
     age: 13,
     pass: 2,
     address: { state: 'NJ' },
     middleName: 'Nathan',
   })
-  c1.create({
+  await c1.create({
     name: 'Another',
     age: 12,
     pass: 3,
     address: { state: 'WA' },
     middleName: 'NATHAN',
   })
-  c1.create({
+  await c1.create({
     name: 'SomeOneElse',
     age: 11,
     pass: 4,
     address: { state: 'DE' },
     middleName: 'NaThan',
   })
-  c1.create({
+  await c1.create({
     name: 'SomeOneElse',
     age: 14,
     pass: 5,
     address: { state: 'WI' },
     middleName: 'nathaN',
   })
-  c1.create({
+  await c1.create({
     name: 'Anybody',
     age: 13,
     address: { state: 'CA' },
     middleName: 'Joe',
   })
-  c1.create({ name: 'Anybody', pass: 6 })
-  c1.create({
+  await c1.create({ name: 'Anybody', pass: 6 })
+  await c1.create({
     name: 'Anybody',
     age: 12,
     address: { state: 'NY' },
     middleName: 'Jim',
   })
   await c1.persist()
-  return new Collection({ name, adapter: new AdapterFs(fn) })
+  return Collection.create({
+    name,
+    adapter: new AdapterFs(fn),
+    list: new List(),
+  })
 }
 
 describe('collection indexes', () => {
@@ -486,7 +491,7 @@ describe('collection indexes', () => {
 
     await c1.persist()
 
-    c1.create({ DeviceId: '1112221', Username: 'testuser01' })
+    await c1.create({ DeviceId: '1112221', Username: 'testuser01' })
 
     expect(Object.keys(c1.indexes.id).length).toBe(2)
     expect(c1.indexes.id[0]).toBe(0)
@@ -533,6 +538,18 @@ describe('collection indexes', () => {
     const new_item = c1.findBy('DeviceId', '111222')
     expect(new_item.length).toBe(1)
     expect(new_item[0].id).toBe(2)
+  })
+
+  it('indexAll', async () => {
+    const c1 = await Collection.create({
+      name: 'collectionTest',
+      indexList: [{ key: '*' }],
+      adapter: new AdapterFs(fileName('device-start')),
+      list: new List(),
+    })
+    await c1.create({ name: 'Some', age: 12, pass: 1 })
+    expect(c1.indexes.name.size).toBe(1)
+    await c1.persist()
   })
 })
 
