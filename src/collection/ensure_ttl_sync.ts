@@ -1,11 +1,10 @@
 import { Item } from '../Item'
 import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
-import Collection, { ttl_key } from '../collection'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory, { ttl_key } from '../collection-memory'
 
-export async function ensure_ttl<T extends Item>(
-  collection: Collection<T> | CollectionMemory<T>,
-) {
+export function ensure_ttl_sync<T extends Item>(
+  collection: CollectionMemory<T>,
+): void {
   if (collection.ttl) {
     // collection.indexes
     // ensure that all object are actuated with time
@@ -17,8 +16,8 @@ export async function ensure_ttl<T extends Item>(
     const source = [...ttl_index]
     for (const i of source) {
       // здесь проблема в том, что данные извлекаются по очереди
-      await collection.removeWithId(i.value)
+      collection.removeWithId(i.value)
     }
-    await collection.persist()
+    collection.persist()
   }
 }

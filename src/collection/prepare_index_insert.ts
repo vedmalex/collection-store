@@ -1,5 +1,6 @@
 import { Item } from '../Item'
 import Collection from '../collection'
+import CollectionMemory from '../collection-memory'
 
 /**
  * ensures values for indexing and return final index insert routines
@@ -7,7 +8,7 @@ import Collection from '../collection'
  * @param val inserting value
  */
 export function prepare_index_insert<T extends Item>(
-  collection: Collection<T>,
+  collection: Collection<T> | CollectionMemory<T>,
   val: T,
 ) {
   const result = []

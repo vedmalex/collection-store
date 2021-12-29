@@ -4,9 +4,10 @@ import { Item } from '../Item'
 import { Dictionary } from '../hash'
 import { store_index_def } from './store_index_def'
 import Collection from '../collection'
+import CollectionMemory from '../collection-memory'
 
 export function store_index<T extends Item>(
-  collection: Collection<T>,
+  collection: Collection<T> | CollectionMemory<T>,
   input: Dictionary<IndexDef<T>>,
 ): Dictionary<IndexStored<T>> {
   return _.map(input, (index) => {

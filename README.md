@@ -39,6 +39,9 @@ features:
 [] сложные индексы(более двух полей)
 [] fuzzy поиск по коллекциям
 
+[x] index all fields
+[x] default adapter and list for Collection
+
 [] интегрировать с google spreadsheet
 
 сделать сервер для работы с библиотекой в смысле сдлать программу сервер

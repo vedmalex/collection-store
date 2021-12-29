@@ -1,9 +1,10 @@
 import { Item } from '../Item'
 import { ValueType } from 'b-pl-tree'
 import Collection from '../collection'
+import CollectionMemory from '../collection-memory'
 
 export function validate_indexed_value_for_insert<T extends Item>(
-  collection: Collection<T>,
+  collection: Collection<T> | CollectionMemory<T>,
   value: ValueType,
   key: string,
   sparse: boolean,

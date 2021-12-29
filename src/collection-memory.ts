@@ -3,89 +3,94 @@ import tp from 'timeparse'
 import _ from 'lodash'
 import { autoIncIdGen } from './autoIncIdGen'
 import { autoTimestamp } from './autoTimestamp'
-import { StorageAdapter } from './interfaces/StorageAdapter'
-import { IList } from './interfaces/IList'
+import { StorageAdapterSync } from './interfaces/StorageAdapter'
+import { IListSync } from './interfaces/IList'
 import { IndexDef, IndexStored, Paths } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
-import { CollectionConfig } from './CollectionConfig'
+import { CollectionConfigSync } from './CollectionConfigSync'
 import { CronJob } from 'cron'
 import { Dictionary } from './hash'
 import { BPlusTree, ValueType } from 'b-pl-tree'
-import { all, first, last, TraverseCondition } from './collection/traverse'
+import {
+  TraverseCondition,
+  last_sync,
+  first_sync,
+  all_sync,
+} from './collection/traverse'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
-import { ensure_ttl } from './collection/ensure_ttl'
+import { ensure_ttl_sync } from './collection/ensure_ttl_sync'
 import { remove_index } from './collection/remove_index'
-import { build_index } from './collection/build_index'
+import { build_index_sync } from './collection/build_index_sync'
 import { ensure_indexes } from './collection/ensure_indexes'
-import { get_indexed_value } from './collection/get_indexed_value'
-import { return_list_if_valid } from './collection/return_list_if_valid'
-import { return_one_if_valid } from './collection/return_one_if_valid'
+import { get_indexed_value_sync } from './collection/get_indexed_value_sync'
+import { return_list_if_valid_sync } from './collection/return_list_if_valid_sync'
+import { return_one_if_valid_sync } from './collection/return_one_if_valid_sync'
 import { restore_index } from './collection/restore_index'
 import { deserialize_indexes } from './collection/deserialize_indexes'
 import { serialize_indexes } from './collection/serialize_indexes'
 import { store_index } from './collection/store_index'
-import { do_rotate_log } from './collection/do_rotate_log'
+import { do_rotate_log_sync } from './collection/do_rotate_log_sync'
 import { StoredIList } from './adapters/StoredIList'
-import { get_first_indexed_value } from './collection/get_first_indexed_value'
-import { get_last_indexed_value } from './collection/get_last_indexed_value'
+import { get_first_indexed_value_sync } from './collection/get_first_indexed_value_sync'
+import { get_last_indexed_value_sync } from './collection/get_last_indexed_value_sync'
 import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
-import { rebuild_indexes } from './collection/rebuild_indexes'
-import { List } from './adapters/List'
-import AdapterMemory from './adapter-memory'
+import { rebuild_indexes_sync } from './collection/rebuild_indexes_sync'
+import { SyncList } from './adapters/SyncList'
+import AdapterMemorySync from './adapter-memory-sync'
 
 export const ttl_key = '__ttltime'
 
-export interface IDataCollection<T extends Item> {
-  reset(): Promise<void>
-  load(name?: string): Promise<void>
-  persist(name?: string): Promise<void>
+export interface IDataCollectionSync<T extends Item> {
+  reset(): void
+  load(name?: string): void
+  persist(name?: string): void
 
-  push(item: T): Promise<T>
-  create(item: T): Promise<T>
-  save(update: T): Promise<T>
+  push(item: T): T
+  create(item: T): T
+  save(update: T): T
 
-  first(): Promise<T>
-  last(): Promise<T>
+  first(): T
+  last(): T
 
-  oldest(): Promise<T>
-  latest(): Promise<T>
+  oldest(): T
+  latest(): T
 
-  lowest(key: Paths<T>): Promise<T>
-  greatest(key: Paths<T>): Promise<T>
+  lowest(key: Paths<T>): T
+  greatest(key: Paths<T>): T
 
-  find(condition: TraverseCondition<T>): Promise<Array<T>>
+  find(condition: TraverseCondition<T>): Array<T>
 
-  findFirst(condition: TraverseCondition<T>): Promise<T>
-  findLast(condition: TraverseCondition<T>): Promise<T>
+  findFirst(condition: TraverseCondition<T>): T
+  findLast(condition: TraverseCondition<T>): T
 
-  findBy(key: Paths<T>, id: ValueType): Promise<Array<T>>
-  findFirstBy(key: Paths<T>, id: ValueType): Promise<T>
-  findLastBy(key: Paths<T>, id: ValueType): Promise<T>
+  findBy(key: Paths<T>, id: ValueType): Array<T>
+  findFirstBy(key: Paths<T>, id: ValueType): T
+  findLastBy(key: Paths<T>, id: ValueType): T
 
-  findById(id: ValueType): Promise<T>
+  findById(id: ValueType): T
 
-  update(condition: TraverseCondition<T>, update: Partial<T>): Promise<Array<T>>
-  updateFirst(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
-  updateLast(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
+  update(condition: TraverseCondition<T>, update: Partial<T>): Array<T>
+  updateFirst(condition: TraverseCondition<T>, update: Partial<T>): T
+  updateLast(condition: TraverseCondition<T>, update: Partial<T>): T
 
-  updateWithId(id: ValueType, update: Partial<T>): Promise<T>
-  removeWithId(id: ValueType): Promise<T>
+  updateWithId(id: ValueType, update: Partial<T>): T
+  removeWithId(id: ValueType): T
 
-  remove(condition: TraverseCondition<T>): Promise<Array<T>>
-  removeFirst(condition: TraverseCondition<T>): Promise<T>
-  removeLast(condition: TraverseCondition<T>): Promise<T>
+  remove(condition: TraverseCondition<T>): Array<T>
+  removeFirst(condition: TraverseCondition<T>): T
+  removeLast(condition: TraverseCondition<T>): T
 }
 
-export default class Collection<T extends Item> implements IDataCollection<T> {
+export default class CollectionMemory<T extends Item>
+  implements IDataCollectionSync<T> {
   path?: string
   cronJob?: CronJob
   onRotate: () => void
-
-  storage: StorageAdapter<T>
+  storage: StorageAdapterSync<T>
   /** ttl for collection in ms */
   ttl: number
   /** cron tab time */
@@ -104,7 +109,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   /**indexes */
   indexes: { [index: string]: BPlusTree<any, any> }
   /** main storage */
-  list: IList<T>
+  list: IListSync<T>
   /** actions in insert */
   inserts: Array<(item: T) => (index_payload: ValueType) => void>
   /** actions in update */
@@ -113,7 +118,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   removes: Array<(item: T) => void>
   /** actions in ensure */
   ensures: Array<() => void>
-  rebuilds: Array<() => Promise<void>>
+  rebuilds: Array<() => void>
   /** index definition */
   indexDefs: Dictionary<IndexDef<T>>
   /** unique generators */
@@ -121,10 +126,10 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
-  static async create<T extends Item>(
-    config?: CollectionConfig<T>,
-  ): Promise<Collection<T>> {
-    const collection: Collection<T> = new Collection<T>()
+  static create<T extends Item>(
+    config?: CollectionConfigSync<T>,
+  ): CollectionMemory<T> {
+    const collection: CollectionMemory<T> = new CollectionMemory<T>()
     const {
       ttl,
       rotate,
@@ -136,9 +141,9 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       },
       auto = true,
       indexList,
-      list = new List<T>() as IList<T>,
+      list = new SyncList<T>() as IListSync<T>,
       path,
-      adapter = new AdapterMemory<T>(),
+      adapter = new AdapterMemorySync<T>(),
       validation,
       audit,
       onRotate,
@@ -163,7 +168,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     if (rotate) {
       collection.onRotate = onRotate
       collection.cronJob = new CronJob(rotate, () => {
-        do_rotate_log(collection)
+        do_rotate_log_sync(collection)
         if (typeof collection.onRotate === 'function') {
           collection.onRotate()
         }
@@ -258,7 +263,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       })
     }
 
-    await build_index(
+    build_index_sync(
       collection,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
         if (curr.key == '*') {
@@ -294,15 +299,22 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return collection
   }
 
-  static async fromList<T extends Item>(array: Array<T>, id: string) {
-    const list = await Collection.create({
+  static fromList<T extends Item>(
+    array: Array<T>,
+    id: string,
+    process?: (value) => any,
+  ): CollectionMemory<T> {
+    const list = CollectionMemory.create({
       name: 'default',
-      indexList: [{ key: '*' }, { key: id, unique: true, required: true }],
+      indexList: [
+        { key: '*' },
+        { key: id, unique: true, required: true, process },
+      ],
       id: { name: '$order', auto: true },
-      list: new List<T>(),
-      adapter: new AdapterMemory<T>(),
+      list: new SyncList<T>(),
+      adapter: new AdapterMemorySync<T>(),
     })
-    await Promise.all(array.map((item) => list.create(item)))
+    array.forEach((item) => list.create(item))
     return list
   }
 
@@ -328,15 +340,15 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         this.ensures = []
 
         this.indexes = {}
-        build_index(this, this.indexDefs)
+        build_index_sync(this, this.indexDefs)
 
         this.indexes = deserialize_indexes(indexes)
-        await rebuild_indexes(this)
+        rebuild_indexes_sync(this)
       }
     } catch (e) {
       // throw e
     }
-    await ensure_ttl(this)
+    ensure_ttl_sync(this)
   }
 
   store(): {
@@ -355,72 +367,72 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
   }
 
-  async persist(name?: string): Promise<void> {
-    await this.storage.store(name)
+  persist(name?: string): void {
+    this.storage.store(name)
   }
 
-  async push(item: T): Promise<T> {
+  push(item: T): T {
     // apply default once it is created
     const insert_indexed_values = prepare_index_insert(this, item)
     const id = item[this.id]
-    const res = await this.list.set(id, item)
+    const res = this.list.set(id, item)
     insert_indexed_values(id)
-    return return_one_if_valid(this, res)
+    return return_one_if_valid_sync(this, res)
   }
 
-  async create(item: T): Promise<T> {
+  create(item: T): T {
     const res = { ...item } as T
 
-    const value = await this.push(res)
+    const value = this.push(res)
     return value
   }
 
-  async save(res: T): Promise<T> {
+  save(res: T): T {
     const id = res[this.id]
-    const item = await this.findById(id)
+    const item = this.findById(id)
     update_index(this, item, res, id)
-    await this.list.update(id, res)
-    return return_one_if_valid(this, res)
+    this.list.update(id, res)
+    return return_one_if_valid_sync(this, res)
   }
 
-  async first(): Promise<T> {
-    return (await first(this, () => true).next()).value
+  first(): T {
+    return first_sync(this, () => true).next().value
   }
 
-  async last(): Promise<T> {
-    return (await last(this, () => true).next()).value
+  last(): T {
+    return last_sync(this, () => true).next().value
   }
 
-  lowest(key: Paths<T>): Promise<T> {
+  lowest(key: Paths<T>): T {
     return this.findFirstBy(key, this.indexes[key].min)
   }
 
-  greatest(key: Paths<T>): Promise<T> {
+  greatest(key: Paths<T>): T {
     return this.findLastBy(key, this.indexes[key].max)
   }
 
-  oldest(): Promise<T> {
+  oldest(): T {
     if (this.ttl) {
       return this.lowest(ttl_key as any)
     } else return this.first()
   }
 
-  latest(): Promise<T> {
+  latest(): T {
     if (this.ttl) {
       return this.greatest(ttl_key as any)
     } else return this.last()
   }
 
-  async findById(id: ValueType): Promise<T> {
+  findById(id: ValueType): T {
     const { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
     }
-    const result = await this.list.get(this.indexes[this.id].findFirst(id))
-    return return_one_if_valid(this, result)
+    const result = this.list.get(this.indexes[this.id].findFirst(id))
+    return return_one_if_valid_sync(this, result)
   }
 
-  async findBy(key: Paths<T>, id: ValueType): Promise<Array<T>> {
+  findBy(key: Paths<T>, id: ValueType): Array<T> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const { process } = this.indexDefs[key as string]
       if (process) {
@@ -429,15 +441,15 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
       const result = []
       if (this.indexDefs.hasOwnProperty(key)) {
-        result.push(...(await get_indexed_value(this, key, id)))
+        result.push(...get_indexed_value_sync(this, key, id))
       }
-      return return_list_if_valid(this, result)
+      return return_list_if_valid_sync(this, result)
     } else {
       throw new Error(`Index for ${key} not found`)
     }
   }
 
-  async findFirstBy(key: Paths<T>, id: ValueType): Promise<T> {
+  findFirstBy(key: Paths<T>, id: ValueType): T {
     if (this.indexDefs.hasOwnProperty(key)) {
       const { process } = this.indexDefs[key as string]
       if (process) {
@@ -445,15 +457,15 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       }
 
       if (this.indexDefs.hasOwnProperty(key)) {
-        const result = await get_first_indexed_value(this, key, id)
-        return return_one_if_valid(this, result)
+        const result = get_first_indexed_value_sync(this, key, id)
+        return return_one_if_valid_sync(this, result)
       }
     } else {
       throw new Error(`Index for ${key} not found`)
     }
   }
 
-  async findLastBy(key: Paths<T>, id: ValueType): Promise<T> {
+  findLastBy(key: Paths<T>, id: ValueType): T {
     if (this.indexDefs.hasOwnProperty(key)) {
       const { process } = this.indexDefs[key as string]
       if (process) {
@@ -461,115 +473,111 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       }
 
       if (this.indexDefs.hasOwnProperty(key)) {
-        const result = await get_last_indexed_value(this, key, id)
-        return return_one_if_valid(this, result)
+        const result = get_last_indexed_value_sync(this, key, id)
+        return return_one_if_valid_sync(this, result)
       }
     } else {
       throw new Error(`Index for ${key} not found`)
     }
   }
 
-  async find(condition: TraverseCondition<T>): Promise<Array<T>> {
+  find(condition: TraverseCondition<T>): Array<T> {
     const result: Array<T> = []
-    for await (const item of all(this, condition)) {
+    for (const item of all_sync(this, condition)) {
       result.push(item)
     }
-    return return_list_if_valid(this, result)
+    return return_list_if_valid_sync(this, result)
   }
 
-  async findFirst(condition: TraverseCondition<T>): Promise<T> {
-    const result: T = await (await first(this, condition).next()).value
-    return return_one_if_valid(this, result)
+  findFirst(condition: TraverseCondition<T>): T {
+    const result: T = first_sync(this, condition).next().value
+    return return_one_if_valid_sync(this, result)
   }
 
-  async findLast(condition: TraverseCondition<T>): Promise<T> {
-    const result: T = await (await last(this, condition).next()).value
-    return return_one_if_valid(this, result)
+  findLast(condition: TraverseCondition<T>): T {
+    const result: T = last_sync(this, condition).next().value
+    return return_one_if_valid_sync(this, result)
   }
 
-  async update(
+  update(
     condition: TraverseCondition<T>,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<Array<T>> {
+  ): Array<T> {
     const result: Array<T> = []
-    for await (const item of all(this, condition)) {
+    for (const item of all_sync(this, condition)) {
       const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
       update_index(this, item, res, item[this.id])
-      await this.list.update(item[this.id], res)
+      this.list.update(item[this.id], res)
     }
-    return return_list_if_valid<T>(this, result)
+    return return_list_if_valid_sync<T>(this, result)
   }
 
-  async updateFirst(
+  updateFirst(
     condition: TraverseCondition<T>,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<T> {
-    const item: T = await (await first(this, condition).next()).value
+  ): T {
+    const item: T = first_sync(this, condition).next().value
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, item, res, item[this.id])
-    await this.list.update(item[this.id], res)
+    this.list.update(item[this.id], res)
 
-    return return_one_if_valid(this, res)
+    return return_one_if_valid_sync(this, res)
   }
 
-  async updateLast(
+  updateLast(
     condition: TraverseCondition<T>,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<T> {
-    const item: T = await (await last(this, condition).next()).value
+  ): T {
+    const item: T = last_sync(this, condition).next().value
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, item, res, item[this.id])
-    await this.list.update(item[this.id], res)
+    this.list.update(item[this.id], res)
 
-    return return_one_if_valid(this, res)
+    return return_one_if_valid_sync(this, res)
   }
 
-  async updateWithId(
-    id: ValueType,
-    update: Partial<T>,
-    merge: boolean = true,
-  ): Promise<T> {
-    const item = await this.findById(id)
+  updateWithId(id: ValueType, update: Partial<T>, merge: boolean = true): T {
+    const item = this.findById(id)
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
     update_index(this, res, update, id)
     this.list.update(id, res)
-    return return_one_if_valid(this, res)
+    return return_one_if_valid_sync(this, res)
   }
 
-  async removeWithId(id: ValueType): Promise<T> {
+  removeWithId(id: ValueType): T {
     // не совсем работает удаление
     const i = this.indexes[this.id].findFirst(id)
-    const cur = await this.list.get(i)
+    const cur = this.list.get(i)
     if (~i && cur) {
       remove_index(this, cur)
-      const result = await this.list.delete(i)
-      return return_one_if_valid(this, result)
+      const result = this.list.delete(i)
+      return return_one_if_valid_sync(this, result)
     }
   }
 
-  async remove(condition: TraverseCondition<T>): Promise<Array<T>> {
+  remove(condition: TraverseCondition<T>): Array<T> {
     const result: Array<T> = []
-    for await (const cur of all(this, condition)) {
+    for (const cur of all_sync(this, condition)) {
       remove_index(this, cur)
-      const res = await this.list.delete(cur[this.id])
+      const res = this.list.delete(cur[this.id])
       result.push(res)
     }
-    return return_list_if_valid(this, result)
+    return return_list_if_valid_sync(this, result)
   }
 
-  async removeFirst(condition: TraverseCondition<T>): Promise<T> {
-    const item: T = await (await first(this, condition).next()).value
+  removeFirst(condition: TraverseCondition<T>): T {
+    const item: T = first_sync(this, condition).next().value
     remove_index(this, item)
-    await this.list.delete(item[this.id])
-    return return_one_if_valid(this, item)
+    this.list.delete(item[this.id])
+    return return_one_if_valid_sync(this, item)
   }
-  async removeLast(condition: TraverseCondition<T>): Promise<T> {
-    const item: T = await (await last(this, condition).next()).value
+  removeLast(condition: TraverseCondition<T>): T {
+    const item: T = last_sync(this, condition).next().value
     remove_index(this, item)
-    await this.list.delete(item[this.id])
-    return return_one_if_valid(this, item)
+    this.list.delete(item[this.id])
+    return return_one_if_valid_sync(this, item)
   }
 }

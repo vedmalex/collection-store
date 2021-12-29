@@ -1,4 +1,5 @@
 import Collection from '../collection'
+import CollectionMemory from '../collection-memory'
 import { StoredData } from '../adapters/StoredData'
 import { Item } from '../Item'
 import { BPlusTree, ValueType, PortableBPlusTree } from 'b-pl-tree'
@@ -10,6 +11,13 @@ export interface StorageAdapter<T extends Item> {
   store(name?: string): Promise<void>
   init(collection: Collection<T>): StorageAdapter<T>
   clone(): StorageAdapter<T>
+}
+
+export interface StorageAdapterSync<T extends Item> {
+  restore(name?: string): StoredData<T>
+  store(name?: string): void
+  init(collection: CollectionMemory<T>): StorageAdapterSync<T>
+  clone(): StorageAdapterSync<T>
 }
 
 export interface IStoredRecord<T extends Item> {
