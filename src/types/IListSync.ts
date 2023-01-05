@@ -1,6 +1,6 @@
 import { ValueType } from 'b-pl-tree'
 import { StoredIList } from '../storage/StoredIList'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../sync/collection-memory'
 import { Item } from './Item'
 
 export interface IListSync<T extends Item> {

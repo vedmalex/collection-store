@@ -1,4 +1,4 @@
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../sync/collection-memory'
 import { StoredData } from '../storage/StoredData'
 import { Item } from './Item'
 

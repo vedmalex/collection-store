@@ -1,4 +1,4 @@
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../sync/collection-memory'
 import { Item } from './Item'
 import { StorageAdapterSync } from './StorageAdapterSync'
 

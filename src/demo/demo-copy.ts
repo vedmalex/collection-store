@@ -1,7 +1,7 @@
 import Collection from '../collection'
 import { FileStorage } from '../storage/FileStorage'
 import { CollectionConfig } from '../types/CollectionConfig'
-import { copy_collection } from '../collection/copy_collection'
+import { copy_collection } from '../collection/async/copy_collection'
 import AdapterFile from '../adapter-file'
 
 type Person = {
