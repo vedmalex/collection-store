@@ -1,5 +1,6 @@
-import { IndexDef, IndexStored } from '../IndexDef'
-import { Item } from '../Item'
+import { IndexDef } from '../types/IndexDef'
+import { IndexStored } from 'src/types/IndexStored'
+import { Item } from '../types/Item'
 import Collection from '../collection'
 import CollectionMemory from 'src/collection-memory'
 

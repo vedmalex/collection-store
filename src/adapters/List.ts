@@ -1,16 +1,15 @@
 import { ValueType } from 'b-pl-tree'
 import { get, set, unset, cloneDeep } from 'lodash'
 import { StoredIList } from './StoredIList'
-import { Item } from '../Item'
-import { IList } from '../interfaces/IList'
+import { Item } from '../types/Item'
+import { IList } from '../types/IList'
 import Collection from '../collection'
 import { diff } from 'jsondiffpatch'
-import { entity_create, entity_update } from '../interfaces/StorageAdapter'
-import {
-  IStoredRecord,
-  is_stored_record,
-  entity_delete,
-} from '../interfaces/StorageAdapter'
+import { entity_create } from 'src/utils/entity_create'
+import { entity_update } from 'src/utils/entity_update'
+import { entity_delete } from 'src/utils/entity_delete'
+import { is_stored_record } from 'src/utils/is_stored_record'
+import { IStoredRecord } from 'src/types/IStoredRecord'
 
 export class List<T extends Item> implements IList<T> {
   hash: { [key: string]: T } = {}

@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import { ensure_ttl } from './ensure_ttl'
 import Collection from '../collection'
 import { is_valid_ttl } from './is_valid_ttl'

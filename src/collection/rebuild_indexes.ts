@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import Collection from '../collection'
 
 export async function rebuild_indexes<T extends Item>(

@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import { build_index } from './build_index'
 import { ensure_indexes } from './ensure_indexes'
 import CollectionMemory from '../collection-memory'

@@ -1,6 +1,6 @@
 import Collection from '../collection'
 import { FileStorage } from '../adapters/FileStorage'
-import { CollectionConfig } from '../CollectionConfig'
+import { CollectionConfig } from '../types/CollectionConfig'
 import { do_rotate_log } from '../collection/do_rotate_log'
 import AdapterFile from '../adapter-file'
 

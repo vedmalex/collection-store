@@ -1,9 +1,9 @@
 import Collection from './collection'
-import { CollectionConfig } from './CollectionConfig'
-import { Item } from './Item'
+import { CollectionConfig } from './types/CollectionConfig'
+import { Item } from './types/Item'
 import fs from 'fs-extra'
 import pathLib from 'path'
-import { StorageAdapter } from './interfaces/StorageAdapter'
+import { StorageAdapter } from './types/StorageAdapter'
 import decamelize from 'decamelize'
 
 export default class AdapterFS<T extends Item> implements StorageAdapter<T> {

@@ -1,19 +1,24 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse'
 import _ from 'lodash'
-import { autoIncIdGen } from './autoIncIdGen'
-import { autoTimestamp } from './autoTimestamp'
-import { StorageAdapter } from './interfaces/StorageAdapter'
-import { IList } from './interfaces/IList'
-import { IndexDef, IndexStored, Paths } from './IndexDef'
-import { Item } from './Item'
-import { IdGeneratorFunction } from './IdGeneratorFunction'
-import { IdType } from './IdType'
-import { CollectionConfig } from './CollectionConfig'
+import { autoIncIdGen } from './utils/autoIncIdGen'
+import { autoTimestamp } from './utils/autoTimestamp'
+import { StorageAdapter } from './types/StorageAdapter'
+import { IList } from './types/IList'
+import { IndexDef } from './types/IndexDef'
+import { IndexStored } from './types/IndexStored'
+import { Paths } from './types/Paths'
+import { Item } from './types/Item'
+import { IdGeneratorFunction } from './types/IdGeneratorFunction'
+import { IdType } from './types/IdType'
+import { CollectionConfig } from './types/CollectionConfig'
 import { CronJob } from 'cron'
-import { Dictionary } from './hash'
+import { Dictionary } from './types/Dictionary'
 import { BPlusTree, ValueType } from 'b-pl-tree'
-import { all, first, last, TraverseCondition } from './collection/traverse'
+import { last } from './iterators/last'
+import { first } from './iterators/first'
+import { all } from './iterators/all'
+import { TraverseCondition } from './iterators/TraverseCondition'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
 import { ensure_ttl } from './collection/ensure_ttl'
@@ -35,50 +40,10 @@ import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { rebuild_indexes } from './collection/rebuild_indexes'
 import { List } from './adapters/List'
-import AdapterMemory from './adapter-memory'
+import AdapterMemory from './types/AdapterMemory'
+import { IDataCollection } from './types/IDataCollection'
 
 export const ttl_key = '__ttltime'
-
-export interface IDataCollection<T extends Item> {
-  reset(): Promise<void>
-  load(name?: string): Promise<void>
-  persist(name?: string): Promise<void>
-
-  push(item: T): Promise<T>
-  create(item: T): Promise<T>
-  save(update: T): Promise<T>
-
-  first(): Promise<T>
-  last(): Promise<T>
-
-  oldest(): Promise<T>
-  latest(): Promise<T>
-
-  lowest(key: Paths<T>): Promise<T>
-  greatest(key: Paths<T>): Promise<T>
-
-  find(condition: TraverseCondition<T>): Promise<Array<T>>
-
-  findFirst(condition: TraverseCondition<T>): Promise<T>
-  findLast(condition: TraverseCondition<T>): Promise<T>
-
-  findBy(key: Paths<T>, id: ValueType): Promise<Array<T>>
-  findFirstBy(key: Paths<T>, id: ValueType): Promise<T>
-  findLastBy(key: Paths<T>, id: ValueType): Promise<T>
-
-  findById(id: ValueType): Promise<T>
-
-  update(condition: TraverseCondition<T>, update: Partial<T>): Promise<Array<T>>
-  updateFirst(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
-  updateLast(condition: TraverseCondition<T>, update: Partial<T>): Promise<T>
-
-  updateWithId(id: ValueType, update: Partial<T>): Promise<T>
-  removeWithId(id: ValueType): Promise<T>
-
-  remove(condition: TraverseCondition<T>): Promise<Array<T>>
-  removeFirst(condition: TraverseCondition<T>): Promise<T>
-  removeLast(condition: TraverseCondition<T>): Promise<T>
-}
 
 export default class Collection<T extends Item> implements IDataCollection<T> {
   path?: string

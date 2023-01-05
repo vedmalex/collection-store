@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import CollectionMemory from '../collection-memory'
 import { copy_collection_sync } from './copy_collection_sync'
 

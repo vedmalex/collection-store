@@ -1,4 +1,5 @@
-import { IList, IListSync } from './interfaces/IList'
+import { IList } from './IList'
+import { IListSync } from './IListSync'
 import { Item } from './Item'
 
 export type IdGeneratorFunction<T extends Item> = (

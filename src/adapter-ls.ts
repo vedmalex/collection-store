@@ -1,8 +1,8 @@
 import Collection from './collection'
-import { CollectionConfig } from './CollectionConfig'
+import { CollectionConfig } from './types/CollectionConfig'
 import { StoredData } from './adapters/StoredData'
-import { Item } from './Item'
-import { StorageAdapter } from './interfaces/StorageAdapter'
+import { Item } from './types/Item'
+import { StorageAdapter } from './types/StorageAdapter'
 import decamelize from 'decamelize'
 
 export default class AdapterLocalStorage<T extends Item>

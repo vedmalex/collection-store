@@ -2,8 +2,8 @@ import { IndexDef } from './IndexDef'
 import { Item } from './Item'
 import { IdGeneratorFunction } from './IdGeneratorFunction'
 import { IdType } from './IdType'
-import { StorageAdapterSync } from './interfaces/StorageAdapter'
-import { IListSync } from './interfaces/IList'
+import { StorageAdapterSync } from './StorageAdapterSync'
+import { IListSync } from './IListSync'
 import { AnySchema } from 'ajv'
 export interface CollectionConfigSync<T extends Item> {
   ttl?: string | number | boolean

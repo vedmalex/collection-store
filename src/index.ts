@@ -1,13 +1,15 @@
 import AdapterFS from './adapter-fs'
 import AdapterLocalStorage from './adapter-ls'
-import Collection, { IDataCollection } from './collection'
-import CollectionMemory, { IDataCollectionSync } from './collection-memory'
+import Collection from './collection'
+import { IDataCollection } from './types/IDataCollection'
+import CollectionMemory from './collection-memory'
+import { IDataCollectionSync } from './types/IDataCollectionSync'
 import { List } from './adapters/List'
 import { copy_collection } from './collection/copy_collection'
 import AdapterFile from './adapter-file'
-import AdapterMemory from './adapter-memory'
+import AdapterMemory from './types/AdapterMemory'
 import { FileStorage } from './adapters/FileStorage'
-import type { Item } from './Item'
+import type { Item } from './types/Item'
 
 export { AdapterMemory }
 export { AdapterFS }

@@ -1,7 +1,8 @@
 import Collection from '../collection'
-import { query, UnaryCondition } from '../filter'
+import { UnaryCondition } from 'src/query/UnaryCondition'
+import { query } from 'src/query/query'
 import { FileStorage } from '../adapters/FileStorage'
-import { CollectionConfig } from '../CollectionConfig'
+import { CollectionConfig } from '../types/CollectionConfig'
 import AdapterFile from '../adapter-file'
 
 type Person = {

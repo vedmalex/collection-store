@@ -1,4 +1,4 @@
-import { Dictionary } from '../hash'
+import { Dictionary } from 'src/types/Dictionary'
 import { BPlusTree, ValueType } from 'b-pl-tree'
 
 export function serialize_indexes(

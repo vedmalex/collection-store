@@ -1,5 +1,5 @@
-import { Paths } from '../IndexDef'
-import { Item } from '../Item'
+import { Paths } from 'src/types/Paths'
+import { Item } from '../types/Item'
 import CollectionMemory from '../collection-memory'
 import { return_list_if_valid_sync } from './return_list_if_valid_sync'
 import { ValueType } from 'b-pl-tree'

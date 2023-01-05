@@ -1,24 +1,24 @@
 // import fs from 'fs-extra';
 import tp from 'timeparse'
 import _ from 'lodash'
-import { autoIncIdGen } from './autoIncIdGen'
-import { autoTimestamp } from './autoTimestamp'
-import { StorageAdapterSync } from './interfaces/StorageAdapter'
-import { IListSync } from './interfaces/IList'
-import { IndexDef, IndexStored, Paths } from './IndexDef'
-import { Item } from './Item'
-import { IdGeneratorFunction } from './IdGeneratorFunction'
-import { IdType } from './IdType'
-import { CollectionConfigSync } from './CollectionConfigSync'
+import { autoIncIdGen } from './utils/autoIncIdGen'
+import { autoTimestamp } from './utils/autoTimestamp'
+import { StorageAdapterSync } from './types/StorageAdapterSync'
+import { IListSync } from './types/IListSync'
+import { IndexDef } from './types/IndexDef'
+import { IndexStored } from './types/IndexStored'
+import { Paths } from './types/Paths'
+import { Item } from './types/Item'
+import { IdGeneratorFunction } from './types/IdGeneratorFunction'
+import { IdType } from './types/IdType'
+import { CollectionConfigSync } from './types/CollectionConfigSync'
 import { CronJob } from 'cron'
-import { Dictionary } from './hash'
+import { Dictionary } from './types/Dictionary'
 import { BPlusTree, ValueType } from 'b-pl-tree'
-import {
-  TraverseCondition,
-  last_sync,
-  first_sync,
-  all_sync,
-} from './collection/traverse'
+import { last_sync } from './iterators/last_sync'
+import { first_sync } from './iterators/first_sync'
+import { all_sync } from './iterators/all_sync'
+import { TraverseCondition } from './iterators/TraverseCondition'
 import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
 import { ensure_ttl_sync } from './collection/ensure_ttl_sync'
@@ -40,50 +40,10 @@ import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { rebuild_indexes_sync } from './collection/rebuild_indexes_sync'
 import { SyncList } from './adapters/SyncList'
-import AdapterMemorySync from './adapter-memory-sync'
+import AdapterMemorySync from './types/AdapterMemorySync'
+import { IDataCollectionSync } from './types/IDataCollectionSync'
 
 export const ttl_key = '__ttltime'
-
-export interface IDataCollectionSync<T extends Item> {
-  reset(): void
-  load(name?: string): void
-  persist(name?: string): void
-
-  push(item: T): T
-  create(item: T): T
-  save(update: T): T
-
-  first(): T
-  last(): T
-
-  oldest(): T
-  latest(): T
-
-  lowest(key: Paths<T>): T
-  greatest(key: Paths<T>): T
-
-  find(condition: TraverseCondition<T>): Array<T>
-
-  findFirst(condition: TraverseCondition<T>): T
-  findLast(condition: TraverseCondition<T>): T
-
-  findBy(key: Paths<T>, id: ValueType): Array<T>
-  findFirstBy(key: Paths<T>, id: ValueType): T
-  findLastBy(key: Paths<T>, id: ValueType): T
-
-  findById(id: ValueType): T
-
-  update(condition: TraverseCondition<T>, update: Partial<T>): Array<T>
-  updateFirst(condition: TraverseCondition<T>, update: Partial<T>): T
-  updateLast(condition: TraverseCondition<T>, update: Partial<T>): T
-
-  updateWithId(id: ValueType, update: Partial<T>): T
-  removeWithId(id: ValueType): T
-
-  remove(condition: TraverseCondition<T>): Array<T>
-  removeFirst(condition: TraverseCondition<T>): T
-  removeLast(condition: TraverseCondition<T>): T
-}
 
 export default class CollectionMemory<T extends Item>
   implements IDataCollectionSync<T> {

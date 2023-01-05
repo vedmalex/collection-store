@@ -1,9 +1,6 @@
-import CollectionMemory from './collection-memory'
-import decamelize from 'decamelize'
+import CollectionMemory from '../collection-memory'
 import { Item } from './Item'
-import fs from 'fs-extra'
-import pathLib from 'path'
-import { StorageAdapter, StorageAdapterSync } from './interfaces/StorageAdapter'
+import { StorageAdapterSync } from './StorageAdapterSync'
 
 export default class AdapterMemorySync<T extends Item>
   implements StorageAdapterSync<T> {

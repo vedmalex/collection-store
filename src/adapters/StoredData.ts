@@ -1,7 +1,7 @@
 import { StoredIList } from './StoredIList'
-import { IndexDef, IndexStored } from '../IndexDef'
-import { Item } from '../Item'
-import { Dictionary } from '../hash'
+import { IndexStored } from 'src/types/IndexStored'
+import { Item } from '../types/Item'
+import { Dictionary } from 'src/types/Dictionary'
 import { PortableBPlusTree } from 'b-pl-tree/types/types/PortableBPlusTree'
 
 export interface StoredData<T extends Item> {

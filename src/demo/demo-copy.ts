@@ -1,6 +1,6 @@
 import Collection from '../collection'
 import { FileStorage } from '../adapters/FileStorage'
-import { CollectionConfig } from '../CollectionConfig'
+import { CollectionConfig } from '../types/CollectionConfig'
 import { copy_collection } from '../collection/copy_collection'
 import AdapterFile from '../adapter-file'
 

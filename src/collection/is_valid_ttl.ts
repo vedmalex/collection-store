@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import Collection, { ttl_key } from '../collection'
 import CollectionMemory from '../collection-memory'
 

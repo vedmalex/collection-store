@@ -1,4 +1,4 @@
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
 import CollectionMemory, { ttl_key } from '../collection-memory'
 

@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 
 export function get_value<T extends Item>(
   item: T,

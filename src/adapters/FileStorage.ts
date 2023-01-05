@@ -1,17 +1,15 @@
 import { ValueType, BPlusTree } from 'b-pl-tree'
 import { StoredIList } from './StoredIList'
-import { Item } from '../Item'
+import { Item } from '../types/Item'
 import fs from 'fs-extra'
 import pathlib from 'path'
-import { IList } from '../interfaces/IList'
+import { IList } from '../types/IList'
 import { Collection } from 'src'
-import { diff, formatters } from 'jsondiffpatch'
-import {
-  entity_delete,
-  entity_update,
-  IStoredRecord,
-} from '../interfaces/StorageAdapter'
-import { entity_create, is_stored_record } from '../interfaces/StorageAdapter'
+import { entity_delete } from 'src/utils/entity_delete'
+import { entity_update } from 'src/utils/entity_update'
+import { IStoredRecord } from 'src/types/IStoredRecord'
+import { entity_create } from 'src/utils/entity_create'
+import { is_stored_record } from 'src/utils/is_stored_record'
 import { cloneDeep } from 'lodash'
 
 export class FileStorage<T extends Item, K extends ValueType>
