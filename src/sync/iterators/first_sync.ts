@@ -1,7 +1,7 @@
 import { Item } from '../../types/Item'
 import { query } from '../../query/query'
-import CollectionMemory from '../collection-memory'
-import { TraverseCondition } from './TraverseCondition'
+import CollectionMemory from '../CollectionMemory'
+import { TraverseCondition } from '../../types/TraverseCondition'
 
 export function* first_sync<T extends Item>(
   collection: CollectionMemory<T>,

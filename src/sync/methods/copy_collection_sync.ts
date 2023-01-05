@@ -1,6 +1,6 @@
 import { Item } from '../../types/Item'
 import { ensure_indexes } from './ensure_indexes'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 import { build_index_sync } from './build_index_sync'
 
 export function copy_collection_sync<T extends Item>(

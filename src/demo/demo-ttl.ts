@@ -1,7 +1,7 @@
-import Collection from '../collection'
-import { FileStorage } from '../storage/FileStorage'
-import { CollectionConfig } from '../types/CollectionConfig'
-import AdapterFile from '../adapter-file'
+import Collection from '../async/Collection'
+import { FileStorage } from '../async/storage/FileStorage'
+import { ICollectionConfig } from '../async/ICollectionConfig'
+import AdapterFile from '../async/AdapterFile'
 
 type Person = {
   id?: number
@@ -21,7 +21,7 @@ type Person = {
   page: string
 }
 
-const collection_config: CollectionConfig<Person> = {
+const collection_config: ICollectionConfig<Person> = {
   name: 'Person',
   // ttl: '2m',
   // list: new List(),

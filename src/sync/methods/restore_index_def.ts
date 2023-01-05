@@ -1,6 +1,6 @@
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from 'src/types/IndexStored'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 
 export function restore_index_def<T>(
   collection: CollectionMemory<T>,

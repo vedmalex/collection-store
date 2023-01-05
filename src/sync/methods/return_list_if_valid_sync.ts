@@ -1,6 +1,6 @@
 import { Item } from '../../types/Item'
 import { ensure_ttl_sync } from './ensure_ttl_sync'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 import { is_valid_ttl } from './is_valid_ttl'
 
 export function return_list_if_valid_sync<T extends Item>(

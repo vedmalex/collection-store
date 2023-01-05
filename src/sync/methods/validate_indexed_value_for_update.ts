@@ -1,6 +1,6 @@
 import { Item } from '../../types/Item'
 import { ValueType } from 'b-pl-tree'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 
 export function validate_indexed_value_for_update<T extends Item>(
   collection: CollectionMemory<T>,

@@ -4,7 +4,7 @@ import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
 import { Dictionary } from 'src/types/Dictionary'
 import { store_index_def } from './store_index_def'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 
 export function store_index<T extends Item>(
   collection: CollectionMemory<T>,

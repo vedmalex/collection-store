@@ -1,7 +1,7 @@
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
-import CollectionMemory from 'src/sync/collection-memory'
+import CollectionMemory from 'src/sync/CollectionMemory'
 
 export function store_index_def<T extends Item>(
   collection: CollectionMemory<T>,

@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 import { copy_collection_sync } from './copy_collection_sync'
 
 export function do_rotate_log_sync<T extends Item>(

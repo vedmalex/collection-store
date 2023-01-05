@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import CollectionMemory, { ttl_key } from '../collection-memory'
+import CollectionMemory, { ttl_key } from '../CollectionMemory'
 
 export function is_valid_ttl<T extends Item>(
   collection: CollectionMemory<T>,

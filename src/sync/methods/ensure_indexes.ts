@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import CollectionMemory from '../collection-memory'
+import CollectionMemory from '../CollectionMemory'
 
 export async function ensure_indexes<T extends Item>(
   collection: CollectionMemory<T>,

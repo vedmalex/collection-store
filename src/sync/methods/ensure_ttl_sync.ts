@@ -1,6 +1,6 @@
 import { Item } from '../../types/Item'
 import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
-import CollectionMemory, { ttl_key } from '../collection-memory'
+import CollectionMemory, { ttl_key } from '../CollectionMemory'
 
 export function ensure_ttl_sync<T extends Item>(
   collection: CollectionMemory<T>,
