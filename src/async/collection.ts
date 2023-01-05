@@ -39,7 +39,7 @@ import { get_last_indexed_value } from './collection/get_last_indexed_value'
 import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { rebuild_indexes } from './collection/rebuild_indexes'
-import { List } from './List'
+import { List } from './storage/List'
 import AdapterMemory from './AdapterMemory'
 import { IDataCollection } from './IDataCollection'
 

@@ -39,14 +39,15 @@ import { get_last_indexed_value_sync } from './methods/get_last_indexed_value_sy
 import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { rebuild_indexes_sync } from './methods/rebuild_indexes_sync'
-import { ListSync } from './ListSync'
+import { ListSync } from './storage/ListSync'
 import AdapterMemorySync from './AdapterMemorySync'
 import { IDataCollectionSync } from './IDataCollectionSync'
 
 export const ttl_key = '__ttltime'
 
 export default class CollectionMemory<T extends Item>
-  implements IDataCollectionSync<T> {
+  implements IDataCollectionSync<T>
+{
   path?: string
   cronJob?: CronJob
   onRotate: () => void
