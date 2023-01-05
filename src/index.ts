@@ -4,11 +4,11 @@ import Collection from './collection'
 import { IDataCollection } from './types/IDataCollection'
 import CollectionMemory from './collection-memory'
 import { IDataCollectionSync } from './types/IDataCollectionSync'
-import { List } from './adapters/List'
+import { List } from './storage/List'
 import { copy_collection } from './collection/copy_collection'
 import AdapterFile from './adapter-file'
 import AdapterMemory from './types/AdapterMemory'
-import { FileStorage } from './adapters/FileStorage'
+import { FileStorage } from './storage/FileStorage'
 import type { Item } from './types/Item'
 
 export { AdapterMemory }

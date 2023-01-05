@@ -1,5 +1,5 @@
 import CollectionMemory from '../collection-memory'
-import { StoredData } from '../adapters/StoredData'
+import { StoredData } from '../storage/StoredData'
 import { Item } from './Item'
 
 export interface StorageAdapterSync<T extends Item> {

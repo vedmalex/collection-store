@@ -10,11 +10,11 @@ export async function copy_collection<T extends Item>(
 ): Promise<Collection<T>> {
   const collection =
     dest ??
-    (await Collection.create<T>({
+    Collection.create<T>({
       name: model,
       adapter: source.storage.clone(),
       list: source.list.construct(),
-    }))
+    })
 
   collection.indexDefs = source.indexDefs
   collection.id = source.id

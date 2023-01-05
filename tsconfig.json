@@ -15,15 +15,17 @@
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["es2020", "DOM"],
+    "lib": ["ES2020", "DOM"],
     "types": ["node"],
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
-    "target": "es2018",
+    "target": "es2020",
     "experimentalDecorators": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"]

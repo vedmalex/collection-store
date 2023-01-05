@@ -1,7 +1,7 @@
 import Collection from '../collection'
 import { UnaryCondition } from 'src/query/UnaryCondition'
 import { query } from 'src/query/query'
-import { FileStorage } from '../adapters/FileStorage'
+import { FileStorage } from '../storage/FileStorage'
 import { CollectionConfig } from '../types/CollectionConfig'
 import AdapterFile from '../adapter-file'
 
@@ -54,7 +54,7 @@ const collection_config: CollectionConfig<Person> = {
 
 const run = async () => {
   const addPerson = async (inp: Person) => data.push(inp)
-  const data = await Collection.create<Person>(collection_config)
+  const data = Collection.create<Person>(collection_config)
 
   await addPerson({
     id: 0,

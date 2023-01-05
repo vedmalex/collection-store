@@ -9,7 +9,7 @@ module.exports = {
     sourceType: 'module',
   },
   extends: [
-    'plugin:@typescript-eslint/recommended',
+    // 'plugin:@typescript-eslint/recommended',
     'prettier',
     'prettier/@typescript-eslint',
   ],
@@ -26,10 +26,7 @@ module.exports = {
     '@typescript-eslint/no-namespace': 'off',
     'arrow-parens': ['error', 'always'],
     '@typescript-eslint/no-unused-vars': ['off'],
-    '@typescript-eslint/explicit-function-return-type': [
-      'off',
-      { allowExpressions: true },
-    ],
+    // '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/member-delimiter-style': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',

@@ -1,6 +1,6 @@
 import Collection from './collection'
 import { CollectionConfig } from './types/CollectionConfig'
-import { StoredData } from './adapters/StoredData'
+import { StoredData } from './storage/StoredData'
 import { Item } from './types/Item'
 import { StorageAdapter } from './types/StorageAdapter'
 import decamelize from 'decamelize'

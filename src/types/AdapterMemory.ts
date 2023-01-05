@@ -14,11 +14,11 @@ export default class AdapterMemory<T extends Item>
     return this
   }
 
-  async restore(name?: string): Promise<any> {
+  restore(name?: string): Promise<any> {
     return Promise.resolve({})
   }
 
-  async store(name: string) {
+  store(name: string) {
     return Promise.resolve()
   }
 }

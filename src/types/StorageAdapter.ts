@@ -1,5 +1,5 @@
 import Collection from '../collection'
-import { StoredData } from '../adapters/StoredData'
+import { StoredData } from '../storage/StoredData'
 import { Item } from './Item'
 
 export interface StorageAdapter<T extends Item> {

@@ -1,5 +1,5 @@
 import Collection from '../collection'
-import { FileStorage } from '../adapters/FileStorage'
+import { FileStorage } from '../storage/FileStorage'
 import { CollectionConfig } from '../types/CollectionConfig'
 import { copy_collection } from '../collection/copy_collection'
 import AdapterFile from '../adapter-file'
@@ -51,7 +51,7 @@ const collection_config: CollectionConfig<Person> = {
   ],
 }
 const persistence = async () => {
-  const data = await Collection.create<Person>(collection_config)
+  const data = Collection.create<Person>(collection_config)
   await data.load()
   console.log(await data.findBy('id', 7))
   const copy = await copy_collection('Person-backup', data)

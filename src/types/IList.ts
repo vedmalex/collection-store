@@ -1,5 +1,5 @@
 import { ValueType } from 'b-pl-tree'
-import { StoredIList } from '../adapters/StoredIList'
+import { StoredIList } from '../storage/StoredIList'
 import Collection from '../collection'
 import { Item } from './Item'
 

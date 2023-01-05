@@ -1,6 +1,6 @@
 import 'jest'
-import { Item } from '../Item'
-import { List } from '../adapters/List'
+import { Item } from '../types/Item'
+import { List } from '../storage/List'
 import AdapterFs from '../adapter-fs'
 import Collection from '../collection'
 
@@ -66,7 +66,7 @@ describe('list', () => {
 
 describe('indexLoader', () => {
   it('loads empty file', async () => {
-    const c1 = new Collection({
+    const c1 = Collection.create({
       name: 'loaded',
       adapter: new AdapterFs(fileName('loaded')),
     })
@@ -76,12 +76,13 @@ describe('indexLoader', () => {
 
 const loadCoolectionTTL = async (name) => {
   const fn = fileName(name)
-  const c1 = new Collection({
+  const c1 = Collection.create({
     name,
     ttl: '100ms',
     id: 'name',
     adapter: new AdapterFs(fn),
   })
+
   c1.create({ name: 'Some', age: 12 })
   c1.create({ name: 'Another', age: 13 })
   c1.create({ name: 'SomeOneElse', age: 12 })
@@ -541,7 +542,7 @@ describe('collection indexes', () => {
   })
 
   it('indexAll', async () => {
-    const c1 = await Collection.create({
+    const c1 = Collection.create({
       name: 'collectionTest',
       indexList: [{ key: '*' }],
       adapter: new AdapterFs(fileName('device-start')),

@@ -33,13 +33,13 @@ import { deserialize_indexes } from './collection/deserialize_indexes'
 import { serialize_indexes } from './collection/serialize_indexes'
 import { store_index } from './collection/store_index'
 import { do_rotate_log } from './collection/do_rotate_log'
-import { StoredIList } from './adapters/StoredIList'
+import { StoredIList } from './storage/StoredIList'
 import { get_first_indexed_value } from './collection/get_first_indexed_value'
 import { get_last_indexed_value } from './collection/get_last_indexed_value'
 import Ajv, { AnySchema, ValidateFunction } from 'ajv'
 import addFormats from 'ajv-formats'
 import { rebuild_indexes } from './collection/rebuild_indexes'
-import { List } from './adapters/List'
+import { List } from './storage/List'
 import AdapterMemory from './types/AdapterMemory'
 import { IDataCollection } from './types/IDataCollection'
 
@@ -86,9 +86,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
-  static async create<T extends Item>(
-    config?: CollectionConfig<T>,
-  ): Promise<Collection<T>> {
+  static create<T extends Item>(config?: CollectionConfig<T>) {
     const collection: Collection<T> = new Collection<T>()
     const {
       ttl,
@@ -223,7 +221,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       })
     }
 
-    await build_index(
+    build_index(
       collection,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
         if (curr.key == '*') {
@@ -260,7 +258,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   }
 
   static async fromList<T extends Item>(array: Array<T>, id: string) {
-    const list = await Collection.create({
+    const list = Collection.create({
       name: 'default',
       indexList: [{ key: '*' }, { key: id, unique: true, required: true }],
       id: { name: '$order', auto: true },
