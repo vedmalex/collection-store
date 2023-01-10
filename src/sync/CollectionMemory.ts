@@ -102,7 +102,7 @@ export default class CollectionMemory<T extends Item>
       },
       auto = true,
       indexList,
-      list = new ListSync<T>() as IListSync<T>,
+      list = new ListSync<T>(),
       path,
       adapter = new AdapterMemorySync<T>(),
       validation,
