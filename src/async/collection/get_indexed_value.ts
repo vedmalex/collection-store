@@ -1,4 +1,4 @@
-import { Paths } from 'src/types/Paths'
+import { Paths } from '../../types/Paths'
 import { Item } from '../../types/Item'
 import Collection from '../Collection'
 import { return_list_if_valid } from './return_list_if_valid'
