@@ -7,25 +7,29 @@ import { IStorageAdapter } from './IStorageAdapter'
 
 export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
   file: string
+  path: string
   collection: Collection<T>
   clone(): AdapterFile<T> {
     return new AdapterFile<T>()
   }
-  constructor(path?: string) {
-    this.file = path
+  /**
+   * @param file only relative file name
+   */
+  constructor(file?: string) {
+    this.file = file
   }
 
   init(collection: Collection<T>): this {
     this.collection = collection
-    this.file = collection.path
-    if (!this.file) {
-      this.file = `${decamelize(collection.model)}.json`
-    }
+    this.file = pathLib.join(
+      collection.path,
+      this.file ? this.file : `${decamelize(collection.model)}.json`,
+    )
     return this
   }
 
   async restore(name?: string): Promise<any> {
-    let path = this.file
+    let path = this.path
     if (name) {
       const p = pathLib.parse(this.file)
       p.name = name
