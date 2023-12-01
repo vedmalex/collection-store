@@ -1,4 +1,4 @@
-import Collection from '../async/Collection'
+import Collection from '../async/collection'
 import { UnaryCondition } from 'src/query/UnaryCondition'
 import { query } from 'src/query/query'
 import { FileStorage } from '../async/storage/FileStorage'
@@ -156,6 +156,7 @@ const run = async () => {
   console.log('reload store')
   // не загружается дерево, node после загрузки пустой!
   await data.load()
+  console.log('reload store')
 
   console.log(await data.findBy('id', 7))
 

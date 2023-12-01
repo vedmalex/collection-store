@@ -1,6 +1,6 @@
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from 'src/types/IndexStored'
-import Collection from '../Collection'
+import Collection from '../collection'
 
 export function restore_index_def<T>(
   collection: Collection<T>,

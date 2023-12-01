@@ -1,6 +1,6 @@
 import { ValueType } from 'b-pl-tree'
 import { StoredIList } from '../types/StoredIList'
-import Collection from './Collection'
+import Collection from './collection'
 import { Item } from '../types/Item'
 
 export interface IList<T extends Item> {

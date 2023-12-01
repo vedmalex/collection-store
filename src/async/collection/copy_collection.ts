@@ -1,7 +1,7 @@
 import { Item } from '../../types/Item'
 import { build_index } from './build_index'
 import { ensure_indexes } from './ensure_indexes'
-import Collection from '../Collection'
+import Collection from '../collection'
 
 export async function copy_collection<T extends Item>(
   model: string,

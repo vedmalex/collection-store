@@ -1,6 +1,6 @@
 import { Item } from '../../types/Item'
 import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
-import Collection, { ttl_key } from '../Collection'
+import Collection, { ttl_key } from '../collection'
 
 export async function ensure_ttl<T extends Item>(collection: Collection<T>) {
   if (collection.ttl) {

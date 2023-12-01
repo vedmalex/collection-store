@@ -1,4 +1,4 @@
-import Collection from './Collection'
+import Collection from './collection'
 import decamelize from 'decamelize'
 import { Item } from '../types/Item'
 import fs from 'fs-extra'

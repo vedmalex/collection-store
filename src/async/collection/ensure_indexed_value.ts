@@ -1,6 +1,6 @@
 import { get, set } from 'lodash'
 import { Item } from '../../types/Item'
-import Collection from '../Collection'
+import Collection from '../collection'
 import { IdGeneratorFunction } from '../../types/IdGeneratorFunction'
 
 export function ensure_indexed_value<T extends Item>(

@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import Collection from '../Collection'
+import Collection from '../collection'
 
 /**
  * ensures values for indexing and return final index insert routines

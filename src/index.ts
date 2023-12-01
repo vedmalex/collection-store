@@ -1,6 +1,6 @@
 import AdapterFS from './async/AdapterFS'
 import AdapterLocalStorage from './sync/AdapterLocalStorage'
-import Collection from './async/Collection'
+import Collection from './async/collection'
 import { IDataCollection } from './async/IDataCollection'
 import CollectionMemory from './sync/CollectionMemory'
 import { IDataCollectionSync } from './sync/IDataCollectionSync'

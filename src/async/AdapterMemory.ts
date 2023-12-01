@@ -1,9 +1,10 @@
-import Collection from './Collection'
+import Collection from './collection'
 import { Item } from '../types/Item'
 import { IStorageAdapter } from './IStorageAdapter'
 
 export default class AdapterMemory<T extends Item>
-  implements IStorageAdapter<T> {
+  implements IStorageAdapter<T>
+{
   collection: Collection<T>
   clone(): AdapterMemory<T> {
     return new AdapterMemory<T>()

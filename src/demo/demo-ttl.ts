@@ -1,4 +1,4 @@
-import Collection from '../async/Collection'
+import Collection from '../async/collection'
 import { FileStorage } from '../async/storage/FileStorage'
 import { ICollectionConfig } from '../async/ICollectionConfig'
 import AdapterFile from '../async/AdapterFile'

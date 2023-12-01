@@ -4,7 +4,7 @@ import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
 import { Dictionary } from 'src/types/Dictionary'
 import { store_index_def } from './store_index_def'
-import Collection from '../Collection'
+import Collection from '../collection'
 
 export function store_index<T extends Item>(
   collection: Collection<T>,

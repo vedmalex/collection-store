@@ -1,4 +1,4 @@
-import Collection from './Collection'
+import Collection from './collection'
 import { ICollectionConfig } from './ICollectionConfig'
 import { Item } from '../types/Item'
 import fs from 'fs-extra'

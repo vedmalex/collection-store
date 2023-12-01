@@ -4,7 +4,7 @@ import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
 import { Dictionary } from 'src/types/Dictionary'
 import { restore_index_def } from './restore_index_def'
-import Collection from '../Collection'
+import Collection from '../collection'
 
 export function restore_index<T extends Item>(
   collection: Collection<T>,
