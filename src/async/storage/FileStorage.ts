@@ -13,7 +13,8 @@ import { is_stored_record } from 'src/utils/is_stored_record'
 import { cloneDeep } from 'lodash'
 
 export class FileStorage<T extends Item, K extends ValueType>
-  implements IList<T> {
+  implements IList<T>
+{
   //  хранить промисы типа кэширование данных к которым был доступ, и которые не обновлялись
   // а на обновление выставлять новый промис
   // таким образом данные всегда будут свежими... если нет другого читателя писателя файлов

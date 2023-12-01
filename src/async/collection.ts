@@ -163,6 +163,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
 
     collection.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
+
     collection.rotate = rotate
     collection.model = name
     collection.storage = adapter.init(collection)

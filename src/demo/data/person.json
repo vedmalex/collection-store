@@ -1,0 +1,420 @@
+{
+  "list": {
+    "counter": 8,
+    "tree": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 7,
+          "min": 0,
+          "size": 8,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "key_num": 8,
+          "pointers": [
+            "0.json",
+            "1.json",
+            "2.json",
+            "3.json",
+            "4.json",
+            "5.json",
+            "6.json",
+            "7.json"
+          ]
+        }
+      ]
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 7,
+          "min": 0,
+          "size": 8,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    "__ttltime": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 1701427255199,
+          "min": 1701427119770,
+          "size": 8,
+          "keys": [
+            1701427119770,
+            1701427136224,
+            1701427225766,
+            1701427240514,
+            1701427249887,
+            1701427251964,
+            1701427255196,
+            1701427255199
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "simon",
+          "min": "alex",
+          "size": 8,
+          "keys": [
+            "alex",
+            "jach",
+            "jame",
+            "jason",
+            "jim",
+            "mark",
+            "monika",
+            "simon"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            6,
+            1,
+            4,
+            5,
+            2,
+            7,
+            3
+          ]
+        }
+      ]
+    },
+    "ssn": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "000-0000-00004",
+          "min": "000-0000-000001",
+          "size": 8,
+          "keys": [
+            "000-0000-000001",
+            "000-0000-000002",
+            "000-0000-000003",
+            "000-0000-000005",
+            "000-0000-000006",
+            "000-0000-000007",
+            "000-0000-000008",
+            "000-0000-00004"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            3
+          ]
+        }
+      ]
+    },
+    "age": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 45,
+          "min": 18,
+          "size": 8,
+          "keys": [
+            18,
+            19,
+            24,
+            29,
+            30,
+            30,
+            42,
+            45
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            4,
+            3,
+            6,
+            2,
+            7,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    "address.home": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "54481",
+          "min": "23310",
+          "size": 8,
+          "keys": [
+            "23310",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "5431",
+            "54481"
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    "address.city": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "New York",
+          "min": "Los Angeles",
+          "size": 8,
+          "keys": [
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "New York",
+            "New York",
+            "New York"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            5,
+            6,
+            7,
+            2,
+            3,
+            4
+          ]
+        }
+      ]
+    },
+    "address.appart": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "penthouse",
+          "min": "1a",
+          "size": 8,
+          "keys": [
+            "1a",
+            "1a",
+            "1a",
+            "1a",
+            null,
+            "3f",
+            "5c",
+            "penthouse"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            5
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "__ttltime": {
+      "key": "__ttltime",
+      "auto": true,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "gen": "autoTimestamp"
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "ssn": {
+      "key": "ssn",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": false
+    },
+    "age": {
+      "key": "age",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.home": {
+      "key": "address.home",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.city": {
+      "key": "address.city",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.appart": {
+      "key": "address.appart",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    }
+  },
+  "id": "id",
+  "ttl": 120000
+}

@@ -25,7 +25,7 @@ type Person = {
 
 const collection_config: ICollectionConfig<Person> = {
   name: 'Person',
-  // ttl: '2m',
+  ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
   adapter: new AdapterFile(),
@@ -151,6 +151,11 @@ const run = async () => {
       city: 'Los Angeles',
     },
   })
+
+  await data.persist()
+  console.log('reload store')
+  // не загружается дерево, node после загрузки пустой!
+  await data.load()
 
   console.log(await data.findBy('id', 7))
 

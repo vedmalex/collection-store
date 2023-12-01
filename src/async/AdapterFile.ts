@@ -21,17 +21,17 @@ export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
 
   init(collection: Collection<T>): this {
     this.collection = collection
-    this.file = pathLib.join(
-      collection.path,
-      this.file ? this.file : `${decamelize(collection.model)}.json`,
-    )
+    if (!this.file) {
+      this.file = `${decamelize(collection.model)}.json`
+    }
+    this.path = pathLib.join(collection.path, this.file)
     return this
   }
 
   async restore(name?: string): Promise<any> {
     let path = this.path
     if (name) {
-      const p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.path)
       p.name = name
       delete p.base
       path = pathLib.format(p)
@@ -41,9 +41,9 @@ export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
   }
 
   async store(name: string) {
-    let path = this.file
+    let path = this.path
     if (name) {
-      const p = pathLib.parse(this.file)
+      const p = pathLib.parse(this.path)
       p.name = name
       delete p.base
       path = pathLib.format(p)

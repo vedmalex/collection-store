@@ -23,7 +23,7 @@ type Person = {
 
 const collection_config: ICollectionConfig<Person> = {
   name: 'Person',
-  // ttl: '2m',
+  ttl: '2m',
   // list: new List(),
   list: new FileStorage<Person, string>(),
   adapter: new AdapterFile(),
