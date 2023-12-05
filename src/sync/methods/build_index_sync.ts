@@ -3,7 +3,7 @@ import { IndexDef } from '../../types/IndexDef'
 import { Item } from '../../types/Item'
 import { Dictionary } from 'src/types/Dictionary'
 import { BPlusTree, ValueType } from 'b-pl-tree'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 import { ensure_indexed_value } from './ensure_indexed_value'
 import { get_value } from './get_value'
 import { validate_indexed_value_for_insert } from './validate_indexed_value_for_insert'
@@ -11,7 +11,7 @@ import { validate_indexed_value_for_update } from './validate_indexed_value_for_
 import { ensure_indexes } from './ensure_indexes'
 
 export function build_index_sync<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   indexList: Dictionary<IndexDef<T>>,
 ): void {
   for (const key in indexList) {

@@ -10,12 +10,13 @@ import { IStoredRecord } from 'src/types/IStoredRecord'
 import { entity_create } from 'src/utils/entity_create'
 import { is_stored_record } from 'src/utils/is_stored_record'
 import { cloneDeep } from 'lodash'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 // each data chunk store in its own storage, or file
 export class FileStorage<T extends Item, K extends ValueType>
   implements IListSync<T>
 {
+  singlefile: boolean = false
   //  хранить промисы типа кэширование данных к которым был доступ, и которые не обновлялись
   // а на обновление выставлять новый промис
   // таким образом данные всегда будут свежими... если нет другого читателя писателя файлов
@@ -26,12 +27,12 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
   constructor(private keyField?: string) {}
   exists: boolean
-  collection: CollectionMemory<T>
+  collection: CollectionSync<T>
   construct() {
     return new FileStorage<T, K>() as IListSync<T>
   }
 
-  init(collection: CollectionMemory<T>): IListSync<T> {
+  init(collection: CollectionSync<T>): IListSync<T> {
     this.collection = collection
     if (this.keyField && !this.collection.indexDefs[this.keyField].unique) {
       throw new Error(`key field ${this.keyField} is not unique`)

@@ -1,0 +1,432 @@
+{
+  "list": {
+    "_count": 8,
+    "_counter": 8,
+    "hash": {
+      "0": {
+        "id": 0,
+        "name": "alex",
+        "age": 42,
+        "ssn": "000-0000-000001",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "Los Angeles"
+        }
+      },
+      "1": {
+        "id": 1,
+        "name": "jame",
+        "age": 45,
+        "ssn": "000-0000-000002",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "Los Angeles"
+        }
+      },
+      "2": {
+        "id": 2,
+        "name": "mark",
+        "age": 30,
+        "ssn": "000-0000-000003",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "3": {
+        "id": 3,
+        "name": "simon",
+        "age": 24,
+        "ssn": "000-0000-00004",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "4": {
+        "id": 4,
+        "name": "jason",
+        "age": 19,
+        "ssn": "000-0000-000005",
+        "page": "http://ya.ru",
+        "address": {
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "5": {
+        "id": 5,
+        "name": "jim",
+        "age": 18,
+        "ssn": "000-0000-000006",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "penthouse",
+          "home": "23310",
+          "city": "Los Angeles"
+        }
+      },
+      "6": {
+        "id": 6,
+        "name": "jach",
+        "age": 29,
+        "ssn": "000-0000-000007",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "3f",
+          "home": "5431",
+          "city": "Los Angeles"
+        }
+      },
+      "7": {
+        "id": 7,
+        "name": "monika",
+        "age": 30,
+        "ssn": "000-0000-000008",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "5c",
+          "home": "54481",
+          "city": "Los Angeles"
+        }
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 7,
+          "min": 0,
+          "size": 8,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "simon",
+          "min": "alex",
+          "size": 8,
+          "keys": [
+            "alex",
+            "jach",
+            "jame",
+            "jason",
+            "jim",
+            "mark",
+            "monika",
+            "simon"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            6,
+            1,
+            4,
+            5,
+            2,
+            7,
+            3
+          ]
+        }
+      ]
+    },
+    "ssn": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "000-0000-00004",
+          "min": "000-0000-000001",
+          "size": 8,
+          "keys": [
+            "000-0000-000001",
+            "000-0000-000002",
+            "000-0000-000003",
+            "000-0000-000005",
+            "000-0000-000006",
+            "000-0000-000007",
+            "000-0000-000008",
+            "000-0000-00004"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            3
+          ]
+        }
+      ]
+    },
+    "age": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 45,
+          "min": 18,
+          "size": 8,
+          "keys": [
+            18,
+            19,
+            24,
+            29,
+            30,
+            30,
+            42,
+            45
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            4,
+            3,
+            6,
+            2,
+            7,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    "address.home": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "54481",
+          "min": "23310",
+          "size": 8,
+          "keys": [
+            "23310",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "5431",
+            "54481"
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    "address.city": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "New York",
+          "min": "Los Angeles",
+          "size": 8,
+          "keys": [
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "New York",
+            "New York",
+            "New York"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            5,
+            6,
+            7,
+            2,
+            3,
+            4
+          ]
+        }
+      ]
+    },
+    "address.appart": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "penthouse",
+          "min": "1a",
+          "size": 8,
+          "keys": [
+            "1a",
+            "1a",
+            "1a",
+            "1a",
+            null,
+            "3f",
+            "5c",
+            "penthouse"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            5
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "ssn": {
+      "key": "ssn",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": false
+    },
+    "age": {
+      "key": "age",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.home": {
+      "key": "address.home",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.city": {
+      "key": "address.city",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    },
+    "address.appart": {
+      "key": "address.appart",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false
+    }
+  },
+  "id": "id",
+  "ttl": false
+}

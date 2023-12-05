@@ -46,7 +46,7 @@ import { IDataCollection } from './IDataCollection'
 export const ttl_key = '__ttltime'
 
 export default class Collection<T extends Item> implements IDataCollection<T> {
-  path?: string
+  root: string
   cronJob?: CronJob
   onRotate: () => void
 
@@ -100,11 +100,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       auto = true,
       indexList,
       list = new List<T>() as IList<T>,
-      path,
       adapter = new AdapterMemory<T>(),
       validation,
       audit,
       onRotate,
+      root,
     } = config ?? {}
 
     collection.audit = !!audit
@@ -115,7 +115,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       addFormats(ajv)
       collection.validator = ajv.compile<T>(validation)
     }
-    collection.path = path ?? './data/'
+    collection.root = root ?? './data/'
 
     let { idGen = 'autoIncIdGen' } = config ?? {}
 
@@ -258,8 +258,13 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return collection
   }
 
-  static async fromList<T extends Item>(array: Array<T>, id: string) {
+  static async fromList<T extends Item>(
+    array: Array<T>,
+    id: string,
+    root: string,
+  ) {
     const list = Collection.create({
+      root,
       name: 'default',
       indexList: [{ key: '*' }, { key: id, unique: true, required: true }],
       id: { name: '$order', auto: true },

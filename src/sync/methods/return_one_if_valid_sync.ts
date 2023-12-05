@@ -1,10 +1,10 @@
 import { Item } from '../../types/Item'
 import { ensure_ttl_sync } from './ensure_ttl_sync'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 import { is_valid_ttl } from './is_valid_ttl'
 
 export function return_one_if_valid_sync<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   result: T,
 ): T {
   let invalidate = false

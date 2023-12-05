@@ -1,9 +1,10 @@
 import { ValueType } from 'b-pl-tree'
 import { StoredIList } from '../types/StoredIList'
-import CollectionMemory from './CollectionMemory'
+import CollectionSync from './collection'
 import { Item } from '../types/Item'
 
 export interface IListSync<T extends Item> {
+  singlefile: boolean
   readonly forward: Iterable<T>
   readonly backward: Iterable<T>
   get(key: ValueType): T
@@ -17,5 +18,5 @@ export interface IListSync<T extends Item> {
   readonly length: number
   clone(): IListSync<T>
   construct(): IListSync<T>
-  init(collection: CollectionMemory<T>): IListSync<T>
+  init(collection: CollectionSync<T>): IListSync<T>
 }

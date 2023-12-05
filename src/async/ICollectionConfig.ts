@@ -19,5 +19,5 @@ export interface ICollectionConfig<T extends Item> {
   auto?: boolean
   indexList?: Array<IndexDef<T>>
   adapter: IStorageAdapter<T>
-  path?: string
+  root: string
 }

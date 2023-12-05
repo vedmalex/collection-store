@@ -4,10 +4,10 @@ import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
 import { Dictionary } from 'src/types/Dictionary'
 import { restore_index_def } from './restore_index_def'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 export function restore_index<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   input: Dictionary<IndexStored<T>>,
 ): Dictionary<IndexDef<T>> {
   return _.map(input, (index) => {

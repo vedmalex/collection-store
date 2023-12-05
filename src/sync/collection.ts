@@ -45,9 +45,10 @@ import { IDataCollectionSync } from './IDataCollectionSync'
 
 export const ttl_key = '__ttltime'
 
-export default class CollectionMemory<T extends Item>
+export default class CollectionSync<T extends Item>
   implements IDataCollectionSync<T>
 {
+  root: string
   path?: string
   cronJob?: CronJob
   onRotate: () => void
@@ -89,8 +90,8 @@ export default class CollectionMemory<T extends Item>
 
   static create<T extends Item>(
     config?: ICollectionConfigSync<T>,
-  ): CollectionMemory<T> {
-    const collection: CollectionMemory<T> = new CollectionMemory<T>()
+  ): CollectionSync<T> {
+    const collection: CollectionSync<T> = new CollectionSync<T>()
     const {
       ttl,
       rotate,
@@ -103,7 +104,7 @@ export default class CollectionMemory<T extends Item>
       auto = true,
       indexList,
       list = new ListSync<T>(),
-      path,
+      root,
       adapter = new AdapterMemorySync<T>(),
       validation,
       audit,
@@ -118,7 +119,7 @@ export default class CollectionMemory<T extends Item>
       addFormats(ajv)
       collection.validator = ajv.compile<T>(validation)
     }
-    collection.path = path ?? './data/'
+    collection.root = root ?? './data/'
 
     let { idGen = 'autoIncIdGen' } = config ?? {}
 
@@ -263,9 +264,11 @@ export default class CollectionMemory<T extends Item>
   static fromList<T extends Item>(
     array: Array<T>,
     id: string,
+    root: string,
     process?: (value) => any,
-  ): CollectionMemory<T> {
-    const list = CollectionMemory.create({
+  ): CollectionSync<T> {
+    const list = CollectionSync.create({
+      root,
       name: 'default',
       indexList: [
         { key: '*' },

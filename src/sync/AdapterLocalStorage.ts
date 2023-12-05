@@ -1,13 +1,13 @@
 import { StoredData } from '../types/StoredData'
 import { Item } from '../types/Item'
 import { IStorageAdapterSync } from './IStorageAdapterSync'
-import decamelize from 'decamelize'
-import CollectionMemory from './CollectionMemory'
+import CollectionSync from './collection'
 
 export default class AdapterLocalStorage<T extends Item>
-  implements IStorageAdapterSync<T> {
+  implements IStorageAdapterSync<T>
+{
   storage: Storage
-  collection: CollectionMemory<T>
+  collection: CollectionSync<T>
 
   clone() {
     return new AdapterLocalStorage<T>(this.storage)
@@ -15,26 +15,17 @@ export default class AdapterLocalStorage<T extends Item>
   constructor(storage?: Storage) {
     this.storage = storage || localStorage
   }
-  init(collection: CollectionMemory<T>): IStorageAdapterSync<T> {
+  init(collection: CollectionSync<T>): IStorageAdapterSync<T> {
     this.collection = collection
     return this
   }
   restore(name?: string): StoredData<T> {
-    return JSON.parse(
-      this.storage.getItem(name ?? decamelize(this.collection.model)),
-    )
+    return JSON.parse(this.storage.getItem(name ?? this.collection.model))
   }
-  store(name?: string): Promise<void> {
-    return new Promise((res, rej) => {
-      try {
-        res()
-        this.storage.setItem(
-          decamelize(this.collection.model),
-          JSON.stringify(name ?? this.collection.store()),
-        )
-      } catch (e) {
-        rej(e)
-      }
-    })
+  store(name?: string) {
+    this.storage.setItem(
+      this.collection.model,
+      JSON.stringify(name ?? this.collection.store()),
+    )
   }
 }

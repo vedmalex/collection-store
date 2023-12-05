@@ -1,12 +1,12 @@
 import { get, set } from 'lodash'
 import { Item } from '../../types/Item'
 import { IdGeneratorFunction } from '../../types/IdGeneratorFunction'
-import CollectionMemory from 'src/sync/CollectionMemory'
+import CollectionSync from 'src/sync/collection'
 
 export function ensure_indexed_value<T extends Item>(
   item: T,
   key: string,
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   gen: IdGeneratorFunction<T>,
   auto: boolean,
   process: (value: any) => any,

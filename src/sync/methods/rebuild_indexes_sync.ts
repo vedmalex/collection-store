@@ -1,8 +1,8 @@
 import { Item } from '../../types/Item'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 export function rebuild_indexes_sync<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
 ) {
   for (const reduild of collection.rebuilds) {
     reduild()

@@ -4,6 +4,7 @@ import Collection from './collection'
 import { Item } from '../types/Item'
 
 export interface IList<T extends Item> {
+  singlefile: boolean
   readonly forward: AsyncIterable<T>
   readonly backward: AsyncIterable<T>
   get(key: ValueType): Promise<T>

@@ -1,16 +1,16 @@
 import { Item } from '../../types/Item'
 import { sourceGte, sourceLte, ValueType } from 'b-pl-tree'
-import CollectionMemory, { ttl_key } from '../CollectionMemory'
+import CollectionSync, { ttl_key } from '../collection'
 
 export function ensure_ttl_sync<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
 ): void {
   if (collection.ttl) {
     // collection.indexes
     // ensure that all object are actuated with time
     const now = Date.now()
     // индекс по TTL
-    const ttl_index = sourceGte<number, ValueType>(now - collection.ttl)(
+    const ttl_index = sourceLte<number, ValueType>(now - collection.ttl)(
       collection.indexes[ttl_key],
     )
     const source = [...ttl_index]

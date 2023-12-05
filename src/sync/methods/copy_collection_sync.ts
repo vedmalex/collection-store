@@ -1,16 +1,17 @@
 import { Item } from '../../types/Item'
 import { ensure_indexes } from './ensure_indexes'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 import { build_index_sync } from './build_index_sync'
 
 export function copy_collection_sync<T extends Item>(
   model: string,
-  source: CollectionMemory<T>,
-  dest?: CollectionMemory<T>,
-): CollectionMemory<T> {
+  source: CollectionSync<T>,
+  dest?: CollectionSync<T>,
+): CollectionSync<T> {
   const collection =
     dest ??
-    CollectionMemory.create<T>({
+    CollectionSync.create<T>({
+      root: source.root,
       name: model,
       adapter: source.storage.clone(),
       list: source.list.construct(),

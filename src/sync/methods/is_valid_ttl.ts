@@ -1,8 +1,8 @@
 import { Item } from '../../types/Item'
-import CollectionMemory, { ttl_key } from '../CollectionMemory'
+import CollectionSync, { ttl_key } from '../collection'
 
 export function is_valid_ttl<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   item?: T,
 ) {
   if (item) {

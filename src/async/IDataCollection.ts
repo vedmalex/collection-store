@@ -4,6 +4,7 @@ import { ValueType } from 'b-pl-tree'
 import { TraverseCondition } from '../types/TraverseCondition'
 
 export interface IDataCollection<T extends Item> {
+  root: string
   reset(): Promise<void>
   load(name?: string): Promise<void>
   persist(name?: string): Promise<void>

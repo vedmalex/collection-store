@@ -1,9 +1,9 @@
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from 'src/types/IndexStored'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 export function restore_index_def<T>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   input: IndexStored<T>,
 ): IndexDef<T> {
   const { key, auto, unique, sparse, required, ignoreCase } = input

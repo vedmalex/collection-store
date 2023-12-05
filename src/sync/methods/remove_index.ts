@@ -1,8 +1,8 @@
 import { Item } from '../../types/Item'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 export function remove_index<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   val,
 ) {
   collection.removes.forEach((item) => item(val))

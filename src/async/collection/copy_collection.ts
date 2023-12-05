@@ -11,6 +11,7 @@ export async function copy_collection<T extends Item>(
   const collection =
     dest ??
     Collection.create<T>({
+      root: source.root,
       name: model,
       adapter: source.storage.clone(),
       list: source.list.construct(),

@@ -15,13 +15,15 @@ import { cloneDeep } from 'lodash'
 export class FileStorage<T extends Item, K extends ValueType>
   implements IList<T>
 {
+  singlefile: boolean = false
+
   //  хранить промисы типа кэширование данных к которым был доступ, и которые не обновлялись
   // а на обновление выставлять новый промис
   // таким образом данные всегда будут свежими... если нет другого читателя писателя файлов
   // можно использовать библиотеку для монитроинга за файлами
   tree: BPlusTree<string, K> = new BPlusTree(32, true)
   get folder(): string {
-    return this.collection.path
+    return pathlib.join(this.collection.root, this.collection.model)
   }
   constructor(private keyField?: string) {}
   exists: Promise<boolean>

@@ -1,9 +1,9 @@
 import { Item } from '../../types/Item'
 import { ValueType } from 'b-pl-tree'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 export function update_index<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   ov: T,
   nv: T,
   i: ValueType,

@@ -19,5 +19,5 @@ export interface ICollectionConfigSync<T extends Item> {
   auto?: boolean
   indexList?: Array<IndexDef<T>>
   adapter: IStorageAdapterSync<T>
-  path?: string
+  root: string
 }

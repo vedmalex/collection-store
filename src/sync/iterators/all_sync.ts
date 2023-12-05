@@ -1,10 +1,10 @@
 import { Item } from '../../types/Item'
 import { query } from '../../query/query'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 import { TraverseCondition } from '../../types/TraverseCondition'
 
 export function* all_sync<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   condition: TraverseCondition<T>,
 ): Generator<T> {
   if (typeof condition == 'object') condition = query(condition)

@@ -1,10 +1,10 @@
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from 'src/types/IndexStored'
 import { Item } from '../../types/Item'
-import CollectionMemory from 'src/sync/CollectionMemory'
+import CollectionSync from 'src/sync/collection'
 
 export function store_index_def<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   input: IndexDef<T>,
 ): IndexStored<T> {
   const { key, auto, unique, sparse, required, ignoreCase } = input

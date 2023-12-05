@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import CollectionMemory from '../CollectionMemory'
+import CollectionSync from '../collection'
 
 /**
  * ensures values for indexing and return final index insert routines
@@ -7,7 +7,7 @@ import CollectionMemory from '../CollectionMemory'
  * @param val inserting value
  */
 export function prepare_index_insert<T extends Item>(
-  collection: CollectionMemory<T>,
+  collection: CollectionSync<T>,
   val: T,
 ) {
   const result = []
