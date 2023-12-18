@@ -1,8 +1,9 @@
+import { Item } from '../../types/Item'
 import { IndexDef } from '../../types/IndexDef'
-import { IndexStored } from 'src/types/IndexStored'
+import { IndexStored } from '../../types/IndexStored'
 import Collection from '../collection'
 
-export function restore_index_def<T>(
+export function restore_index_def<T extends Item>(
   collection: Collection<T>,
   input: IndexStored<T>,
 ): IndexDef<T> {

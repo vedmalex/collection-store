@@ -1,5 +1,5 @@
-import { Dictionary } from 'src/types/Dictionary'
-import { BPlusTree, ValueType } from 'b-pl-tree'
+import { Dictionary } from '../../types/Dictionary'
+import { BPlusTree, PortableBPlusTree, ValueType } from 'b-pl-tree'
 
 export function serialize_indexes(
   indexes: Dictionary<BPlusTree<any, ValueType>>,
@@ -7,5 +7,5 @@ export function serialize_indexes(
   return Object.keys(indexes).reduce((res, cur) => {
     res[cur] = BPlusTree.serialize(indexes[cur])
     return res
-  }, {})
+  }, {} as Dictionary<PortableBPlusTree<any, ValueType>>)
 }

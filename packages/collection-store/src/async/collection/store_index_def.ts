@@ -1,5 +1,5 @@
 import { IndexDef } from '../../types/IndexDef'
-import { IndexStored } from 'src/types/IndexStored'
+import { IndexStored } from '../../types/IndexStored'
 import { Item } from '../../types/Item'
 import Collection from '../collection'
 
@@ -21,7 +21,7 @@ export function store_index_def<T extends Item>(
       ? input.process.toString()
       : undefined,
     gen: input.gen
-      ? collection.genCache[input.gen.name]
+      ? Collection.genCache[input.gen.name]
         ? input.gen.name
         : input.gen.toString()
       : undefined,

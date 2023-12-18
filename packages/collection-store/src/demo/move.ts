@@ -1,4 +1,4 @@
-import { ICollectionConfig } from 'src/async/ICollectionConfig'
+import { ICollectionConfig } from '../async/ICollectionConfig'
 import Collection from '../async/collection'
 import { do_rotate_log } from '../async/collection/do_rotate_log'
 import { Person } from './Person'

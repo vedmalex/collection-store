@@ -1,6 +1,41 @@
 {
+  "config": {
+    "root": "./data",
+    "name": "Person",
+    "adapter": "AdapterFS",
+    "list": "FileStorage",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "name"
+      },
+      {
+        "key": "ssn",
+        "unique": true
+      },
+      {
+        "key": "age"
+      },
+      {
+        "key": "address.home"
+      },
+      {
+        "key": "address.city"
+      },
+      {
+        "key": "address.appart"
+      }
+    ]
+  },
   "list": {
-    "counter": 9,
+    "counter": 8,
     "tree": {
       "t": 32,
       "next_node_id": 1,
@@ -11,12 +46,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": 7,
+          "min": 0,
+          "size": 8,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "key_num": 8,
+          "pointers": [
+            "0.json",
+            "1.json",
+            "2.json",
+            "3.json",
+            "4.json",
+            "5.json",
+            "6.json",
+            "7.json"
+          ]
         }
       ]
     }
@@ -32,12 +87,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": 7,
+          "min": 0,
+          "size": 8,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
         }
       ]
     },
@@ -51,12 +126,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": "simon",
+          "min": "alex",
+          "size": 8,
+          "keys": [
+            "alex",
+            "jach",
+            "jame",
+            "jason",
+            "jim",
+            "mark",
+            "monika",
+            "simon"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            6,
+            1,
+            4,
+            5,
+            2,
+            7,
+            3
+          ]
         }
       ]
     },
@@ -70,12 +165,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": "000-0000-00004",
+          "min": "000-0000-000001",
+          "size": 8,
+          "keys": [
+            "000-0000-000001",
+            "000-0000-000002",
+            "000-0000-000003",
+            "000-0000-000005",
+            "000-0000-000006",
+            "000-0000-000007",
+            "000-0000-000008",
+            "000-0000-00004"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            3
+          ]
         }
       ]
     },
@@ -89,12 +204,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": 45,
+          "min": 18,
+          "size": 8,
+          "keys": [
+            18,
+            19,
+            24,
+            29,
+            30,
+            30,
+            42,
+            45
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            4,
+            3,
+            6,
+            2,
+            7,
+            0,
+            1
+          ]
         }
       ]
     },
@@ -108,12 +243,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": "54481",
+          "min": "23310",
+          "size": 8,
+          "keys": [
+            "23310",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "5431",
+            "54481"
+          ],
+          "key_num": 8,
+          "pointers": [
+            5,
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ]
         }
       ]
     },
@@ -127,12 +282,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": "New York",
+          "min": "Los Angeles",
+          "size": 8,
+          "keys": [
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "New York",
+            "New York",
+            "New York"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            5,
+            6,
+            7,
+            2,
+            3,
+            4
+          ]
         }
       ]
     },
@@ -146,12 +321,32 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": "penthouse",
+          "min": "1a",
+          "size": 8,
+          "keys": [
+            "1a",
+            "1a",
+            "1a",
+            "1a",
+            null,
+            "3f",
+            "5c",
+            "penthouse"
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            5
+          ]
         }
       ]
     }
@@ -207,7 +402,5 @@
       "sparse": false,
       "required": false
     }
-  },
-  "id": "id",
-  "ttl": false
+  }
 }

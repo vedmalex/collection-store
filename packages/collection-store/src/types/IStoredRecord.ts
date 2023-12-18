@@ -1,7 +1,7 @@
 import { Item } from './Item'
 import { ValueType } from 'b-pl-tree'
-import { AnySchema } from 'ajv'
 import { IVersion } from './IVersion'
+import { ZodType } from 'zod'
 
 export interface IStoredRecord<T extends Item> {
   readonly id: ValueType
@@ -11,6 +11,6 @@ export interface IStoredRecord<T extends Item> {
   readonly created: number
   readonly updated?: number
   readonly deleted?: number
-  readonly schema?: AnySchema
+  readonly schema?: ZodType<T>
   readonly history: Array<IVersion>
 }

@@ -5,13 +5,16 @@ import { autoIncIdGen } from '../utils/autoIncIdGen'
 import { autoTimestamp } from '../utils/autoTimestamp'
 import { IStorageAdapter } from './IStorageAdapter'
 import { IList } from './IList'
-import { IndexDef } from '../types/IndexDef'
+import { IndexDef, SerializedIndexDef } from '../types/IndexDef'
 import { IndexStored } from '../types/IndexStored'
 import { Paths } from '../types/Paths'
-import { Item } from '../types/Item'
+import { Item, ItemSchema } from '../types/Item'
 import { IdGeneratorFunction } from '../types/IdGeneratorFunction'
 import { IdType } from '../types/IdType'
-import { ICollectionConfig } from './ICollectionConfig'
+import {
+  ICollectionConfig,
+  ISerializedCollectionConfig,
+} from './ICollectionConfig'
 import { CronJob } from 'cron'
 import { Dictionary } from '../types/Dictionary'
 import { BPlusTree, ValueType } from 'b-pl-tree'
@@ -23,7 +26,7 @@ import { prepare_index_insert } from './collection/prepare_index_insert'
 import { update_index } from './collection/update_index'
 import { ensure_ttl } from './collection/ensure_ttl'
 import { remove_index } from './collection/remove_index'
-import { build_index } from './collection/build_index'
+import { build_indexes } from './collection/build_indexes'
 import { ensure_indexes } from './collection/ensure_indexes'
 import { get_indexed_value } from './collection/get_indexed_value'
 import { return_list_if_valid } from './collection/return_list_if_valid'
@@ -36,53 +39,104 @@ import { do_rotate_log } from './collection/do_rotate_log'
 import { StoredIList } from '../types/StoredIList'
 import { get_first_indexed_value } from './collection/get_first_indexed_value'
 import { get_last_indexed_value } from './collection/get_last_indexed_value'
-import Ajv, { AnySchema, ValidateFunction } from 'ajv'
-import addFormats from 'ajv-formats'
 import { rebuild_indexes } from './collection/rebuild_indexes'
 import { List } from './storage/List'
 import AdapterMemory from './AdapterMemory'
 import { IDataCollection } from './IDataCollection'
+import { ProcessInsert } from './ProcessInsert'
+import { ProcessUpdates } from './ProcessUpdates'
+import { ProcessRemoves } from './ProcessRemoves'
+import { ProcessEnsure } from './ProcessEnsure'
+import { ProcessRebuild } from './ProcessRebuild'
+import { create_index } from './collection/create_index'
+import { ZodError, ZodSchema, ZodType } from 'zod'
+import { serialize_collection_config } from './collection/serialize_collection_config'
 
 export const ttl_key = '__ttltime'
 
 export default class Collection<T extends Item> implements IDataCollection<T> {
-  root: string
-  cronJob?: CronJob
-  onRotate: () => void
+  get config(): ISerializedCollectionConfig {
+    return serialize_collection_config(this)
+  }
 
-  storage: IStorageAdapter<T>
-  /** ttl for collection in ms */
-  ttl: number
-  /** cron tab time */
-  rotate: string
-  /** model name */
-  model: string
-  /** field that is used for identity */
-  id: string
-  /** is autioincrement */
-  auto: boolean
-  /** audit */
-  audit: boolean
-  /** ajv validator */
-  validation: AnySchema
-  validator?: ValidateFunction<T>
-  /**indexes */
-  indexes: { [index: string]: BPlusTree<any, any> }
-  /** main storage */
-  list: IList<T>
-  /** actions in insert */
-  inserts: Array<(item: T) => (index_payload: ValueType) => void>
-  /** actions in update */
-  updates: Array<(ov: T, nv: T, index_payload: ValueType) => void>
-  /** actions in remove */
-  removes: Array<(item: T) => void>
-  /** actions in ensure */
-  ensures: Array<() => void>
-  rebuilds: Array<() => Promise<void>>
-  /** index definition */
-  indexDefs: Dictionary<IndexDef<T>>
   /** unique generators */
-  genCache: Dictionary<IdGeneratorFunction<T>>
+  static genCache: Dictionary<IdGeneratorFunction<any>> = {
+    autoIncIdGen: autoIncIdGen as IdGeneratorFunction<any>,
+    autoTimestamp: autoTimestamp as IdGeneratorFunction<any>,
+  }
+
+  root!: string
+  cronJob?: CronJob
+  createIndex(name: string, config: IndexDef<T>): void {
+    create_index(this, name, config)
+    debugger
+    ensure_indexes(this)
+    //ensure
+    //rebuild
+  }
+
+  listIndexes(name: string) {
+    if (!name) {
+      return Object.keys(this.indexes).map((name) => ({
+        name,
+        key: { name: this.indexes[name] },
+      }))
+    } else {
+      if (this.indexes[name]) {
+        return [{ name, keys: { name: this.indexes[name] } }]
+      } else {
+        return [] as any
+      }
+    }
+  }
+
+  dropIndex(name: string) {
+    delete this.indexes[name]
+  }
+
+  storage!: IStorageAdapter<T>
+  /** ttl for collection in ms */
+  ttl?: number
+  /** cron tab time */
+  rotate?: string
+  /** model name */
+  name!: string
+  /** field that is used for identity */
+  id!: string
+  /** is autioincrement */
+  auto?: boolean
+  /** audit */
+  audit!: boolean
+  /** zod validator */
+  validation: ZodType<T> = ItemSchema as ZodSchema<T>
+  validator(item: T):
+    | { success: true; data: T }
+    | {
+        success: false
+        errors: ZodError<T>
+      } {
+    if (this.validation) {
+      return this.validation.safeParse(item) as any
+    } else {
+      return { success: true, data: item as T }
+    }
+  }
+  /**indexes */
+  indexes!: { [index: string]: BPlusTree<any, any> }
+  /** main storage */
+  list!: IList<T>
+  /** actions in insert */
+  inserts!: Array<ProcessInsert<T>>
+  /** actions in update */
+  updates!: Array<ProcessUpdates<T>>
+  /** actions in remove */
+  removes!: Array<ProcessRemoves<T>>
+  /** actions in ensure */
+  ensures!: Array<ProcessEnsure>
+  rebuilds!: Array<ProcessRebuild>
+  /** index definition */
+  indexDefs!: Dictionary<IndexDef<T>>
+
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
 
@@ -103,17 +157,12 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       adapter = new AdapterMemory<T>(),
       validation,
       audit,
-      onRotate,
       root,
     } = config ?? {}
 
     collection.audit = !!audit
-
     if (validation) {
       collection.validation = validation
-      const ajv = new Ajv({ useDefaults: true })
-      addFormats(ajv)
-      collection.validator = ajv.compile<T>(validation)
     }
     collection.root = root ?? './data/'
 
@@ -124,12 +173,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
 
     if (rotate) {
-      collection.onRotate = onRotate
       collection.cronJob = new CronJob(rotate, () => {
         do_rotate_log(collection)
-        if (typeof collection.onRotate === 'function') {
-          collection.onRotate()
-        }
       })
       collection.cronJob.start()
     }
@@ -142,17 +187,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         auto: auto != null ? auto : true,
         gen: idGen,
       }
-    } else if (id instanceof Function) {
-      Id = id()
     }
 
     if (!Id.name) {
       Id.name = 'id'
     }
-
-    // if (Id.auto) {
-    //   Id.auto = (auto == null) ? auto : true;
-    // }
 
     if (Id.gen == null) {
       Id.gen = idGen
@@ -165,7 +204,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     collection.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
 
     collection.rotate = rotate
-    collection.model = name
+    collection.name = name
     collection.storage = adapter.init(collection)
     collection.id = Id.name
     collection.auto = Id.auto
@@ -178,11 +217,6 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     collection.ensures = []
     collection.rebuilds = []
 
-    collection.genCache = {
-      autoIncIdGen: autoIncIdGen,
-      autoTimestamp: autoTimestamp,
-    }
-
     const defIndex: Array<IndexDef<T>> = [
       {
         key: collection.id,
@@ -191,8 +225,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         gen:
           typeof Id.gen == 'function'
             ? Id.gen
-            : collection.genCache[Id.gen]
-            ? collection.genCache[Id.gen]
+            : Collection.genCache[Id.gen]
+            ? Collection.genCache[Id.gen]
             : eval(Id.gen),
         unique: true,
         sparse: false,
@@ -204,7 +238,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       defIndex.push({
         key: ttl_key,
         auto: true,
-        gen: collection.genCache['autoTimestamp'],
+        gen: Collection.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
@@ -215,14 +249,14 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       defIndex.push({
         key: ttl_key,
         auto: true,
-        gen: collection.genCache['autoTimestamp'],
+        gen: Collection.genCache['autoTimestamp'],
         unique: false,
         sparse: false,
         required: true,
       })
     }
 
-    build_index(
+    build_indexes(
       collection,
       defIndex.concat(indexList || []).reduce((prev, curr) => {
         if (curr.key == '*') {
@@ -242,7 +276,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
             unique: curr.unique || false,
             gen:
               curr.gen ||
-              (curr.auto ? collection.genCache['autoIncIdGen'] : undefined),
+              (curr.auto ? Collection.genCache['autoIncIdGen'] : undefined),
             sparse: curr.sparse || false,
             required: curr.required || false,
             ignoreCase: curr.ignoreCase,
@@ -255,6 +289,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     collection.list.init(collection)
     // придумать загрузку
     ensure_indexes(collection) ///??
+
     return collection
   }
 
@@ -297,7 +332,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         this.ensures = []
 
         this.indexes = {}
-        build_index(this, this.indexDefs)
+        build_indexes(this, this.indexDefs)
 
         this.indexes = deserialize_indexes(indexes)
         await rebuild_indexes(this)
@@ -309,18 +344,16 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   }
 
   store(): {
+    config: any
     list: StoredIList
     indexes: { [key: string]: unknown }
     indexDefs: Dictionary<IndexStored<T>>
-    id: string
-    ttl: number
   } {
     return {
+      config: this.config,
       list: this.list.persist(),
       indexes: serialize_indexes(this.indexes),
       indexDefs: store_index(this, this.indexDefs),
-      id: this.id,
-      ttl: this.ttl,
     }
   }
 
@@ -328,7 +361,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     await this.storage.store(name)
   }
 
-  async push(item: T): Promise<T> {
+  //
+  async push(item: T): Promise<T | undefined> {
     // apply default once it is created
     const insert_indexed_values = prepare_index_insert(this, item)
     const id = item[this.id]
@@ -337,17 +371,16 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return return_one_if_valid(this, res)
   }
 
-  async create(item: T): Promise<T> {
+  async create(item: T): Promise<T | undefined> {
     const res = { ...item } as T
-
     const value = await this.push(res)
     return value
   }
 
-  async save(res: T): Promise<T> {
+  async save(res: T): Promise<T | undefined> {
     const id = res[this.id]
     const item = await this.findById(id)
-    update_index(this, item, res, id)
+    update_index(this, item as T, res as T, id)
     await this.list.update(id, res)
     return return_one_if_valid(this, res)
   }
@@ -360,27 +393,27 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return (await last(this, () => true).next()).value
   }
 
-  lowest(key: Paths<T>): Promise<T> {
+  lowest(key: Paths<T>): Promise<T | undefined> {
     return this.findFirstBy(key, this.indexes[key].min)
   }
 
-  greatest(key: Paths<T>): Promise<T> {
+  greatest(key: Paths<T>): Promise<T | undefined> {
     return this.findLastBy(key, this.indexes[key].max)
   }
 
-  oldest(): Promise<T> {
+  oldest(): Promise<T | undefined> {
     if (this.ttl) {
       return this.lowest(ttl_key as any)
     } else return this.first()
   }
 
-  latest(): Promise<T> {
+  latest(): Promise<T | undefined> {
     if (this.ttl) {
       return this.greatest(ttl_key as any)
     } else return this.last()
   }
 
-  async findById(id: ValueType): Promise<T> {
+  async findById(id: ValueType): Promise<T | undefined> {
     const { process } = this.indexDefs[this.id]
     if (process) {
       id = process(id)
@@ -406,7 +439,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
   }
 
-  async findFirstBy(key: Paths<T>, id: ValueType): Promise<T> {
+  async findFirstBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const { process } = this.indexDefs[key as string]
       if (process) {
@@ -417,12 +450,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         const result = await get_first_indexed_value(this, key, id)
         return return_one_if_valid(this, result)
       }
-    } else {
-      throw new Error(`Index for ${key} not found`)
     }
+    throw new Error(`Index for ${key} not found`)
   }
 
-  async findLastBy(key: Paths<T>, id: ValueType): Promise<T> {
+  async findLastBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const { process } = this.indexDefs[key as string]
       if (process) {
@@ -433,9 +465,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
         const result = await get_last_indexed_value(this, key, id)
         return return_one_if_valid(this, result)
       }
-    } else {
-      throw new Error(`Index for ${key} not found`)
     }
+    throw new Error(`Index for ${key} not found`)
   }
 
   async find(condition: TraverseCondition<T>): Promise<Array<T>> {
@@ -446,12 +477,12 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     return return_list_if_valid(this, result)
   }
 
-  async findFirst(condition: TraverseCondition<T>): Promise<T> {
+  async findFirst(condition: TraverseCondition<T>): Promise<T | undefined> {
     const result: T = await (await first(this, condition).next()).value
     return return_one_if_valid(this, result)
   }
 
-  async findLast(condition: TraverseCondition<T>): Promise<T> {
+  async findLast(condition: TraverseCondition<T>): Promise<T | undefined> {
     const result: T = await (await last(this, condition).next()).value
     return return_one_if_valid(this, result)
   }
@@ -464,9 +495,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     const result: Array<T> = []
     for await (const item of all(this, condition)) {
       const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
-      update_index(this, item, res, item[this.id])
+      update_index(this, item, res as T, item[this.id])
       await this.list.update(item[this.id], res)
+      result.push(res)
     }
+    debugger
     return return_list_if_valid<T>(this, result)
   }
 
@@ -474,41 +507,40 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     condition: TraverseCondition<T>,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<T> {
+  ): Promise<T | undefined> {
     const item: T = await (await first(this, condition).next()).value
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
-    update_index(this, item, res, item[this.id])
+    update_index(this, item, res as T, item[this.id])
     await this.list.update(item[this.id], res)
-
-    return return_one_if_valid(this, res)
+    return return_one_if_valid(this, res as T)
   }
 
   async updateLast(
     condition: TraverseCondition<T>,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<T> {
+  ): Promise<T | undefined> {
     const item: T = await (await last(this, condition).next()).value
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
-    update_index(this, item, res, item[this.id])
+    update_index(this, item, res as T, item[this.id])
     await this.list.update(item[this.id], res)
 
-    return return_one_if_valid(this, res)
+    return return_one_if_valid(this, res as T)
   }
 
   async updateWithId(
     id: ValueType,
     update: Partial<T>,
     merge: boolean = true,
-  ): Promise<T> {
+  ): Promise<T | undefined> {
     const item = await this.findById(id)
     const res = merge ? _.merge({}, item, update) : _.assign({}, item, update)
-    update_index(this, res, update, id)
+    update_index(this, res as T, update as T, id)
     this.list.update(id, res)
-    return return_one_if_valid(this, res)
+    return return_one_if_valid(this, res as T)
   }
 
-  async removeWithId(id: ValueType): Promise<T> {
+  async removeWithId(id: ValueType): Promise<T | undefined> {
     // не совсем работает удаление
     const i = this.indexes[this.id].findFirst(id)
     const cur = await this.list.get(i)
@@ -519,26 +551,56 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     }
   }
 
-  async remove(condition: TraverseCondition<T>): Promise<Array<T>> {
+  async remove(condition: TraverseCondition<T>): Promise<Array<T | undefined>> {
     const result: Array<T> = []
     for await (const cur of all(this, condition)) {
       remove_index(this, cur)
       const res = await this.list.delete(cur[this.id])
       result.push(res)
     }
-    return return_list_if_valid(this, result)
+    return return_list_if_valid<T>(this, result)
   }
 
-  async removeFirst(condition: TraverseCondition<T>): Promise<T> {
+  async removeFirst(condition: TraverseCondition<T>): Promise<T | undefined> {
     const item: T = await (await first(this, condition).next()).value
     remove_index(this, item)
     await this.list.delete(item[this.id])
     return return_one_if_valid(this, item)
   }
-  async removeLast(condition: TraverseCondition<T>): Promise<T> {
+  async removeLast(condition: TraverseCondition<T>): Promise<T | undefined> {
     const item: T = await (await last(this, condition).next()).value
     remove_index(this, item)
     await this.list.delete(item[this.id])
     return return_one_if_valid(this, item)
+  }
+}
+
+export function serializeIndex<T extends Item>(
+  res: IndexDef<T>,
+): SerializedIndexDef {
+  return {
+    key: res.key as string,
+    auto: res.auto ? true : undefined,
+    unique: res.unique ? true : undefined,
+    sparse: res.sparse ? true : undefined,
+    ignoreCase: res.ignoreCase ? true : undefined,
+    required: res.required ? true : undefined,
+    gen: res.gen?.name ?? undefined,
+    process: res.process?.toString() ?? undefined,
+  }
+}
+
+export function deserializeIndex<T extends Item>(
+  res: SerializedIndexDef,
+): IndexDef<T> {
+  return {
+    key: res.key,
+    auto: res.auto ? true : undefined,
+    unique: res.unique ? true : undefined,
+    sparse: res.sparse ? true : undefined,
+    ignoreCase: res.ignoreCase ? true : undefined,
+    required: res.required ? true : undefined,
+    gen: res.gen ? Collection.genCache[res.gen] : undefined,
+    process: res.process ? eval(res.process) : undefined,
   }
 }

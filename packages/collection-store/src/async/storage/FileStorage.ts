@@ -5,16 +5,20 @@ import fs from 'fs-extra'
 import pathlib from 'path'
 import { IList } from '../IList'
 import { Collection } from 'src'
-import { entity_delete } from 'src/utils/entity_delete'
-import { entity_update } from 'src/utils/entity_update'
-import { IStoredRecord } from 'src/types/IStoredRecord'
-import { entity_create } from 'src/utils/entity_create'
-import { is_stored_record } from 'src/utils/is_stored_record'
+import { entity_delete } from '../../utils/entity_delete'
+import { entity_update } from '../../utils/entity_update'
+import { IStoredRecord } from '../../types/IStoredRecord'
+import { entity_create } from '../../utils/entity_create'
+import { is_stored_record } from '../../utils/is_stored_record'
 import { cloneDeep } from 'lodash'
+import { fromZodError } from 'zod-validation-error'
 
 export class FileStorage<T extends Item, K extends ValueType>
   implements IList<T>
 {
+  get name() {
+    return 'FileStorage'
+  }
   singlefile: boolean = false
 
   //  хранить промисы типа кэширование данных к которым был доступ, и которые не обновлялись
@@ -23,11 +27,11 @@ export class FileStorage<T extends Item, K extends ValueType>
   // можно использовать библиотеку для монитроинга за файлами
   tree: BPlusTree<string, K> = new BPlusTree(32, true)
   get folder(): string {
-    return pathlib.join(this.collection.root, this.collection.model)
+    return pathlib.join(this.collection.root, this.collection.name)
   }
   constructor(private keyField?: string) {}
-  exists: Promise<boolean>
-  collection: Collection<T>
+  exists!: Promise<boolean>
+  collection!: Collection<T>
   construct() {
     return new FileStorage<T, K>()
   }
@@ -44,13 +48,12 @@ export class FileStorage<T extends Item, K extends ValueType>
     return this
   }
   async clone(): Promise<IList<T>> {
-    if (this.exists) {
+    if (await this.exists) {
       const res = new FileStorage<T, K>()
       BPlusTree.deserialize(res.tree, BPlusTree.serialize(this.tree))
       return res
-    } else {
-      throw new Error('folder not found')
     }
+    throw new Error('folder not found')
   }
   persist(): StoredIList {
     return {
@@ -85,14 +88,13 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
 
   async *toArray() {
-    if (await this.exists) {
+    const res = await this.exists
+    if (res) {
       const it = this.tree.each()(this.tree)
       for (const path of it) {
         yield await fs.readJSON(this.get_path(path.value))
       }
-    } else {
-      throw new Error('folder not found')
-    }
+    } else throw new Error('folder not found')
   }
 
   async *toArrayReverse() {
@@ -101,9 +103,7 @@ export class FileStorage<T extends Item, K extends ValueType>
       for (const path of it) {
         yield await fs.readJSON(this.get_path(path.value))
       }
-    } else {
-      throw new Error('folder not found')
-    }
+    } else throw new Error('folder not found')
   }
 
   private key_filename(key: ValueType) {
@@ -126,12 +126,10 @@ export class FileStorage<T extends Item, K extends ValueType>
         .ensureDir(this.folder)
         .then((_) => true)
         .catch((_) => false)
-    } else {
-      throw new Error('folder not found')
-    }
+    } else throw new Error('folder not found')
   }
 
-  async get(key: K): Promise<T> {
+  async get(key: K): Promise<T | undefined> {
     if (await this.exists) {
       const value = this.tree.findFirst(key)
       if (value) {
@@ -146,14 +144,14 @@ export class FileStorage<T extends Item, K extends ValueType>
           return result
         }
       }
-    } else {
-      throw new Error('folder not found')
     }
+    throw new Error('folder not found')
   }
 
   async set(key: K, item: T): Promise<T> {
     if (await this.exists) {
-      if (this.collection.validator?.(item) ?? true) {
+      let valiadtor = this.collection.validator(item)
+      if (valiadtor.success) {
         this._counter++
         // checkif exists
         // берем новый ключ
@@ -181,23 +179,23 @@ export class FileStorage<T extends Item, K extends ValueType>
         this.tree.insert(key, this.key_filename(uid))
         return this.collection.audit ? result.data : result
       } else {
-        console.log(this.collection.validator?.errors)
+        console.log(fromZodError(valiadtor.errors))
         throw new Error('Validation error')
       }
-    } else {
-      throw new Error('folder not found')
     }
+    throw new Error('folder not found')
   }
 
   async update(key: K, item: T): Promise<T> {
     // checkif exists
     if (await this.exists) {
-      if (this.collection.validator?.(item) ?? true) {
+      let valiadtor = this.collection.validator(item)
+      if (valiadtor.success) {
         // ищем текущее название файла
         const location = this.get_path(this.tree.findFirst(key))
         let result: T = item
 
-        const record = await fs.readJSON(location)
+        const record = (await fs.readJSON(location)) as T
         if (this.collection.audit) {
           let res: T | IStoredRecord<T>
           if (!is_stored_record(record)) {
@@ -207,7 +205,7 @@ export class FileStorage<T extends Item, K extends ValueType>
               this.collection.validation,
             )
           } else {
-            res = entity_update(record, cloneDeep(item))
+            res = entity_update<T>(record, cloneDeep(item))
           }
           result = res.data
           await fs.writeJSON(location, res)
@@ -217,12 +215,11 @@ export class FileStorage<T extends Item, K extends ValueType>
         }
         return result
       } else {
-        console.log(this.collection.validator?.errors)
+        console.log(fromZodError(valiadtor.errors))
         throw new Error('Validation error')
       }
-    } else {
-      throw new Error('folder not found')
     }
+    throw new Error('folder not found')
   }
 
   async delete(key: K): Promise<T> {
@@ -243,9 +240,8 @@ export class FileStorage<T extends Item, K extends ValueType>
         this.tree.remove(key)
         return result
       }
-    } else {
-      throw new Error('folder not found')
     }
+    throw new Error('folder not found')
   }
 
   _counter: number = 0

@@ -5,7 +5,10 @@ import { IStorageAdapter } from './IStorageAdapter'
 export default class AdapterMemory<T extends Item>
   implements IStorageAdapter<T>
 {
-  collection: Collection<T>
+  get name() {
+    return 'AdapterMemory' as const
+  }
+  collection!: Collection<T>
   clone(): AdapterMemory<T> {
     return new AdapterMemory<T>()
   }

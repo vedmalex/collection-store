@@ -1,6 +1,5 @@
-import Collection from '../async/collection'
-import { UnaryCondition } from 'src/query/UnaryCondition'
-import { query } from 'src/query/query'
+import { UnaryCondition } from '../query/UnaryCondition'
+import { query } from '../query/query'
 import { create } from './create'
 import { collection_config } from './collection_2'
 

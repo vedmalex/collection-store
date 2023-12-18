@@ -1,0 +1,208 @@
+{
+  "config": {
+    "root": "./data",
+    "name": "Article",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "slug",
+        "unique": true,
+        "required": true
+      },
+      {
+        "key": "title",
+        "required": true
+      }
+    ]
+  },
+  "list": {
+    "_count": 4,
+    "_counter": 4,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-15T18:01:55.858Z",
+        "updatedAt": "2023-12-15T18:01:55.891Z",
+        "slug": "foo-is-bar",
+        "title": "Foo is Bar",
+        "description": "Lorem impsum dolor sit amet…",
+        "text": "Lorem impsum dolor sit amet",
+        "author": 0,
+        "id": 0,
+        "tags": [
+          0,
+          1
+        ]
+      },
+      "1": {
+        "createdAt": "2023-12-15T18:01:55.894Z",
+        "updatedAt": "2023-12-15T18:01:55.894Z",
+        "slug": "title-13",
+        "title": "title 1/3",
+        "description": "desc 1/3",
+        "text": "text text text 1/3",
+        "author": 1,
+        "tags": [
+          1,
+          2
+        ],
+        "id": 1
+      },
+      "2": {
+        "createdAt": "2023-12-15T18:01:55.894Z",
+        "updatedAt": "2023-12-15T18:01:55.894Z",
+        "slug": "title-23",
+        "title": "title 2/3",
+        "description": "desc 2/3",
+        "text": "text text text 2/3",
+        "author": 1,
+        "tags": [
+          2
+        ],
+        "id": 2
+      },
+      "3": {
+        "createdAt": "2023-12-15T18:01:55.894Z",
+        "updatedAt": "2023-12-15T18:01:55.894Z",
+        "slug": "title-33",
+        "title": "title 3/3",
+        "description": "desc 3/3",
+        "text": "text text text 3/3",
+        "author": 1,
+        "tags": [
+          2,
+          3
+        ],
+        "id": 3
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 3,
+          "min": 0,
+          "size": 4,
+          "keys": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "key_num": 4,
+          "pointers": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      ]
+    },
+    "slug": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "title-33",
+          "min": "foo-is-bar",
+          "size": 4,
+          "keys": [
+            "foo-is-bar",
+            "title-13",
+            "title-23",
+            "title-33"
+          ],
+          "key_num": 4,
+          "pointers": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      ]
+    },
+    "title": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "title 3/3",
+          "min": "Foo is Bar",
+          "size": 4,
+          "keys": [
+            "Foo is Bar",
+            "title 1/3",
+            "title 2/3",
+            "title 3/3"
+          ],
+          "key_num": 4,
+          "pointers": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "slug": {
+      "key": "slug",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": true
+    },
+    "title": {
+      "key": "title",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  }
+}

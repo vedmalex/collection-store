@@ -4,7 +4,10 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "bun-types": "^1.0.15",
+    "sqlite3": "^5.1.6"
+  },
   "devDependencies": {
     "lerna": "^8.0.0"
   }

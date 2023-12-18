@@ -13,14 +13,19 @@ import { $size } from './$size'
 import { $match } from './$match'
 import { $or } from './$or'
 import { $and } from './$and'
-import { UnaryCondition } from './UnaryCondition'
+import { UnaryCondition, UnaryConditionOperation } from './UnaryCondition'
+
+import { debug } from 'debug'
+const log = debug('query:build')
 
 export function build_query(
-  obj: unknown,
+  _obj: unknown,
   options?: { [op: string]: (...args: Array<any>) => UnaryCondition },
-): UnaryCondition | { [key: string]: UnaryCondition } {
-  const res = []
-  if (typeof obj == 'object' && !(obj instanceof Date)) {
+): UnaryCondition | UnaryConditionOperation {
+  log(arguments)
+  const res: Array<UnaryCondition | UnaryConditionOperation> = []
+  if (typeof _obj == 'object' && !(_obj instanceof Date) && _obj) {
+    const obj = _obj as Record<string, any>
     const keys = Object.keys(obj)
     for (const prop of keys) {
       if (options?.[prop]) {
@@ -86,16 +91,15 @@ export function build_query(
     if (res.length == 1) {
       return res[0]
     } else {
-      return options?.$and(res) ?? $and(res)
+      return options?.$and(res) ?? $and(res as any)
     }
   } else if (
-    typeof obj == 'number' ||
-    typeof obj == 'bigint' ||
-    typeof obj == 'string' ||
-    obj instanceof Date
+    typeof _obj == 'number' ||
+    typeof _obj == 'bigint' ||
+    typeof _obj == 'string' ||
+    _obj instanceof Date
   ) {
-    return $eq(obj)
-  } else {
-    throw new Error('unknown type')
+    return $eq(_obj)
   }
+  throw new Error('unknown type')
 }

@@ -1,0 +1,9 @@
+{
+  "extends": "./shared/tsconfig.base.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    "allowJs": true
+  },
+  "include": [".eslintrc.js", "./packages/*/src/**.{tsx?|jsx?}"]
+}

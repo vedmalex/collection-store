@@ -1,0 +1,55 @@
+{
+  "name": "collection-store-sync",
+  "version": "3.0.0",
+  "description": "very flexible collection for in-memory operations with flexible indexing",
+  "main": "src/index.ts",
+  "scripts": {
+    "prepublish": "tsc --build tsconfig.json",
+    "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
+    "compile": "tsc --build tsconfig.json",
+    "compile:clean": "tsc --build tsconfig.json --clean",
+    "watch": "tsc --build tsconfig.json --watch",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vedmalex/collection-store.git"
+  },
+  "keywords": [],
+  "author": "vedanta-krit.das <vedmalex@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vedmalex/collection-store/issues"
+  },
+  "homepage": "https://github.com/vedmalex/collection-store",
+  "devDependencies": {
+    "@types/cron": "^2.4.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.10",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^18.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-watch": "^8.0.0",
+    "jest": "^29.7.0",
+    "prettier": "^2.8.8",
+    "ts-jest": "^29.1.1",
+    "typescript": "next"
+  },
+  "dependencies": {
+    "b-pl-tree": "^1.0.2",
+    "cron": "^2.4.4",
+    "decamelize": "^6.0.0",
+    "flexsearch": "^0.7.31",
+    "fs-extra": "^11.2.0",
+    "jsondiffpatch": "^0.5.0",
+    "lodash": "^4.17.21",
+    "timeparse": "^1.0.0",
+    "zod": "^3.22.4"
+  }
+}

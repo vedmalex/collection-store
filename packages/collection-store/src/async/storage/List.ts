@@ -4,18 +4,21 @@ import { StoredIList } from '../../types/StoredIList'
 import { Item } from '../../types/Item'
 import { IList } from '../IList'
 import Collection from '../collection'
-import { entity_create } from 'src/utils/entity_create'
-import { entity_update } from 'src/utils/entity_update'
-import { entity_delete } from 'src/utils/entity_delete'
-import { is_stored_record } from 'src/utils/is_stored_record'
-import { IStoredRecord } from 'src/types/IStoredRecord'
+import { entity_create } from '../../utils/entity_create'
+import { entity_update } from '../../utils/entity_update'
+import { entity_delete } from '../../utils/entity_delete'
+import { is_stored_record } from '../../utils/is_stored_record'
+import { IStoredRecord } from '../../types/IStoredRecord'
 
 export class List<T extends Item> implements IList<T> {
+  get name() {
+    return 'List'
+  }
   singlefile: boolean = true
   hash: { [key: string]: T } = {}
   _counter: number = 0
   _count: number = 0
-  collection: Collection<T>
+  collection!: Collection<T>
   exists: Promise<boolean> = Promise.resolve(true)
 
   init(collection: Collection<T>): IList<T> {
@@ -33,7 +36,7 @@ export class List<T extends Item> implements IList<T> {
     const item = get(this.hash, String(key))
     let result: T
     if (is_stored_record<T>(item)) {
-      result = cloneDeep(item.data)
+      result = cloneDeep<T>(item.data!)
       if (!this.collection.audit) {
         set(this.hash, String(key), result)
       }
@@ -58,7 +61,8 @@ export class List<T extends Item> implements IList<T> {
   }
 
   async set(_key: ValueType, item: T) {
-    if (this.collection.validator?.(item) ?? true) {
+    let valiadtor = this.collection.validator(item)
+    if (valiadtor.success) {
       let result: T | IStoredRecord<T>
       if (this.collection.audit) {
         result = entity_create(
@@ -73,13 +77,13 @@ export class List<T extends Item> implements IList<T> {
       this._counter++
       this._count++
       return is_stored_record(item) ? item.data : item
-    } else {
-      throw new Error('Validation error')
     }
+    throw new Error('Validation error')
   }
 
   async update(_key: ValueType, item: T) {
-    if (this.collection.validator?.(item) ?? true) {
+    let valiadtor = this.collection.validator(item)
+    if (valiadtor.success) {
       let result: T = item
       const record = get(this.hash, item[this.collection.id])
       if (this.collection.audit) {
@@ -99,9 +103,8 @@ export class List<T extends Item> implements IList<T> {
         set(this.hash, item[this.collection.id], cloneDeep(result))
       }
       return result
-    } else {
-      throw new Error('Validation error')
     }
+    throw new Error('Validation error')
   }
 
   async delete(i: ValueType) {

@@ -1,0 +1,79 @@
+{
+  "Tag": {
+    "root": "./data",
+    "name": "Tag",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "User": {
+    "root": "./data",
+    "name": "User",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "Article": {
+    "root": "./data",
+    "name": "Article",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "slug",
+        "unique": true,
+        "required": true
+      },
+      {
+        "key": "title",
+        "required": true
+      }
+    ]
+  },
+  "mikro_orm_migrations": {
+    "root": "./data",
+    "name": "mikro_orm_migrations",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  }
+}

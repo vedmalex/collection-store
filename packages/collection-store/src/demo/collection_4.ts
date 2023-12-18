@@ -1,14 +1,14 @@
 import { ICollectionConfig } from '../async/ICollectionConfig'
 import { Person } from './Person'
-import AdapterFS from 'src/async/AdapterFS'
-import { List } from 'src/async/storage/List'
+import AdapterFile from '../async/AdapterFile'
+import { List } from '../async/storage/List'
 
 export const collection_config: ICollectionConfig<Person> = {
   root: './data',
   name: 'Person',
   // ttl: '2m',
-  list: new List(),
-  adapter: new AdapterFS(),
+  list: new List<Person>(),
+  adapter: new AdapterFile(),
   indexList: [
     {
       key: 'name',

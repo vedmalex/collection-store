@@ -4,7 +4,6 @@ import { Paths } from './Paths'
 
 export interface IndexDef<T extends Item> {
   key: string | Paths<T>
-  // type?: ValueType
   auto?: boolean
   unique?: boolean
   sparse?: boolean
@@ -12,4 +11,15 @@ export interface IndexDef<T extends Item> {
   ignoreCase?: boolean
   gen?: IdGeneratorFunction<T>
   process?: (value: any) => any
+}
+
+export interface SerializedIndexDef {
+  key: string
+  auto?: boolean
+  unique?: boolean
+  sparse?: boolean
+  required?: boolean
+  ignoreCase?: boolean
+  gen?: string
+  process?: string
 }

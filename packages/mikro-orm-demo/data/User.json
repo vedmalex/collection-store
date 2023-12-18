@@ -1,0 +1,82 @@
+{
+  "config": {
+    "root": "./data",
+    "name": "User",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "list": {
+    "_count": 2,
+    "_counter": 2,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-15T18:01:55.844Z",
+        "updatedAt": "2023-12-15T18:01:55.844Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441",
+        "bio": "",
+        "id": 0
+      },
+      "1": {
+        "createdAt": "2023-12-15T18:01:55.893Z",
+        "updatedAt": "2023-12-15T18:01:55.893Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "498c81ea3c7c52027981967388f9fbce0ae0e3c54deb8eb5b249968c07aaf1c9",
+        "bio": "",
+        "id": 1
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 1,
+          "min": 0,
+          "size": 2,
+          "keys": [
+            0,
+            1
+          ],
+          "key_num": 2,
+          "pointers": [
+            0,
+            1
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  }
+}

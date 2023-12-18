@@ -1,0 +1,26 @@
+{
+  "extends": "bun-types/tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": false,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noErrorTruncation": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "lib": ["ESNext"],
+    "types": ["bun-types"]
+  },
+  "include": [],
+  "exclude": []
+}

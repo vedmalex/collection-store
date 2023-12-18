@@ -1,9 +1,45 @@
 {
+  "config": {
+    "root": "./data",
+    "name": "Person",
+    "adapter": "AdapterFS",
+    "list": "List",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "name"
+      },
+      {
+        "key": "ssn",
+        "unique": true
+      },
+      {
+        "key": "age"
+      },
+      {
+        "key": "address.home"
+      },
+      {
+        "key": "address.city"
+      },
+      {
+        "key": "address.appart"
+      }
+    ]
+  },
   "list": {
-    "_count": 1,
-    "_counter": 1,
+    "_count": 8,
+    "_counter": 8,
     "hash": {
       "0": {
+        "id": 0,
         "name": "alex",
         "age": 42,
         "ssn": "000-0000-000001",
@@ -12,8 +48,90 @@
           "appart": "1a",
           "home": "3481",
           "city": "Los Angeles"
-        },
-        "id": 0
+        }
+      },
+      "1": {
+        "id": 1,
+        "name": "jame",
+        "age": 45,
+        "ssn": "000-0000-000002",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "Los Angeles"
+        }
+      },
+      "2": {
+        "id": 2,
+        "name": "mark",
+        "age": 30,
+        "ssn": "000-0000-000003",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "3": {
+        "id": 3,
+        "name": "simon",
+        "age": 24,
+        "ssn": "000-0000-00004",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "4": {
+        "id": 4,
+        "name": "jason",
+        "age": 19,
+        "ssn": "000-0000-000005",
+        "page": "http://ya.ru",
+        "address": {
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "5": {
+        "id": 5,
+        "name": "jim",
+        "age": 18,
+        "ssn": "000-0000-000006",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "penthouse",
+          "home": "23310",
+          "city": "Los Angeles"
+        }
+      },
+      "6": {
+        "id": 6,
+        "name": "jach",
+        "age": 29,
+        "ssn": "000-0000-000007",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "3f",
+          "home": "5431",
+          "city": "Los Angeles"
+        }
+      },
+      "7": {
+        "id": 7,
+        "name": "monika",
+        "age": 30,
+        "ssn": "000-0000-000008",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "5c",
+          "home": "54481",
+          "city": "Los Angeles"
+        }
       }
     }
   },
@@ -30,15 +148,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": 0,
+          "max": 7,
           "min": 0,
-          "size": 1,
+          "size": 8,
           "keys": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
           ]
         }
       ]
@@ -55,15 +187,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": "alex",
+          "max": "simon",
           "min": "alex",
-          "size": 1,
+          "size": 8,
           "keys": [
-            "alex"
+            "alex",
+            "jach",
+            "jame",
+            "jason",
+            "jim",
+            "mark",
+            "monika",
+            "simon"
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            0,
+            6,
+            1,
+            4,
+            5,
+            2,
+            7,
+            3
           ]
         }
       ]
@@ -80,15 +226,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": "000-0000-000001",
+          "max": "000-0000-00004",
           "min": "000-0000-000001",
-          "size": 1,
+          "size": 8,
           "keys": [
-            "000-0000-000001"
+            "000-0000-000001",
+            "000-0000-000002",
+            "000-0000-000003",
+            "000-0000-000005",
+            "000-0000-000006",
+            "000-0000-000007",
+            "000-0000-000008",
+            "000-0000-00004"
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            3
           ]
         }
       ]
@@ -105,15 +265,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": 42,
-          "min": 42,
-          "size": 1,
+          "max": 45,
+          "min": 18,
+          "size": 8,
           "keys": [
-            42
+            18,
+            19,
+            24,
+            29,
+            30,
+            30,
+            42,
+            45
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            5,
+            4,
+            3,
+            6,
+            2,
+            7,
+            0,
+            1
           ]
         }
       ]
@@ -130,15 +304,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": "3481",
-          "min": "3481",
-          "size": 1,
+          "max": "54481",
+          "min": "23310",
+          "size": 8,
           "keys": [
-            "3481"
+            "23310",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "3481",
+            "5431",
+            "54481"
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            5,
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
           ]
         }
       ]
@@ -155,15 +343,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": "Los Angeles",
+          "max": "New York",
           "min": "Los Angeles",
-          "size": 1,
+          "size": 8,
           "keys": [
-            "Los Angeles"
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "Los Angeles",
+            "New York",
+            "New York",
+            "New York"
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            0,
+            1,
+            5,
+            6,
+            7,
+            2,
+            3,
+            4
           ]
         }
       ]
@@ -180,15 +382,29 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": "1a",
+          "max": "penthouse",
           "min": "1a",
-          "size": 1,
+          "size": 8,
           "keys": [
-            "1a"
+            "1a",
+            "1a",
+            "1a",
+            "1a",
+            null,
+            "3f",
+            "5c",
+            "penthouse"
           ],
-          "key_num": 1,
+          "key_num": 8,
           "pointers": [
-            0
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            5
           ]
         }
       ]
@@ -245,7 +461,5 @@
       "sparse": false,
       "required": false
     }
-  },
-  "id": "id",
-  "ttl": false
+  }
 }

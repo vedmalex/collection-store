@@ -1,5 +1,5 @@
 import { Item } from '../../types/Item'
-import { build_index } from './build_index'
+import { build_indexes } from './build_indexes'
 import { ensure_indexes } from './ensure_indexes'
 import Collection from '../collection'
 
@@ -15,6 +15,8 @@ export async function copy_collection<T extends Item>(
       name: model,
       adapter: source.storage.clone(),
       list: source.list.construct(),
+      // id: source.id,
+      // ttl: source.ttl,
     })
 
   collection.indexDefs = source.indexDefs
@@ -27,7 +29,7 @@ export async function copy_collection<T extends Item>(
   collection.ensures = []
 
   collection.indexes = {}
-  build_index(collection, collection.indexDefs)
+  build_indexes(collection, collection.indexDefs)
   await ensure_indexes(collection)
   for await (const item of source.list.forward) {
     await collection.push(item)

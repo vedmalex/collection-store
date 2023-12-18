@@ -1,5 +1,3 @@
-import { Item } from './Item'
-
-export type TraverseCondition<T extends Item> =
+export type TraverseCondition<T> =
   | { [key: string]: unknown }
   | ((arg: T) => boolean)

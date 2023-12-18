@@ -3,12 +3,16 @@ import { diff } from 'jsondiffpatch'
 import { IStoredRecord } from '../types/IStoredRecord'
 import { version_create } from './version_create'
 
+import { debug } from 'debug'
+const log = debug('entity_create')
+
 export function entity_update<T extends Item>(
   record: IStoredRecord<T>,
   item: T,
 ): IStoredRecord<T> {
+  log(arguments)
   const delta = diff(record.data, item)
-  const v = version_create(record.next_version, delta)
+  const v = version_create(record.next_version, delta!)
   record.history.push(v)
   return {
     ...record,
