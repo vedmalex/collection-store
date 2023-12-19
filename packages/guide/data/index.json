@@ -59,6 +59,23 @@
       }
     ]
   },
+  "Comment": {
+    "root": "./data",
+    "name": "Comment",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
   "mikro_orm_migrations": {
     "root": "./data",
     "name": "mikro_orm_migrations",

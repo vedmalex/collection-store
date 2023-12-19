@@ -1,0 +1,39 @@
+{
+  "name": "@mikro-orm/getting-started",
+  "version": "3.0.0-beta.0",
+  "type": "module",
+  "private": true,
+  "description": "MikroORM Getting Started guide",
+  "repository": "https://github.com/mikro-orm/guide",
+  "author": "Martin Adamek",
+  "license": "MIT",
+  "homepage": "https://mikro-orm.io/docs/guide",
+  "dependencies": {
+    "@fastify/jwt": "^7.0.0",
+    "@mikro-orm/core": "^6.0.0-rc.3",
+    "@mikro-orm/migrations": "^6.0.0-rc.3",
+    "@mikro-orm/reflection": "^6.0.0-rc.3",
+    "@mikro-orm/sql-highlighter": "^1.0.1",
+    "@mikro-orm/sqlite": "^6.0.0-rc.3",
+    "collection-store-mikro-orm": "workspace:*",
+    "fastify": "^4.17.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@mikro-orm/cli": "^6.0.0-rc.3",
+    "@mikro-orm/seeder": "^6.0.0-rc.3",
+    "@types/node": "^20.2.5",
+    "@types/slug": "^5.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "vitest": "^0.31.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --no-warnings=ExperimentalWarning --loader ts-node/esm src/server.ts",
+    "test": "vitest"
+  },
+  "mikro-orm": {
+    "useTsNode": true
+  }
+}

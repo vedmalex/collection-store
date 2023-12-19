@@ -1,0 +1,120 @@
+{
+  "config": {
+    "root": "./data",
+    "name": "Comment",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "list": {
+    "_count": 6,
+    "_counter": 6,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-15T21:19:42.486Z",
+        "updatedAt": "2023-12-15T21:19:42.486Z",
+        "text": "random comment 0.43248976820802765",
+        "article": 0,
+        "author": 0,
+        "id": 0
+      },
+      "1": {
+        "createdAt": "2023-12-15T21:19:42.486Z",
+        "updatedAt": "2023-12-15T21:19:42.486Z",
+        "text": "random comment 0.6976696278745911",
+        "article": 0,
+        "author": 0,
+        "id": 1
+      },
+      "2": {
+        "createdAt": "2023-12-15T21:19:42.490Z",
+        "updatedAt": "2023-12-15T21:19:42.490Z",
+        "text": "random comment 0.642917146711166",
+        "article": 1,
+        "author": 0,
+        "id": 2
+      },
+      "3": {
+        "createdAt": "2023-12-15T21:19:42.493Z",
+        "updatedAt": "2023-12-15T21:19:42.493Z",
+        "text": "random comment 0.4383465571417595",
+        "article": 2,
+        "author": 0,
+        "id": 3
+      },
+      "4": {
+        "createdAt": "2023-12-15T21:19:42.493Z",
+        "updatedAt": "2023-12-15T21:19:42.493Z",
+        "text": "random comment 0.8436444278023818",
+        "article": 2,
+        "author": 0,
+        "id": 4
+      },
+      "5": {
+        "createdAt": "2023-12-15T21:19:42.494Z",
+        "updatedAt": "2023-12-15T21:19:42.494Z",
+        "text": "random comment 0.9685077192851195",
+        "article": 2,
+        "author": 0,
+        "id": 5
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 5,
+          "min": 0,
+          "size": 6,
+          "keys": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "key_num": 6,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  }
+}

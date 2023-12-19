@@ -1,7 +1,7 @@
 {
   "config": {
     "root": "./data",
-    "name": "mikro_orm_migrations",
+    "name": "User",
     "adapter": "AdapterFile",
     "list": "List",
     "id": "id",
@@ -17,9 +17,22 @@
     ]
   },
   "list": {
-    "_count": 0,
-    "_counter": 0,
-    "hash": {}
+    "_count": 1,
+    "_counter": 1,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-15T21:19:42.456Z",
+        "updatedAt": "2023-12-15T21:19:42.456Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "5122164616230401468",
+        "bio": "",
+        "social": {
+          "twitter": "@foobar"
+        },
+        "id": 0
+      }
+    }
   },
   "indexes": {
     "id": {
@@ -32,12 +45,18 @@
           "id": 0,
           "leaf": true,
           "t": 32,
-          "isEmpty": true,
+          "isEmpty": false,
           "isFull": false,
-          "size": 0,
-          "keys": [],
-          "key_num": 0,
-          "pointers": []
+          "max": 0,
+          "min": 0,
+          "size": 1,
+          "keys": [
+            0
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ]
         }
       ]
     }

@@ -2,7 +2,7 @@
   "config": {
     "root": "./data",
     "name": "Tag",
-    "adapter": "AdapterFS",
+    "adapter": "AdapterFile",
     "list": "List",
     "id": "id",
     "auto": true,
@@ -21,27 +21,27 @@
     "_counter": 4,
     "hash": {
       "0": {
-        "createdAt": "2023-12-15T18:01:55.877Z",
-        "updatedAt": "2023-12-15T18:01:55.877Z",
+        "createdAt": "2023-12-19T13:23:16.712Z",
+        "updatedAt": "2023-12-19T13:23:16.712Z",
         "name": "new",
         "id": 0
       },
       "1": {
-        "createdAt": "2023-12-15T18:01:55.877Z",
-        "updatedAt": "2023-12-15T18:01:55.877Z",
+        "createdAt": "2023-12-19T13:23:16.713Z",
+        "updatedAt": "2023-12-19T13:23:16.713Z",
         "name": "old",
         "id": 1
       },
       "2": {
         "id": 2,
-        "createdAt": "2023-12-15T18:01:55.894Z",
-        "updatedAt": "2023-12-15T18:01:55.894Z",
+        "createdAt": "2023-12-19T13:23:16.726Z",
+        "updatedAt": "2023-12-19T13:23:16.726Z",
         "name": "foo2"
       },
       "3": {
         "id": 3,
-        "createdAt": "2023-12-15T18:01:55.894Z",
-        "updatedAt": "2023-12-15T18:01:55.894Z",
+        "createdAt": "2023-12-19T13:23:16.727Z",
+        "updatedAt": "2023-12-19T13:23:16.727Z",
         "name": "foo3"
       }
     }
