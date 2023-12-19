@@ -26,7 +26,7 @@ export function create_index<T extends Item>(
   let { gen, process } = indexDef
 
   if (auto && !gen) {
-    gen = collection.genCache['autoIncIdGen']
+    gen = Collection.genCache['autoIncIdGen']
   }
   if (ignoreCase) {
     process = (value: any) =>

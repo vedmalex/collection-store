@@ -10,7 +10,7 @@ export interface ICollectionConfig<T extends Item> {
     name: string;
     list: IList<T>;
     adapter: IStorageAdapter<T>;
-    ttl?: string | number | boolean;
+    ttl?: string | number;
     rotate?: string;
     audit?: boolean;
     validation?: ZodType<T>;
@@ -22,13 +22,13 @@ export interface ICollectionConfig<T extends Item> {
 export interface ISerializedCollectionConfig {
     name: string;
     id: string;
-    ttl?: string | number | boolean;
+    ttl?: number;
     rotate?: string;
     list: string;
     audit?: boolean;
     validation?: JSON;
     auto?: boolean;
-    indexList?: Array<SerializedIndexDef>;
-    adapter: string;
+    indexList: Array<SerializedIndexDef>;
+    adapter: 'AdapterMemory' | 'AdapterFile';
     root: string;
 }

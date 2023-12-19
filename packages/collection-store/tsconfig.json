@@ -1,7 +1,7 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./types",
     "types": ["bun-types"]

@@ -37,6 +37,7 @@ const run = async () => {
           if (data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return 0
           if (data.indexDefs[a_list[0]] && !data.indexDefs[b_list[0]]) return 1
           if (!data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return -1
+          throw new Error('nonsence')
         })
 
         return () => true

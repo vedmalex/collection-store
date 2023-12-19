@@ -1,6 +1,6 @@
 {
   "name": "collection-store-mikro-orm",
-  "version": "1.0.0",
+  "version": "3.0.0-beta.0",
   "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
   "main": "src/index.ts",
   "typings": "src/index.ts",
@@ -38,22 +38,24 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
-    "build": "yarn clean && yarn compile && yarn copy && yarn run -T gen-esm-wrapper dist/index.js dist/index.mjs",
-    "clean": "yarn run -T rimraf ./dist",
-    "compile": "yarn run -T tsc -p tsconfig.build.json",
+    "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
+    "compile": "tsc --build tsconfig.json",
+    "compile:clean": "tsc --build tsconfig.json --clean",
     "watch": "tsc --build tsconfig.json --watch",
-    "copy": "node ../../scripts/copy.mjs"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "collection-store": "workspace:*"
+    "collection-store": "workspace:*",
+    "debug": "^4.3.4"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^6.0.0-rc.2"
+    "@mikro-orm/core": "^6.0.0-rc.3",
+    "typescript": "next"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "^6.0.0-rc.2"
+    "@mikro-orm/core": "^6.0.0-rc.3"
   }
 }

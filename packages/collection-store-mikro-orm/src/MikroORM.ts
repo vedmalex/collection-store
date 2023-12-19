@@ -10,6 +10,7 @@ import { CollectionStoreDriver } from './Driver'
  * @inheritDoc
  */
 export class CollectionStoreMikroORM extends MikroORM<CollectionStoreDriver> {
+  // @ts-ignore
   private static DRIVER = CollectionStoreDriver
 
   /**

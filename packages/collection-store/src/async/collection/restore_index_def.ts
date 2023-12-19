@@ -21,8 +21,8 @@ export function restore_index_def<T extends Item>(
       ? eval(input.process)
       : undefined,
     gen: input.gen
-      ? collection.genCache[input.gen]
-        ? collection.genCache[input.gen]
+      ? Collection.genCache[input.gen]
+        ? Collection.genCache[input.gen]
         : eval(input.gen)
       : undefined,
   }

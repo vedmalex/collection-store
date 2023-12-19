@@ -11,7 +11,7 @@ export interface ICollectionConfig<T extends Item> {
   name: string
   list: IList<T>
   adapter: IStorageAdapter<T>
-  ttl?: string | number | boolean
+  ttl?: string | number
   /** crontab format */
   rotate?: string
   audit?: boolean

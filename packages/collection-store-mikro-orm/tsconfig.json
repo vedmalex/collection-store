@@ -1,14 +1,19 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./types",
     "types": ["bun-types"],
-    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.*", "**/node_modules/**"]
+  "files": [
+    "./src/index.ts",
+    "./src/Connection.ts",
+    "./src/Driver.ts",
+    "./src/Platform.ts",
+    "./src/MikroORM.ts",
+    "./src/SchemaGenerator.ts"
+  ]
 }

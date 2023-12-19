@@ -53,7 +53,7 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       const [item] = await this.findVirtual(
         entityName,
         where,
-        {} as FindOptions<T, any, any>,
+        {} as FindOptions<T, any, any, any>,
       )
       /* istanbul ignore next */
       return item ?? null
@@ -153,17 +153,16 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   override async findVirtual<T extends object>(
     entityName: string,
     where: FilterQuery<T>,
-    options: FindOptions<T, any, any>,
+    options: FindOptions<T, any, any, any>,
   ): Promise<EntityData<T>[]> {
     log('findVirtual', arguments)
     const meta = this.metadata.find(entityName)!
 
     if (meta.expression instanceof Function) {
       const em = this.createEntityManager<CollectionStoreDriver>()
-      return meta.expression(em, where, options) as EntityData<T>[]
+      return meta.expression(em, where, options as any) as any
     }
 
-    /* istanbul ignore next */
     return super.findVirtual(entityName, where, options)
   }
 }

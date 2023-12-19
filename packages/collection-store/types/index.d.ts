@@ -1,4 +1,4 @@
-import AdapterFS from './async/AdapterFS';
+import AdapterFile from './async/AdapterFile';
 import Collection from './async/collection';
 import { IDataCollection } from './async/IDataCollection';
 import { List } from './async/storage/List';
@@ -7,7 +7,7 @@ import AdapterMemory from './async/AdapterMemory';
 import { FileStorage } from './async/storage/FileStorage';
 import type { Item } from './types/Item';
 export { AdapterMemory };
-export { AdapterFS };
+export { AdapterFile as AdapterFile };
 export { Collection };
 export { List };
 export { FileStorage };

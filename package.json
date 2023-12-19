@@ -4,6 +4,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "clean": "./clean.sh"
+  },
   "dependencies": {
     "bun-types": "^1.0.15",
     "sqlite3": "^5.1.6"

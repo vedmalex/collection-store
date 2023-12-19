@@ -2,10 +2,11 @@
   "name": "mikro-orm-demo",
   "module": "src/server.ts",
   "type": "module",
+  "private": true,
   "devDependencies": {
-    "@mikro-orm/core": "^6.0.0-rc.2",
-    "@mikro-orm/reflection": "^6.0.0-rc.2",
-    "@mikro-orm/sqlite": "^6.0.0-rc.2",
+    "@mikro-orm/core": "^6.0.0-rc.3",
+    "@mikro-orm/reflection": "^6.0.0-rc.3",
+    "@mikro-orm/sqlite": "^6.0.0-rc.3",
     "bun-types": "latest",
     "fastify": "^4.24.3"
   },
@@ -13,7 +14,7 @@
     "typescript": "next"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^6.0.0-rc.2",
+    "@mikro-orm/cli": "^6.0.0-rc.3",
     "@types/debug": "^4.1.12",
     "@types/node": "^20.10.4",
     "acorn-loose": "^8.4.0",
@@ -22,5 +23,6 @@
     "debug": "^4.3.4",
     "typescript": "next",
     "vitest": "^1.0.2"
-  }
+  },
+  "version": "3.0.0-beta.0"
 }

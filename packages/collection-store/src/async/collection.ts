@@ -1,5 +1,5 @@
 // import fs from 'fs-extra';
-import tp from 'timeparse'
+import tp from './timeparse'
 import _ from 'lodash'
 import { autoIncIdGen } from '../utils/autoIncIdGen'
 import { autoTimestamp } from '../utils/autoTimestamp'
@@ -201,7 +201,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       throw new Error('must Have Model Name as "name" prop in config')
     }
 
-    collection.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || false
+    collection.ttl = (typeof ttl == 'string' ? tp(ttl) : ttl) || undefined
 
     collection.rotate = rotate
     collection.name = name
