@@ -1,10 +1,11 @@
 {
   "name": "collection-store",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "description": "very flexible collection for in-memory operations with flexible indexing",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
   "scripts": {
+    "prepublish": "bun build.ts && bun run compile",
     "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",

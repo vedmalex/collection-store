@@ -1,6 +1,6 @@
 {
   "name": "collection-store-mikro-orm",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
   "main": "src/index.ts",
   "typings": "src/index.ts",
@@ -38,6 +38,7 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
+    "prepublish": "bun build.ts && bun run compile",
     "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",
