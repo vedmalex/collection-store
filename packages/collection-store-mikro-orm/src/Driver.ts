@@ -12,23 +12,18 @@ import { CollectionStoreConnection } from './Connection'
 import { CollectionStorePlatform } from './Platform'
 import { Item } from 'collection-store'
 
-import { debug } from 'debug'
-const log = debug('driver')
-
 export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
   protected override readonly platform = new CollectionStorePlatform()
   protected override readonly connection = new CollectionStoreConnection(
     this.config,
   )
   constructor(config: Configuration) {
-    log('constructor', arguments)
     super(config, ['collection-store'])
   }
   override async find<T extends object>(
     entityName: string,
     where: FilterQuery<T>,
   ): Promise<EntityData<T>[]> {
-    log('find', arguments)
     if (this.metadata.find(entityName)?.virtual) {
       return this.findVirtual(entityName, where, {})
     }
@@ -58,7 +53,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       /* istanbul ignore next */
       return item ?? null
     }
-    log('findOne', arguments)
     const res = await this.connection.db
       .collection<T>(entityName)
       ?.findFirst(where as any)
@@ -70,7 +64,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   }
 
   override async connect(): Promise<CollectionStoreConnection> {
-    log('connect', arguments)
     await this.connection.connect()
     return this.connection
   }
@@ -78,7 +71,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     data: EntityDictionary<T>,
   ): Promise<QueryResult<T>> {
-    log('nativeInsert', arguments)
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? 'id'
     const res = await this.connection.db.collection<T>(entityName)?.create(data)
@@ -93,7 +85,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     data: EntityDictionary<T>[],
   ): Promise<QueryResult<T>> {
-    log('nativeInsertMany', arguments)
     const res = data.map((d) => {
       return this.nativeInsert(entityName, d)
     })
@@ -118,7 +109,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     where: FilterQuery<T>,
     data: EntityDictionary<T>,
   ): Promise<QueryResult<T>> {
-    log('nativeUpdate', arguments)
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? '_id'
     const res = await this.connection.db
@@ -134,7 +124,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     where: FilterQuery<T>,
   ): Promise<QueryResult<T>> {
-    log('nativeDelete', arguments)
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? '_id'
     const res = await this.connection.db
@@ -150,7 +139,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     where: FilterQuery<T>,
   ): Promise<number> {
-    log('count', arguments)
     const res = await this.find(entityName, where)
     return res.length
   }
@@ -160,7 +148,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     where: FilterQuery<T>,
     options: FindOptions<T, any, any, any>,
   ): Promise<EntityData<T>[]> {
-    log('findVirtual', arguments)
     const meta = this.metadata.find(entityName)!
 
     if (meta.expression instanceof Function) {

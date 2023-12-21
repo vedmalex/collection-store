@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get } from 'lodash-es'
 import { Item } from '../../types/Item'
 
 export function get_value<T extends Item>(

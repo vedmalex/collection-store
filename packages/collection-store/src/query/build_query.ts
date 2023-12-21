@@ -15,14 +15,10 @@ import { $or } from './$or'
 import { $and } from './$and'
 import { UnaryCondition, UnaryConditionOperation } from './UnaryCondition'
 
-import { debug } from 'debug'
-const log = debug('query:build')
-
 export function build_query(
   _obj: unknown,
   options?: { [op: string]: (...args: Array<any>) => UnaryCondition },
 ): UnaryCondition | UnaryConditionOperation {
-  log(arguments)
   const res: Array<UnaryCondition | UnaryConditionOperation> = []
   if (typeof _obj == 'object' && !(_obj instanceof Date) && _obj) {
     const obj = _obj as Record<string, any>

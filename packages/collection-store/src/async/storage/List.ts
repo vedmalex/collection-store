@@ -1,5 +1,5 @@
 import { ValueType } from 'b-pl-tree'
-import { get, set, unset, cloneDeep } from 'lodash'
+import { get, set, unset, cloneDeep } from 'lodash-es'
 import { StoredIList } from '../../types/StoredIList'
 import { Item } from '../../types/Item'
 import { IList } from '../IList'

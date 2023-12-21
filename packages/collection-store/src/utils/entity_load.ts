@@ -1,12 +1,9 @@
 import { Item } from '../types/Item'
 import { IStoredRecord } from '../types/IStoredRecord'
-import { debug } from 'debug'
-const log = debug('entity_load')
 
 export function entity_load<T extends Item>(
   entity: IStoredRecord<T>,
 ): IStoredRecord<T> {
-  log(arguments)
   return {
     ...entity,
   }

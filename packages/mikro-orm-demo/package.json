@@ -15,14 +15,12 @@
   },
   "dependencies": {
     "@mikro-orm/cli": "^6.0.0-rc.3",
-    "@types/debug": "^4.1.12",
     "@types/node": "^20.10.4",
     "acorn-loose": "^8.4.0",
     "acorn-walk": "^8.3.1",
     "collection-store-mikro-orm": "workspace:*",
-    "debug": "^4.3.4",
     "typescript": "next",
     "vitest": "^1.0.2"
   },
-  "version": "3.0.0-beta.9"
+  "version": "3.0.0-beta.10"
 }

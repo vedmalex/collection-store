@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get } from 'lodash-es'
 import { IndexDef } from '../../types/IndexDef'
 import { Item } from '../../types/Item'
 import { BPlusTree, ValueType } from 'b-pl-tree'

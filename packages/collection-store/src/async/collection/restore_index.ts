@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { IndexDef } from '../../types/IndexDef'
 import { IndexStored } from '../../types/IndexStored'
 import { Item } from '../../types/Item'

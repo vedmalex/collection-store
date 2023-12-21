@@ -1,6 +1,6 @@
 // import fs from 'fs-extra';
 import tp from './timeparse'
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { autoIncIdGen } from '../utils/autoIncIdGen'
 import { autoTimestamp } from '../utils/autoTimestamp'
 import { IStorageAdapter } from './IStorageAdapter'

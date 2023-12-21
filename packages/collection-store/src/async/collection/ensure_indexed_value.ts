@@ -1,4 +1,4 @@
-import { get, set } from 'lodash'
+import { get, set } from 'lodash-es'
 import { Item } from '../../types/Item'
 import Collection from '../collection'
 import { IdGeneratorFunction } from '../../types/IdGeneratorFunction'

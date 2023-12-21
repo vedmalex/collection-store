@@ -9,13 +9,11 @@ import { Item } from './types/Item'
 import path from 'path'
 import Collection from './async/collection'
 
-import { debug } from 'debug'
 import { IndexDef } from './types/IndexDef'
 import AdapterFile from './async/AdapterFile'
 import { List } from './async/storage/List'
 import { serialize_collection_config } from './async/collection/serialize_collection_config'
 import { deserialize_collection_config } from './async/collection/deserialize_collection_config'
-const log = debug('CSDatabase')
 
 export interface TransactionOptions {}
 
@@ -33,14 +31,12 @@ export class CSDatabase implements CSTransaction {
   private collections: Map<string, Collection<any>>
 
   constructor(root: string, name?: string) {
-    log('constructor', arguments)
     this.root = root
     this.name = name || 'default'
     this.collections = new Map()
   }
 
   private async writeSchema() {
-    log('writeSchema', arguments)
     let result = {} as Record<string, ISerializedCollectionConfig>
     for (let [name, collection] of this.collections) {
       result[name] = serialize_collection_config(collection)
@@ -53,7 +49,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   async connect() {
-    log('connect', arguments)
     await this.load()
   }
 
@@ -78,14 +73,11 @@ export class CSDatabase implements CSTransaction {
     }
   }
 
-  async close() {
-    log('close', arguments)
-  }
+  async close() {}
 
   collectionList: Map<string, ICollectionConfig<any>> = new Map()
 
   private registerCollection(collection: Collection<any>) {
-    log('registerCollection', arguments)
     if (!this.collections.has(collection.name)) {
       this.collections.set(collection.name, collection)
       return
@@ -94,7 +86,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   createCollection<T extends Item>(name: string): IDataCollection<T> {
-    log('createCollection', arguments)
     const collection = Collection.create({
       name,
       list: new List<T>(),
@@ -108,12 +99,10 @@ export class CSDatabase implements CSTransaction {
   }
 
   listCollections(): Array<IDataCollection<any>> {
-    log('listCollections', arguments)
     return [...this.collections.values()]
   }
 
   dropCollection(name: string): boolean {
-    log('dropCollection', arguments)
     let result = false
     if (this.collections.has(name)) {
       const collection = this.collections.get(name)!
@@ -125,7 +114,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   collection<T extends Item>(name: string): IDataCollection<T> | undefined {
-    log('collection', arguments)
     if (this.collections.has(name)) {
       return this.collections.get(name)
     }
@@ -133,7 +121,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   createIndex(collection: string, name: string, def: IndexDef<any>) {
-    log('createIndex', arguments)
     if (this.collections.has(collection)) {
       const col = this.collections.get(collection)!
       if (col.listIndexes(name)) {
@@ -147,7 +134,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   dropIndex(collection: string, name: string) {
-    log('createIndex', arguments)
     if (this.collections.has(collection)) {
       this.collections.get(collection)?.dropIndex(name)
       this.writeSchema()
@@ -157,7 +143,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   async persist() {
-    log('persist', arguments)
     const res = []
     for (let collection of this.collections) {
       res.push(collection[1].persist())
@@ -166,7 +151,6 @@ export class CSDatabase implements CSTransaction {
   }
 
   async startSession(): Promise<CSTransaction> {
-    log('startSession', arguments)
     if (!this.inTransaction) {
       await this.persist()
     }
@@ -174,20 +158,16 @@ export class CSDatabase implements CSTransaction {
   }
 
   async endSession(): Promise<void> {
-    log('endSession', arguments)
     this.inTransaction = false
   }
 
   async startTransaction(options: TransactionOptions): Promise<void> {
-    log('startTransaction', arguments)
     this.inTransaction = true
   }
   async abortTransaction(): Promise<void> {
-    log('abortTransaction', arguments)
     this.inTransaction = false
   }
   async commitTransaction(): Promise<void> {
-    log('commitTransaction', arguments)
     // проверять какие значения были внесены, что изменилось и создавать транзакцию для изменения
     await this.persist()
     this.inTransaction = false

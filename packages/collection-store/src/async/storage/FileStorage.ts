@@ -10,7 +10,7 @@ import { entity_update } from '../../utils/entity_update'
 import { IStoredRecord } from '../../types/IStoredRecord'
 import { entity_create } from '../../utils/entity_create'
 import { is_stored_record } from '../../utils/is_stored_record'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { fromZodError } from 'zod-validation-error'
 
 export class FileStorage<T extends Item, K extends ValueType>

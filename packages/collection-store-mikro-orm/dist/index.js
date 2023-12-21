@@ -4,18 +4,14 @@ Connection,
 EventType,
 Utils
 } from "@mikro-orm/core";
-import {debug} from "debug";
 import {CSDatabase} from "collection-store";
-var log = debug("connections");
 
 class CollectionStoreConnection extends Connection {
   db;
   constructor(config, options, type = "write") {
-    log("constructor", arguments);
     super(config, options, type);
   }
   getDb() {
-    log("getDb");
     return this.db;
   }
   getCollection(name) {
@@ -27,26 +23,21 @@ class CollectionStoreConnection extends Connection {
     return meta ? meta.collection : name;
   }
   async connect() {
-    log("connect");
     if (!this.db) {
       this.db = new CSDatabase(this.getClientUrl(), this.options.dbName);
       await this.db.connect();
     }
   }
   async isConnected() {
-    log("isConnected");
     return !!this.db;
   }
   checkConnection() {
-    log("checkConnection");
     return Promise.resolve({ ok: true });
   }
   getDefaultClientUrl() {
-    log("getDefaultClientUrl");
     return "./data";
   }
   getClientUrl() {
-    log("getClientUrl");
     const url = this.config.getClientUrl(true);
     return url;
   }
@@ -94,7 +85,6 @@ class CollectionStoreConnection extends Connection {
     throw new Error(`${this.constructor.name} does not support generic execute method`);
   }
   async close(force) {
-    log("close", arguments);
     this.db.close();
   }
   async ensureConnection() {
@@ -157,19 +147,15 @@ import {
 AbstractSchemaGenerator,
 Utils as Utils2
 } from "@mikro-orm/core";
-import {debug as debug2} from "debug";
-var log2 = debug2("generator");
 
 class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
   constructor() {
     super(...arguments);
   }
   static register(orm) {
-    log2("register");
     orm.config.registerExtension("@mikro-orm/schema-generator", () => new CollectionStoreSchemaGenerator(orm.em));
   }
   async createSchema(options = {}) {
-    log2("createSchema");
     options.ensureIndexes ??= true;
     const db = this.connection.getDb();
     const collections = db.listCollections();
@@ -184,7 +170,6 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     }
   }
   async dropSchema(options = {}) {
-    log2("dropSchema");
     const db = this.connection.getDb();
     const collections = db.listCollections();
     const existing = collections.map((c) => c.name);
@@ -197,21 +182,17 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     metadata.filter((meta) => existing.includes(meta.collection)).forEach((meta) => this.connection.db.dropCollection(meta.collection));
   }
   async updateSchema(options = {}) {
-    log2("updateSchema");
     await this.createSchema(options);
   }
   async ensureDatabase() {
-    log2("ensureDatabase");
     return false;
   }
   async refreshDatabase(options = {}) {
-    log2("refreshDatabase");
     this.ensureDatabase();
     this.dropSchema();
     this.createSchema(options);
   }
   async ensureIndexes(options = {}) {
-    log2("ensureIndexes");
     options.ensureCollections ??= true;
     if (options.ensureCollections) {
       await this.createSchema({ ensureIndexes: false });
@@ -226,7 +207,6 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     }
   }
   createIndexes(meta) {
-    log2("createIndexes");
     meta.indexes.forEach((index) => {
       let fieldOrSpec;
       const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
@@ -240,7 +220,6 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     });
   }
   createUniqueIndexes(meta) {
-    log2("createUniqueIndexes");
     meta.uniques.forEach((index) => {
       const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const fieldOrSpec = properties[0];
@@ -253,7 +232,6 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     });
   }
   createPropertyIndexes(meta, prop, type) {
-    log2("createPropertyIndexes");
     if (!prop[type] || !meta.collection) {
       return;
     }
@@ -269,44 +247,32 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
 }
 
 // src/Platform.ts
-import {debug as debug3} from "debug";
-var log3 = debug3("platform");
-
 class CollectionStorePlatform extends Platform {
   constructor() {
     super(...arguments);
   }
   getSchemaGenerator(driver, em) {
-    log3("getSchemaGenerator", arguments);
     return new CollectionStoreSchemaGenerator(em ?? driver);
   }
   lookupExtensions(orm) {
-    log3("lookupExtensions", arguments);
     CollectionStoreSchemaGenerator.register(orm);
   }
   supportsTransactions() {
-    log3("supportsTransactions", arguments);
     return true;
   }
   getNamingStrategy() {
-    log3("getNamingStrategy", arguments);
     return EntityCaseNamingStrategy;
   }
 }
 
 // src/Driver.ts
-import {debug as debug4} from "debug";
-var log4 = debug4("driver");
-
 class CollectionStoreDriver extends DatabaseDriver {
   platform = new CollectionStorePlatform;
   connection = new CollectionStoreConnection(this.config);
   constructor(config) {
-    log4("constructor", arguments);
     super(config, ["collection-store"]);
   }
   async find(entityName, where) {
-    log4("find", arguments);
     if (this.metadata.find(entityName)?.virtual) {
       return this.findVirtual(entityName, where, {});
     }
@@ -325,7 +291,6 @@ class CollectionStoreDriver extends DatabaseDriver {
       const [item] = await this.findVirtual(entityName, where, {});
       return item ?? null;
     }
-    log4("findOne", arguments);
     const res = await this.connection.db.collection(entityName)?.findFirst(where);
     if (res) {
       return res;
@@ -334,12 +299,10 @@ class CollectionStoreDriver extends DatabaseDriver {
     }
   }
   async connect() {
-    log4("connect", arguments);
     await this.connection.connect();
     return this.connection;
   }
   async nativeInsert(entityName, data) {
-    log4("nativeInsert", arguments);
     const meta = this.metadata.find(entityName);
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? "id";
     const res = await this.connection.db.collection(entityName)?.create(data);
@@ -350,7 +313,6 @@ class CollectionStoreDriver extends DatabaseDriver {
     };
   }
   async nativeInsertMany(entityName, data) {
-    log4("nativeInsertMany", arguments);
     const res = data.map((d) => {
       return this.nativeInsert(entityName, d);
     });
@@ -367,7 +329,6 @@ class CollectionStoreDriver extends DatabaseDriver {
     return result;
   }
   async nativeUpdate(entityName, where, data) {
-    log4("nativeUpdate", arguments);
     const meta = this.metadata.find(entityName);
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? "_id";
     const res = await this.connection.db.collection(entityName)?.update(where, data);
@@ -377,7 +338,6 @@ class CollectionStoreDriver extends DatabaseDriver {
     };
   }
   async nativeDelete(entityName, where) {
-    log4("nativeDelete", arguments);
     const meta = this.metadata.find(entityName);
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? "_id";
     const res = await this.connection.db.collection(entityName)?.remove(where);
@@ -387,12 +347,10 @@ class CollectionStoreDriver extends DatabaseDriver {
     };
   }
   async count(entityName, where) {
-    log4("count", arguments);
     const res = await this.find(entityName, where);
     return res.length;
   }
   async findVirtual(entityName, where, options) {
-    log4("findVirtual", arguments);
     const meta = this.metadata.find(entityName);
     if (meta.expression instanceof Function) {
       const em = this.createEntityManager();

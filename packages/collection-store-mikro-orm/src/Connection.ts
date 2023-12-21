@@ -12,9 +12,6 @@ import {
   Utils,
 } from '@mikro-orm/core'
 
-import { debug } from 'debug'
-const log = debug('connections')
-
 import { CSDatabase, Item } from 'collection-store'
 import { CSTransaction } from 'collection-store/src/CSDatabase'
 
@@ -26,13 +23,11 @@ export class CollectionStoreConnection extends Connection {
     options?: ConnectionOptions,
     type: ConnectionType = 'write',
   ) {
-    log('constructor', arguments)
     super(config, options, type)
     // придумать что тут нужно сделать, а пока для тестов хватит
   }
 
   getDb() {
-    log('getDb')
     return this.db
   }
 
@@ -47,7 +42,6 @@ export class CollectionStoreConnection extends Connection {
     return meta ? meta.collection : name
   }
   override async connect(): Promise<void> {
-    log('connect')
     if (!this.db) {
       this.db = new CSDatabase(this.getClientUrl(), this.options.dbName)
       await this.db.connect()
@@ -55,7 +49,6 @@ export class CollectionStoreConnection extends Connection {
   }
 
   override async isConnected(): Promise<boolean> {
-    log('isConnected')
     return !!this.db
   }
 
@@ -64,17 +57,14 @@ export class CollectionStoreConnection extends Connection {
     reason?: string | undefined
     error?: Error | undefined
   }> {
-    log('checkConnection')
     return Promise.resolve({ ok: true })
   }
 
   override getDefaultClientUrl(): string {
-    log('getDefaultClientUrl')
     return './data'
   }
 
   override getClientUrl() {
-    log('getClientUrl')
     const url = this.config.getClientUrl(true)
     return url
   }
@@ -134,7 +124,6 @@ export class CollectionStoreConnection extends Connection {
   }
 
   override async close(force?: boolean) {
-    log('close', arguments)
     this.db.close()
   }
 

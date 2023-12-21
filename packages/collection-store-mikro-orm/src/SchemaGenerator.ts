@@ -7,12 +7,8 @@ import {
 } from '@mikro-orm/core'
 import type { CollectionStoreDriver } from './Driver'
 
-import { debug } from 'debug'
-const log = debug('generator')
-
 export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<CollectionStoreDriver> {
   static register(orm: MikroORM): void {
-    log('register')
     orm.config.registerExtension(
       '@mikro-orm/schema-generator',
       () => new CollectionStoreSchemaGenerator(orm.em),
@@ -20,7 +16,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   }
 
   override async createSchema(options: CreateSchemaOptions = {}) {
-    log('createSchema')
     options.ensureIndexes ??= true
     const db = this.connection.getDb()
     const collections = db.listCollections()
@@ -40,7 +35,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   }
 
   override async dropSchema(options: { dropMigrationsTable?: boolean } = {}) {
-    log('dropSchema')
     const db = this.connection.getDb()
     const collections = db.listCollections()
     const existing = collections.map((c) => c.name)
@@ -60,19 +54,16 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   override async updateSchema(
     options: CreateSchemaOptions = {},
   ): Promise<void> {
-    log('updateSchema')
     await this.createSchema(options)
   }
 
   override async ensureDatabase(): Promise<boolean> {
-    log('ensureDatabase')
     return false
   }
 
   override async refreshDatabase(
     options: CreateSchemaOptions = {},
   ): Promise<void> {
-    log('refreshDatabase')
     this.ensureDatabase()
     this.dropSchema()
     this.createSchema(options)
@@ -81,7 +72,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   override async ensureIndexes(
     options: EnsureIndexesOptions = {},
   ): Promise<void> {
-    log('ensureIndexes')
     options.ensureCollections ??= true
 
     if (options.ensureCollections) {
@@ -102,7 +92,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   }
 
   private createIndexes(meta: EntityMetadata) {
-    log('createIndexes')
     meta.indexes.forEach((index) => {
       let fieldOrSpec: string
       const properties = Utils.flatten(
@@ -123,7 +112,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   }
 
   private createUniqueIndexes(meta: EntityMetadata) {
-    log('createUniqueIndexes')
     meta.uniques.forEach((index) => {
       const properties = Utils.flatten(
         Utils.asArray(index.properties).map(
@@ -147,7 +135,6 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
     prop: EntityProperty,
     type: 'index' | 'unique',
   ) {
-    log('createPropertyIndexes')
     if (!prop[type] || !meta.collection) {
       return
     }
