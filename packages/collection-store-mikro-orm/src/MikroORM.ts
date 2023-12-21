@@ -3,13 +3,17 @@ import {
   MikroORM,
   type Options,
   type IDatabaseDriver,
+  // EntityManagerType,
 } from '@mikro-orm/core'
 import { CollectionStoreDriver } from './Driver'
+// import { CollectionStoreEntityManager } from './EntityManager'
 
 /**
  * @inheritDoc
  */
 export class CollectionStoreMikroORM extends MikroORM<CollectionStoreDriver> {
+  // declare em: CollectionStoreDriver[typeof EntityManagerType] &
+  //   CollectionStoreEntityManager
   // @ts-ignore
   private static DRIVER = CollectionStoreDriver
 

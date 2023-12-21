@@ -79,36 +79,46 @@ export class CollectionStoreConnection extends Connection {
     return url
   }
 
-  async first(collection: string): Promise<any> {
+  async first(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.db.first(collection)
   }
 
-  async last(collection: string): Promise<any> {
+  async last(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.db.first(collection)
   }
 
-  async lowest(collection: string, key: string) {
+  async lowest(entityName: EntityName<any>, key: string) {
+    const collection = Utils.className(entityName)
     return this.db.lowest(collection, key)
   }
-  async greatest(collection: string, key: string) {
+  async greatest(entityName: EntityName<any>, key: string) {
+    const collection = Utils.className(entityName)
     return this.db.greatest(collection, key)
   }
-  async oldest(collection: string) {
+  async oldest(entityName: EntityName<any>) {
+    const collection = Utils.className(entityName)
     return this.db.oldest(collection)
   }
-  async latest(collection: string) {
+  async latest(entityName: EntityName<any>) {
+    const collection = Utils.className(entityName)
     return this.db.latest(collection)
   }
-  async findById(collection: string, id: any) {
+  async findById(entityName: EntityName<any>, id: any) {
+    const collection = Utils.className(entityName)
     return this.db.findById(collection, id)
   }
-  async findBy(collection: string, key: string, id: any) {
+  async findBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.db.findBy(collection, key, id)
   }
-  async findFirstBy(collection: string, key: string, id: any) {
+  async findFirstBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.db.findFirstBy(collection, key, id)
   }
-  async findLastBy(collection: string, key: string, id: any) {
+  async findLastBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.db.findLastBy(collection, key, id)
   }
 

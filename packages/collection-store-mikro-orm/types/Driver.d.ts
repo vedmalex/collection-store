@@ -1,4 +1,4 @@
-import { Configuration, DatabaseDriver, EntityData, EntityDictionary, FilterQuery, FindOptions, QueryResult } from '@mikro-orm/core';
+import { Configuration, DatabaseDriver, EntityData, EntityDictionary, EntityName, FilterQuery, FindOptions, QueryResult } from '@mikro-orm/core';
 import { CollectionStoreConnection } from './Connection';
 import { CollectionStorePlatform } from './Platform';
 import { Item } from 'collection-store';
@@ -15,14 +15,14 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     nativeDelete<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<QueryResult<T>>;
     count<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<number>;
     findVirtual<T extends object>(entityName: string, where: FilterQuery<T>, options: FindOptions<T, any, any, any>): Promise<EntityData<T>[]>;
-    first(collection: string): Promise<any>;
-    last(collection: string): Promise<any>;
-    lowest(collection: string, key: string): Promise<any>;
-    greatest(collection: string, key: string): Promise<any>;
-    oldest(collection: string): Promise<any>;
-    latest(collection: string): Promise<any>;
-    findById(collection: string, id: any): Promise<any>;
-    findBy(collection: string, key: string, id: any): Promise<any[]>;
-    findFirstBy(collection: string, key: string, id: any): Promise<any>;
-    findLastBy(collection: string, key: string, id: any): Promise<any>;
+    first(entityName: EntityName<any>): Promise<any>;
+    last(entityName: EntityName<any>): Promise<any>;
+    lowest(entityName: EntityName<any>, key: string): Promise<any>;
+    greatest(entityName: EntityName<any>, key: string): Promise<any>;
+    oldest(entityName: EntityName<any>): Promise<any>;
+    latest(entityName: EntityName<any>): Promise<any>;
+    findById(entityName: EntityName<any>, id: any): Promise<any>;
+    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any[]>;
+    findFirstBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
+    findLastBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
 }

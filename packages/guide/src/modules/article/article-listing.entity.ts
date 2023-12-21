@@ -1,4 +1,4 @@
-import { Entity, EntityManager, Property } from '@mikro-orm/core'
+import { Entity, EntityManager, Property } from 'collection-store-mikro-orm'
 import { Article } from './article.entity.js'
 
 @Entity({

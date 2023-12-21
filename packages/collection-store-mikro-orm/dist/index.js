@@ -50,34 +50,44 @@ class CollectionStoreConnection extends Connection {
     const url = this.config.getClientUrl(true);
     return url;
   }
-  async first(collection) {
+  async first(entityName) {
+    const collection = Utils.className(entityName);
     return this.db.first(collection);
   }
-  async last(collection) {
+  async last(entityName) {
+    const collection = Utils.className(entityName);
     return this.db.first(collection);
   }
-  async lowest(collection, key) {
+  async lowest(entityName, key) {
+    const collection = Utils.className(entityName);
     return this.db.lowest(collection, key);
   }
-  async greatest(collection, key) {
+  async greatest(entityName, key) {
+    const collection = Utils.className(entityName);
     return this.db.greatest(collection, key);
   }
-  async oldest(collection) {
+  async oldest(entityName) {
+    const collection = Utils.className(entityName);
     return this.db.oldest(collection);
   }
-  async latest(collection) {
+  async latest(entityName) {
+    const collection = Utils.className(entityName);
     return this.db.latest(collection);
   }
-  async findById(collection, id) {
+  async findById(entityName, id) {
+    const collection = Utils.className(entityName);
     return this.db.findById(collection, id);
   }
-  async findBy(collection, key, id) {
+  async findBy(entityName, key, id) {
+    const collection = Utils.className(entityName);
     return this.db.findBy(collection, key, id);
   }
-  async findFirstBy(collection, key, id) {
+  async findFirstBy(entityName, key, id) {
+    const collection = Utils.className(entityName);
     return this.db.findFirstBy(collection, key, id);
   }
-  async findLastBy(collection, key, id) {
+  async findLastBy(entityName, key, id) {
+    const collection = Utils.className(entityName);
     return this.db.findLastBy(collection, key, id);
   }
   execute(query, params, method, ctx) {
@@ -390,35 +400,35 @@ class CollectionStoreDriver extends DatabaseDriver {
     }
     return super.findVirtual(entityName, where, options);
   }
-  async first(collection) {
-    return this.getConnection("read").first(collection);
+  async first(entityName) {
+    return this.getConnection("read").first(entityName);
   }
-  async last(collection) {
-    return this.getConnection("read").last(collection);
+  async last(entityName) {
+    return this.getConnection("read").last(entityName);
   }
-  async lowest(collection, key) {
-    return this.getConnection("read").lowest(collection, key);
+  async lowest(entityName, key) {
+    return this.getConnection("read").lowest(entityName, key);
   }
-  async greatest(collection, key) {
-    return this.getConnection("read").greatest(collection, key);
+  async greatest(entityName, key) {
+    return this.getConnection("read").greatest(entityName, key);
   }
-  async oldest(collection) {
-    return this.getConnection("read").oldest(collection);
+  async oldest(entityName) {
+    return this.getConnection("read").oldest(entityName);
   }
-  async latest(collection) {
-    return this.getConnection("read").latest(collection);
+  async latest(entityName) {
+    return this.getConnection("read").latest(entityName);
   }
-  async findById(collection, id) {
-    return this.getConnection("read").findById(collection, id);
+  async findById(entityName, id) {
+    return this.getConnection("read").findById(entityName, id);
   }
-  async findBy(collection, key, id) {
-    return this.getConnection("read").findBy(collection, key, id);
+  async findBy(entityName, key, id) {
+    return this.getConnection("read").findBy(entityName, key, id);
   }
-  async findFirstBy(collection, key, id) {
-    return this.getConnection("read").findFirstBy(collection, key, id);
+  async findFirstBy(entityName, key, id) {
+    return this.getConnection("read").findFirstBy(entityName, key, id);
   }
-  async findLastBy(collection, key, id) {
-    return this.getConnection("read").findLastBy(collection, key, id);
+  async findLastBy(entityName, key, id) {
+    return this.getConnection("read").findLastBy(entityName, key, id);
   }
 }
 
@@ -427,57 +437,45 @@ export * from "@mikro-orm/core";
 
 // src/EntityManager.ts
 import {
-EntityManager as EntityManager2,
-Utils as Utils3
+EntityManager as EntityManager2
 } from "@mikro-orm/core";
 
 class CollectionStoreEntityManager extends EntityManager2 {
   constructor() {
     super(...arguments);
   }
-  async aggregate(entityName, pipeline) {
-    entityName = Utils3.className(entityName);
-    return this.getDriver().aggregate(entityName, pipeline);
+  fork(options) {
+    return super.fork(options);
   }
   async first(entityName) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().first(collection);
+    return this.getDriver().first(entityName);
   }
   async last(entityName) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().last(collection);
+    return this.getDriver().last(entityName);
   }
   async lowest(entityName, key) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().lowest(collection, key);
+    return this.getDriver().lowest(entityName, key);
   }
   async greatest(entityName, key) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().greatest(collection, key);
+    return this.getDriver().greatest(entityName, key);
   }
   async oldest(entityName) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().oldest(collection);
+    return this.getDriver().oldest(entityName);
   }
   async latest(entityName) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().latest(collection);
+    return this.getDriver().latest(entityName);
   }
   async findById(entityName, id) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().findById(collection, id);
+    return this.getDriver().findById(entityName, id);
   }
   async findBy(entityName, key, id) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().findBy(collection, key, id);
+    return this.getDriver().findBy(entityName, key, id);
   }
   async findFirstBy(entityName, key, id) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().findFirstBy(collection, key, id);
+    return this.getDriver().findFirstBy(entityName, key, id);
   }
   async findLastBy(entityName, key, id) {
-    const collection = Utils3.className(entityName);
-    return this.getDriver().findLastBy(collection, key, id);
+    return this.getDriver().findLastBy(entityName, key, id);
   }
   getCollection(entityName) {
     return this.getConnection().getCollection(entityName);
@@ -494,6 +492,36 @@ class CollectionStoreEntityRepository extends EntityRepository {
   constructor(em, entityName) {
     super(em, entityName);
     this.em = em;
+  }
+  async first(entityName) {
+    return this.getEntityManager().first(entityName);
+  }
+  async last(entityName) {
+    return this.getEntityManager().last(entityName);
+  }
+  async lowest(entityName, key) {
+    return this.getEntityManager().lowest(entityName, key);
+  }
+  async greatest(entityName, key) {
+    return this.getEntityManager().greatest(entityName, key);
+  }
+  async oldest(entityName) {
+    return this.getEntityManager().oldest(entityName);
+  }
+  async latest(entityName) {
+    return this.getEntityManager().latest(entityName);
+  }
+  async findById(entityName, id) {
+    return this.getEntityManager().findById(entityName, id);
+  }
+  async findBy(entityName, key, id) {
+    return this.getEntityManager().findBy(entityName, key, id);
+  }
+  async findFirstBy(entityName, key, id) {
+    return this.getEntityManager().findFirstBy(entityName, key, id);
+  }
+  async findLastBy(entityName, key, id) {
+    return this.getEntityManager().findLastBy(entityName, key, id);
   }
   getCollection() {
     return this.getEntityManager().getCollection(this.entityName);

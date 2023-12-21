@@ -9,7 +9,7 @@ import {
   type EventArgs,
   OneToMany,
   Property,
-} from '@mikro-orm/core'
+} from 'collection-store-mikro-orm'
 import { BaseEntity } from '../common/base.entity.js'
 import { Article } from '../article/article.entity.js'
 import { UserRepository } from './user.repository.js'

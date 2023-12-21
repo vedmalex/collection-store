@@ -1,9 +1,9 @@
-import { EntityManager, type EntityName, type EntityRepository, type GetRepository } from '@mikro-orm/core';
+import { EntityManager, type EntityName, type EntityRepository, type GetRepository, ForkOptions } from '@mikro-orm/core';
 import type { CollectionStoreDriver } from './Driver';
 import type { CollectionStoreEntityRepository } from './EntityRepository';
 import { Item } from 'collection-store';
 export declare class CollectionStoreEntityManager extends EntityManager<CollectionStoreDriver> {
-    aggregate(entityName: EntityName<any>, pipeline: any[]): Promise<any[]>;
+    fork(options?: ForkOptions | undefined): CollectionStoreEntityManager;
     first(entityName: EntityName<any>): Promise<any>;
     last(entityName: EntityName<any>): Promise<any>;
     lowest(entityName: EntityName<any>, key: string): Promise<any>;

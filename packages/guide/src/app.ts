@@ -1,6 +1,6 @@
 import { fastify } from 'fastify'
 import fastifyJWT from '@fastify/jwt'
-import { NotFoundError, RequestContext } from '@mikro-orm/core'
+import { NotFoundError, RequestContext } from 'collection-store-mikro-orm'
 import { initORM } from './db.js'
 import { registerUserRoutes } from './modules/user/routes.js'
 import { registerArticleRoutes } from './modules/article/routes.js'

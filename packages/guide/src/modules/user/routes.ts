@@ -1,4 +1,4 @@
-import { wrap } from '@mikro-orm/core'
+import { wrap } from 'collection-store-mikro-orm'
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { initORM } from '../../db.js'

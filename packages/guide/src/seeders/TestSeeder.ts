@@ -1,4 +1,4 @@
-import type { EntityManager } from '@mikro-orm/core'
+import type { EntityManager } from 'collection-store-mikro-orm'
 import { Seeder } from '@mikro-orm/seeder'
 import { User } from '../modules/user/user.entity.js'
 

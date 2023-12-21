@@ -1,9 +1,9 @@
 import {
   EntityManager,
-  Utils,
   type EntityName,
   type EntityRepository,
   type GetRepository,
+  ForkOptions,
 } from '@mikro-orm/core'
 import type { CollectionStoreDriver } from './Driver'
 import type { CollectionStoreEntityRepository } from './EntityRepository'
@@ -13,56 +13,40 @@ import { Item } from 'collection-store'
  * @inheritDoc
  */
 export class CollectionStoreEntityManager extends EntityManager<CollectionStoreDriver> {
-  /**
-   * Shortcut to driver's aggregate method. Available in MongoDriver only.
-   */
-  async aggregate(
-    entityName: EntityName<any>,
-    pipeline: any[],
-  ): Promise<any[]> {
-    entityName = Utils.className(entityName)
-    return this.getDriver().aggregate(entityName, pipeline)
+  override fork(
+    options?: ForkOptions | undefined,
+  ): CollectionStoreEntityManager {
+    return super.fork(options) as CollectionStoreEntityManager
   }
-
   async first(entityName: EntityName<any>): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().first(collection)
+    return this.getDriver().first(entityName)
   }
   async last(entityName: EntityName<any>): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().last(collection)
+    return this.getDriver().last(entityName)
   }
   async lowest(entityName: EntityName<any>, key: string): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().lowest(collection, key)
+    return this.getDriver().lowest(entityName, key)
   }
   async greatest(entityName: EntityName<any>, key: string): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().greatest(collection, key)
+    return this.getDriver().greatest(entityName, key)
   }
   async oldest(entityName: EntityName<any>): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().oldest(collection)
+    return this.getDriver().oldest(entityName)
   }
   async latest(entityName: EntityName<any>): Promise<any> {
-    const collection = Utils.className(entityName)
-    return this.getDriver().latest(collection)
+    return this.getDriver().latest(entityName)
   }
   async findById(entityName: EntityName<any>, id: any) {
-    const collection = Utils.className(entityName)
-    return this.getDriver().findById(collection, id)
+    return this.getDriver().findById(entityName, id)
   }
   async findBy(entityName: EntityName<any>, key: string, id: any) {
-    const collection = Utils.className(entityName)
-    return this.getDriver().findBy(collection, key, id)
+    return this.getDriver().findBy(entityName, key, id)
   }
   async findFirstBy(entityName: EntityName<any>, key: string, id: any) {
-    const collection = Utils.className(entityName)
-    return this.getDriver().findFirstBy(collection, key, id)
+    return this.getDriver().findFirstBy(entityName, key, id)
   }
   async findLastBy(entityName: EntityName<any>, key: string, id: any) {
-    const collection = Utils.className(entityName)
-    return this.getDriver().findLastBy(collection, key, id)
+    return this.getDriver().findLastBy(entityName, key, id)
   }
 
   getCollection<T extends Item>(entityName: EntityName<T>) {

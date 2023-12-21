@@ -1,4 +1,8 @@
-import { FindOptions, EntityRepository, LoadStrategy } from '@mikro-orm/core'
+import {
+  FindOptions,
+  EntityRepository,
+  LoadStrategy,
+} from 'collection-store-mikro-orm'
 import { Article } from './article.entity.js'
 import { ArticleListing } from './article-listing.entity.js'
 

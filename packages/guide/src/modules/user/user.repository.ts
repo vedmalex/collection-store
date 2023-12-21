@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/core'
+import { EntityRepository } from 'collection-store-mikro-orm'
 import { User } from './user.entity.js'
 import { AuthError } from '../common/utils.js'
 

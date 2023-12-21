@@ -10,7 +10,7 @@ import {
   Ref,
   type Rel,
   t,
-} from '@mikro-orm/core'
+} from 'collection-store-mikro-orm'
 import { BaseEntity } from '../common/base.entity.js'
 import { User } from '../user/user.entity.js'
 import { Comment } from './comment.entity.js'

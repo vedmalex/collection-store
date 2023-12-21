@@ -1,4 +1,9 @@
-import { Collection, Entity, ManyToMany, Property } from '@mikro-orm/core'
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  Property,
+} from 'collection-store-mikro-orm'
 import { Article } from './article.entity.js'
 import { BaseEntity } from '../common/base.entity.js'
 

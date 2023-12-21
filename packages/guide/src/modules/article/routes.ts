@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { wrap } from '@mikro-orm/core'
+import { wrap } from 'collection-store-mikro-orm'
 import { initORM } from '../../db.js'
 import { Article } from './article.entity.js'
 import { getUserFromToken, verifyArticlePermissions } from '../common/utils.js'

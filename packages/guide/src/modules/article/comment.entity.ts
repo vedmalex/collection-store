@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, Property, Ref } from '@mikro-orm/core'
+import { Entity, ManyToOne, Property, Ref } from 'collection-store-mikro-orm'
 import { Article } from './article.entity.js'
 import { User } from '../user/user.entity.js'
 import { BaseEntity } from '../common/base.entity.js'

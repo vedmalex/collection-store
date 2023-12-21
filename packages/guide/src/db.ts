@@ -1,5 +1,9 @@
-import { MikroORM, Options } from 'collection-store-mikro-orm'
-import { EntityManager, EntityRepository } from '@mikro-orm/core'
+import {
+  MikroORM,
+  Options,
+  EntityManager,
+  EntityRepository,
+} from 'collection-store-mikro-orm'
 import { User } from './modules/user/user.entity.js'
 import { Comment } from './modules/article/comment.entity.js'
 import { Article } from './modules/article/article.entity.js'
@@ -33,7 +37,7 @@ export async function initORM(options?: Options): Promise<Services> {
   // save to cache before returning
   return (cache = {
     orm,
-    em: orm.em,
+    em: orm.em.fork() as EntityManager,
     article: orm.em.getRepository(Article),
     comment: orm.em.getRepository(Comment),
     user: orm.em.getRepository(User),
