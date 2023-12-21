@@ -6,8 +6,8 @@ import {
   type GetRepository,
 } from '@mikro-orm/core'
 import type { CollectionStoreDriver } from './Driver'
-import type { MongoEntityRepository } from './EntityRepository'
-import { Collection, Item } from 'collection-store'
+import type { CollectionStoreEntityRepository } from './EntityRepository'
+import { Item } from 'collection-store'
 
 /**
  * @inheritDoc
@@ -66,7 +66,7 @@ export class CollectionStoreEntityManager extends EntityManager<CollectionStoreD
    */
   override getRepository<
     T extends object,
-    U extends EntityRepository<T> = MongoEntityRepository<T>,
+    U extends EntityRepository<T> = CollectionStoreEntityRepository<T>,
   >(entityName: EntityName<T>): GetRepository<T, U> {
     return super.getRepository<T, U>(entityName)
   }

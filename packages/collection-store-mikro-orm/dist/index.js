@@ -425,6 +425,73 @@ class CollectionStoreDriver extends DatabaseDriver {
 // src/index.ts
 export * from "@mikro-orm/core";
 
+// src/EntityManager.ts
+import {
+EntityManager as EntityManager2,
+Utils as Utils3
+} from "@mikro-orm/core";
+
+class CollectionStoreEntityManager extends EntityManager2 {
+  constructor() {
+    super(...arguments);
+  }
+  async aggregate(entityName, pipeline) {
+    entityName = Utils3.className(entityName);
+    return this.getDriver().aggregate(entityName, pipeline);
+  }
+  async first(collection) {
+    return this.getDriver().first(collection);
+  }
+  async last(collection) {
+    return this.getDriver().last(collection);
+  }
+  async lowest(collection, key) {
+    return this.getDriver().lowest(collection, key);
+  }
+  async greatest(collection, key) {
+    return this.getDriver().greatest(collection, key);
+  }
+  async oldest(collection) {
+    return this.getDriver().oldest(collection);
+  }
+  async latest(collection) {
+    return this.getDriver().latest(collection);
+  }
+  async findById(collection, id) {
+    return this.getDriver().findById(collection, id);
+  }
+  async findBy(collection, key, id) {
+    return this.getDriver().findBy(collection, key, id);
+  }
+  async findFirstBy(collection, key, id) {
+    return this.getDriver().findFirstBy(collection, key, id);
+  }
+  async findLastBy(collection, key, id) {
+    return this.getDriver().findLastBy(collection, key, id);
+  }
+  getCollection(entityName) {
+    return this.getConnection().getCollection(entityName);
+  }
+  getRepository(entityName) {
+    return super.getRepository(entityName);
+  }
+}
+// src/EntityRepository.ts
+import {EntityRepository} from "@mikro-orm/core";
+
+class CollectionStoreEntityRepository extends EntityRepository {
+  em;
+  constructor(em, entityName) {
+    super(em, entityName);
+    this.em = em;
+  }
+  getCollection() {
+    return this.getEntityManager().getCollection(this.entityName);
+  }
+  getEntityManager() {
+    return this.em;
+  }
+}
 // src/MikroORM.ts
 import {
 defineConfig,
@@ -449,6 +516,8 @@ class CollectionStoreMikroORM extends MikroORM2 {
 export {
   defineCollectionStoreConfig as defineConfig,
   CollectionStoreMikroORM as MikroORM,
+  CollectionStoreEntityRepository as EntityRepository,
+  CollectionStoreEntityManager as EntityManager,
   CollectionStorePlatform,
   CollectionStoreDriver,
   CollectionStoreConnection

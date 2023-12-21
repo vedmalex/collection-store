@@ -2,7 +2,9 @@ import { EntityRepository, type EntityName } from '@mikro-orm/core'
 import type { CollectionStoreEntityManager } from './EntityManager'
 import { Item } from 'collection-store'
 
-export class MongoEntityRepository<T extends Item> extends EntityRepository<T> {
+export class CollectionStoreEntityRepository<
+  T extends Item,
+> extends EntityRepository<T> {
   constructor(
     protected override readonly em: CollectionStoreEntityManager,
     entityName: EntityName<T>,

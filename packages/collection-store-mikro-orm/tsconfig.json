@@ -14,6 +14,8 @@
     "./src/Driver.ts",
     "./src/Platform.ts",
     "./src/MikroORM.ts",
-    "./src/SchemaGenerator.ts"
+    "./src/SchemaGenerator.ts",
+    "./src/EntityManager.ts",
+    "./src/EntityRepository.ts"
   ]
 }
