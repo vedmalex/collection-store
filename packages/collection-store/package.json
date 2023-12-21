@@ -1,6 +1,6 @@
 {
   "name": "collection-store",
-  "version": "3.0.0-beta.8",
+  "version": "3.0.0-beta.9",
   "description": "very flexible collection for in-memory operations with flexible indexing",
   "main": "dist/index.js",
   "typings": "types/index.d.ts",
@@ -16,6 +16,7 @@
     "type": "git",
     "url": "https://github.com/vedmalex/collection-store.git"
   },
+  "type": "module",
   "keywords": [],
   "author": "vedanta-krit.das <vedmalex@gmail.com>",
   "license": "MIT",
