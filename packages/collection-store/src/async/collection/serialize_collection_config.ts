@@ -13,7 +13,7 @@ export function serialize_collection_config<T extends Item>(
   res.name = collection.name
   res.adapter = collection.storage.name
   res.list = collection.list.name
-  res.id = collection.id
+  res.id = collection.id || 'id'
   res.auto = collection.auto ?? undefined
   // добавить сериализацию схемы
   // или использоваь ajv??

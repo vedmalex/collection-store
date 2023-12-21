@@ -1,6 +1,6 @@
 {
   "config": {
-    "root": "./data",
+    "root": "data/UserDb",
     "name": "mikro_orm_migrations",
     "adapter": "AdapterFile",
     "list": "List",

@@ -1,6 +1,23 @@
 {
+  "mikro_orm_migrations": {
+    "root": "data/UserDb",
+    "name": "mikro_orm_migrations",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
   "Tag": {
-    "root": "./data",
+    "root": "data/UserDb",
     "name": "Tag",
     "adapter": "AdapterFile",
     "list": "List",
@@ -17,7 +34,7 @@
     ]
   },
   "User": {
-    "root": "./data",
+    "root": "data/UserDb",
     "name": "User",
     "adapter": "AdapterFile",
     "list": "List",
@@ -34,7 +51,7 @@
     ]
   },
   "Article": {
-    "root": "./data",
+    "root": "data/UserDb",
     "name": "Article",
     "adapter": "AdapterFile",
     "list": "List",
@@ -56,23 +73,6 @@
       {
         "key": "title",
         "required": true
-      }
-    ]
-  },
-  "mikro_orm_migrations": {
-    "root": "./data",
-    "name": "mikro_orm_migrations",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
       }
     ]
   }

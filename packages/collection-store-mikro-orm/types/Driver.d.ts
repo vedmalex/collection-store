@@ -15,4 +15,14 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     nativeDelete<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<QueryResult<T>>;
     count<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<number>;
     findVirtual<T extends object>(entityName: string, where: FilterQuery<T>, options: FindOptions<T, any, any, any>): Promise<EntityData<T>[]>;
+    first(collection: string): Promise<any>;
+    last(collection: string): Promise<any>;
+    lowest(collection: string, key: string): Promise<any>;
+    greatest(collection: string, key: string): Promise<any>;
+    oldest(collection: string): Promise<any>;
+    latest(collection: string): Promise<any>;
+    findById(collection: string, id: any): Promise<void>;
+    findBy(collection: string, key: string, id: any): Promise<void>;
+    findFirstBy(collection: string, key: string, id: any): Promise<void>;
+    findLastBy(collection: string, key: string, id: any): Promise<void>;
 }

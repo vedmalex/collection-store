@@ -13,6 +13,8 @@ export async function bootstrap(port = 3001, seed = false) {
   if (seed) {
     await db.orm.schema.refreshDatabase()
     await db.orm.seeder.seed(TestSeeder)
+  } else {
+    await db.orm.schema.ensureDatabase()
   }
   const app = fastify()
 

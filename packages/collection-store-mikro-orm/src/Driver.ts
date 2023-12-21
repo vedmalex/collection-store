@@ -48,7 +48,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     where: FilterQuery<T>,
   ): Promise<EntityData<T> | null> {
-    debugger
     if (this.metadata.find(entityName)?.virtual) {
       const [item] = await this.findVirtual(
         entityName,
@@ -70,7 +69,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   }
 
   override async connect(): Promise<CollectionStoreConnection> {
-    debugger
     log('connect', arguments)
     await this.connection.connect()
     return this.connection
@@ -79,7 +77,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     entityName: string,
     data: EntityDictionary<T>,
   ): Promise<QueryResult<T>> {
-    debugger
     log('nativeInsert', arguments)
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? 'id'
@@ -171,5 +168,37 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     }
 
     return super.findVirtual(entityName, where, options)
+  }
+  // extra operations
+  async first(collection: string): Promise<any> {
+    return this.getConnection('read').first(collection)
+  }
+  async last(collection: string): Promise<any> {
+    return this.getConnection('read').last(collection)
+  }
+
+  async lowest(collection: string, key: string): Promise<any> {
+    return this.getConnection('read').lowest(collection, key)
+  }
+  async greatest(collection: string, key: string): Promise<any> {
+    return this.getConnection('read').greatest(collection, key)
+  }
+  async oldest(collection: string): Promise<any> {
+    return this.getConnection('read').oldest(collection)
+  }
+  async latest(collection: string): Promise<any> {
+    return this.getConnection('read').latest(collection)
+  }
+  async findById(collection: string, id: any) {
+    return this.getConnection('read').findById(collection, id)
+  }
+  async findBy(collection: string, key: string, id: any) {
+    return this.getConnection('read').findBy(collection, key, id)
+  }
+  async findFirstBy(collection: string, key: string, id: any) {
+    return this.getConnection('read').findFirstBy(collection, key, id)
+  }
+  async findLastBy(collection: string, key: string, id: any) {
+    return this.getConnection('read').findLastBy(collection, key, id)
   }
 }

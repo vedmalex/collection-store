@@ -14,11 +14,11 @@ export class UserRepository extends EntityRepository<User> {
 
     const user = await this.em
       .fork()
-      .getRepository('User')
+      .getRepository(User)
       .findOneOrFail(
         { email },
         {
-          populate: ['password'], // password is a lazy property, we need to populate it
+          populate: ['password'] as any, // password is a lazy property, we need to populate it
           failHandler: () => err,
         },
       )

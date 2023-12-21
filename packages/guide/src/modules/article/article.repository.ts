@@ -7,7 +7,7 @@ export class ArticleRepository extends EntityRepository<Article> {
   listArticlesQuery() {
     // sub-query for total number of comments
     return this.findAll({
-      populate: ['tags', 'comments', 'author'],
+      populate: ['tags', 'comments', 'author'] as any,
       strategy: LoadStrategy.JOINED,
     }).then((res) => {
       return res.map((item) => {
@@ -25,8 +25,8 @@ export class ArticleRepository extends EntityRepository<Article> {
   }
 
   async listArticles(options: FindOptions<ArticleListing>) {
-    const rep = this.em.fork().getRepository('ArticleListing')
-    const [items, total] = await rep.findAndCount(ArticleListing, {})
+    const rep = this.em.fork().getRepository(ArticleListing)
+    const [items, total] = await rep.findAndCount({})
     return { items, total }
   }
 }

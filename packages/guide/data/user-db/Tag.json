@@ -1,7 +1,7 @@
 {
   "config": {
-    "root": "./data",
-    "name": "User",
+    "root": "data/user-db",
+    "name": "Tag",
     "adapter": "AdapterFile",
     "list": "List",
     "id": "id",
@@ -17,26 +17,26 @@
     ]
   },
   "list": {
-    "_count": 2,
-    "_counter": 2,
+    "_count": 3,
+    "_counter": 3,
     "hash": {
       "0": {
-        "createdAt": "2023-12-19T13:23:16.682Z",
-        "updatedAt": "2023-12-19T13:23:16.683Z",
-        "fullName": "Foo Bar",
-        "email": "foo@bar.com",
-        "password": "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441",
-        "bio": "",
-        "id": 0
+        "id": 1,
+        "createdAt": "2023-12-21T11:06:54.590Z",
+        "updatedAt": "2023-12-21T11:06:54.590Z",
+        "name": "foo1"
       },
       "1": {
-        "createdAt": "2023-12-19T13:23:16.725Z",
-        "updatedAt": "2023-12-19T13:23:16.725Z",
-        "fullName": "Foo Bar",
-        "email": "foo@bar.com",
-        "password": "498c81ea3c7c52027981967388f9fbce0ae0e3c54deb8eb5b249968c07aaf1c9",
-        "bio": "",
-        "id": 1
+        "id": 2,
+        "createdAt": "2023-12-21T11:06:54.591Z",
+        "updatedAt": "2023-12-21T11:06:54.591Z",
+        "name": "foo2"
+      },
+      "2": {
+        "id": 3,
+        "createdAt": "2023-12-21T11:06:54.592Z",
+        "updatedAt": "2023-12-21T11:06:54.592Z",
+        "name": "foo3"
       }
     }
   },
@@ -53,17 +53,19 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": 1,
-          "min": 0,
-          "size": 2,
+          "max": 3,
+          "min": 1,
+          "size": 3,
           "keys": [
-            0,
-            1
+            1,
+            2,
+            3
           ],
-          "key_num": 2,
+          "key_num": 3,
           "pointers": [
-            0,
-            1
+            1,
+            2,
+            3
           ]
         }
       ]

@@ -1,7 +1,7 @@
 {
   "config": {
-    "root": "./data",
-    "name": "Tag",
+    "root": "data/user-db",
+    "name": "User",
     "adapter": "AdapterFile",
     "list": "List",
     "id": "id",
@@ -17,32 +17,26 @@
     ]
   },
   "list": {
-    "_count": 4,
-    "_counter": 4,
+    "_count": 2,
+    "_counter": 2,
     "hash": {
       "0": {
-        "createdAt": "2023-12-19T13:23:16.712Z",
-        "updatedAt": "2023-12-19T13:23:16.712Z",
-        "name": "new",
+        "createdAt": "2023-12-21T09:35:34.467Z",
+        "updatedAt": "2023-12-21T09:35:34.467Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441",
+        "bio": "",
         "id": 0
       },
       "1": {
-        "createdAt": "2023-12-19T13:23:16.713Z",
-        "updatedAt": "2023-12-19T13:23:16.713Z",
-        "name": "old",
+        "createdAt": "2023-12-21T09:35:34.516Z",
+        "updatedAt": "2023-12-21T09:35:34.516Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "498c81ea3c7c52027981967388f9fbce0ae0e3c54deb8eb5b249968c07aaf1c9",
+        "bio": "",
         "id": 1
-      },
-      "2": {
-        "id": 2,
-        "createdAt": "2023-12-19T13:23:16.726Z",
-        "updatedAt": "2023-12-19T13:23:16.726Z",
-        "name": "foo2"
-      },
-      "3": {
-        "id": 3,
-        "createdAt": "2023-12-19T13:23:16.727Z",
-        "updatedAt": "2023-12-19T13:23:16.727Z",
-        "name": "foo3"
       }
     }
   },
@@ -59,21 +53,17 @@
           "t": 32,
           "isEmpty": false,
           "isFull": false,
-          "max": 3,
+          "max": 1,
           "min": 0,
-          "size": 4,
+          "size": 2,
           "keys": [
             0,
-            1,
-            2,
-            3
+            1
           ],
-          "key_num": 4,
+          "key_num": 2,
           "pointers": [
             0,
-            1,
-            2,
-            3
+            1
           ]
         }
       ]

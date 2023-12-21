@@ -1,0 +1,116 @@
+{
+  "config": {
+    "root": "data/UserDb",
+    "name": "Article",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "slug",
+        "unique": true,
+        "required": true
+      },
+      {
+        "key": "title",
+        "required": true
+      }
+    ]
+  },
+  "list": {
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": []
+        }
+      ]
+    },
+    "slug": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": []
+        }
+      ]
+    },
+    "title": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "slug": {
+      "key": "slug",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": true
+    },
+    "title": {
+      "key": "title",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  }
+}

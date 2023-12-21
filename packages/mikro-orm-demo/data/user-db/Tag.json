@@ -1,6 +1,6 @@
 {
   "config": {
-    "root": "./data",
+    "root": "data/user-db",
     "name": "Tag",
     "adapter": "AdapterFile",
     "list": "List",
@@ -17,25 +17,31 @@
     ]
   },
   "list": {
-    "_count": 3,
-    "_counter": 3,
+    "_count": 4,
+    "_counter": 4,
     "hash": {
       "0": {
-        "id": 1,
-        "createdAt": "2023-12-15T21:19:42.459Z",
-        "updatedAt": "2023-12-15T21:19:42.459Z",
-        "name": "foo1"
+        "createdAt": "2023-12-21T09:35:34.500Z",
+        "updatedAt": "2023-12-21T09:35:34.500Z",
+        "name": "new",
+        "id": 0
       },
       "1": {
-        "id": 2,
-        "createdAt": "2023-12-15T21:19:42.460Z",
-        "updatedAt": "2023-12-15T21:19:42.460Z",
-        "name": "foo2"
+        "createdAt": "2023-12-21T09:35:34.501Z",
+        "updatedAt": "2023-12-21T09:35:34.501Z",
+        "name": "old",
+        "id": 1
       },
       "2": {
+        "id": 2,
+        "createdAt": "2023-12-21T09:35:34.517Z",
+        "updatedAt": "2023-12-21T09:35:34.517Z",
+        "name": "foo2"
+      },
+      "3": {
         "id": 3,
-        "createdAt": "2023-12-15T21:19:42.461Z",
-        "updatedAt": "2023-12-15T21:19:42.461Z",
+        "createdAt": "2023-12-21T09:35:34.517Z",
+        "updatedAt": "2023-12-21T09:35:34.517Z",
         "name": "foo3"
       }
     }
@@ -54,15 +60,17 @@
           "isEmpty": false,
           "isFull": false,
           "max": 3,
-          "min": 1,
-          "size": 3,
+          "min": 0,
+          "size": 4,
           "keys": [
+            0,
             1,
             2,
             3
           ],
-          "key_num": 3,
+          "key_num": 4,
           "pointers": [
+            0,
             1,
             2,
             3

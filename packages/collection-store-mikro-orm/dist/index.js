@@ -1,7 +1,8 @@
 // src/Connection.ts
 import {
 Connection,
-EventType
+EventType,
+Utils
 } from "@mikro-orm/core";
 import {debug} from "debug";
 import {CSDatabase} from "collection-store";
@@ -16,6 +17,14 @@ class CollectionStoreConnection extends Connection {
   getDb() {
     log("getDb");
     return this.db;
+  }
+  getCollection(name) {
+    return this.db.collection(this.getCollectionName(name));
+  }
+  getCollectionName(name) {
+    name = Utils.className(name);
+    const meta = this.metadata.find(name);
+    return meta ? meta.collection : name;
   }
   async connect() {
     log("connect");
@@ -40,6 +49,36 @@ class CollectionStoreConnection extends Connection {
     log("getClientUrl");
     const url = this.config.getClientUrl(true);
     return url;
+  }
+  async first(collection) {
+    this.db.first(collection);
+  }
+  async last(collection) {
+    this.db.first(collection);
+  }
+  async lowest(collection, key) {
+    this.db.lowest(collection, key);
+  }
+  async greatest(collection, key) {
+    this.db.greatest(collection, key);
+  }
+  async oldest(collection) {
+    this.db.oldest(collection);
+  }
+  async latest(collection) {
+    this.db.latest(collection);
+  }
+  async findById(collection, id) {
+    this.db.findById(collection, id);
+  }
+  async findBy(collection, key, id) {
+    this.db.findBy(collection, key, id);
+  }
+  async findFirstBy(collection, key, id) {
+    this.db.findFirstBy(collection, key, id);
+  }
+  async findLastBy(collection, key, id) {
+    this.db.findLastBy(collection, key, id);
   }
   execute(query, params, method, ctx) {
     throw new Error(`${this.constructor.name} does not support generic execute method`);
@@ -106,7 +145,7 @@ Platform
 // src/SchemaGenerator.ts
 import {
 AbstractSchemaGenerator,
-Utils
+Utils as Utils2
 } from "@mikro-orm/core";
 import {debug as debug2} from "debug";
 var log2 = debug2("generator");
@@ -180,7 +219,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     log2("createIndexes");
     meta.indexes.forEach((index) => {
       let fieldOrSpec;
-      const properties = Utils.flatten(Utils.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
+      const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const db = this.connection.getDb();
       fieldOrSpec = properties[0];
       db.createIndex(meta.className, fieldOrSpec, {
@@ -193,7 +232,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
   createUniqueIndexes(meta) {
     log2("createUniqueIndexes");
     meta.uniques.forEach((index) => {
-      const properties = Utils.flatten(Utils.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
+      const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const fieldOrSpec = properties[0];
       const db = this.connection.getDb();
       db.createIndex(meta.className, fieldOrSpec, {
@@ -272,7 +311,6 @@ class CollectionStoreDriver extends DatabaseDriver {
     }
   }
   async findOne(entityName, where) {
-    debugger;
     if (this.metadata.find(entityName)?.virtual) {
       const [item] = await this.findVirtual(entityName, where, {});
       return item ?? null;
@@ -286,13 +324,11 @@ class CollectionStoreDriver extends DatabaseDriver {
     }
   }
   async connect() {
-    debugger;
     log4("connect", arguments);
     await this.connection.connect();
     return this.connection;
   }
   async nativeInsert(entityName, data) {
-    debugger;
     log4("nativeInsert", arguments);
     const meta = this.metadata.find(entityName);
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? "id";
@@ -353,6 +389,36 @@ class CollectionStoreDriver extends DatabaseDriver {
       return meta.expression(em, where, options);
     }
     return super.findVirtual(entityName, where, options);
+  }
+  async first(collection) {
+    return this.getConnection("read").first(collection);
+  }
+  async last(collection) {
+    return this.getConnection("read").last(collection);
+  }
+  async lowest(collection, key) {
+    return this.getConnection("read").lowest(collection, key);
+  }
+  async greatest(collection, key) {
+    return this.getConnection("read").greatest(collection, key);
+  }
+  async oldest(collection) {
+    return this.getConnection("read").oldest(collection);
+  }
+  async latest(collection) {
+    return this.getConnection("read").latest(collection);
+  }
+  async findById(collection, id) {
+    return this.getConnection("read").findById(collection, id);
+  }
+  async findBy(collection, key, id) {
+    return this.getConnection("read").findBy(collection, key, id);
+  }
+  async findFirstBy(collection, key, id) {
+    return this.getConnection("read").findFirstBy(collection, key, id);
+  }
+  async findLastBy(collection, key, id) {
+    return this.getConnection("read").findLastBy(collection, key, id);
   }
 }
 

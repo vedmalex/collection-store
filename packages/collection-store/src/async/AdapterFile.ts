@@ -37,8 +37,11 @@ export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
       delete p.base
       path = pathLib.format(p)
     }
-    await fs.ensureFile(path)
-    return fs.readJSON(path)
+    if (fs.pathExistsSync(path)) {
+      return fs.readJSON(path)
+    } else {
+      return false
+    }
   }
 
   async store(name: string) {

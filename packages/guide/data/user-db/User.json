@@ -1,0 +1,74 @@
+{
+  "config": {
+    "root": "data/user-db",
+    "name": "User",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "list": {
+    "_count": 1,
+    "_counter": 1,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-21T11:06:54.588Z",
+        "updatedAt": "2023-12-21T11:10:06.763Z",
+        "fullName": "Alex Vedmedenko",
+        "email": "foo@bar.com",
+        "password": "5122164616230401468",
+        "bio": "",
+        "social": {
+          "twitter": "@foobar"
+        },
+        "id": 0
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 0,
+          "min": 0,
+          "size": 1,
+          "keys": [
+            0
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  }
+}

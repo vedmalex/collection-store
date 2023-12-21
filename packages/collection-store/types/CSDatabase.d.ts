@@ -12,9 +12,10 @@ export interface CSTransaction {
 }
 export declare class CSDatabase implements CSTransaction {
     private root;
+    private name;
     private inTransaction;
     private collections;
-    constructor(root: string);
+    constructor(root: string, name?: string);
     private writeSchema;
     connect(): Promise<void>;
     load(): Promise<void>;
@@ -33,4 +34,14 @@ export declare class CSDatabase implements CSTransaction {
     startTransaction(options: TransactionOptions): Promise<void>;
     abortTransaction(): Promise<void>;
     commitTransaction(): Promise<void>;
+    first(collection: string): Promise<any>;
+    last(collection: string): Promise<any>;
+    lowest(collection: string, key: string): Promise<any>;
+    greatest(collection: string, key: string): Promise<any>;
+    oldest(collection: string): Promise<any>;
+    latest(collection: string): Promise<any>;
+    findById(collection: string, id: any): Promise<any>;
+    findBy(collection: string, key: string, id: any): Promise<any[]>;
+    findFirstBy(collection: string, key: string, id: any): Promise<any>;
+    findLastBy(collection: string, key: string, id: any): Promise<any>;
 }

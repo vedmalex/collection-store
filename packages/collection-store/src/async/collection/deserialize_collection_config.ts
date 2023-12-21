@@ -18,7 +18,7 @@ export function deserialize_collection_config<T extends Item>(
   res.rotate = config.rotate
   res.ttl = config.ttl
   res.audit = config?.audit ?? false
-  res.id = config.id
+  res.id = config.id || 'id'
   res.auto = config.auto
   res.indexList = config.indexList.map((index) => deserializeIndex<T>(index))
   res.adapter =

@@ -1,0 +1,96 @@
+{
+  "Tag": {
+    "root": "data/user-db",
+    "name": "Tag",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "User": {
+    "root": "data/user-db",
+    "name": "User",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "Article": {
+    "root": "data/user-db",
+    "name": "Article",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      },
+      {
+        "key": "slug",
+        "unique": true,
+        "required": true
+      },
+      {
+        "key": "title",
+        "required": true
+      }
+    ]
+  },
+  "Comment": {
+    "root": "data/user-db",
+    "name": "Comment",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "mikro_orm_migrations": {
+    "root": "data/user-db",
+    "name": "mikro_orm_migrations",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  }
+}

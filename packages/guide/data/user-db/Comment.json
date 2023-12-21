@@ -1,6 +1,6 @@
 {
   "config": {
-    "root": "./data",
+    "root": "data/user-db",
     "name": "Comment",
     "adapter": "AdapterFile",
     "list": "List",
@@ -21,49 +21,49 @@
     "_counter": 6,
     "hash": {
       "0": {
-        "createdAt": "2023-12-15T21:19:42.486Z",
-        "updatedAt": "2023-12-15T21:19:42.486Z",
-        "text": "random comment 0.43248976820802765",
+        "createdAt": "2023-12-21T11:06:54.608Z",
+        "updatedAt": "2023-12-21T11:06:54.608Z",
+        "text": "random comment 0.0361544632515054",
         "article": 0,
         "author": 0,
         "id": 0
       },
       "1": {
-        "createdAt": "2023-12-15T21:19:42.486Z",
-        "updatedAt": "2023-12-15T21:19:42.486Z",
-        "text": "random comment 0.6976696278745911",
+        "createdAt": "2023-12-21T11:06:54.608Z",
+        "updatedAt": "2023-12-21T11:06:54.608Z",
+        "text": "random comment 0.246586870777752",
         "article": 0,
         "author": 0,
         "id": 1
       },
       "2": {
-        "createdAt": "2023-12-15T21:19:42.490Z",
-        "updatedAt": "2023-12-15T21:19:42.490Z",
-        "text": "random comment 0.642917146711166",
+        "createdAt": "2023-12-21T11:06:54.610Z",
+        "updatedAt": "2023-12-21T11:06:54.610Z",
+        "text": "random comment 0.5875455542730066",
         "article": 1,
         "author": 0,
         "id": 2
       },
       "3": {
-        "createdAt": "2023-12-15T21:19:42.493Z",
-        "updatedAt": "2023-12-15T21:19:42.493Z",
-        "text": "random comment 0.4383465571417595",
+        "createdAt": "2023-12-21T11:06:54.612Z",
+        "updatedAt": "2023-12-21T11:06:54.612Z",
+        "text": "random comment 0.6857887217916926",
         "article": 2,
         "author": 0,
         "id": 3
       },
       "4": {
-        "createdAt": "2023-12-15T21:19:42.493Z",
-        "updatedAt": "2023-12-15T21:19:42.493Z",
-        "text": "random comment 0.8436444278023818",
+        "createdAt": "2023-12-21T11:06:54.612Z",
+        "updatedAt": "2023-12-21T11:06:54.612Z",
+        "text": "random comment 0.17605219243088455",
         "article": 2,
         "author": 0,
         "id": 4
       },
       "5": {
-        "createdAt": "2023-12-15T21:19:42.494Z",
-        "updatedAt": "2023-12-15T21:19:42.494Z",
-        "text": "random comment 0.9685077192851195",
+        "createdAt": "2023-12-21T11:06:54.613Z",
+        "updatedAt": "2023-12-21T11:06:54.613Z",
+        "text": "random comment 0.8977161487623695",
         "article": 2,
         "author": 0,
         "id": 5

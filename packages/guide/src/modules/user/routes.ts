@@ -36,7 +36,6 @@ export async function registerUserRoutes(app: FastifyInstance) {
     const userRepo = em.getRepository(User)
     // thanks to zod, our `dto` is fully typed and passes the `em.create()` checks
     const user = userRepo.create(dto)
-    debugger
     await em.flush() // no need for explcit `em.persist()` when we use `em.create()`
 
     // after flush, we have the `user.id` set

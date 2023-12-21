@@ -69,7 +69,6 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   cronJob?: CronJob
   createIndex(name: string, config: IndexDef<T>): void {
     create_index(this, name, config)
-    debugger
     ensure_indexes(this)
     //ensure
     //rebuild
@@ -499,7 +498,6 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       await this.list.update(item[this.id], res)
       result.push(res)
     }
-    debugger
     return return_list_if_valid<T>(this, result)
   }
 

@@ -52,7 +52,6 @@ const run = async () => {
    * создаем план обхода базы данных и можно вывести его в консоль
    */
 
-  debugger
   await data.persist()
 }
 

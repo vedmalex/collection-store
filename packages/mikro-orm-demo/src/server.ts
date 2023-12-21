@@ -9,6 +9,7 @@ import {
 
 // initialize the ORM, loading the config file dynamically
 const orm = await MikroORM.init({
+  clientUrl: './data',
   entities: [Article, User, Tag],
   driver: CollectionStoreDriver,
   dbName: 'user-db',
@@ -74,7 +75,6 @@ console.log(articleWithAuthor)
   const newTag = em.create(Tag, { name: 'new' })
   const oldTag = em.create(Tag, { name: 'old' })
   article.tags.add(newTag, oldTag)
-  debugger
   await em.flush()
   console.log(article.tags)
 

@@ -27,13 +27,15 @@ export interface CSTransaction {
 }
 
 export class CSDatabase implements CSTransaction {
-  private root
+  private root: string
+  private name: string
   private inTransaction: boolean = false
   private collections: Map<string, Collection<any>>
 
-  constructor(root: string) {
+  constructor(root: string, name?: string) {
     log('constructor', arguments)
     this.root = root
+    this.name = name || 'default'
     this.collections = new Map()
   }
 
@@ -45,7 +47,7 @@ export class CSDatabase implements CSTransaction {
     }
     fse.ensureDir(this.root)
     fs.writeFileSync(
-      path.join(this.root, 'index.json'),
+      path.join(this.root, `${this.name}.json`),
       JSON.stringify(result, null, 2),
     )
   }
@@ -56,17 +58,23 @@ export class CSDatabase implements CSTransaction {
   }
 
   async load() {
-    let result = fse.readJSONSync(path.join(this.root, 'index.json')) as Record<
-      string,
-      ISerializedCollectionConfig
-    >
+    const exists = fs.existsSync(path.join(this.root, `${this.name}.json`))
+    if (!exists) {
+      fse.ensureDirSync(this.root)
+    } else {
+      let result = fse.readJSONSync(
+        path.join(this.root, `${this.name}.json`),
+      ) as Record<string, ISerializedCollectionConfig>
 
-    this.collections.clear()
-    for (let name in result) {
-      let config = result[name]
-      let collection = Collection.create(deserialize_collection_config(config))
-      await collection.load()
-      this.registerCollection(collection)
+      this.collections.clear()
+      for (let name in result) {
+        let config = result[name]
+        let collection = Collection.create(
+          deserialize_collection_config(config),
+        )
+        await collection.load()
+        this.registerCollection(collection)
+      }
     }
   }
 
@@ -91,7 +99,7 @@ export class CSDatabase implements CSTransaction {
       name,
       list: new List<T>(),
       adapter: new AdapterFile<T>(),
-      root: this.root,
+      root: path.join(this.root, this.name),
     })
 
     this.registerCollection(collection)
@@ -183,5 +191,39 @@ export class CSDatabase implements CSTransaction {
     // проверять какие значения были внесены, что изменилось и создавать транзакцию для изменения
     await this.persist()
     this.inTransaction = false
+  }
+  // extra operations
+
+  async first(collection: string): Promise<any> {
+    return this.collections.get(collection)!.first()
+  }
+  async last(collection: string): Promise<any> {
+    return this.collections.get(collection)!.last()
+  }
+
+  async lowest(collection: string, key: string): Promise<any> {
+    return this.collections.get(collection)!.lowest(key)
+  }
+  async greatest(collection: string, key: string): Promise<any> {
+    return this.collections.get(collection)!.greatest(key)
+  }
+
+  async oldest(collection: string): Promise<any> {
+    return this.collections.get(collection)!.oldest()
+  }
+  async latest(collection: string): Promise<any> {
+    return this.collections.get(collection)!.latest()
+  }
+  async findById(collection: string, id: any) {
+    return this.collections.get(collection)!.findById(id)
+  }
+  async findBy(collection: string, key: string, id: any) {
+    return this.collections.get(collection)!.findBy(key, id)
+  }
+  async findFirstBy(collection: string, key: string, id: any) {
+    return this.collections.get(collection)!.findFirstBy(key, id)
+  }
+  async findLastBy(collection: string, key: string, id: any) {
+    return this.collections.get(collection)!.findLastBy(key, id)
   }
 }
