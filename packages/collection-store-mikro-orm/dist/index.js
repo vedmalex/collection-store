@@ -51,34 +51,34 @@ class CollectionStoreConnection extends Connection {
     return url;
   }
   async first(collection) {
-    this.db.first(collection);
+    return this.db.first(collection);
   }
   async last(collection) {
-    this.db.first(collection);
+    return this.db.first(collection);
   }
   async lowest(collection, key) {
-    this.db.lowest(collection, key);
+    return this.db.lowest(collection, key);
   }
   async greatest(collection, key) {
-    this.db.greatest(collection, key);
+    return this.db.greatest(collection, key);
   }
   async oldest(collection) {
-    this.db.oldest(collection);
+    return this.db.oldest(collection);
   }
   async latest(collection) {
-    this.db.latest(collection);
+    return this.db.latest(collection);
   }
   async findById(collection, id) {
-    this.db.findById(collection, id);
+    return this.db.findById(collection, id);
   }
   async findBy(collection, key, id) {
-    this.db.findBy(collection, key, id);
+    return this.db.findBy(collection, key, id);
   }
   async findFirstBy(collection, key, id) {
-    this.db.findFirstBy(collection, key, id);
+    return this.db.findFirstBy(collection, key, id);
   }
   async findLastBy(collection, key, id) {
-    this.db.findLastBy(collection, key, id);
+    return this.db.findLastBy(collection, key, id);
   }
   execute(query, params, method, ctx) {
     throw new Error(`${this.constructor.name} does not support generic execute method`);
@@ -439,34 +439,44 @@ class CollectionStoreEntityManager extends EntityManager2 {
     entityName = Utils3.className(entityName);
     return this.getDriver().aggregate(entityName, pipeline);
   }
-  async first(collection) {
+  async first(entityName) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().first(collection);
   }
-  async last(collection) {
+  async last(entityName) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().last(collection);
   }
-  async lowest(collection, key) {
+  async lowest(entityName, key) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().lowest(collection, key);
   }
-  async greatest(collection, key) {
+  async greatest(entityName, key) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().greatest(collection, key);
   }
-  async oldest(collection) {
+  async oldest(entityName) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().oldest(collection);
   }
-  async latest(collection) {
+  async latest(entityName) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().latest(collection);
   }
-  async findById(collection, id) {
+  async findById(entityName, id) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().findById(collection, id);
   }
-  async findBy(collection, key, id) {
+  async findBy(entityName, key, id) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().findBy(collection, key, id);
   }
-  async findFirstBy(collection, key, id) {
+  async findFirstBy(entityName, key, id) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().findFirstBy(collection, key, id);
   }
-  async findLastBy(collection, key, id) {
+  async findLastBy(entityName, key, id) {
+    const collection = Utils3.className(entityName);
     return this.getDriver().findLastBy(collection, key, id);
   }
   getCollection(entityName) {

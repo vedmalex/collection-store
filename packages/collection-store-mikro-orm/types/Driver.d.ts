@@ -21,8 +21,8 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     greatest(collection: string, key: string): Promise<any>;
     oldest(collection: string): Promise<any>;
     latest(collection: string): Promise<any>;
-    findById(collection: string, id: any): Promise<void>;
-    findBy(collection: string, key: string, id: any): Promise<void>;
-    findFirstBy(collection: string, key: string, id: any): Promise<void>;
-    findLastBy(collection: string, key: string, id: any): Promise<void>;
+    findById(collection: string, id: any): Promise<any>;
+    findBy(collection: string, key: string, id: any): Promise<any[]>;
+    findFirstBy(collection: string, key: string, id: any): Promise<any>;
+    findLastBy(collection: string, key: string, id: any): Promise<any>;
 }

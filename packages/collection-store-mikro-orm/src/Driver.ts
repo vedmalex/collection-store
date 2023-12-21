@@ -176,7 +176,6 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   async last(collection: string): Promise<any> {
     return this.getConnection('read').last(collection)
   }
-
   async lowest(collection: string, key: string): Promise<any> {
     return this.getConnection('read').lowest(collection, key)
   }

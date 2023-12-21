@@ -24,36 +24,44 @@ export class CollectionStoreEntityManager extends EntityManager<CollectionStoreD
     return this.getDriver().aggregate(entityName, pipeline)
   }
 
-  async first(collection: string): Promise<any> {
+  async first(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().first(collection)
   }
-  async last(collection: string): Promise<any> {
+  async last(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().last(collection)
   }
-
-  async lowest(collection: string, key: string): Promise<any> {
+  async lowest(entityName: EntityName<any>, key: string): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().lowest(collection, key)
   }
-  async greatest(collection: string, key: string): Promise<any> {
+  async greatest(entityName: EntityName<any>, key: string): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().greatest(collection, key)
   }
-
-  async oldest(collection: string): Promise<any> {
+  async oldest(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().oldest(collection)
   }
-  async latest(collection: string): Promise<any> {
+  async latest(entityName: EntityName<any>): Promise<any> {
+    const collection = Utils.className(entityName)
     return this.getDriver().latest(collection)
   }
-  async findById(collection: string, id: any) {
+  async findById(entityName: EntityName<any>, id: any) {
+    const collection = Utils.className(entityName)
     return this.getDriver().findById(collection, id)
   }
-  async findBy(collection: string, key: string, id: any) {
+  async findBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.getDriver().findBy(collection, key, id)
   }
-  async findFirstBy(collection: string, key: string, id: any) {
+  async findFirstBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.getDriver().findFirstBy(collection, key, id)
   }
-  async findLastBy(collection: string, key: string, id: any) {
+  async findLastBy(entityName: EntityName<any>, key: string, id: any) {
+    const collection = Utils.className(entityName)
     return this.getDriver().findLastBy(collection, key, id)
   }
 

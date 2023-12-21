@@ -80,36 +80,36 @@ export class CollectionStoreConnection extends Connection {
   }
 
   async first(collection: string): Promise<any> {
-    this.db.first(collection)
+    return this.db.first(collection)
   }
 
   async last(collection: string): Promise<any> {
-    this.db.first(collection)
+    return this.db.first(collection)
   }
 
   async lowest(collection: string, key: string) {
-    this.db.lowest(collection, key)
+    return this.db.lowest(collection, key)
   }
   async greatest(collection: string, key: string) {
-    this.db.greatest(collection, key)
+    return this.db.greatest(collection, key)
   }
   async oldest(collection: string) {
-    this.db.oldest(collection)
+    return this.db.oldest(collection)
   }
   async latest(collection: string) {
-    this.db.latest(collection)
+    return this.db.latest(collection)
   }
   async findById(collection: string, id: any) {
-    this.db.findById(collection, id)
+    return this.db.findById(collection, id)
   }
   async findBy(collection: string, key: string, id: any) {
-    this.db.findBy(collection, key, id)
+    return this.db.findBy(collection, key, id)
   }
   async findFirstBy(collection: string, key: string, id: any) {
-    this.db.findFirstBy(collection, key, id)
+    return this.db.findFirstBy(collection, key, id)
   }
   async findLastBy(collection: string, key: string, id: any) {
-    this.db.findLastBy(collection, key, id)
+    return this.db.findLastBy(collection, key, id)
   }
 
   override execute<T>(
