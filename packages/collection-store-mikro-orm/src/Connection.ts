@@ -34,11 +34,11 @@ export class CollectionStoreConnection extends Connection {
     return this.db
   }
 
-  override connect(): void | Promise<void> {
+  override async connect(): Promise<void> {
     log('connect')
     if (!this.db) {
-      this.db = new CSDatabase(this.getClientUrl())
-      this.db.connect()
+      this.db = new CSDatabase(this.getClientUrl(), this.options.dbName)
+      await this.db.connect()
     }
   }
 

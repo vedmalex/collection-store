@@ -5,7 +5,7 @@ export declare class CollectionStoreConnection extends Connection {
     db: CSDatabase;
     constructor(config: Configuration, options?: ConnectionOptions, type?: ConnectionType);
     getDb(): CSDatabase;
-    connect(): void | Promise<void>;
+    connect(): Promise<void>;
     isConnected(): Promise<boolean>;
     checkConnection(): Promise<{
         ok: boolean;

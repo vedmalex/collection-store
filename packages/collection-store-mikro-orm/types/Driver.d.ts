@@ -8,6 +8,7 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     constructor(config: Configuration);
     find<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T>[]>;
     findOne<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T> | null>;
+    connect(): Promise<CollectionStoreConnection>;
     nativeInsert<T extends Item>(entityName: string, data: EntityDictionary<T>): Promise<QueryResult<T>>;
     nativeInsertMany<T extends Item>(entityName: string, data: EntityDictionary<T>[]): Promise<QueryResult<T>>;
     nativeUpdate<T extends Item>(entityName: string, where: FilterQuery<T>, data: EntityDictionary<T>): Promise<QueryResult<T>>;

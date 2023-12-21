@@ -68,6 +68,13 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       return null
     }
   }
+
+  override async connect(): Promise<CollectionStoreConnection> {
+    debugger
+    log('connect', arguments)
+    await this.connection.connect()
+    return this.connection
+  }
   override async nativeInsert<T extends Item>(
     entityName: string,
     data: EntityDictionary<T>,

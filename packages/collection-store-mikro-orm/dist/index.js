@@ -1,10 +1,10 @@
 // src/Connection.ts
 import {
-  Connection,
-  EventType
+Connection,
+EventType
 } from "@mikro-orm/core";
-import { debug } from "debug";
-import { CSDatabase } from "collection-store";
+import {debug} from "debug";
+import {CSDatabase} from "collection-store";
 var log = debug("connections");
 
 class CollectionStoreConnection extends Connection {
@@ -17,11 +17,11 @@ class CollectionStoreConnection extends Connection {
     log("getDb");
     return this.db;
   }
-  connect() {
+  async connect() {
     log("connect");
     if (!this.db) {
-      this.db = new CSDatabase(this.getClientUrl());
-      this.db.connect();
+      this.db = new CSDatabase(this.getClientUrl(), this.options.dbName);
+      await this.db.connect();
     }
   }
   async isConnected() {
@@ -94,21 +94,21 @@ class CollectionStoreConnection extends Connection {
 }
 // src/Driver.ts
 import {
-  DatabaseDriver
+DatabaseDriver
 } from "@mikro-orm/core";
 
 // src/Platform.ts
 import {
-  EntityCaseNamingStrategy,
-  Platform
+EntityCaseNamingStrategy,
+Platform
 } from "@mikro-orm/core";
 
 // src/SchemaGenerator.ts
 import {
-  AbstractSchemaGenerator,
-  Utils
+AbstractSchemaGenerator,
+Utils
 } from "@mikro-orm/core";
-import { debug as debug2 } from "debug";
+import {debug as debug2} from "debug";
 var log2 = debug2("generator");
 
 class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
@@ -220,7 +220,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
 }
 
 // src/Platform.ts
-import { debug as debug3 } from "debug";
+import {debug as debug3} from "debug";
 var log3 = debug3("platform");
 
 class CollectionStorePlatform extends Platform {
@@ -246,7 +246,7 @@ class CollectionStorePlatform extends Platform {
 }
 
 // src/Driver.ts
-import { debug as debug4 } from "debug";
+import {debug as debug4} from "debug";
 var log4 = debug4("driver");
 
 class CollectionStoreDriver extends DatabaseDriver {
@@ -284,6 +284,12 @@ class CollectionStoreDriver extends DatabaseDriver {
     } else {
       return null;
     }
+  }
+  async connect() {
+    debugger;
+    log4("connect", arguments);
+    await this.connection.connect();
+    return this.connection;
   }
   async nativeInsert(entityName, data) {
     debugger;
@@ -355,8 +361,8 @@ export * from "@mikro-orm/core";
 
 // src/MikroORM.ts
 import {
-  defineConfig,
-  MikroORM as MikroORM2
+defineConfig,
+MikroORM as MikroORM2
 } from "@mikro-orm/core";
 function defineCollectionStoreConfig(options) {
   return defineConfig({ driver: CollectionStoreDriver, ...options });
