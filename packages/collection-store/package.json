@@ -2,8 +2,13 @@
   "name": "collection-store",
   "version": "3.0.0-beta.10",
   "description": "very flexible collection for in-memory operations with flexible indexing",
-  "main": "dist/index.js",
-  "typings": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./types/index.d.ts",
+      "bun": "./src/index.ts"
+    }
+  },
   "scripts": {
     "prepublish": "bun build.ts && bun run compile",
     "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",

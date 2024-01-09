@@ -4,17 +4,17 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@mikro-orm/core": "^6.0.0-rc.3",
-    "@mikro-orm/reflection": "^6.0.0-rc.3",
-    "@mikro-orm/sqlite": "^6.0.0-rc.3",
+    "@mikro-orm/core": "^6.0.1",
+    "@mikro-orm/reflection": "^6.0.1",
+    "@mikro-orm/sqlite": "^6.0.1",
     "bun-types": "latest",
-    "fastify": "^4.24.3"
+    "fastify": "^4.25.2"
   },
   "peerDependencies": {
     "typescript": "next"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^6.0.0-rc.3",
+    "@mikro-orm/cli": "^6.0.1",
     "@types/node": "^20.10.4",
     "acorn-loose": "^8.4.0",
     "acorn-walk": "^8.3.1",

@@ -14,3 +14,4 @@ export { FileStorage };
 export { copy_collection };
 export type { Item, IDataCollection };
 export { CSDatabase } from './CSDatabase';
+export type { CSTransaction } from './CSDatabase';

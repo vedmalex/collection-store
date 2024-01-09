@@ -21,49 +21,37 @@
     "_counter": 6,
     "hash": {
       "0": {
-        "createdAt": "2023-12-21T19:13:17.998Z",
-        "updatedAt": "2023-12-21T19:13:17.999Z",
-        "text": "random comment 0.6532182862396524",
+        "text": "random comment 0.9011064629309197",
         "article": 0,
         "author": 0,
         "id": 0
       },
       "1": {
-        "createdAt": "2023-12-21T19:13:17.999Z",
-        "updatedAt": "2023-12-21T19:13:17.999Z",
-        "text": "random comment 0.7853648970275788",
+        "text": "random comment 0.3703951741941742",
         "article": 0,
         "author": 0,
         "id": 1
       },
       "2": {
-        "createdAt": "2023-12-21T19:13:18.002Z",
-        "updatedAt": "2023-12-21T19:13:18.002Z",
-        "text": "random comment 0.1401469826767553",
+        "text": "random comment 0.13859970488393958",
         "article": 1,
         "author": 0,
         "id": 2
       },
       "3": {
-        "createdAt": "2023-12-21T19:13:18.005Z",
-        "updatedAt": "2023-12-21T19:13:18.005Z",
-        "text": "random comment 0.11720200789067081",
+        "text": "random comment 0.5644543865341871",
         "article": 2,
         "author": 0,
         "id": 3
       },
       "4": {
-        "createdAt": "2023-12-21T19:13:18.005Z",
-        "updatedAt": "2023-12-21T19:13:18.005Z",
-        "text": "random comment 0.715377440768891",
+        "text": "random comment 0.5112234155858906",
         "article": 2,
         "author": 0,
         "id": 4
       },
       "5": {
-        "createdAt": "2023-12-21T19:13:18.005Z",
-        "updatedAt": "2023-12-21T19:13:18.005Z",
-        "text": "random comment 0.4812296202666395",
+        "text": "random comment 0.9150752147182976",
         "article": 2,
         "author": 0,
         "id": 5

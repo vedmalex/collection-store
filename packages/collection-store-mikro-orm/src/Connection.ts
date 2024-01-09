@@ -13,7 +13,7 @@ import {
 } from '@mikro-orm/core'
 
 import { CSDatabase, Item } from 'collection-store'
-import { CSTransaction } from 'collection-store/src/CSDatabase'
+import type { CSTransaction } from 'collection-store'
 
 export class CollectionStoreConnection extends Connection {
   db!: CSDatabase
