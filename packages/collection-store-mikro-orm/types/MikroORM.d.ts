@@ -1,9 +1,10 @@
-import { MikroORM, type Options, type IDatabaseDriver } from '@mikro-orm/core';
+import { MikroORM, type Options, type IDatabaseDriver, EntityManagerType, EntityManager } from '@mikro-orm/core';
 import { CollectionStoreDriver } from './Driver';
-export declare class CollectionStoreMikroORM extends MikroORM<CollectionStoreDriver> {
+import { CollectionStoreEntityManager } from './EntityManager';
+export declare class CollectionStoreMikroORM<EM extends EntityManager = CollectionStoreEntityManager> extends MikroORM<CollectionStoreDriver, EM> {
     private static DRIVER;
-    static init<D extends IDatabaseDriver = CollectionStoreDriver>(options?: Options<D>): Promise<MikroORM<D>>;
-    static initSync<D extends IDatabaseDriver = CollectionStoreDriver>(options: Options<D>): MikroORM<D>;
+    static init<D extends IDatabaseDriver = CollectionStoreDriver, EM extends EntityManager = D[typeof EntityManagerType] & EntityManager>(options?: Options<D, EM>): Promise<MikroORM<D, EM>>;
+    static initSync<D extends IDatabaseDriver = CollectionStoreDriver, EM extends EntityManager = D[typeof EntityManagerType] & EntityManager>(options: Options<D, EM>): MikroORM<D, EM>;
 }
 export type CollectionStoreOptions = Options<CollectionStoreDriver>;
-export declare function defineCollectionStoreConfig(options: CollectionStoreOptions): Options<CollectionStoreDriver>;
+export declare function defineCollectionStoreConfig(options: CollectionStoreOptions): Options<CollectionStoreDriver, CollectionStoreEntityManager<CollectionStoreDriver> & EntityManager<IDatabaseDriver<import("@mikro-orm/core").Connection>>>;

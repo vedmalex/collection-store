@@ -3,6 +3,7 @@ import {
   DatabaseDriver,
   EntityData,
   EntityDictionary,
+  EntityManagerType,
   EntityName,
   FilterQuery,
   FindOptions,
@@ -11,12 +12,15 @@ import {
 import { CollectionStoreConnection } from './Connection'
 import { CollectionStorePlatform } from './Platform'
 import { Item } from 'collection-store'
+import { CollectionStoreEntityManager } from './EntityManager'
 
 export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
+  [EntityManagerType]!: CollectionStoreEntityManager<this>
   protected override readonly platform = new CollectionStorePlatform()
   protected override readonly connection = new CollectionStoreConnection(
     this.config,
   )
+
   constructor(config: Configuration) {
     super(config, ['collection-store'])
   }

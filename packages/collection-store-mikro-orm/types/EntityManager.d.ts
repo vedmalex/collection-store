@@ -2,7 +2,7 @@ import { EntityManager, type EntityName, type EntityRepository, type GetReposito
 import type { CollectionStoreDriver } from './Driver';
 import type { CollectionStoreEntityRepository } from './EntityRepository';
 import { Item } from 'collection-store';
-export declare class CollectionStoreEntityManager extends EntityManager<CollectionStoreDriver> {
+export declare class CollectionStoreEntityManager<D extends CollectionStoreDriver = CollectionStoreDriver> extends EntityManager<D> {
     fork(options?: ForkOptions | undefined): CollectionStoreEntityManager;
     first(entityName: EntityName<any>): Promise<any>;
     last(entityName: EntityName<any>): Promise<any>;

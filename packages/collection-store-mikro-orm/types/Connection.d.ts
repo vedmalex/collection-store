@@ -1,6 +1,6 @@
 import { Configuration, Connection, ConnectionOptions, ConnectionType, EntityName, IsolationLevel, Transaction, TransactionEventBroadcaster, TransactionOptions } from '@mikro-orm/core';
 import { CSDatabase, Item } from 'collection-store';
-import { CSTransaction } from 'collection-store/src/CSDatabase';
+import type { CSTransaction } from 'collection-store';
 export declare class CollectionStoreConnection extends Connection {
     db: CSDatabase;
     constructor(config: Configuration, options?: ConnectionOptions, type?: ConnectionType);

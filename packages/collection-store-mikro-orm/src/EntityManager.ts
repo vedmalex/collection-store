@@ -12,7 +12,9 @@ import { Item } from 'collection-store'
 /**
  * @inheritDoc
  */
-export class CollectionStoreEntityManager extends EntityManager<CollectionStoreDriver> {
+export class CollectionStoreEntityManager<
+  D extends CollectionStoreDriver = CollectionStoreDriver,
+> extends EntityManager<D> {
   override fork(
     options?: ForkOptions | undefined,
   ): CollectionStoreEntityManager {

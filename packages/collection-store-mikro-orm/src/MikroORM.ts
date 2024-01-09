@@ -3,35 +3,38 @@ import {
   MikroORM,
   type Options,
   type IDatabaseDriver,
-  // EntityManagerType,
+  EntityManagerType,
+  EntityManager,
 } from '@mikro-orm/core'
 import { CollectionStoreDriver } from './Driver'
-// import { CollectionStoreEntityManager } from './EntityManager'
+import { CollectionStoreEntityManager } from './EntityManager'
 
 /**
  * @inheritDoc
  */
-export class CollectionStoreMikroORM extends MikroORM<CollectionStoreDriver> {
-  // declare em: CollectionStoreDriver[typeof EntityManagerType] &
-  //   CollectionStoreEntityManager
+export class CollectionStoreMikroORM<
+  EM extends EntityManager = CollectionStoreEntityManager,
+> extends MikroORM<CollectionStoreDriver, EM> {
   // @ts-ignore
   private static DRIVER = CollectionStoreDriver
 
   /**
    * @inheritDoc
    */
-  static override async init<D extends IDatabaseDriver = CollectionStoreDriver>(
-    options?: Options<D>,
-  ): Promise<MikroORM<D>> {
+  static override async init<
+    D extends IDatabaseDriver = CollectionStoreDriver,
+    EM extends EntityManager = D[typeof EntityManagerType] & EntityManager,
+  >(options?: Options<D, EM>): Promise<MikroORM<D, EM>> {
     return super.init(options)
   }
 
   /**
    * @inheritDoc
    */
-  static override initSync<D extends IDatabaseDriver = CollectionStoreDriver>(
-    options: Options<D>,
-  ): MikroORM<D> {
+  static override initSync<
+    D extends IDatabaseDriver = CollectionStoreDriver,
+    EM extends EntityManager = D[typeof EntityManagerType] & EntityManager,
+  >(options: Options<D, EM>): MikroORM<D, EM> {
     return super.initSync(options)
   }
 }
