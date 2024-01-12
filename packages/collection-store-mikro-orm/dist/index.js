@@ -133,7 +133,8 @@ class CollectionStoreConnection extends Connection {
 }
 // src/Driver.ts
 import {
-DatabaseDriver
+DatabaseDriver,
+EntityManagerType
 } from "@mikro-orm/core";
 
 // src/Platform.ts
@@ -267,6 +268,7 @@ class CollectionStorePlatform extends Platform {
 
 // src/Driver.ts
 class CollectionStoreDriver extends DatabaseDriver {
+  [EntityManagerType];
   platform = new CollectionStorePlatform;
   connection = new CollectionStoreConnection(this.config);
   constructor(config) {

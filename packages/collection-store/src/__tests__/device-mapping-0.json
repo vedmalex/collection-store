@@ -1,0 +1,60 @@
+{
+  "list": {
+    "_count": 2,
+    "_counter": 3,
+    "hash": {
+      "1": {
+        "DeviceId": "1112221",
+        "Username": "testuser01",
+        "id": 1
+      },
+      "2": {
+        "DeviceId": "111222",
+        "Username": "testuser01",
+        "id": 2
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "1": 1,
+      "2": 2
+    },
+    "DeviceId": {
+      "111222": 2,
+      "1112221": 1
+    },
+    "Username": {
+      "testuser01": [
+        1,
+        2
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "DeviceId": {
+      "key": "DeviceId",
+      "auto": false,
+      "unique": true,
+      "sparse": true,
+      "required": true
+    },
+    "Username": {
+      "key": "Username",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  },
+  "id": "id",
+  "ttl": false
+}
