@@ -8,7 +8,7 @@
     "clean": "./clean.sh"
   },
   "dependencies": {
-    "bun-types": "^1.0.15",
+    "@types/bun": "^1.0.5",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {

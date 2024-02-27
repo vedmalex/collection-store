@@ -13,11 +13,11 @@ import { is_stored_record } from '../../utils/is_stored_record'
 import { cloneDeep } from 'lodash-es'
 import { fromZodError } from 'zod-validation-error'
 
-export class FileStorage<T extends Item, K extends ValueType>
+export class FileStorage<T extends Item>
   implements IList<T>
 {
   get name() {
-    return 'FileStorage'
+    return 'FileStorage' as const
   }
   singlefile: boolean = false
 
@@ -25,7 +25,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   // а на обновление выставлять новый промис
   // таким образом данные всегда будут свежими... если нет другого читателя писателя файлов
   // можно использовать библиотеку для монитроинга за файлами
-  tree: BPlusTree<string, K> = new BPlusTree(32, true)
+  tree: BPlusTree<string, ValueType> = new BPlusTree(32, true)
   get folder(): string {
     return pathlib.join(this.collection.root, this.collection.name)
   }
@@ -33,7 +33,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   exists!: Promise<boolean>
   collection!: Collection<T>
   construct() {
-    return new FileStorage<T, K>()
+    return new FileStorage<T>()
   }
 
   init(collection: Collection<T>): IList<T> {
@@ -49,7 +49,7 @@ export class FileStorage<T extends Item, K extends ValueType>
   }
   async clone(): Promise<IList<T>> {
     if (await this.exists) {
-      const res = new FileStorage<T, K>()
+      const res = new FileStorage<T>()
       BPlusTree.deserialize(res.tree, BPlusTree.serialize(this.tree))
       return res
     }
@@ -129,7 +129,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     } else throw new Error('folder not found')
   }
 
-  async get(key: K): Promise<T | undefined> {
+  async get(key: ValueType): Promise<T | undefined> {
     if (await this.exists) {
       const value = this.tree.findFirst(key)
       if (value) {
@@ -148,7 +148,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     throw new Error('folder not found')
   }
 
-  async set(key: K, item: T): Promise<T> {
+  async set(key: ValueType, item: T): Promise<T> {
     if (await this.exists) {
       let valiadtor = this.collection.validator(item)
       if (valiadtor.success) {
@@ -186,7 +186,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     throw new Error('folder not found')
   }
 
-  async update(key: K, item: T): Promise<T> {
+  async update(key: ValueType, item: T): Promise<T> {
     // checkif exists
     if (await this.exists) {
       let valiadtor = this.collection.validator(item)
@@ -222,7 +222,7 @@ export class FileStorage<T extends Item, K extends ValueType>
     throw new Error('folder not found')
   }
 
-  async delete(key: K): Promise<T> {
+  async delete(key: ValueType): Promise<T> {
     if (await this.exists) {
       const value = this.tree.findFirst(key)
       if (value) {

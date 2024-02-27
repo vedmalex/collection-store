@@ -1,9 +1,15 @@
 {
   "name": "collection-store-sync",
-  "version": "3.0.0-beta.13",
+  "version": "3.0.0-beta.14",
   "description": "very flexible collection for in-memory operations with flexible indexing",
-  "main": "src/index.ts",
   "private": true,
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./types/index.d.ts",
   "scripts": {
     "prepublish": "tsc --build tsconfig.json",
     "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",

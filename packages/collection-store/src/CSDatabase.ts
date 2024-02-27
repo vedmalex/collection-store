@@ -14,6 +14,7 @@ import AdapterFile from './async/AdapterFile'
 import { List } from './async/storage/List'
 import { serialize_collection_config } from './async/collection/serialize_collection_config'
 import { deserialize_collection_config } from './async/collection/deserialize_collection_config'
+import { FileStorage } from './async/storage/FileStorage'
 
 export interface TransactionOptions {}
 
@@ -86,9 +87,10 @@ export class CSDatabase implements CSTransaction {
   }
 
   createCollection<T extends Item>(name: string): IDataCollection<T> {
+    const [collectionName, collectionType = "List"] = name.split(':')
     const collection = Collection.create({
-      name,
-      list: new List<T>(),
+      name:collectionName,
+      list: collectionType === "List" ? new List<T>() : new FileStorage<T>(),
       adapter: new AdapterFile<T>(),
       root: path.join(this.root, this.name),
     })

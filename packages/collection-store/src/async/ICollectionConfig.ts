@@ -28,7 +28,7 @@ export interface ISerializedCollectionConfig {
   ttl?: number
   /** crontab format */
   rotate?: string
-  list: string
+  list: "single" | "List" | "separate" | "FileStorage" | 'chunked'
   audit?: boolean
   validation?: JSON
   auto?: boolean

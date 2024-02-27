@@ -12,7 +12,7 @@ import { IStoredRecord } from '../../types/IStoredRecord'
 
 export class List<T extends Item> implements IList<T> {
   get name() {
-    return 'List'
+    return 'List' as const
   }
   singlefile: boolean = true
   hash: { [key: string]: T } = {}

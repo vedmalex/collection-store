@@ -24,6 +24,6 @@ export function deserialize_collection_config<T extends Item>(
   res.adapter =
     config.adapter === 'AdapterMemory' ? new AdapterMemory() : new AdapterFile()
   res.list =
-    config.list === 'List' ? new List<T>() : new FileStorage<T, string>()
+    config.list === 'List' ? new List<T>() : new FileStorage<T>()
   return res
 }

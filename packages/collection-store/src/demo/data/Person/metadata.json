@@ -2,8 +2,9 @@
   "config": {
     "root": "./data",
     "name": "Person",
-    "adapter": "AdapterFS",
+    "adapter": "AdapterFile",
     "list": "FileStorage",
+    "id": "id",
     "auto": true,
     "indexList": [
       {

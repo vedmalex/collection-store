@@ -29,6 +29,7 @@ const run = async () => {
     },
     {
       $and: (cond: Array<{ [key: string]: UnaryCondition }>) => {
+        debugger
         cond.sort((a, b) => {
           const a_list = Object.keys(a)
           const b_list = Object.keys(b)
@@ -37,7 +38,7 @@ const run = async () => {
           if (data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return 0
           if (data.indexDefs[a_list[0]] && !data.indexDefs[b_list[0]]) return 1
           if (!data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return -1
-          throw new Error('nonsence')
+          return 0
         })
 
         return () => true
@@ -46,6 +47,7 @@ const run = async () => {
     },
   )
   /**
+   * ЧТО НАДО СДЕЛАТЬ!
    * отсортировать операции $or и $and по наличию индекса
    * берем значения по индексу там где он есть,
    * а там где нет берем полный обход

@@ -7,7 +7,7 @@ export const collection_config: ICollectionConfig<Person> = {
   root: './data',
   name: 'Person',
   // ttl: '2m',
-  list: new FileStorage<Person, string>(),
+  list: new FileStorage<Person>(),
   adapter: new AdapterFile(),
   indexList: [
     {
