@@ -1,6 +1,6 @@
 {
   "name": "collection-store",
-  "version": "3.0.0-beta.16",
+  "version": "3.0.0-beta.17",
   "description": "very flexible collection for in-memory operations with flexible indexing",
   "exports": {
     ".": {
@@ -58,5 +58,5 @@
     "zod": "^3.22.4",
     "zod-validation-error": "^2.1.0"
   },
-  "gitHead": "e9ad5fc6e64821c9d72d9342cfa180af5dcec8d0"
+  "gitHead": "03c5e2ee2d20a4df7fd37e2b511945ba3be5dbb3"
 }
