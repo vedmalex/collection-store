@@ -11,7 +11,7 @@
   "files": [
     "./src/index.ts",
     "./src/Connection.ts",
-    "src/DriverSeparateFile.ts",
+    "src/Driver.ts",
     "./src/Platform.ts",
     "./src/MikroORM.ts",
     "./src/SchemaGenerator.ts",

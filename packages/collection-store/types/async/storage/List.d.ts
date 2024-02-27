@@ -4,7 +4,7 @@ import { Item } from '../../types/Item';
 import { IList } from '../IList';
 import Collection from '../collection';
 export declare class List<T extends Item> implements IList<T> {
-    get name(): string;
+    get name(): "List";
     singlefile: boolean;
     hash: {
         [key: string]: T;

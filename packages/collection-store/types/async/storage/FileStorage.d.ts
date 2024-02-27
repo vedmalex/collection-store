@@ -3,16 +3,16 @@ import { StoredIList } from '../../types/StoredIList';
 import { Item } from '../../types/Item';
 import { IList } from '../IList';
 import Collection from '../collection';
-export declare class FileStorage<T extends Item, K extends ValueType> implements IList<T> {
+export declare class FileStorage<T extends Item> implements IList<T> {
     private keyField?;
-    get name(): string;
+    get name(): "FileStorage";
     singlefile: boolean;
-    tree: BPlusTree<string, K>;
+    tree: BPlusTree<string, ValueType>;
     get folder(): string;
     constructor(keyField?: string | undefined);
     exists: Promise<boolean>;
     collection: Collection<T>;
-    construct(): FileStorage<T, K>;
+    construct(): FileStorage<T>;
     init(collection: Collection<T>): IList<T>;
     clone(): Promise<IList<T>>;
     persist(): StoredIList;
@@ -29,10 +29,10 @@ export declare class FileStorage<T extends Item, K extends ValueType> implements
     private set_path;
     private get_path;
     reset(): Promise<void>;
-    get(key: K): Promise<T | undefined>;
-    set(key: K, item: T): Promise<T>;
-    update(key: K, item: T): Promise<T>;
-    delete(key: K): Promise<T>;
+    get(key: ValueType): Promise<T | undefined>;
+    set(key: ValueType, item: T): Promise<T>;
+    update(key: ValueType, item: T): Promise<T>;
+    delete(key: ValueType): Promise<T>;
     _counter: number;
     get counter(): number;
     get length(): number;

@@ -3,7 +3,7 @@ import { StoredIList } from '../types/StoredIList';
 import Collection from './collection';
 import { Item } from '../types/Item';
 export interface IList<T extends Item> {
-    get name(): string;
+    get name(): "List" | "FileStorage";
     singlefile: boolean;
     readonly forward: AsyncIterable<T>;
     readonly backward: AsyncIterable<T>;

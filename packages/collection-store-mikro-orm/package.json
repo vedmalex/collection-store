@@ -1,6 +1,6 @@
 {
   "name": "collection-store-mikro-orm",
-  "version": "3.0.0-beta.14",
+  "version": "3.0.0-beta.15",
   "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
   "exports": {
     ".": {
@@ -55,7 +55,7 @@
     "access": "public"
   },
   "dependencies": {
-    "collection-store": "workspace:*"
+    "collection-store": "^3.0.0-beta.15"
   },
   "devDependencies": {
     "@mikro-orm/core": "^6.1.5",
@@ -65,5 +65,5 @@
   "peerDependencies": {
     "@mikro-orm/core": "^6.1.5"
   },
-  "gitHead": "89f2c99a5190f8202c333b82721fe13d1fc47158"
+  "gitHead": "ea07e52461f9378e44ff69be6c5a3e28302f2388"
 }

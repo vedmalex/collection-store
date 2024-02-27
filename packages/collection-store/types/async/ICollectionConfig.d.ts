@@ -24,7 +24,7 @@ export interface ISerializedCollectionConfig {
     id: string;
     ttl?: number;
     rotate?: string;
-    list: string;
+    list: "single" | "List" | "separate" | "FileStorage" | 'chunked';
     audit?: boolean;
     validation?: JSON;
     auto?: boolean;
