@@ -1,6 +1,6 @@
 {
   "name": "collection-store",
-  "version": "3.0.0-beta.15",
+  "version": "3.0.0-beta.16",
   "description": "very flexible collection for in-memory operations with flexible indexing",
   "exports": {
     ".": {
