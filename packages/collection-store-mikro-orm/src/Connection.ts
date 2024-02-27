@@ -12,7 +12,9 @@ import {
   Utils,
 } from '@mikro-orm/core'
 
+//@ts-ignore
 import { CSDatabase, Item } from 'collection-store'
+//@ts-ignore
 import type { CSTransaction } from 'collection-store'
 
 export class CollectionStoreConnection extends Connection {

@@ -19,6 +19,7 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
     options.ensureIndexes ??= true
     const db = this.connection.getDb()
     const collections = db.listCollections()
+    //@ts-ignore
     const existing = collections.map((c) => c.name)
     const metadata = this.getOrderedMetadata()
     metadata.push({
@@ -37,6 +38,7 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
   override async dropSchema(options: { dropMigrationsTable?: boolean } = {}) {
     const db = this.connection.getDb()
     const collections = db.listCollections()
+    //@ts-ignore
     const existing = collections.map((c) => c.name)
     const metadata = this.getOrderedMetadata()
 

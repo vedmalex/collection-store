@@ -24,7 +24,7 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     oldest(entityName: EntityName<any>): Promise<any>;
     latest(entityName: EntityName<any>): Promise<any>;
     findById(entityName: EntityName<any>, id: any): Promise<any>;
-    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any[]>;
+    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findFirstBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findLastBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
 }

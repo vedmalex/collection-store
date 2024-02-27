@@ -11,6 +11,7 @@ import {
 } from '@mikro-orm/core'
 import { CollectionStoreConnection } from './Connection'
 import { CollectionStorePlatform } from './Platform'
+//@ts-ignore
 import { Item } from 'collection-store'
 import { CollectionStoreEntityManager } from './EntityManager'
 
@@ -36,6 +37,7 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       .collection<T>(entityName)
       ?.find(where as any)
     if (res) {
+      //@ts-ignore
       return res.reduce((res, cur) => {
         res.push(cur)
         return res

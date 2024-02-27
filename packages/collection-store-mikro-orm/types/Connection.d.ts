@@ -5,7 +5,7 @@ export declare class CollectionStoreConnection extends Connection {
     db: CSDatabase;
     constructor(config: Configuration, options?: ConnectionOptions, type?: ConnectionType);
     getDb(): CSDatabase;
-    getCollection<T extends Item>(name: EntityName<T>): import("collection-store").IDataCollection<T> | undefined;
+    getCollection<T extends Item>(name: EntityName<T>): any;
     private getCollectionName;
     connect(): Promise<void>;
     isConnected(): Promise<boolean>;
@@ -23,7 +23,7 @@ export declare class CollectionStoreConnection extends Connection {
     oldest(entityName: EntityName<any>): Promise<any>;
     latest(entityName: EntityName<any>): Promise<any>;
     findById(entityName: EntityName<any>, id: any): Promise<any>;
-    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any[]>;
+    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findFirstBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findLastBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     execute<T>(query: string, params?: any[] | undefined, method?: 'all' | 'get' | 'run' | undefined, ctx?: any): Promise<any>;

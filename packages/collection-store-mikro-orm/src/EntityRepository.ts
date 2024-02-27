@@ -1,5 +1,6 @@
 import { EntityRepository, type EntityName } from '@mikro-orm/core'
 import type { CollectionStoreEntityManager } from './EntityManager'
+//@ts-ignore
 import { Item } from 'collection-store'
 
 export class CollectionStoreEntityRepository<

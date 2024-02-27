@@ -7,6 +7,7 @@ import {
 } from '@mikro-orm/core'
 import type { CollectionStoreDriver } from './Driver'
 import type { CollectionStoreEntityRepository } from './EntityRepository'
+//@ts-ignore
 import { Item } from 'collection-store'
 
 /**

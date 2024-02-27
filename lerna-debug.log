@@ -1,0 +1,8 @@
+52 error Error: Command failed with exit code 128: git tag v3.0.0-beta.15 -m v3.0.0-beta.15
+52 error fatal: метка «v3.0.0-beta.15» уже существует
+52 error     at makeError (/Users/vedmalex/work/collection-store/node_modules/execa/lib/error.js:59:11)
+52 error     at handlePromise (/Users/vedmalex/work/collection-store/node_modules/execa/index.js:114:26)
+52 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+52 error     at async VersionCommand.gitCommitAndTagVersion (/Users/vedmalex/work/collection-store/node_modules/lerna/dist/index.js:8541:9)
+52 error     at async VersionCommand.commitAndTagUpdates (/Users/vedmalex/work/collection-store/node_modules/lerna/dist/index.js:8505:18)
+52 error     at async Promise.all (index 0)
