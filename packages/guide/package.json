@@ -1,6 +1,6 @@
 {
   "name": "@mikro-orm/getting-started",
-  "version": "3.0.0-beta.19",
+  "version": "3.0.0-beta.20",
   "type": "module",
   "private": true,
   "description": "MikroORM Getting Started guide",
