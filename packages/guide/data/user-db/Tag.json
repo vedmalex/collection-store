@@ -1,0 +1,78 @@
+{
+  "config": {
+    "root": "data/user-db",
+    "name": "Tag",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "list": {
+    "_count": 3,
+    "_counter": 3,
+    "hash": {
+      "0": {
+        "id": 1,
+        "name": "foo1"
+      },
+      "1": {
+        "id": 2,
+        "name": "foo2"
+      },
+      "2": {
+        "id": 3,
+        "name": "foo3"
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 3,
+          "min": 1,
+          "size": 3,
+          "keys": [
+            1,
+            2,
+            3
+          ],
+          "key_num": 3,
+          "pointers": [
+            1,
+            2,
+            3
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  }
+}

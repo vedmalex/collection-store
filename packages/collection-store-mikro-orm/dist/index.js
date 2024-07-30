@@ -85,10 +85,10 @@ class CollectionStoreConnection extends Connection {
     throw new Error(`${this.constructor.name} does not support generic execute method`);
   }
   async close(force) {
-    this.db.close();
+    await this.db.close();
   }
   async ensureConnection() {
-    this.connect();
+    await this.connect();
   }
   async transactional(cb, options = {}) {
     await this.ensureConnection();
@@ -165,7 +165,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     metadata.push({
       collection: this.config.get("migrations").tableName
     });
-    metadata.filter((meta) => !existing.includes(meta.collection)).forEach((meta) => this.connection.db.createCollection(meta.collection));
+    await Promise.all(metadata.filter((meta) => !existing.includes(meta.collection)).map((meta) => this.connection.db.createCollection(meta.collection)));
     if (options.ensureIndexes) {
       await this.ensureIndexes({ ensureCollections: false });
     }
@@ -180,7 +180,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
         collection: this.config.get("migrations").tableName
       });
     }
-    metadata.filter((meta) => existing.includes(meta.collection)).forEach((meta) => this.connection.db.dropCollection(meta.collection));
+    await Promise.all(metadata.filter((meta) => existing.includes(meta.collection)).map((meta) => this.connection.db.dropCollection(meta.collection)));
   }
   async updateSchema(options = {}) {
     await this.createSchema(options);
@@ -189,9 +189,9 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
     return false;
   }
   async refreshDatabase(options = {}) {
-    this.ensureDatabase();
-    this.dropSchema();
-    this.createSchema(options);
+    await this.ensureDatabase();
+    await this.dropSchema();
+    await this.createSchema(options);
   }
   async ensureIndexes(options = {}) {
     options.ensureCollections ??= true;
@@ -199,7 +199,7 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
       await this.createSchema({ ensureIndexes: false });
     }
     for (const meta of this.getOrderedMetadata()) {
-      this.createIndexes(meta);
+      await this.createIndexes(meta);
       this.createUniqueIndexes(meta);
       for (const prop of meta.props) {
         this.createPropertyIndexes(meta, prop, "index");
@@ -207,38 +207,38 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
       }
     }
   }
-  createIndexes(meta) {
-    meta.indexes.forEach((index) => {
+  async createIndexes(meta) {
+    for (const index of meta.indexes) {
       let fieldOrSpec;
       const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const db = this.connection.getDb();
       fieldOrSpec = properties[0];
-      db.createIndex(meta.className, fieldOrSpec, {
+      await db.createIndex(meta.className, fieldOrSpec, {
         key: fieldOrSpec,
         unique: false,
         ...index.options || {}
       });
-    });
+    }
   }
-  createUniqueIndexes(meta) {
-    meta.uniques.forEach((index) => {
+  async createUniqueIndexes(meta) {
+    for (const index of meta.uniques) {
       const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const fieldOrSpec = properties[0];
       const db = this.connection.getDb();
-      db.createIndex(meta.className, fieldOrSpec, {
+      await db.createIndex(meta.className, fieldOrSpec, {
         key: fieldOrSpec,
         unique: true,
         ...index.options || {}
       });
-    });
+    }
   }
-  createPropertyIndexes(meta, prop, type) {
+  async createPropertyIndexes(meta, prop, type) {
     if (!prop[type] || !meta.collection) {
       return;
     }
     const db = this.connection.getDb();
     const fieldOrSpec = prop.embeddedPath ? prop.embeddedPath.join(".") : prop.fieldNames[0];
-    db.createIndex(meta.className, fieldOrSpec, {
+    await db.createIndex(meta.className, fieldOrSpec, {
       key: fieldOrSpec,
       unique: type === "unique",
       sparse: prop.nullable === true,

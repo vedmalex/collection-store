@@ -12,19 +12,13 @@ import {
   Utils,
 } from '@mikro-orm/core'
 
-//@ts-ignore
 import { CSDatabase, Item } from 'collection-store'
-//@ts-ignore
 import type { CSTransaction } from 'collection-store'
 
 export class CollectionStoreConnection extends Connection {
   db!: CSDatabase
 
-  constructor(
-    config: Configuration,
-    options?: ConnectionOptions,
-    type: ConnectionType = 'write',
-  ) {
+  constructor(config: Configuration, options?: ConnectionOptions, type: ConnectionType = 'write') {
     super(config, options, type)
     // придумать что тут нужно сделать, а пока для тестов хватит
   }
@@ -37,9 +31,9 @@ export class CollectionStoreConnection extends Connection {
     return this.db.collection<T>(this.getCollectionName(name))
   }
 
-  private getCollectionName<T>(name: EntityName<T>): string {
-    name = Utils.className(name)
-    const meta = this.metadata.find(name)
+  private getCollectionName<T>(_name: EntityName<T>): string {
+    const name = Utils.className(_name)
+    const meta = this.metadata.find(Utils.className(name))
 
     return meta ? meta.collection : name
   }
@@ -120,17 +114,15 @@ export class CollectionStoreConnection extends Connection {
     method?: 'all' | 'get' | 'run' | undefined,
     ctx?: any,
   ): Promise<any> {
-    throw new Error(
-      `${this.constructor.name} does not support generic execute method`,
-    )
+    throw new Error(`${this.constructor.name} does not support generic execute method`)
   }
 
   override async close(force?: boolean) {
-    this.db.close()
+    await this.db.close()
   }
 
   override async ensureConnection() {
-    this.connect()
+    await this.connect()
   }
 
   // transaction support
@@ -173,43 +165,25 @@ export class CollectionStoreConnection extends Connection {
     const session = ctx || (await this.db.startSession())
     session.startTransaction(txOptions)
     this.logQuery('db.begin();')
-    await eventBroadcaster?.dispatchEvent(
-      EventType.afterTransactionStart,
-      session,
-    )
+    await eventBroadcaster?.dispatchEvent(EventType.afterTransactionStart, session)
 
     return session
   }
 
-  override async commit(
-    ctx: CSTransaction,
-    eventBroadcaster?: TransactionEventBroadcaster,
-  ): Promise<void> {
+  override async commit(ctx: CSTransaction, eventBroadcaster?: TransactionEventBroadcaster): Promise<void> {
     await this.ensureConnection()
-    await eventBroadcaster?.dispatchEvent(
-      EventType.beforeTransactionCommit,
-      ctx,
-    )
+    await eventBroadcaster?.dispatchEvent(EventType.beforeTransactionCommit, ctx)
     await ctx.commitTransaction()
     this.logQuery('db.commit();')
     await eventBroadcaster?.dispatchEvent(EventType.afterTransactionCommit, ctx)
   }
 
-  override async rollback(
-    ctx: CSTransaction,
-    eventBroadcaster?: TransactionEventBroadcaster,
-  ): Promise<void> {
+  override async rollback(ctx: CSTransaction, eventBroadcaster?: TransactionEventBroadcaster): Promise<void> {
     await this.ensureConnection()
 
-    await eventBroadcaster?.dispatchEvent(
-      EventType.beforeTransactionRollback,
-      ctx,
-    )
+    await eventBroadcaster?.dispatchEvent(EventType.beforeTransactionRollback, ctx)
     await ctx.abortTransaction()
     this.logQuery('db.rollback();')
-    await eventBroadcaster?.dispatchEvent(
-      EventType.afterTransactionRollback,
-      ctx,
-    )
+    await eventBroadcaster?.dispatchEvent(EventType.afterTransactionRollback, ctx)
   }
 }

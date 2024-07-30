@@ -1,11 +1,9 @@
 import { ValueType } from 'b-pl-tree'
 import { UnaryCondition } from './UnaryCondition'
+import { get_value_of } from '../utils/get_value_of'
 
 export function $eq(value: ValueType): UnaryCondition {
-  if (value === undefined) return (v: ValueType) => false
-  if (value instanceof Date) {
-    return (v: ValueType) => value.valueOf() == v.valueOf()
-  } else {
-    return (v: ValueType) => value == v
-  }
+  const val = get_value_of(value)
+  if (val === undefined) return (v: ValueType) => false
+  return (v: ValueType) => val === get_value_of(v)
 }

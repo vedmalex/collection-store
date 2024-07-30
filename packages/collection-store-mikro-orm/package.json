@@ -8,7 +8,7 @@
       "default": "./dist/index.js"
     }
   },
-  "types": "./types/index.d.ts",
+  "types": "./src/index.ts",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mikro-orm/mikro-orm.git"
@@ -65,5 +65,5 @@
   "peerDependencies": {
     "@mikro-orm/core": "^6.1.5"
   },
-  "gitHead": "03c5e2ee2d20a4df7fd37e2b511945ba3be5dbb3"
+  "gitHead": "14ec69d5fce5f0c48d93dc3afcfcb6232c4ffaaa"
 }

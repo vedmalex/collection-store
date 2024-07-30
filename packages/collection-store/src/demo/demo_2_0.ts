@@ -2,6 +2,7 @@ import { UnaryCondition } from '../query/UnaryCondition'
 import { query } from '../query/query'
 import { create } from './create'
 import { collection_config } from './collection_2'
+import { map } from 'b-pl-tree'
 
 const run = async () => {
   const data = await create(collection_config)
@@ -29,7 +30,6 @@ const run = async () => {
     },
     {
       $and: (cond: Array<{ [key: string]: UnaryCondition }>) => {
-        debugger
         cond.sort((a, b) => {
           const a_list = Object.keys(a)
           const b_list = Object.keys(b)

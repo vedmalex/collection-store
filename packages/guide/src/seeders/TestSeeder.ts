@@ -1,5 +1,5 @@
-import type { EntityManager } from 'collection-store-mikro-orm'
 import { Seeder } from '@mikro-orm/seeder'
+import type { EntityManager } from 'collection-store-mikro-orm'
 import { User } from '../modules/user/user.entity.js'
 
 export class TestSeeder extends Seeder {

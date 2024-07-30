@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node --no-warnings=ExperimentalWarning --loader ts-node/esm src/server.ts",
+    "start": "bun src/server.ts",
     "test": "vitest"
   },
   "mikro-orm": {

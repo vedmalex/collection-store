@@ -1,22 +1,20 @@
-import fse from 'fs-extra/esm'
 import fs from 'fs'
-import {
-  ICollectionConfig,
-  ISerializedCollectionConfig,
-} from './async/ICollectionConfig'
-import { IDataCollection } from './async/IDataCollection'
-import { Item } from './types/Item'
 import path from 'path'
+import fse from 'fs-extra/esm'
+import { ICollectionConfig, ISerializedCollectionConfig } from './async/ICollectionConfig'
+import { IDataCollection } from './async/IDataCollection'
 import Collection from './async/collection'
+import { Item } from './types/Item'
 
-import { IndexDef } from './types/IndexDef'
 import AdapterFile from './async/AdapterFile'
-import { List } from './async/storage/List'
-import { serialize_collection_config } from './async/collection/serialize_collection_config'
 import { deserialize_collection_config } from './async/collection/deserialize_collection_config'
+import { serialize_collection_config } from './async/collection/serialize_collection_config'
 import { FileStorage } from './async/storage/FileStorage'
+import { List } from './async/storage/List'
+import { IndexDef } from './types/IndexDef'
 
-export interface TransactionOptions {}
+// biome-ignore lint/complexity/noBannedTypes: будет обновлен
+export type TransactionOptions = {}
 
 export interface CSTransaction {
   startTransaction(options: TransactionOptions): Promise<void>
@@ -28,7 +26,7 @@ export interface CSTransaction {
 export class CSDatabase implements CSTransaction {
   private root: string
   private name: string
-  private inTransaction: boolean = false
+  private inTransaction = false
   private collections: Map<string, Collection<any>>
 
   constructor(root: string, name?: string) {
@@ -38,15 +36,12 @@ export class CSDatabase implements CSTransaction {
   }
 
   private async writeSchema() {
-    let result = {} as Record<string, ISerializedCollectionConfig>
-    for (let [name, collection] of this.collections) {
+    const result = {} as Record<string, ISerializedCollectionConfig>
+    for (const [name, collection] of this.collections) {
       result[name] = serialize_collection_config(collection)
     }
-    fse.ensureDir(this.root)
-    fs.writeFileSync(
-      path.join(this.root, `${this.name}.json`),
-      JSON.stringify(result, null, 2),
-    )
+    await fse.ensureDir(this.root)
+    fs.writeFileSync(path.join(this.root, `${this.name}.json`), JSON.stringify(result, null, 2))
   }
 
   async connect() {
@@ -58,16 +53,15 @@ export class CSDatabase implements CSTransaction {
     if (!exists) {
       fse.ensureDirSync(this.root)
     } else {
-      let result = fse.readJSONSync(
-        path.join(this.root, `${this.name}.json`),
-      ) as Record<string, ISerializedCollectionConfig>
+      const result = fse.readJSONSync(path.join(this.root, `${this.name}.json`)) as Record<
+        string,
+        ISerializedCollectionConfig
+      >
 
       this.collections.clear()
-      for (let name in result) {
-        let config = result[name]
-        let collection = Collection.create(
-          deserialize_collection_config(config),
-        )
+      for (const name in result) {
+        const config = result[name]
+        const collection = Collection.create(deserialize_collection_config(config))
         await collection.load()
         this.registerCollection(collection)
       }
@@ -86,17 +80,17 @@ export class CSDatabase implements CSTransaction {
     throw new Error(`collection ${collection.name} already exists`)
   }
 
-  createCollection<T extends Item>(name: string): IDataCollection<T> {
-    const [collectionName, collectionType = "List"] = name.split(':')
+  async createCollection<T extends Item>(name: string): Promise<IDataCollection<T>> {
+    const [, collectionType = 'List'] = name.split(':')
     const collection = Collection.create({
-      name:collectionName,
-      list: collectionType === "List" ? new List<T>() : new FileStorage<T>(),
+      name,
+      list: collectionType === 'List' ? new List<T>() : new FileStorage<T>(),
       adapter: new AdapterFile<T>(),
       root: path.join(this.root, this.name),
     })
 
     this.registerCollection(collection)
-    this.writeSchema()
+    await this.writeSchema()
     return collection
   }
 
@@ -104,13 +98,13 @@ export class CSDatabase implements CSTransaction {
     return [...this.collections.values()]
   }
 
-  dropCollection(name: string): boolean {
+  async dropCollection(name: string): Promise<boolean> {
     let result = false
     if (this.collections.has(name)) {
       const collection = this.collections.get(name)!
-      collection.reset()
+      await collection.reset()
       result = this.collections.delete(name)
-      this.writeSchema()
+      await this.writeSchema()
     }
     return result
   }
@@ -122,23 +116,23 @@ export class CSDatabase implements CSTransaction {
     throw new Error(`collection ${name} not found`)
   }
 
-  createIndex(collection: string, name: string, def: IndexDef<any>) {
+  async createIndex(collection: string, name: string, def: IndexDef<any>) {
     if (this.collections.has(collection)) {
       const col = this.collections.get(collection)!
       if (col.listIndexes(name)) {
         col.dropIndex(name)
-        col.createIndex(name, def)
+        await col.createIndex(name, def)
       }
-      this.writeSchema()
+      await this.writeSchema()
       return
     }
     throw new Error(`collection ${collection} not found`)
   }
 
-  dropIndex(collection: string, name: string) {
+  async dropIndex(collection: string, name: string) {
     if (this.collections.has(collection)) {
       this.collections.get(collection)?.dropIndex(name)
-      this.writeSchema()
+      await this.writeSchema()
       return
     }
     throw new Error(`collection ${collection} not found`)
@@ -146,7 +140,7 @@ export class CSDatabase implements CSTransaction {
 
   async persist() {
     const res = []
-    for (let collection of this.collections) {
+    for (const collection of this.collections) {
       res.push(collection[1].persist())
     }
     return Promise.all(res)
@@ -162,7 +156,6 @@ export class CSDatabase implements CSTransaction {
   async endSession(): Promise<void> {
     this.inTransaction = false
   }
-
   async startTransaction(options: TransactionOptions): Promise<void> {
     this.inTransaction = true
   }
@@ -182,14 +175,12 @@ export class CSDatabase implements CSTransaction {
   async last(collection: string): Promise<any> {
     return this.collections.get(collection)!.last()
   }
-
   async lowest(collection: string, key: string): Promise<any> {
     return this.collections.get(collection)!.lowest(key)
   }
   async greatest(collection: string, key: string): Promise<any> {
     return this.collections.get(collection)!.greatest(key)
   }
-
   async oldest(collection: string): Promise<any> {
     return this.collections.get(collection)!.oldest()
   }

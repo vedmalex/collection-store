@@ -9,74 +9,53 @@ import {
   FindOptions,
   QueryResult,
 } from '@mikro-orm/core'
-import { CollectionStoreConnection } from './Connection'
-import { CollectionStorePlatform } from './Platform'
 //@ts-ignore
 import { Item } from 'collection-store'
+import { CollectionStoreConnection } from './Connection'
 import { CollectionStoreEntityManager } from './EntityManager'
+import { CollectionStorePlatform } from './Platform'
 
 export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
   [EntityManagerType]!: CollectionStoreEntityManager<this>
   protected override readonly platform = new CollectionStorePlatform()
-  protected override readonly connection = new CollectionStoreConnection(
-    this.config,
-  )
+  protected override readonly connection = new CollectionStoreConnection(this.config)
 
   constructor(config: Configuration) {
     super(config, ['collection-store'])
   }
-  override async find<T extends object>(
-    entityName: string,
-    where: FilterQuery<T>,
-  ): Promise<EntityData<T>[]> {
+  override async find<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T>[]> {
     if (this.metadata.find(entityName)?.virtual) {
       return this.findVirtual(entityName, where, {})
     }
 
-    const res = await this.connection.db
-      .collection<T>(entityName)
-      ?.find(where as any)
+    const res = await this.connection.db.collection<T>(entityName)?.find(where as any)
     if (res) {
       //@ts-ignore
       return res.reduce((res, cur) => {
         res.push(cur)
         return res
       }, [] as EntityData<T>[])
-    } else {
-      return []
     }
+    return []
   }
-  override async findOne<T extends object>(
-    entityName: string,
-    where: FilterQuery<T>,
-  ): Promise<EntityData<T> | null> {
+  override async findOne<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T> | null> {
     if (this.metadata.find(entityName)?.virtual) {
-      const [item] = await this.findVirtual(
-        entityName,
-        where,
-        {} as FindOptions<T, any, any, any>,
-      )
+      const [item] = await this.findVirtual(entityName, where, {} as FindOptions<T, any, any, any>)
       /* istanbul ignore next */
       return item ?? null
     }
-    const res = await this.connection.db
-      .collection<T>(entityName)
-      ?.findFirst(where as any)
+    const res = await this.connection.db.collection<T>(entityName)?.findFirst(where as any)
     if (res) {
       return res
-    } else {
-      return null
     }
+    return null
   }
 
   override async connect(): Promise<CollectionStoreConnection> {
     await this.connection.connect()
     return this.connection
   }
-  override async nativeInsert<T extends Item>(
-    entityName: string,
-    data: EntityDictionary<T>,
-  ): Promise<QueryResult<T>> {
+  override async nativeInsert<T extends Item>(entityName: string, data: EntityDictionary<T>): Promise<QueryResult<T>> {
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? 'id'
     const res = await this.connection.db.collection<T>(entityName)?.create(data)
@@ -117,34 +96,24 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   ): Promise<QueryResult<T>> {
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? '_id'
-    const res = await this.connection.db
-      .collection<T>(entityName)
-      ?.update(where as any, data)!
+    const res = await this.connection.db.collection<T>(entityName)?.update(where as any, data)!
     return {
       insertId: res[0][pk],
       affectedRows: 1,
     }
   }
 
-  override async nativeDelete<T extends Item>(
-    entityName: string,
-    where: FilterQuery<T>,
-  ): Promise<QueryResult<T>> {
+  override async nativeDelete<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<QueryResult<T>> {
     const meta = this.metadata.find(entityName)
     const pk = meta?.getPrimaryProps()[0].fieldNames[0] ?? '_id'
-    const res = await this.connection.db
-      .collection<T>(entityName)
-      ?.remove(where as any)!
+    const res = await this.connection.db.collection<T>(entityName)?.remove(where as any)!
     return {
       insertId: res[0]?.[pk],
       affectedRows: res.length,
     }
   }
 
-  override async count<T extends Item>(
-    entityName: string,
-    where: FilterQuery<T>,
-  ): Promise<number> {
+  override async count<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<number> {
     const res = await this.find(entityName, where)
     return res.length
   }

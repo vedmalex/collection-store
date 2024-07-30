@@ -1,8 +1,8 @@
-import Collection from './collection'
-import { Item } from '../types/Item'
-import fs from 'fs-extra'
 import pathLib from 'path'
+import fs from 'fs-extra'
+import { Item } from '../types/Item'
 import { IStorageAdapter } from './IStorageAdapter'
+import Collection from './collection'
 
 export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
   get name() {
@@ -11,13 +11,8 @@ export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
   get file(): string {
     if (this.collection.list.singlefile) {
       return pathLib.join(this.collection.root, `${this.collection.name}.json`)
-    } else {
-      return pathLib.join(
-        this.collection.root,
-        this.collection.name,
-        'metadata.json',
-      )
     }
+    return pathLib.join(this.collection.root, this.collection.name, 'metadata.json')
   }
   collection!: Collection<T>
   clone() {
@@ -39,9 +34,8 @@ export default class AdapterFile<T extends Item> implements IStorageAdapter<T> {
     }
     if (fs.pathExistsSync(path)) {
       return fs.readJSON(path)
-    } else {
-      return false
     }
+    return false
   }
 
   async store(name: string) {

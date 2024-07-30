@@ -1075,9 +1075,9 @@ class Collection {
   };
   root;
   cronJob;
-  createIndex(name2, config2) {
+  async createIndex(name2, config2) {
     create_index(this, name2, config2);
-    ensure_indexes(this);
+    await ensure_indexes(this);
   }
   listIndexes(name2) {
     if (!name2) {
@@ -1699,7 +1699,7 @@ class CSDatabase {
     for (let [name2, collection11] of this.collections) {
       result[name2] = serialize_collection_config(collection11);
     }
-    fse.ensureDir(this.root);
+    await fse.ensureDir(this.root);
     fs3.writeFileSync(path.join(this.root, `${this.name}.json`), JSON.stringify(result, null, 2));
   }
   async connect() {
@@ -1730,28 +1730,28 @@ class CSDatabase {
     }
     throw new Error(`collection ${collection11.name} already exists`);
   }
-  createCollection(name2) {
-    const [collectionName, collectionType = "List"] = name2.split(":");
+  async createCollection(name2) {
+    const [, collectionType = "List"] = name2.split(":");
     const collection11 = Collection.create({
-      name: collectionName,
+      name: name2,
       list: collectionType === "List" ? new List : new FileStorage,
       adapter: new AdapterFile,
       root: path.join(this.root, this.name)
     });
     this.registerCollection(collection11);
-    this.writeSchema();
+    await this.writeSchema();
     return collection11;
   }
   listCollections() {
     return [...this.collections.values()];
   }
-  dropCollection(name2) {
+  async dropCollection(name2) {
     let result = false;
     if (this.collections.has(name2)) {
       const collection11 = this.collections.get(name2);
-      collection11.reset();
+      await collection11.reset();
       result = this.collections.delete(name2);
-      this.writeSchema();
+      await this.writeSchema();
     }
     return result;
   }
@@ -1761,22 +1761,22 @@ class CSDatabase {
     }
     throw new Error(`collection ${name2} not found`);
   }
-  createIndex(collection11, name2, def) {
+  async createIndex(collection11, name2, def) {
     if (this.collections.has(collection11)) {
       const col = this.collections.get(collection11);
       if (col.listIndexes(name2)) {
         col.dropIndex(name2);
-        col.createIndex(name2, def);
+        await col.createIndex(name2, def);
       }
-      this.writeSchema();
+      await this.writeSchema();
       return;
     }
     throw new Error(`collection ${collection11} not found`);
   }
-  dropIndex(collection11, name2) {
+  async dropIndex(collection11, name2) {
     if (this.collections.has(collection11)) {
       this.collections.get(collection11)?.dropIndex(name2);
-      this.writeSchema();
+      await this.writeSchema();
       return;
     }
     throw new Error(`collection ${collection11} not found`);

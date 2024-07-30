@@ -1,11 +1,7 @@
+import { CollectionStoreDriver, LoadStrategy, MikroORM } from 'collection-store-mikro-orm'
 import { Article } from './modules/article/article.entity.js'
 import { Tag } from './modules/article/tag.entity.js'
 import { User } from './modules/user/user.entity.js'
-import {
-  CollectionStoreDriver,
-  LoadStrategy,
-  MikroORM,
-} from 'collection-store-mikro-orm'
 
 // initialize the ORM, loading the config file dynamically
 const orm = await MikroORM.init({

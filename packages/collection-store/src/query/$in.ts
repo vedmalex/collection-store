@@ -1,11 +1,9 @@
 import { ValueType } from 'b-pl-tree'
 import { UnaryCondition } from './UnaryCondition'
+import { get_value_of } from '../utils/get_value_of'
 
 export function $in(value: Array<ValueType>): UnaryCondition {
   if (value === undefined) return (_: ValueType) => false
-  if (value instanceof Date) {
-    return (v: ValueType) => value.includes(v.valueOf())
-  } else {
-    return (v: ValueType) => value.includes(v)
-  }
+  const val = value.map(get_value_of)
+  return (v: ValueType) => val.includes((get_value_of(v)))
 }

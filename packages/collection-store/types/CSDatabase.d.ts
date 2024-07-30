@@ -2,8 +2,7 @@ import { ICollectionConfig } from './async/ICollectionConfig';
 import { IDataCollection } from './async/IDataCollection';
 import { Item } from './types/Item';
 import { IndexDef } from './types/IndexDef';
-export interface TransactionOptions {
-}
+export type TransactionOptions = {};
 export interface CSTransaction {
     startTransaction(options: TransactionOptions): Promise<void>;
     abortTransaction(): Promise<void>;
@@ -22,12 +21,12 @@ export declare class CSDatabase implements CSTransaction {
     close(): Promise<void>;
     collectionList: Map<string, ICollectionConfig<any>>;
     private registerCollection;
-    createCollection<T extends Item>(name: string): IDataCollection<T>;
+    createCollection<T extends Item>(name: string): Promise<IDataCollection<T>>;
     listCollections(): Array<IDataCollection<any>>;
-    dropCollection(name: string): boolean;
+    dropCollection(name: string): Promise<boolean>;
     collection<T extends Item>(name: string): IDataCollection<T> | undefined;
-    createIndex(collection: string, name: string, def: IndexDef<any>): void;
-    dropIndex(collection: string, name: string): void;
+    createIndex(collection: string, name: string, def: IndexDef<any>): Promise<void>;
+    dropIndex(collection: string, name: string): Promise<void>;
     persist(): Promise<void[]>;
     startSession(): Promise<CSTransaction>;
     endSession(): Promise<void>;

@@ -21,7 +21,7 @@ export const move = async () => {
       city: 'Los Angeles',
     },
   })
-  data.persist()
+  await data.persist()
   return copy
 }
 

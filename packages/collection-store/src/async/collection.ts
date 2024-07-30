@@ -67,9 +67,9 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
   root!: string
   cronJob?: CronJob
-  createIndex(name: string, config: IndexDef<T>): void {
+  async createIndex(name: string, config: IndexDef<T>): Promise<void> {
     create_index(this, name, config)
-    ensure_indexes(this)
+    await ensure_indexes(this)
     //ensure
     //rebuild
   }

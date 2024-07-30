@@ -1,11 +1,9 @@
 import { ValueType } from 'b-pl-tree'
 import { UnaryCondition } from './UnaryCondition'
+import { get_value_of } from '../utils/get_value_of'
 
 export function $ne(value: ValueType): UnaryCondition {
-  if (value === undefined) return (_: ValueType) => false
-  if (value instanceof Date) {
-    return (v: ValueType) => v.valueOf() != value.valueOf()
-  } else {
-    return (v: ValueType) => v != value
-  }
+  const val = get_value_of(value)
+  if (val === undefined) return (_: ValueType) => false
+  return (v: ValueType) => get_value_of(v) !== val
 }

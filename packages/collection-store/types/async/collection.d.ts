@@ -24,7 +24,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
     static genCache: Dictionary<IdGeneratorFunction<any>>;
     root: string;
     cronJob?: CronJob;
-    createIndex(name: string, config: IndexDef<T>): void;
+    createIndex(name: string, config: IndexDef<T>): Promise<void>;
     listIndexes(name: string): any;
     dropIndex(name: string): void;
     storage: IStorageAdapter<T>;
