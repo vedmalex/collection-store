@@ -1,5 +1,5 @@
-52 error Error: Command failed with exit code 128: git tag v3.0.0-beta.15 -m v3.0.0-beta.15
-52 error fatal: метка «v3.0.0-beta.15» уже существует
+52 error Error: Command failed with exit code 128: git tag v3.0.0-beta.22 -m v3.0.0-beta.22
+52 error fatal: метка «v3.0.0-beta.22» уже существует
 52 error     at makeError (/Users/vedmalex/work/collection-store/node_modules/execa/lib/error.js:59:11)
 52 error     at handlePromise (/Users/vedmalex/work/collection-store/node_modules/execa/index.js:114:26)
 52 error     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

@@ -11,9 +11,9 @@ export declare class CollectionStoreEntityRepository<T extends Item> extends Ent
     oldest(entityName: EntityName<any>): Promise<any>;
     latest(entityName: EntityName<any>): Promise<any>;
     findById(entityName: EntityName<any>, id: any): Promise<any>;
-    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
+    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any[]>;
     findFirstBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findLastBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
-    getCollection(): any;
+    getCollection(): import("collection-store").IDataCollection<T> | undefined;
     getEntityManager(): CollectionStoreEntityManager;
 }

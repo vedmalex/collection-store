@@ -1,8 +1,8 @@
 import { Configuration, DatabaseDriver, EntityData, EntityDictionary, EntityManagerType, EntityName, FilterQuery, FindOptions, QueryResult } from '@mikro-orm/core';
-import { CollectionStoreConnection } from './Connection';
-import { CollectionStorePlatform } from './Platform';
 import { Item } from 'collection-store';
+import { CollectionStoreConnection } from './Connection';
 import { CollectionStoreEntityManager } from './EntityManager';
+import { CollectionStorePlatform } from './Platform';
 export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
     [EntityManagerType]: CollectionStoreEntityManager<this>;
     protected readonly platform: CollectionStorePlatform;
@@ -24,7 +24,7 @@ export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStor
     oldest(entityName: EntityName<any>): Promise<any>;
     latest(entityName: EntityName<any>): Promise<any>;
     findById(entityName: EntityName<any>, id: any): Promise<any>;
-    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
+    findBy(entityName: EntityName<any>, key: string, id: any): Promise<any[]>;
     findFirstBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
     findLastBy(entityName: EntityName<any>, key: string, id: any): Promise<any>;
 }

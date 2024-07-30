@@ -1,6 +1,6 @@
 // src/async/AdapterFile.ts
-import fs from "fs-extra";
 import pathLib from "path";
+import fs from "fs-extra";
 
 class AdapterFile {
   get name() {
@@ -9,9 +9,8 @@ class AdapterFile {
   get file() {
     if (this.collection.list.singlefile) {
       return pathLib.join(this.collection.root, `${this.collection.name}.json`);
-    } else {
-      return pathLib.join(this.collection.root, this.collection.name, "metadata.json");
     }
+    return pathLib.join(this.collection.root, this.collection.name, "metadata.json");
   }
   collection;
   clone() {
@@ -31,9 +30,8 @@ class AdapterFile {
     }
     if (fs.pathExistsSync(path)) {
       return fs.readJSON(path);
-    } else {
-      return false;
     }
+    return false;
   }
   async store(name2) {
     let path = this.file;
@@ -51,31 +49,31 @@ class AdapterFile {
 }
 
 // src/async/timeparse.ts
-var getMicroseconds = function(value, unit) {
-  var result = units[unit];
+function getMicroseconds(value, unit) {
+  const result = units[unit];
   if (result) {
     return value * result;
   }
-  throw new Error('The unit "' + unit + '" could not be recognized');
-};
+  throw new Error(`The unit "${unit}" could not be recognized`);
+}
 var units = {
   "μs": 1,
   ms: 1000,
-  s: 1e6,
-  m: 60000000,
-  h: 3600000000,
-  d: 86400000000,
-  w: 604800000000
+  s: 1000 * 1000,
+  m: 1000 * 1000 * 60,
+  h: 1000 * 1000 * 60 * 60,
+  d: 1000 * 1000 * 60 * 60 * 24,
+  w: 1000 * 1000 * 60 * 60 * 24 * 7
 };
 function parse(str, returnUnit = "ms") {
-  var totalMicroseconds = 0;
-  var groups = str.toLowerCase().match(/[-+]?[0-9\.]+[a-z]+/g);
+  let totalMicroseconds = 0;
+  const groups = str.toLowerCase().match(/[-+]?[0-9\.]+[a-z]+/g);
   if (groups !== null) {
-    groups.forEach(function(g) {
-      var value = parseFloat(g.match(/[0-9\.]+/g)[0]);
-      var unit = g.match(/[a-z]+/g)[0];
+    for (const g of groups) {
+      const value = parseFloat(g.match(/[0-9\.]+/g)[0]);
+      const unit = g.match(/[a-z]+/g)[0];
       totalMicroseconds += getMicroseconds(value, unit);
-    });
+    }
   }
   return totalMicroseconds / units[returnUnit];
 }
@@ -116,106 +114,28 @@ function $and(value) {
   };
 }
 
+// src/utils/get_value_of.ts
+function get_value_of(v) {
+  if (typeof v === "object" && v !== null && "valueOf" in v && typeof v.valueOf === "function") {
+    return v.valueOf();
+  } else {
+    return v;
+  }
+}
+
 // src/query/$eq.ts
 function $eq(value) {
-  if (value === undefined)
+  const val = get_value_of(value);
+  if (val === undefined)
     return (v) => false;
-  if (value instanceof Date) {
-    return (v) => value.valueOf() == v.valueOf();
-  } else {
-    return (v) => value == v;
-  }
-}
-
-// src/query/$gt.ts
-function $gt(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => v.valueOf() > value.valueOf();
-  } else {
-    return (v) => v > value;
-  }
-}
-
-// src/query/$gte.ts
-function $gte(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => v.valueOf() >= value.valueOf();
-  } else {
-    return (v) => v >= value;
-  }
-}
-
-// src/query/$lt.ts
-function $lt(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => v.valueOf() < value.valueOf();
-  } else {
-    return (v) => v < value;
-  }
-}
-
-// src/query/$lte.ts
-function $lte(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => v.valueOf() <= value.valueOf();
-  } else {
-    return (v) => v <= value;
-  }
-}
-
-// src/query/$ne.ts
-function $ne(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => v.valueOf() != value.valueOf();
-  } else {
-    return (v) => v != value;
-  }
-}
-
-// src/query/$in.ts
-function $in(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => value.includes(v.valueOf());
-  } else {
-    return (v) => value.includes(v);
-  }
-}
-
-// src/query/$nin.ts
-function $nin(value) {
-  if (value === undefined)
-    return (_) => false;
-  if (value instanceof Date) {
-    return (v) => !value.includes(v.valueOf());
-  } else {
-    return (v) => !value.includes(v);
-  }
-}
-
-// src/query/$some.ts
-function $some(value) {
-  if (value === undefined)
-    return (_) => false;
-  return (v) => v.some(value);
+  return (v) => val === get_value_of(v);
 }
 
 // src/query/$every.ts
 function $every(value) {
   if (value === undefined)
     return (_) => false;
-  return (v) => v.every(value);
+  return (v) => v.map(get_value_of).every(value);
 }
 
 // src/query/$exists.ts
@@ -226,19 +146,69 @@ function $exists(value) {
   };
 }
 
-// src/query/$size.ts
-function $size(value) {
-  return (val) => val.length == value;
+// src/query/$gt.ts
+function $gt(value) {
+  const val = get_value_of(value);
+  if (val === undefined)
+    return (_) => false;
+  return (v) => get_value_of(v) > val;
+}
+
+// src/query/$gte.ts
+function $gte(value) {
+  const val = get_value_of(value);
+  if (val === undefined)
+    return (_) => false;
+  return (v) => get_value_of(v) >= value;
+}
+
+// src/query/$in.ts
+function $in(value) {
+  if (value === undefined)
+    return (_) => false;
+  const val = value.map(get_value_of);
+  return (v) => val.includes(get_value_of(v));
+}
+
+// src/query/$lt.ts
+function $lt(value) {
+  const val = get_value_of(value);
+  if (val === undefined)
+    return (_) => false;
+  return (v) => get_value_of(v) < value;
+}
+
+// src/query/$lte.ts
+function $lte(value) {
+  const val = get_value_of(value);
+  if (val === undefined)
+    return (_) => false;
+  return (v) => get_value_of(v) <= value;
 }
 
 // src/query/$match.ts
 function $match(value, flags) {
   if (typeof value === "object") {
     return (val) => value.test(val);
-  } else {
-    const reg = new RegExp(value, flags);
-    return (val) => reg.test(val);
   }
+  const reg = new RegExp(value, flags);
+  return (val) => reg.test(val);
+}
+
+// src/query/$ne.ts
+function $ne(value) {
+  const val = get_value_of(value);
+  if (val === undefined)
+    return (_) => false;
+  return (v) => get_value_of(v) !== val;
+}
+
+// src/query/$nin.ts
+function $nin(value) {
+  if (value === undefined)
+    return (_) => false;
+  const val = value.map(get_value_of);
+  return (v) => !val.includes(get_value_of(v));
 }
 
 // src/query/$or.ts
@@ -255,10 +225,22 @@ function $or(value) {
   };
 }
 
+// src/query/$size.ts
+function $size(value) {
+  return (val) => val.length === value;
+}
+
+// src/query/$some.ts
+function $some(value) {
+  if (value === undefined)
+    return (_) => false;
+  return (v) => v.map(get_value_of).some(value);
+}
+
 // src/query/build_query.ts
 function build_query(_obj, options) {
   const res2 = [];
-  if (typeof _obj == "object" && !(_obj instanceof Date) && _obj) {
+  if (typeof _obj === "object" && !(_obj instanceof Date) && _obj) {
     const obj = _obj;
     const keys = Object.keys(obj);
     for (const prop of keys) {
@@ -267,67 +249,64 @@ function build_query(_obj, options) {
       } else {
         switch (prop) {
           case "$eq":
-            res2.push($eq(obj["$eq"]));
+            res2.push($eq(obj.$eq));
             break;
           case "$gt":
-            res2.push($gt(obj["$gt"]));
+            res2.push($gt(obj.$gt));
             break;
           case "$gte":
-            res2.push($gte(obj["$gte"]));
+            res2.push($gte(obj.$gte));
             break;
           case "$lt":
-            res2.push($lt(obj["$lt"]));
+            res2.push($lt(obj.$lt));
             break;
           case "$lte":
-            res2.push($lte(obj["$lte"]));
+            res2.push($lte(obj.$lte));
             break;
           case "$ne":
-            res2.push($ne(obj["$ne"]));
+            res2.push($ne(obj.$ne));
             break;
           case "$in":
-            res2.push($in(obj["$in"]));
+            res2.push($in(obj.$in));
             break;
           case "$nin":
-            res2.push($nin(obj["$nin"]));
+            res2.push($nin(obj.$nin));
             break;
           case "$some":
-            res2.push($some(obj["$some"]));
+            res2.push($some(obj.$some));
             break;
           case "$every":
-            res2.push($every(obj["$every"]));
+            res2.push($every(obj.$every));
             break;
           case "$exists":
-            res2.push($exists(obj["$exists"]));
-            break;
-          case "$every":
-            res2.push($every(obj["$every"]));
+            res2.push($exists(obj.$exists));
             break;
           case "$match":
-            res2.push($match(obj["$match"], "g"));
+            res2.push($match(obj.$match, "g"));
             break;
           case "$imatch":
-            res2.push($match(obj["$imatch"], "ig"));
+            res2.push($match(obj.$imatch, "ig"));
             break;
           case "$size":
-            res2.push($size(obj["$size"]));
+            res2.push($size(obj.$size));
             break;
           case "$and":
-            res2.push($and(obj["$and"]));
+            res2.push($and(obj.$and));
             break;
           case "$or":
-            res2.push($or(obj["$or"]));
+            res2.push($or(obj.$or));
             break;
           default:
             res2.push({ [prop]: build_query(obj[prop], options) });
         }
       }
     }
-    if (res2.length == 1) {
+    if (res2.length === 1) {
       return res2[0];
-    } else {
-      return options?.$and(res2) ?? $and(res2);
     }
-  } else if (typeof _obj == "number" || typeof _obj == "bigint" || typeof _obj == "string" || _obj instanceof Date) {
+    return options?.$and(res2) ?? $and(res2);
+  }
+  if (typeof _obj === "number" || typeof _obj === "bigint" || typeof _obj === "string" || _obj instanceof Date) {
     return $eq(_obj);
   }
   throw new Error("unknown type");
@@ -336,16 +315,16 @@ function build_query(_obj, options) {
 // src/query/query.ts
 function query(obj, options) {
   const q = build_query(obj, options);
-  if (typeof q == "object") {
+  if (typeof q === "object") {
     return $and(Object.keys(q).reduce((res2, key2) => {
       res2.push({ [key2]: q[key2] });
       return res2;
     }, []));
-  } else if (typeof q == "function") {
-    return q;
-  } else {
-    throw new Error("nonsense");
   }
+  if (typeof q === "function") {
+    return q;
+  }
+  throw new Error("nonsense");
 }
 
 // src/async/iterators/last.ts
@@ -854,7 +833,7 @@ function entity_delete(record) {
 
 // src/utils/is_stored_record.ts
 function is_stored_record(item) {
-  return item && item.hasOwnProperty("id") && item.hasOwnProperty("version") && typeof item.version == "number" && item.hasOwnProperty("next_version") && typeof item.next_version == "number" && item.hasOwnProperty("created") && typeof item.created == "number" && item.hasOwnProperty("history") && Array.isArray(item.history);
+  return Object.hasOwn(item, "version") && typeof item.version === "number" && Object.hasOwn(item, "next_version") && typeof item.next_version === "number" && Object.hasOwn(item, "created") && typeof item.created === "number" && Object.hasOwn(item, "history") && Array.isArray(item.history);
 }
 
 // src/async/storage/List.ts
@@ -1663,9 +1642,9 @@ class FileStorage {
 }
 
 // src/CSDatabase.ts
-import fse from "fs-extra/esm";
 import fs3 from "fs";
 import path from "path";
+import fse from "fs-extra/esm";
 
 // src/async/collection/deserialize_collection_config.ts
 function deserialize_collection_config(config2) {
@@ -1695,8 +1674,8 @@ class CSDatabase {
     this.collections = new Map;
   }
   async writeSchema() {
-    let result = {};
-    for (let [name2, collection11] of this.collections) {
+    const result = {};
+    for (const [name2, collection11] of this.collections) {
       result[name2] = serialize_collection_config(collection11);
     }
     await fse.ensureDir(this.root);
@@ -1710,11 +1689,11 @@ class CSDatabase {
     if (!exists) {
       fse.ensureDirSync(this.root);
     } else {
-      let result = fse.readJSONSync(path.join(this.root, `${this.name}.json`));
+      const result = fse.readJSONSync(path.join(this.root, `${this.name}.json`));
       this.collections.clear();
-      for (let name2 in result) {
-        let config2 = result[name2];
-        let collection11 = Collection.create(deserialize_collection_config(config2));
+      for (const name2 in result) {
+        const config2 = result[name2];
+        const collection11 = Collection.create(deserialize_collection_config(config2));
         await collection11.load();
         this.registerCollection(collection11);
       }
@@ -1783,7 +1762,7 @@ class CSDatabase {
   }
   async persist() {
     const res2 = [];
-    for (let collection11 of this.collections) {
+    for (const collection11 of this.collections) {
       res2.push(collection11[1].persist());
     }
     return Promise.all(res2);

@@ -17,9 +17,9 @@ class CollectionStoreConnection extends Connection {
   getCollection(name) {
     return this.db.collection(this.getCollectionName(name));
   }
-  getCollectionName(name) {
-    name = Utils.className(name);
-    const meta = this.metadata.find(name);
+  getCollectionName(_name) {
+    const name = Utils.className(_name);
+    const meta = this.metadata.find(Utils.className(name));
     return meta ? meta.collection : name;
   }
   async connect() {
@@ -150,9 +150,6 @@ Utils as Utils2
 } from "@mikro-orm/core";
 
 class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
-  constructor() {
-    super(...arguments);
-  }
   static register(orm) {
     orm.config.registerExtension("@mikro-orm/schema-generator", () => new CollectionStoreSchemaGenerator(orm.em));
   }
@@ -209,10 +206,9 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
   }
   async createIndexes(meta) {
     for (const index of meta.indexes) {
-      let fieldOrSpec;
       const properties = Utils2.flatten(Utils2.asArray(index.properties).map((prop) => meta.properties[prop].fieldNames));
       const db = this.connection.getDb();
-      fieldOrSpec = properties[0];
+      const fieldOrSpec = properties[0];
       await db.createIndex(meta.className, fieldOrSpec, {
         key: fieldOrSpec,
         unique: false,
@@ -249,9 +245,6 @@ class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator {
 
 // src/Platform.ts
 class CollectionStorePlatform extends Platform {
-  constructor() {
-    super(...arguments);
-  }
   getSchemaGenerator(driver, em) {
     return new CollectionStoreSchemaGenerator(em ?? driver);
   }
@@ -284,9 +277,8 @@ class CollectionStoreDriver extends DatabaseDriver {
         res2.push(cur);
         return res2;
       }, []);
-    } else {
-      return [];
     }
+    return [];
   }
   async findOne(entityName, where) {
     if (this.metadata.find(entityName)?.virtual) {
@@ -296,9 +288,8 @@ class CollectionStoreDriver extends DatabaseDriver {
     const res = await this.connection.db.collection(entityName)?.findFirst(where);
     if (res) {
       return res;
-    } else {
-      return null;
     }
+    return null;
   }
   async connect() {
     await this.connection.connect();
@@ -401,9 +392,6 @@ EntityManager as EntityManager2
 } from "@mikro-orm/core";
 
 class CollectionStoreEntityManager extends EntityManager2 {
-  constructor() {
-    super(...arguments);
-  }
   fork(options) {
     return super.fork(options);
   }
@@ -500,9 +488,6 @@ function defineCollectionStoreConfig(options) {
 }
 
 class CollectionStoreMikroORM extends MikroORM2 {
-  constructor() {
-    super(...arguments);
-  }
   static DRIVER = CollectionStoreDriver;
   static async init(options) {
     return super.init(options);
