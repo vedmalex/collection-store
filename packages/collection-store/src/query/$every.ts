@@ -1,6 +1,6 @@
 import { ValueType } from 'b-pl-tree'
 import { UnaryCondition } from './UnaryCondition'
-import { get_value_of } from 'src/utils/get_value_of'
+import { get_value_of } from '../utils/get_value_of'
 
 export function $every(value: (v: any) => true): UnaryCondition {
   if (value === undefined) return (_: ValueType) => false
