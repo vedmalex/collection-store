@@ -55,7 +55,7 @@
     "access": "public"
   },
   "dependencies": {
-    "collection-store": "workspace:*"
+    "collection-store": "^3.0.0-beta.22"
   },
   "devDependencies": {
     "@mikro-orm/core": "^6.1.5",
@@ -65,5 +65,5 @@
   "peerDependencies": {
     "@mikro-orm/core": "^6.1.5"
   },
-  "gitHead": "14ec69d5fce5f0c48d93dc3afcfcb6232c4ffaaa"
+  "gitHead": "6be7bf4855f9224dda0b6b8fb97230af8a3296f1"
 }
