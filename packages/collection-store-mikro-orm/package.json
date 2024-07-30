@@ -1,6 +1,6 @@
 {
   "name": "collection-store-mikro-orm",
-  "version": "3.0.0-beta.22",
+  "version": "3.0.0-beta.23",
   "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
   "exports": {
     ".": {
@@ -55,7 +55,7 @@
     "access": "public"
   },
   "dependencies": {
-    "collection-store": "^3.0.0-beta.22"
+    "collection-store": "^3.0.0-beta.23"
   },
   "devDependencies": {
     "@mikro-orm/core": "^6.1.5",
