@@ -1,1 +1,1 @@
-export type UnaryCondition = (v) => boolean
+export type UnaryCondition = (v: any) => boolean

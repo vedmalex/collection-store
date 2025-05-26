@@ -111,9 +111,9 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   validator(item: T):
     | { success: true; data: T }
     | {
-        success: false
-        errors: ZodError<T>
-      } {
+      success: false
+      errors: ZodError<T>
+    } {
     if (this.validation) {
       return this.validation.safeParse(item) as any
     } else {
@@ -137,7 +137,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   indexDefs!: Dictionary<IndexDef<T>>
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
+  private constructor() { }
 
   static create<T extends Item>(config?: ICollectionConfig<T>) {
     const collection: Collection<T> = new Collection<T>()
@@ -225,8 +225,8 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
           typeof Id.gen == 'function'
             ? Id.gen
             : Collection.genCache[Id.gen]
-            ? Collection.genCache[Id.gen]
-            : eval(Id.gen),
+              ? Collection.genCache[Id.gen]
+              : eval(Id.gen),
         unique: true,
         sparse: false,
         required: true,

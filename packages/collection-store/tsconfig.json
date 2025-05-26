@@ -11,7 +11,7 @@
     "src/**/*.test.*",
     "src/sync/**/*",
     "src/demo/**/*",
-    "src/__tests__/**/*",
+    "src/__test__/**/*",
     "**/node_modules/**"
   ]
 }

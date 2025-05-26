@@ -16,7 +16,7 @@ import { CollectionStoreEntityManager } from './EntityManager'
 import { CollectionStorePlatform } from './Platform'
 
 export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
-  [EntityManagerType]!: CollectionStoreEntityManager<this>
+  override [EntityManagerType]!: CollectionStoreEntityManager<this>
   protected override readonly platform = new CollectionStorePlatform()
   protected override readonly connection = new CollectionStoreConnection(this.config)
 

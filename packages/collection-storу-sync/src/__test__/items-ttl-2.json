@@ -1,0 +1,64 @@
+{
+  "list": {
+    "_count": 4,
+    "_counter": 8,
+    "hash": {
+      "4": {
+        "name": "Some",
+        "age": 12,
+        "__ttltime": 1640641916098
+      },
+      "5": {
+        "name": "Another",
+        "age": 13,
+        "__ttltime": 1640641916098
+      },
+      "6": {
+        "name": "SomeOneElse",
+        "age": 12,
+        "__ttltime": 1640641916098
+      },
+      "7": {
+        "name": "Anybody",
+        "age": 12,
+        "__ttltime": 1640641916098
+      }
+    }
+  },
+  "indexes": {
+    "name": {
+      "Some": 4,
+      "Another": 5,
+      "SomeOneElse": 6,
+      "Anybody": 7
+    },
+    "__ttltime": {
+      "1640641916098": [
+        4,
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  "indexDefs": {
+    "name": {
+      "key": "name",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "__ttltime": {
+      "key": "__ttltime",
+      "auto": true,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "gen": "autoTimestamp"
+    }
+  },
+  "id": "name",
+  "ttl": 100
+}

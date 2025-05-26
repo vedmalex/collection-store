@@ -1,0 +1,22 @@
+{
+  "list": {
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
+  },
+  "indexes": {
+    "id": {}
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  },
+  "id": "id",
+  "ttl": false
+}

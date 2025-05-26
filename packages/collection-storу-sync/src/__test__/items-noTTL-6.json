@@ -1,0 +1,70 @@
+{
+  "list": {
+    "_count": 4,
+    "_counter": 4,
+    "hash": {
+      "0": {
+        "name": "!!!",
+        "age": 12,
+        "id": 0,
+        "class": 5,
+        "address": {
+          "state": "NJ"
+        }
+      },
+      "1": {
+        "name": "Another",
+        "age": 13,
+        "id": 1,
+        "class": 6
+      },
+      "2": {
+        "name": "SomeOneElse",
+        "age": 12,
+        "id": 2,
+        "class": 5
+      },
+      "3": {
+        "name": "Anybody",
+        "age": 12,
+        "address": {
+          "state": "NY"
+        },
+        "id": 3,
+        "class": 5
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 3
+    },
+    "address.state": {
+      "NY": [
+        3
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "address.state": {
+      "key": "address.state",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false
+    }
+  },
+  "id": "id",
+  "ttl": false
+}
