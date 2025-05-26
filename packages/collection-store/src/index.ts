@@ -1,10 +1,10 @@
-import AdapterFile from './async/AdapterFile'
-import Collection from './async/collection'
-import { IDataCollection } from './async/IDataCollection'
-import { List } from './async/storage/List'
-import { copy_collection } from './async/collection/copy_collection'
-import AdapterMemory from './async/AdapterMemory'
-import { FileStorage } from './async/storage/FileStorage'
+import AdapterFile from './AdapterFile'
+import Collection from './collection'
+import { IDataCollection } from './IDataCollection'
+import { List } from './storage/List'
+import { copy_collection } from './collection/copy_collection'
+import AdapterMemory from './AdapterMemory'
+import { FileStorage } from './storage/FileStorage'
 import type { Item } from './types/Item'
 
 export { AdapterMemory }

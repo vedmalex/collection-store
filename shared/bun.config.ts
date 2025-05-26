@@ -1,34 +1,42 @@
-import { BuildConfig } from 'bun'
 import { builtinModules } from 'module'
+/// <reference types="@types/bun" />
+import { BuildConfig } from 'bun'
+import { BuildOptions } from 'esbuild'
 
-export function createConfig({
-  pkg,
-  // aliases,
-  entrypoints = ['src/index.ts'],
-  outdir = './dist',
-  target = 'node',
-  format = 'esm',
-  external = [],
-  define = {
-    PRODUCTION: JSON.stringify(process.env.NODE_ENV == 'production'),
-  },
-  splitting = true,
-}: {
-  entrypoints?: BuildConfig['entrypoints']
-  outdir?: BuildConfig['outdir']
-  external?: Array<string>
-  define?: BuildConfig['define']
-  target?: BuildConfig['target']
-  splitting?: BuildConfig['splitting']
-  format?: BuildConfig['format']
+interface BuilderConfig {
+  entrypoints?: string[] | string
+  outdir?: string
+  format?: 'esm' | 'cjs'
+  target?: 'node' | 'bun'
+  external?: string[]
+  sourcemap?: 'inline' | 'external' | boolean
+  splitting?: boolean
   pkg: {
     dependencies?: Record<string, string>
     peerDependencies?: Record<string, string>
     devDependencies?: Record<string, string>
   }
-}): BuildConfig {
-  const config: BuildConfig = {
-    entrypoints,
+  define?: Record<string, string>
+}
+
+// Функция для Bun
+export function createBunConfig(config: BuilderConfig): BuildConfig {
+  const {
+    pkg,
+    entrypoints = ['src/index.ts'],
+    outdir = './dist',
+    target = 'node',
+    format = 'cjs',
+    external = [],
+    define = {
+      PRODUCTION: JSON.stringify(process.env.NODE_ENV === 'production'),
+    },
+    splitting = true,
+    sourcemap = 'inline',
+  } = config
+
+  const bunConfig: BuildConfig = {
+    entrypoints: Array.isArray(entrypoints) ? entrypoints : [entrypoints],
     target,
     define,
     external: Object.keys(pkg.dependencies || {})
@@ -39,6 +47,7 @@ export function createConfig({
     outdir,
     format,
     splitting,
+    sourcemap,
     minify: {
       whitespace: false,
       syntax: false,
@@ -46,6 +55,56 @@ export function createConfig({
     },
   }
 
-  // console.log(Bun.inspect(config))
-  return config
+  return bunConfig
 }
+
+// Функция для esbuild
+export function createConfig(config: BuilderConfig): BuildOptions {
+  const {
+    entrypoints = ['src/index.ts'],
+    outdir = './dist',
+    format = 'cjs',
+    target = 'node',
+    sourcemap = 'inline',
+    pkg,
+    external = [],
+  } = config
+
+  return {
+    entryPoints: Array.isArray(entrypoints) ? entrypoints : [entrypoints],
+    bundle: true,
+    format,
+    platform: target as 'node',
+    outdir,
+    sourcemap,
+    external: Object.keys(pkg.dependencies || {})
+      .concat(Object.keys(pkg.peerDependencies || {}))
+      .concat(Object.keys(pkg.devDependencies || {}))
+      .concat(builtinModules)
+      .concat(external),
+  }
+}
+
+// Пример использования:
+/*
+import pkg from './package.json' assert { type: 'json' }
+
+// Для Bun
+const bunConfig = createConfig({
+  pkg,
+  entrypoints: 'index.js'
+})
+
+const result = await Bun.build(bunConfig)
+if (!result.success) {
+  throw new AggregateError(result.logs, 'Build failed')
+}
+
+// Для esbuild
+import { build } from 'esbuild'
+const esbuildConfig = createEsbuildConfig({
+  pkg,
+  entrypoints: 'index.js'
+})
+await build(esbuildConfig)
+*/

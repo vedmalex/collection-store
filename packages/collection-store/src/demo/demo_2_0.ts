@@ -2,7 +2,7 @@ import { UnaryCondition } from '../query/UnaryCondition'
 import { query } from '../query/query'
 import { create } from './create'
 import { collection_config } from './collection_2'
-import { map } from 'b-pl-tree'
+// import { map } from 'b-pl-tree' // unused
 
 const run = async () => {
   const data = await create(collection_config)
@@ -22,7 +22,7 @@ const run = async () => {
 
   console.log(await data.find(q))
   console.log(await data.find(q1))
-
+  //@ts-ignore
   const q2 = query(
     {
       age: { $in: [30, 29] },

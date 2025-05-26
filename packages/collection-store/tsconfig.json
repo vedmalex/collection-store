@@ -1,17 +1,11 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./types",
-    "types": ["bun-types"]
+    "types": ["@types/bun"]
   },
-  "include": ["./src/**/*"],
-  "exclude": [
-    "src/**/*.test.*",
-    "src/sync/**/*",
-    "src/demo/**/*",
-    "src/__test__/**/*",
-    "**/node_modules/**"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.*", "**/node_modules/**"]
 }

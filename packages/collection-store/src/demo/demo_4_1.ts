@@ -1,5 +1,5 @@
-import Collection from '../async/collection'
-import { do_rotate_log } from '../async/collection/do_rotate_log'
+import Collection from '../collection'
+import { do_rotate_log } from '../collection/do_rotate_log'
 import { Person } from './Person'
 import { collection_config } from './collection_4'
 

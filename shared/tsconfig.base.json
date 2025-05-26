@@ -1,17 +1,13 @@
 {
-  "extends": "bun-types/tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,
     "sourceMap": true,
     "emitDeclarationOnly": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "noEmit": false,
-    "strict": true,
     "declaration": true,
     "declarationMap": false,
     "removeComments": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitReturns": false,
     "noImplicitOverride": true,
     "noImplicitThis": true,
@@ -19,10 +15,17 @@
     "noUnusedParameters": false,
     "noUnusedLocals": true,
     "noErrorTruncation": true,
-    "skipDefaultLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "target": "esnext",
+    "disableSolutionSearching": true,
+    "module": "Preserve",
+    "moduleResolution": "bundler",
     "lib": ["ESNext"],
-    "types": ["bun-types"]
+    "erasableSyntaxOnly": true,
+    "types": ["@types/bun", "@types/node"]
   },
   "include": [],
   "exclude": []

@@ -1,7 +1,7 @@
-import { ICollectionConfig } from '../async/ICollectionConfig'
+import { ICollectionConfig } from '../ICollectionConfig'
 import { Person } from './Person'
-import AdapterFile from '../async/AdapterFile'
-import { List } from '../async/storage/List'
+import AdapterFile from '../AdapterFile'
+import { List } from '../storage/List'
 
 export const collection_config: ICollectionConfig<Person> = {
   root: './data',

@@ -1,5 +1,5 @@
-import { ICollectionConfig } from './async/ICollectionConfig';
-import { IDataCollection } from './async/IDataCollection';
+import { ICollectionConfig } from './ICollectionConfig';
+import { IDataCollection } from './IDataCollection';
 import { Item } from './types/Item';
 import { IndexDef } from './types/IndexDef';
 export type TransactionOptions = {};

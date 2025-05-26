@@ -1,0 +1,165 @@
+{
+  "list": {
+    "counter": 1,
+    "tree": {},
+    "_count": 1,
+    "_counter": 1,
+    "hash": {
+      "0": {
+        "name": "Some",
+        "age": 12,
+        "pass": 1,
+        "id": 0
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 0,
+          "min": 0,
+          "size": 1,
+          "keys": [
+            0
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "some",
+          "min": "some",
+          "size": 1,
+          "keys": [
+            "some"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "age": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "12",
+          "min": "12",
+          "size": 1,
+          "keys": [
+            "12"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "pass": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "1",
+          "min": "1",
+          "size": 1,
+          "keys": [
+            "1"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "*": {
+      "key": "*",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "ignoreCase": true
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "ignoreCase": true
+    },
+    "age": {
+      "key": "age",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "ignoreCase": true
+    },
+    "pass": {
+      "key": "pass",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "ignoreCase": true
+    }
+  },
+  "id": "id"
+}

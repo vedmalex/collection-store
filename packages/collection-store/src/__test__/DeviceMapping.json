@@ -1,0 +1,131 @@
+{
+  "list": {
+    "counter": 3,
+    "tree": {},
+    "_count": 2,
+    "_counter": 3,
+    "hash": {
+      "1": {
+        "DeviceId": "1112221",
+        "Username": "testuser01",
+        "id": 1
+      },
+      "2": {
+        "DeviceId": "111222",
+        "Username": "testuser01",
+        "id": 2
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 2,
+          "min": 1,
+          "size": 2,
+          "keys": [
+            1,
+            2
+          ],
+          "key_num": 2,
+          "pointers": [
+            1,
+            2
+          ],
+          "children": []
+        }
+      ]
+    },
+    "DeviceId": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "1112221",
+          "min": "111222",
+          "size": 2,
+          "keys": [
+            "111222",
+            "1112221"
+          ],
+          "key_num": 2,
+          "pointers": [
+            2,
+            1
+          ],
+          "children": []
+        }
+      ]
+    },
+    "Username": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "testuser01",
+          "min": "testuser01",
+          "size": 2,
+          "keys": [
+            "testuser01",
+            "testuser01"
+          ],
+          "key_num": 2,
+          "pointers": [
+            1,
+            2
+          ],
+          "children": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    },
+    "DeviceId": {
+      "key": "DeviceId",
+      "auto": false,
+      "unique": true,
+      "sparse": true,
+      "required": true
+    },
+    "Username": {
+      "key": "Username",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  },
+  "id": "id"
+}

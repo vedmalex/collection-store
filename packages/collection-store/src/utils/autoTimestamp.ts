@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import { IList } from '../async/IList'
+import { IList } from '../IList'
 
 export function autoTimestamp<T extends Item>(
   item: T,

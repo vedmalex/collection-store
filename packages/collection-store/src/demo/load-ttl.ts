@@ -1,5 +1,5 @@
-import Collection from '../async/collection'
-import { ICollectionConfig } from '../async/ICollectionConfig'
+import Collection from '../collection'
+import { ICollectionConfig } from '../ICollectionConfig'
 import { Person } from './Person'
 
 export const load_ttl = async (config: ICollectionConfig<Person>) => {

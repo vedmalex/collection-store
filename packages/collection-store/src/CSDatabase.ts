@@ -1,16 +1,16 @@
 import fs from 'fs'
 import path from 'path'
-import fse from 'fs-extra/esm'
-import { ICollectionConfig, ISerializedCollectionConfig } from './async/ICollectionConfig'
-import { IDataCollection } from './async/IDataCollection'
-import Collection from './async/collection'
+import fse from 'fs-extra'
+import { ICollectionConfig, ISerializedCollectionConfig } from './ICollectionConfig'
+import { IDataCollection } from './IDataCollection'
+import Collection from './collection'
 import { Item } from './types/Item'
 
-import AdapterFile from './async/AdapterFile'
-import { deserialize_collection_config } from './async/collection/deserialize_collection_config'
-import { serialize_collection_config } from './async/collection/serialize_collection_config'
-import { FileStorage } from './async/storage/FileStorage'
-import { List } from './async/storage/List'
+import AdapterFile from './AdapterFile'
+import { deserialize_collection_config } from './collection/deserialize_collection_config'
+import { serialize_collection_config } from './collection/serialize_collection_config'
+import { FileStorage } from './storage/FileStorage'
+import { List } from './storage/List'
 import { IndexDef } from './types/IndexDef'
 
 // biome-ignore lint/complexity/noBannedTypes: будет обновлен
@@ -37,9 +37,9 @@ export class CSDatabase implements CSTransaction {
 
   private async writeSchema() {
     const result = {} as Record<string, ISerializedCollectionConfig>
-    for (const [name, collection] of this.collections) {
+    this.collections.forEach((collection, name) => {
       result[name] = serialize_collection_config(collection)
-    }
+    })
     await fse.ensureDir(this.root)
     fs.writeFileSync(path.join(this.root, `${this.name}.json`), JSON.stringify(result, null, 2))
   }
@@ -95,7 +95,11 @@ export class CSDatabase implements CSTransaction {
   }
 
   listCollections(): Array<IDataCollection<any>> {
-    return [...this.collections.values()]
+    const result: Array<IDataCollection<any>> = []
+    this.collections.forEach((collection) => {
+      result.push(collection)
+    })
+    return result
   }
 
   async dropCollection(name: string): Promise<boolean> {
@@ -139,10 +143,10 @@ export class CSDatabase implements CSTransaction {
   }
 
   async persist() {
-    const res = []
-    for (const collection of this.collections) {
-      res.push(collection[1].persist())
-    }
+    const res: Array<Promise<void>> = []
+    this.collections.forEach((collection) => {
+      res.push(collection.persist())
+    })
     return Promise.all(res)
   }
 

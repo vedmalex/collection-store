@@ -1,4 +1,4 @@
-import { UnaryCondition } from '../query/UnaryCondition'
+import { UnaryCondition } from '../query/UnaryCondition' // unused
 import { query } from '../query/query'
 import { create } from './create'
 import { collection_config } from './collection_4'
@@ -22,6 +22,7 @@ const run = async () => {
   console.log(await data.find(q))
   console.log(await data.find(q1))
 
+  //@ts-ignore
   const q2 = query(
     {
       age: { $in: [30, 29] },
@@ -46,6 +47,7 @@ const run = async () => {
       // $or: () => () => true,
     },
   )
+
   /**
    * ЧТО НАДО СДЕЛАТЬ!
    * отсортировать операции $or и $and по наличию индекса

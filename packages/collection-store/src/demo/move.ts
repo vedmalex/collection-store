@@ -1,6 +1,6 @@
-import { ICollectionConfig } from '../async/ICollectionConfig'
-import Collection from '../async/collection'
-import { do_rotate_log } from '../async/collection/do_rotate_log'
+import { ICollectionConfig } from '../ICollectionConfig'
+import Collection from '../collection'
+import { do_rotate_log } from '../collection/do_rotate_log'
 import { Person } from './Person'
 
 export const move = async (config: ICollectionConfig<Person>) => {

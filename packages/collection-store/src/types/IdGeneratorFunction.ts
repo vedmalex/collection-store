@@ -1,4 +1,4 @@
-import { IList } from '../async/IList'
+import { IList } from '../IList'
 import { Item } from './Item'
 
 export type IdGeneratorFunction<T extends Item> = (

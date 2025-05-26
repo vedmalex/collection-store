@@ -7,5 +7,5 @@ declare const units: {
     readonly d: number;
     readonly w: number;
 };
-export declare function parse(str: string, returnUnit: keyof typeof units): number;
+export default function parse(str: string, returnUnit?: keyof typeof units): number;
 export {};

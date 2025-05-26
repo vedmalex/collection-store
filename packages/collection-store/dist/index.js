@@ -1,6 +1,60 @@
-// src/async/AdapterFile.ts
-import pathLib from "path";
-import fs from "fs-extra";
+var __create = Object.create;
+var __getProtoOf = Object.getPrototypeOf;
+var __defProp = Object.defineProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __toESM = (mod, isNodeMode, target) => {
+  target = mod != null ? __create(__getProtoOf(mod)) : {};
+  const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
+  for (let key2 of __getOwnPropNames(mod))
+    if (!__hasOwnProp.call(to, key2))
+      __defProp(to, key2, {
+        get: () => mod[key2],
+        enumerable: true
+      });
+  return to;
+};
+var __moduleCache = /* @__PURE__ */ new WeakMap;
+var __toCommonJS = (from) => {
+  var entry = __moduleCache.get(from), desc;
+  if (entry)
+    return entry;
+  entry = __defProp({}, "__esModule", { value: true });
+  if (from && typeof from === "object" || typeof from === "function")
+    __getOwnPropNames(from).map((key2) => !__hasOwnProp.call(entry, key2) && __defProp(entry, key2, {
+      get: () => from[key2],
+      enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable
+    }));
+  __moduleCache.set(from, entry);
+  return entry;
+};
+var __export = (target, all) => {
+  for (var name2 in all)
+    __defProp(target, name2, {
+      get: all[name2],
+      enumerable: true,
+      configurable: true,
+      set: (newValue) => all[name2] = () => newValue
+    });
+};
+
+// src/index.ts
+var exports_src = {};
+__export(exports_src, {
+  copy_collection: () => copy_collection,
+  List: () => List,
+  FileStorage: () => FileStorage,
+  Collection: () => Collection,
+  CSDatabase: () => CSDatabase,
+  AdapterMemory: () => AdapterMemory,
+  AdapterFile: () => AdapterFile
+});
+module.exports = __toCommonJS(exports_src);
+
+// src/AdapterFile.ts
+var import_path = __toESM(require("path"));
+var import_fs_extra = __toESM(require("fs-extra"));
 
 class AdapterFile {
   get name() {
@@ -8,9 +62,9 @@ class AdapterFile {
   }
   get file() {
     if (this.collection.list.singlefile) {
-      return pathLib.join(this.collection.root, `${this.collection.name}.json`);
+      return import_path.default.join(this.collection.root, `${this.collection.name}.json`);
     }
-    return pathLib.join(this.collection.root, this.collection.name, "metadata.json");
+    return import_path.default.join(this.collection.root, this.collection.name, "metadata.json");
   }
   collection;
   clone() {
@@ -23,41 +77,34 @@ class AdapterFile {
   async restore(name2) {
     let path = this.file;
     if (name2) {
-      const p = { ...pathLib.parse(this.file) };
+      const p = { ...import_path.default.parse(this.file) };
       p.name = name2;
       delete p.base;
-      path = pathLib.format(p);
+      path = import_path.default.format(p);
     }
-    if (fs.pathExistsSync(path)) {
-      return fs.readJSON(path);
+    if (import_fs_extra.default.pathExistsSync(path)) {
+      return import_fs_extra.default.readJSON(path);
     }
     return false;
   }
   async store(name2) {
     let path = this.file;
     if (name2) {
-      const p = { ...pathLib.parse(this.file) };
+      const p = { ...import_path.default.parse(this.file) };
       p.name = name2;
       delete p.base;
-      path = pathLib.format(p);
+      path = import_path.default.format(p);
     }
-    await fs.ensureFile(path);
-    await fs.writeJSON(path, this.collection.store(), {
+    await import_fs_extra.default.ensureFile(path);
+    await import_fs_extra.default.writeJSON(path, this.collection.store(), {
       spaces: 2
     });
   }
 }
 
-// src/async/timeparse.ts
-function getMicroseconds(value, unit) {
-  const result = units[unit];
-  if (result) {
-    return value * result;
-  }
-  throw new Error(`The unit "${unit}" could not be recognized`);
-}
+// src/timeparse.ts
 var units = {
-  "μs": 1,
+  μs: 1,
   ms: 1000,
   s: 1000 * 1000,
   m: 1000 * 1000 * 60,
@@ -77,9 +124,16 @@ function parse(str, returnUnit = "ms") {
   }
   return totalMicroseconds / units[returnUnit];
 }
+function getMicroseconds(value, unit) {
+  const result = units[unit];
+  if (result) {
+    return value * result;
+  }
+  throw new Error(`The unit "${unit}" could not be recognized`);
+}
 
-// src/async/collection.ts
-import _3 from "lodash-es";
+// src/collection.ts
+var _3 = __toESM(require("lodash-es"));
 
 // src/utils/autoIncIdGen.ts
 function autoIncIdGen(item, model, list2) {
@@ -92,14 +146,14 @@ function autoTimestamp(item, model, list2) {
 }
 
 // src/types/Item.ts
-import {z} from "zod";
-var ItemSchema = z.object({
-  __ttltime: z.number().optional(),
-  id: z.union([z.number(), z.string()]).optional()
+var import_zod = require("zod");
+var ItemSchema = import_zod.z.object({
+  __ttltime: import_zod.z.number().optional(),
+  id: import_zod.z.union([import_zod.z.number(), import_zod.z.string()]).optional()
 }).passthrough();
 
-// src/async/collection.ts
-import {CronJob} from "cron";
+// src/collection.ts
+var import_cron = require("cron");
 
 // src/query/$and.ts
 function $and(value) {
@@ -159,7 +213,7 @@ function $gte(value) {
   const val = get_value_of(value);
   if (val === undefined)
     return (_) => false;
-  return (v) => get_value_of(v) >= value;
+  return (v) => get_value_of(v) >= (value ?? 0);
 }
 
 // src/query/$in.ts
@@ -175,7 +229,7 @@ function $lt(value) {
   const val = get_value_of(value);
   if (val === undefined)
     return (_) => false;
-  return (v) => get_value_of(v) < value;
+  return (v) => get_value_of(v) < (value ?? 0);
 }
 
 // src/query/$lte.ts
@@ -183,7 +237,7 @@ function $lte(value) {
   const val = get_value_of(value);
   if (val === undefined)
     return (_) => false;
-  return (v) => get_value_of(v) <= value;
+  return (v) => get_value_of(v) <= (value ?? 0);
 }
 
 // src/query/$match.ts
@@ -327,7 +381,7 @@ function query(obj, options) {
   throw new Error("nonsense");
 }
 
-// src/async/iterators/last.ts
+// src/iterators/last.ts
 async function* last(collection2, condition) {
   if (typeof condition == "object")
     condition = query(condition);
@@ -339,7 +393,7 @@ async function* last(collection2, condition) {
   }
 }
 
-// src/async/iterators/first.ts
+// src/iterators/first.ts
 async function* first(collection2, condition) {
   if (typeof condition == "object")
     condition = query(condition);
@@ -351,7 +405,7 @@ async function* first(collection2, condition) {
   }
 }
 
-// src/async/iterators/all.ts
+// src/iterators/all.ts
 async function* all(collection2, condition) {
   if (typeof condition == "object")
     condition = query(condition);
@@ -362,7 +416,7 @@ async function* all(collection2, condition) {
   }
 }
 
-// src/async/collection/prepare_index_insert.ts
+// src/collection/prepare_index_insert.ts
 function prepare_index_insert(collection2, val) {
   const result = [];
   for (let i = 0;i < collection2.inserts?.length; i += 1) {
@@ -373,41 +427,53 @@ function prepare_index_insert(collection2, val) {
   };
 }
 
-// src/async/collection/update_index.ts
-function update_index(collection2, ov, nv, i) {
-  collection2.updates.forEach((item) => item(ov, nv, i));
+// src/collection/update_index.ts
+async function update_index(collection2, ov, nv, i) {
+  await Promise.all(collection2.updates.map((item) => item(ov, nv, i)));
 }
 
-// src/async/collection/ensure_ttl.ts
-import {sourceLte} from "b-pl-tree";
-async function ensure_ttl(collection3) {
-  if (collection3.ttl) {
+// src/collection/ensure_ttl.ts
+async function ensure_ttl(collection2) {
+  if (collection2.ttl) {
     const now = Date.now();
-    const ttl_index = sourceLte(now - collection3.ttl)(collection3.indexes[ttl_key]);
-    const source = [...ttl_index];
-    for (const i of source) {
-      await collection3.removeWithId(i.value);
+    const cutoffTime = now - collection2.ttl;
+    const ttlIndex = collection2.indexes[ttl_key];
+    if (!ttlIndex)
+      return;
+    const expiredItems = [];
+    const expiredGenerator = ttlIndex.lt(cutoffTime)(ttlIndex);
+    let cursor = expiredGenerator.next();
+    while (!cursor.done && cursor.value) {
+      if (cursor.value.value !== undefined) {
+        expiredItems.push(cursor.value.value);
+      }
+      cursor = expiredGenerator.next();
     }
-    await collection3.persist();
+    for (const itemId of expiredItems) {
+      await collection2.removeWithId(itemId);
+    }
+    if (expiredItems.length > 0) {
+      await collection2.persist();
+    }
   }
 }
 
-// src/async/collection/remove_index.ts
-function remove_index(collection3, val) {
-  collection3.removes.forEach((item) => item(val));
+// src/collection/remove_index.ts
+function remove_index(collection2, val) {
+  collection2.removes.forEach((item) => item(val));
 }
 
-// src/async/collection/create_index.ts
-import {get as get3} from "lodash-es";
-import {BPlusTree} from "b-pl-tree";
+// src/collection/create_index.ts
+var import_lodash_es3 = require("lodash-es");
+var import_b_pl_tree = require("b-pl-tree");
 
-// src/async/collection/ensure_indexed_value.ts
-import {get, set} from "lodash-es";
-function ensure_indexed_value(item, key2, collection3, gen, auto2, process) {
-  let value = get(item, key2);
+// src/collection/ensure_indexed_value.ts
+var import_lodash_es = require("lodash-es");
+function ensure_indexed_value(item, key2, collection2, gen, auto2, process) {
+  let value = import_lodash_es.get(item, key2);
   if (value == null && auto2) {
-    value = gen?.(item, collection3.name, collection3.list) ?? value;
-    set(item, key2, value);
+    value = gen?.(item, collection2.name, collection2.list) ?? value;
+    import_lodash_es.set(item, key2, value);
   }
   if (process) {
     value = process(value);
@@ -415,51 +481,57 @@ function ensure_indexed_value(item, key2, collection3, gen, auto2, process) {
   return value;
 }
 
-// src/async/collection/get_value.ts
-import {get as get2} from "lodash-es";
+// src/collection/get_value.ts
+var import_lodash_es2 = require("lodash-es");
 function get_value(item, key2, process) {
-  let value = get2(item, key2);
+  let value = import_lodash_es2.get(item, key2);
   if (process) {
     value = process(value);
   }
   return value;
 }
 
-// src/async/collection/validate_indexed_value_for_insert.ts
-function validate_indexed_value_for_insert(collection3, value, key2, sparse2, required2, unique2) {
+// src/collection/validate_indexed_value_for_insert.ts
+function validate_indexed_value_for_insert(collection2, value, key2, sparse2, required2, unique2) {
   if (!(sparse2 && value == null)) {
     if (required2 && value == null) {
       return [false, `value for index ${key2} is required, but ${value} is met`];
     }
-    if (unique2 && collection3.indexes.hasOwnProperty(key2) && collection3.indexes[key2].findFirst(value)) {
+    if (unique2 && collection2.indexes.hasOwnProperty(key2) && collection2.indexes[key2].findFirst(value) !== undefined) {
       return [false, `unique index ${key2} already contains value ${value}`];
     }
   }
   return [true];
 }
 
-// src/async/collection/validate_indexed_value_for_update.ts
-function validate_indexed_value_for_update(collection3, value, key2, sparse2, required2, unique2, id2) {
+// src/collection/validate_indexed_value_for_update.ts
+async function validate_indexed_value_for_update(collection2, value, key2, sparse2, required2, unique2, id2) {
   if (!(sparse2 && value == null)) {
     if (required2 && value == null) {
       return [false, `value for index ${key2} is required, but ${value} is met`];
     }
-    if (unique2 && collection3.indexes.hasOwnProperty(key2) && collection3.indexes[key2].findFirst(value) != id2) {
-      return [false, `unique index ${key2} already contains value ${value}`];
+    if (unique2 && collection2.indexes.hasOwnProperty(key2)) {
+      const existingPosition = collection2.indexes[key2].findFirst(value);
+      if (existingPosition !== undefined) {
+        const existingItem = await collection2.list.get(existingPosition);
+        if (existingItem && existingItem[collection2.id] !== id2) {
+          return [false, `unique index ${key2} already contains value ${value}`];
+        }
+      }
     }
   }
   return [true];
 }
 
-// src/async/collection/ensure_indexes.ts
-async function ensure_indexes(collection3) {
-  for (const ensure of collection3.ensures) {
+// src/collection/ensure_indexes.ts
+async function ensure_indexes(collection2) {
+  for (const ensure of collection2.ensures) {
     ensure();
   }
 }
 
-// src/async/collection/create_index.ts
-function create_index(collection4, key2, indexDef) {
+// src/collection/create_index.ts
+function create_index(collection2, key2, indexDef) {
   const {
     auto: auto2 = false,
     unique: unique2 = false,
@@ -477,7 +549,7 @@ function create_index(collection4, key2, indexDef) {
   if (!key2) {
     throw new Error(`key is required field for index`);
   }
-  collection4.indexDefs[key2] = {
+  collection2.indexDefs[key2] = {
     key: key2,
     auto: auto2,
     unique: unique2,
@@ -487,107 +559,107 @@ function create_index(collection4, key2, indexDef) {
     ignoreCase: ignoreCase2,
     process
   };
-  if (collection4.indexes.hasOwnProperty(key2)) {
+  if (collection2.indexes.hasOwnProperty(key2)) {
     throw new Error(`index with key ${key2} already exists`);
   }
   const insert = key2 !== "*" ? (item) => {
-    const value = ensure_indexed_value(item, key2, collection4, gen, auto2, process);
-    const [valid, message] = validate_indexed_value_for_insert(collection4, value, key2, sparse2, required2, unique2);
+    const value = ensure_indexed_value(item, key2, collection2, gen, auto2, process);
+    const [valid, message] = validate_indexed_value_for_insert(collection2, value, key2, sparse2, required2, unique2);
     if (!valid)
       throw new Error(message);
     if (!(sparse2 && value == null)) {
-      return (record_link) => collection4.indexes[key2].insert(value !== undefined ? value : null, record_link);
+      return (record_link) => collection2.indexes[key2].insert(value !== undefined ? value : null, record_link);
     }
   } : (item) => {
     let found = false;
     const newIndexDefs = Object.keys(item).reduce((res2, pname) => {
-      if (!collection4.indexDefs[pname]) {
+      if (!collection2.indexDefs[pname]) {
         found = true;
         res2[pname] = {
-          ...collection4.indexDefs["*"],
+          ...collection2.indexDefs["*"],
           key: pname
         };
       }
       return res2;
     }, {});
     if (found) {
-      collection4.indexDefs = {
-        ...collection4.indexDefs,
+      collection2.indexDefs = {
+        ...collection2.indexDefs,
         ...newIndexDefs
       };
-      build_indexes2(collection4, newIndexDefs);
-      ensure_indexes(collection4);
+      build_indexes(collection2, newIndexDefs);
+      ensure_indexes(collection2);
     }
     return (record_link) => {
       return;
     };
   };
-  const update = key2 !== "*" ? (ov, nv, index_payload) => {
-    const valueOld = ensure_indexed_value(ov, key2, collection4, gen, auto2, process);
+  const update = key2 !== "*" ? async (ov, nv, index_payload) => {
+    const valueOld = ensure_indexed_value(ov, key2, collection2, gen, auto2, process);
     const valueNew = get_value(nv, key2, process);
     if (valueNew != null) {
-      const [valid, message] = validate_indexed_value_for_update(collection4, valueNew, key2, sparse2, required2, unique2, ov[collection4.id]);
+      const [valid, message] = await validate_indexed_value_for_update(collection2, valueNew, key2, sparse2, required2, unique2, ov[collection2.id]);
       if (!valid)
         throw new Error(message);
       if (valueOld !== valueNew) {
         if (unique2) {
-          collection4.indexes[key2].remove(valueOld);
+          collection2.indexes[key2].remove(valueOld);
         } else {
-          collection4.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection4.id ? pointer == ov[collection4.id] : true);
+          collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == ov[collection2.id] : true);
         }
-        collection4.indexes[key2].insert(valueNew !== undefined ? valueNew : null, index_payload);
+        collection2.indexes[key2].insert(valueNew !== undefined ? valueNew : null, index_payload);
       }
     } else {
       if (unique2) {
-        collection4.indexes[key2].remove(valueOld);
+        collection2.indexes[key2].remove(valueOld);
       } else {
-        collection4.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection4.id ? pointer == ov[collection4.id] : true);
+        collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == ov[collection2.id] : true);
       }
     }
   } : undefined;
   const remove = key2 !== "*" ? (item) => {
-    console.log(key2, collection4.indexes[key2].removeSpecific(get3(item, key2) ?? null, (pointer) => key2 != collection4.id ? pointer == item[collection4.id] : true));
+    console.log(key2, collection2.indexes[key2].removeSpecific(import_lodash_es3.get(item, key2) ?? null, (pointer) => key2 != collection2.id ? pointer == item[collection2.id] : true));
   } : undefined;
   const ensure = key2 !== "*" ? () => {
-    if (!collection4.indexes.hasOwnProperty(key2)) {
-      collection4.indexes[key2] = new BPlusTree;
+    if (!collection2.indexes.hasOwnProperty(key2)) {
+      collection2.indexes[key2] = new import_b_pl_tree.BPlusTree;
     }
   } : undefined;
   const rebuild = key2 !== "*" ? async () => {
-    if (!collection4.indexes.hasOwnProperty(key2)) {
-      collection4.indexes[key2] = new BPlusTree;
-      if (collection4.list.length > 0) {
-        for await (const item of collection4.list.forward) {
-          insert?.(item)?.(item[collection4.id]);
+    if (!collection2.indexes.hasOwnProperty(key2)) {
+      collection2.indexes[key2] = new import_b_pl_tree.BPlusTree;
+      if (collection2.list.length > 0) {
+        for await (const item of collection2.list.forward) {
+          insert?.(item)?.(item[collection2.id]);
         }
       }
     }
   } : null;
   if (ensure)
-    collection4.ensures.push(ensure);
+    collection2.ensures.push(ensure);
   if (rebuild)
-    collection4.rebuilds.push(rebuild);
+    collection2.rebuilds.push(rebuild);
   if (insert)
-    collection4.inserts.push(insert);
+    collection2.inserts.push(insert);
   if (update)
-    collection4.updates.push(update);
+    collection2.updates.push(update);
   if (remove)
-    collection4.removes.push(remove);
+    collection2.removes.push(remove);
 }
 
-// src/async/collection/build_indexes.ts
-function build_indexes2(collection4, indexList2) {
+// src/collection/build_indexes.ts
+function build_indexes(collection2, indexList2) {
   for (const key2 in indexList2) {
-    create_index(collection4, key2, indexList2[key2]);
+    create_index(collection2, key2, indexList2[key2]);
   }
 }
 
-// src/async/collection/is_valid_ttl.ts
-function is_valid_ttl(collection5, item) {
+// src/collection/is_valid_ttl.ts
+function is_valid_ttl(collection2, item) {
   if (item) {
     if (item[ttl_key]) {
       const now = Date.now();
-      return now - item[ttl_key] <= collection5.ttl;
+      return now - item[ttl_key] <= collection2.ttl;
     } else {
       return true;
     }
@@ -596,11 +668,11 @@ function is_valid_ttl(collection5, item) {
   }
 }
 
-// src/async/collection/return_list_if_valid.ts
-async function return_list_if_valid(collection5, items) {
+// src/collection/return_list_if_valid.ts
+async function return_list_if_valid(collection2, items) {
   let invalidate = false;
   const result = items.filter((i) => {
-    if (is_valid_ttl(collection5, i)) {
+    if (is_valid_ttl(collection2, i)) {
       return true;
     } else {
       invalidate = true;
@@ -608,44 +680,44 @@ async function return_list_if_valid(collection5, items) {
     }
   });
   if (invalidate) {
-    if (collection5.ttl && collection5.list.length > 0) {
-      await ensure_ttl(collection5);
+    if (collection2.ttl && collection2.list.length > 0) {
+      await ensure_ttl(collection2);
     }
   }
   return result;
 }
 
-// src/async/collection/get_indexed_value.ts
-async function get_indexed_value(collection5, key2, value) {
+// src/collection/get_indexed_value.ts
+async function get_indexed_value(collection2, key2, value) {
   const result = [];
-  if (collection5.indexes[key2]) {
-    const keys = collection5.indexes[key2].find(value);
+  if (collection2.indexes[key2]) {
+    const keys = collection2.indexes[key2].find(value);
     for (const key3 of keys) {
-      const res2 = await collection5.list.get(key3);
+      const res2 = await collection2.list.get(key3);
       result.push(res2);
     }
   }
-  return return_list_if_valid(collection5, result);
+  return return_list_if_valid(collection2, result);
 }
 
-// src/async/collection/return_one_if_valid.ts
-async function return_one_if_valid(collection5, result) {
+// src/collection/return_one_if_valid.ts
+async function return_one_if_valid(collection2, result) {
   let invalidate = false;
-  if (result && !is_valid_ttl(collection5, result)) {
+  if (result && !is_valid_ttl(collection2, result)) {
     invalidate = true;
   }
   if (invalidate) {
-    if (collection5.ttl && collection5.list.length > 0) {
-      await ensure_ttl(collection5);
+    if (collection2.ttl && collection2.list.length > 0) {
+      await ensure_ttl(collection2);
     }
   }
   return invalidate ? undefined : result;
 }
 
-// src/async/collection/restore_index.ts
-import _ from "lodash-es";
+// src/collection/restore_index.ts
+var _ = __toESM(require("lodash-es"));
 
-// src/async/collection/restore_index_def.ts
+// src/collection/restore_index_def.ts
 function restore_index_def(collection, input) {
   const { key, auto, unique, sparse, required, ignoreCase } = input;
   return {
@@ -660,39 +732,50 @@ function restore_index_def(collection, input) {
   };
 }
 
-// src/async/collection/restore_index.ts
-function restore_index(collection6, input2) {
+// src/collection/restore_index.ts
+function restore_index(collection2, input2) {
   return _.map(input2, (index) => {
-    return restore_index_def(collection6, index);
+    return restore_index_def(collection2, index);
   }).reduce((res2, cur) => {
     res2[cur.key] = cur;
     return res2;
   }, {});
 }
 
-// src/async/collection/deserialize_indexes.ts
-import {BPlusTree as BPlusTree2} from "b-pl-tree";
+// src/utils/btree-serialization.ts
+var import_b_pl_tree2 = require("b-pl-tree");
+function serializeBPlusTree(tree) {
+  return import_b_pl_tree2.serializeTree(tree);
+}
+function deserializeBPlusTree(data) {
+  return import_b_pl_tree2.createTreeFrom(data);
+}
+function cloneBPlusTree(source) {
+  const serialized = import_b_pl_tree2.serializeTree(source);
+  return import_b_pl_tree2.createTreeFrom(serialized);
+}
+
+// src/collection/deserialize_indexes.ts
 function deserialize_indexes(indexes) {
   return Object.keys(indexes).reduce((res2, cur) => {
-    res2[cur] = BPlusTree2.createFrom(indexes[cur]);
+    res2[cur] = deserializeBPlusTree(indexes[cur]);
     return res2;
   }, {});
 }
 
-// src/async/collection/serialize_indexes.ts
-import {BPlusTree as BPlusTree3} from "b-pl-tree";
+// src/collection/serialize_indexes.ts
 function serialize_indexes(indexes) {
   return Object.keys(indexes).reduce((res2, cur) => {
-    res2[cur] = BPlusTree3.serialize(indexes[cur]);
+    res2[cur] = serializeBPlusTree(indexes[cur]);
     return res2;
   }, {});
 }
 
-// src/async/collection/store_index.ts
-import _2 from "lodash-es";
+// src/collection/store_index.ts
+var _2 = __toESM(require("lodash-es"));
 
-// src/async/collection/store_index_def.ts
-function store_index_def(collection7, input2) {
+// src/collection/store_index_def.ts
+function store_index_def(collection2, input2) {
   const { key: key2, auto: auto2, unique: unique2, sparse: sparse2, required: required2, ignoreCase: ignoreCase2 } = input2;
   return {
     key: key2,
@@ -706,78 +789,78 @@ function store_index_def(collection7, input2) {
   };
 }
 
-// src/async/collection/store_index.ts
-function store_index(collection7, input2) {
+// src/collection/store_index.ts
+function store_index(collection2, input2) {
   return _2.map(input2, (index) => {
-    return store_index_def(collection7, index);
+    return store_index_def(collection2, index);
   }).reduce((res2, cur) => {
     res2[cur.key] = cur;
     return res2;
   }, {});
 }
 
-// src/async/collection/copy_collection.ts
+// src/collection/copy_collection.ts
 async function copy_collection(model, source, dest) {
-  const collection8 = dest ?? Collection.create({
+  const collection2 = dest ?? Collection.create({
     root: source.root,
     name: model,
     adapter: source.storage.clone(),
     list: source.list.construct()
   });
-  collection8.indexDefs = source.indexDefs;
-  collection8.id = source.id;
-  collection8.ttl = source.ttl;
-  collection8.inserts = [];
-  collection8.removes = [];
-  collection8.updates = [];
-  collection8.ensures = [];
-  collection8.indexes = {};
-  build_indexes2(collection8, collection8.indexDefs);
-  await ensure_indexes(collection8);
+  collection2.indexDefs = source.indexDefs;
+  collection2.id = source.id;
+  collection2.ttl = source.ttl;
+  collection2.inserts = [];
+  collection2.removes = [];
+  collection2.updates = [];
+  collection2.ensures = [];
+  collection2.indexes = {};
+  build_indexes(collection2, collection2.indexDefs);
+  await ensure_indexes(collection2);
   for await (const item of source.list.forward) {
-    await collection8.push(item);
+    await collection2.push(item);
   }
-  await collection8.persist();
-  return collection8;
+  await collection2.persist();
+  return collection2;
 }
 
-// src/async/collection/do_rotate_log.ts
+// src/collection/do_rotate_log.ts
 async function do_rotate_log(source) {
   await copy_collection(`${source.name}.${new Date().toJSON()}`, source);
   await source.reset();
   await source.persist();
 }
 
-// src/async/collection/get_first_indexed_value.ts
-async function get_first_indexed_value(collection8, key2, value) {
-  if (collection8.indexes[key2]) {
-    const id2 = collection8.indexes[key2].findFirst(value);
-    const result = id2 != null ? await collection8.list.get(id2) : undefined;
-    return return_one_if_valid(collection8, result);
+// src/collection/get_first_indexed_value.ts
+async function get_first_indexed_value(collection2, key2, value) {
+  if (collection2.indexes[key2]) {
+    const id2 = collection2.indexes[key2].findFirst(value);
+    const result = id2 != null ? await collection2.list.get(id2) : undefined;
+    return return_one_if_valid(collection2, result);
   }
 }
 
-// src/async/collection/get_last_indexed_value.ts
-async function get_last_indexed_value(collection8, key2, value) {
-  if (collection8.indexes[key2]) {
-    const id2 = collection8.indexes[key2].findLast(value);
-    const result = id2 != null ? await collection8.list.get(id2) : undefined;
-    return return_one_if_valid(collection8, result);
+// src/collection/get_last_indexed_value.ts
+async function get_last_indexed_value(collection2, key2, value) {
+  if (collection2.indexes[key2]) {
+    const id2 = collection2.indexes[key2].findLast(value);
+    const result = id2 != null ? await collection2.list.get(id2) : undefined;
+    return return_one_if_valid(collection2, result);
   }
 }
 
-// src/async/collection/rebuild_indexes.ts
-async function rebuild_indexes(collection8) {
-  for (const reduild of collection8.rebuilds) {
+// src/collection/rebuild_indexes.ts
+async function rebuild_indexes(collection2) {
+  for (const reduild of collection2.rebuilds) {
     await reduild();
   }
 }
 
-// src/async/storage/List.ts
-import {get as get4, set as set2, unset, cloneDeep} from "lodash-es";
+// src/storage/List.ts
+var import_lodash_es4 = require("lodash-es");
 
 // src/utils/entity_create.ts
-import {diff} from "jsondiffpatch";
+var import_jsondiffpatch = require("jsondiffpatch");
 
 // src/utils/version_create.ts
 function version_create(version, delta) {
@@ -799,14 +882,14 @@ function entity_create(id2, item, schema) {
     updated: undefined,
     deleted: undefined,
     schema,
-    history: [version_create(0, diff({}, item))]
+    history: [version_create(0, import_jsondiffpatch.diff({}, item))]
   };
 }
 
 // src/utils/entity_update.ts
-import {diff as diff2} from "jsondiffpatch";
+var import_jsondiffpatch2 = require("jsondiffpatch");
 function entity_update(record, item) {
-  const delta = diff2(record.data, item);
+  const delta = import_jsondiffpatch2.diff(record.data, item);
   const v = version_create(record.next_version, delta);
   record.history.push(v);
   return {
@@ -818,9 +901,9 @@ function entity_update(record, item) {
 }
 
 // src/utils/entity_delete.ts
-import {diff as diff3} from "jsondiffpatch";
+var import_jsondiffpatch3 = require("jsondiffpatch");
 function entity_delete(record) {
-  const delta = diff3({}, record.data);
+  const delta = import_jsondiffpatch3.diff({}, record.data);
   const v = version_create(record.next_version, delta);
   record.history.push(v);
   return {
@@ -833,10 +916,12 @@ function entity_delete(record) {
 
 // src/utils/is_stored_record.ts
 function is_stored_record(item) {
-  return Object.hasOwn(item, "version") && typeof item.version === "number" && Object.hasOwn(item, "next_version") && typeof item.next_version === "number" && Object.hasOwn(item, "created") && typeof item.created === "number" && Object.hasOwn(item, "history") && Array.isArray(item.history);
+  if (!item || typeof item !== "object")
+    return false;
+  return Object.prototype.hasOwnProperty.call(item, "version") && typeof item.version === "number" && Object.prototype.hasOwnProperty.call(item, "next_version") && typeof item.next_version === "number" && Object.prototype.hasOwnProperty.call(item, "created") && typeof item.created === "number" && Object.prototype.hasOwnProperty.call(item, "history") && Array.isArray(item.history);
 }
 
-// src/async/storage/List.ts
+// src/storage/List.ts
 class List {
   get name() {
     return "List";
@@ -847,8 +932,8 @@ class List {
   _count = 0;
   collection;
   exists = Promise.resolve(true);
-  init(collection8) {
-    this.collection = collection8;
+  init(collection2) {
+    this.collection = collection2;
     return this;
   }
   async clone() {
@@ -857,15 +942,15 @@ class List {
     return list2;
   }
   async get(key2) {
-    const item = get4(this.hash, String(key2));
+    const item = import_lodash_es4.get(this.hash, String(key2));
     let result;
     if (is_stored_record(item)) {
-      result = cloneDeep(item.data);
+      result = import_lodash_es4.cloneDeep(item.data);
       if (!this.collection.audit) {
-        set2(this.hash, String(key2), result);
+        import_lodash_es4.set(this.hash, String(key2), result);
       }
     } else {
-      result = cloneDeep(item);
+      result = import_lodash_es4.cloneDeep(item);
     }
     return result;
   }
@@ -873,61 +958,65 @@ class List {
     return this._counter;
   }
   get length() {
-    return this._count;
+    return Object.keys(this.hash).length;
   }
   set length(len) {
     if (len === 0) {
       this.reset();
     }
   }
-  async set(_key, item) {
+  async set(key2, item) {
     let valiadtor = this.collection.validator(item);
     if (valiadtor.success) {
       let result;
       if (this.collection.audit) {
-        result = entity_create(item[this.collection.id], cloneDeep(item), this.collection.validation);
+        result = entity_create(item[this.collection.id], import_lodash_es4.cloneDeep(item), this.collection.validation);
       } else {
-        result = cloneDeep(item);
+        result = import_lodash_es4.cloneDeep(item);
       }
-      set2(this.hash, this._counter, result);
-      this._counter++;
-      this._count++;
+      const keyStr = String(key2);
+      const exists = Object.prototype.hasOwnProperty.call(this.hash, keyStr);
+      import_lodash_es4.set(this.hash, keyStr, result);
+      if (!exists) {
+        this._counter++;
+        this._count++;
+      }
       return is_stored_record(item) ? item.data : item;
     }
     throw new Error("Validation error");
   }
-  async update(_key, item) {
+  async update(key2, item) {
     let valiadtor = this.collection.validator(item);
     if (valiadtor.success) {
       let result = item;
-      const record = get4(this.hash, item[this.collection.id]);
+      const record = import_lodash_es4.get(this.hash, String(key2));
       if (this.collection.audit) {
         let res2;
         if (!is_stored_record(record)) {
           res2 = entity_create(item[this.collection.id], item, this.collection.validation);
         } else {
-          res2 = entity_update(record, cloneDeep(item));
+          res2 = entity_update(record, import_lodash_es4.cloneDeep(item));
         }
-        set2(this.hash, item[this.collection.id], res2);
+        import_lodash_es4.set(this.hash, String(key2), res2);
         result = res2.data;
       } else {
-        set2(this.hash, item[this.collection.id], cloneDeep(result));
+        import_lodash_es4.set(this.hash, String(key2), import_lodash_es4.cloneDeep(result));
       }
       return result;
     }
     throw new Error("Validation error");
   }
   async delete(i) {
-    const item = get4(this.hash, i.toString());
+    const item = import_lodash_es4.get(this.hash, i?.toString() ?? "undefined");
     let result;
     if (is_stored_record(item)) {
       entity_delete(item);
-      result = cloneDeep(item.data);
+      result = import_lodash_es4.cloneDeep(item.data);
       this._count--;
     } else {
-      unset(this.hash, i.toString());
+      import_lodash_es4.unset(this.hash, i?.toString() ?? "undefined");
       this._count--;
-      result = cloneDeep(item);
+      result = import_lodash_es4.cloneDeep(item);
     }
     return result;
   }
@@ -950,6 +1039,8 @@ class List {
   }
   persist() {
     return {
+      counter: this._counter,
+      tree: {},
       _count: this._count,
       _counter: this._counter,
       hash: this.hash
@@ -967,17 +1058,17 @@ class List {
   }
   async* toArray() {
     for (const key2 of this.keys) {
-      yield get4(this.hash, key2);
+      yield import_lodash_es4.get(this.hash, key2);
     }
   }
   async* toArrayReverse() {
     for (const key2 of this.keys.reverse()) {
-      yield get4(this.hash, key2);
+      yield import_lodash_es4.get(this.hash, key2);
     }
   }
 }
 
-// src/async/AdapterMemory.ts
+// src/AdapterMemory.ts
 class AdapterMemory {
   get name() {
     return "AdapterMemory";
@@ -986,8 +1077,8 @@ class AdapterMemory {
   clone() {
     return new AdapterMemory;
   }
-  init(collection8) {
-    this.collection = collection8;
+  init(collection2) {
+    this.collection = collection2;
     return this;
   }
   restore(name2) {
@@ -998,50 +1089,26 @@ class AdapterMemory {
   }
 }
 
-// src/async/collection/serialize_collection_config.ts
-function serialize_collection_config(collection9) {
+// src/collection/serialize_collection_config.ts
+function serialize_collection_config(collection2) {
   const res2 = {};
-  res2.audit = collection9.audit ? true : undefined;
-  res2.root = collection9.root;
-  res2.rotate = collection9.rotate ?? undefined;
-  res2.ttl = collection9.ttl ? collection9.ttl : undefined;
-  res2.name = collection9.name;
-  res2.adapter = collection9.storage.name;
-  res2.list = collection9.list.name;
-  res2.id = collection9.id || "id";
-  res2.auto = collection9.auto ?? undefined;
-  res2.indexList = Object.keys(collection9.indexDefs).map((name2) => {
-    const res3 = collection9.indexDefs[name2];
+  res2.audit = collection2.audit ? true : undefined;
+  res2.root = collection2.root;
+  res2.rotate = collection2.rotate ?? undefined;
+  res2.ttl = collection2.ttl ? collection2.ttl : undefined;
+  res2.name = collection2.name;
+  res2.adapter = collection2.storage.name;
+  res2.list = collection2.list.name;
+  res2.id = collection2.id || "id";
+  res2.auto = collection2.auto ?? undefined;
+  res2.indexList = Object.keys(collection2.indexDefs).map((name2) => {
+    const res3 = collection2.indexDefs[name2];
     return serializeIndex(res3);
   });
   return res2;
 }
 
-// src/async/collection.ts
-function serializeIndex(res2) {
-  return {
-    key: res2.key,
-    auto: res2.auto ? true : undefined,
-    unique: res2.unique ? true : undefined,
-    sparse: res2.sparse ? true : undefined,
-    ignoreCase: res2.ignoreCase ? true : undefined,
-    required: res2.required ? true : undefined,
-    gen: res2.gen?.name ?? undefined,
-    process: res2.process?.toString() ?? undefined
-  };
-}
-function deserializeIndex(res) {
-  return {
-    key: res.key,
-    auto: res.auto ? true : undefined,
-    unique: res.unique ? true : undefined,
-    sparse: res.sparse ? true : undefined,
-    ignoreCase: res.ignoreCase ? true : undefined,
-    required: res.required ? true : undefined,
-    gen: res.gen ? Collection.genCache[res.gen] : undefined,
-    process: res.process ? eval(res.process) : undefined
-  };
-}
+// src/collection.ts
 var ttl_key = "__ttltime";
 
 class Collection {
@@ -1098,8 +1165,7 @@ class Collection {
   ensures;
   rebuilds;
   indexDefs;
-  constructor() {
-  }
+  constructor() {}
   static create(config) {
     const collection = new Collection;
     const {
@@ -1129,7 +1195,7 @@ class Collection {
       idGen = idGen.toString();
     }
     if (rotate) {
-      collection.cronJob = new CronJob(rotate, () => {
+      collection.cronJob = new import_cron.CronJob(rotate, () => {
         do_rotate_log(collection);
       });
       collection.cronJob.start();
@@ -1169,7 +1235,7 @@ class Collection {
       {
         key: collection.id,
         auto: collection.auto,
-        gen: typeof Id.gen == "function" ? Id.gen : Collection.genCache[Id.gen] ? Collection.genCache[Id.gen] : eval(Id.gen),
+        gen: typeof Id.gen == "function" ? Id.gen : Id.gen && Collection.genCache[Id.gen] ? Collection.genCache[Id.gen] : Id.gen ? eval(Id.gen) : undefined,
         unique: true,
         sparse: false,
         required: true
@@ -1195,7 +1261,7 @@ class Collection {
         required: true
       });
     }
-    build_indexes2(collection, defIndex.concat(indexList || []).reduce((prev, curr) => {
+    build_indexes(collection, defIndex.concat(indexList || []).reduce((prev, curr) => {
       if (curr.key == "*") {
         prev[curr.key] = {
           key: "*",
@@ -1255,20 +1321,21 @@ class Collection {
         this.updates = [];
         this.ensures = [];
         this.indexes = {};
-        build_indexes2(this, this.indexDefs);
+        build_indexes(this, this.indexDefs);
         this.indexes = deserialize_indexes(indexes);
         await rebuild_indexes(this);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     await ensure_ttl(this);
   }
   store() {
     return {
-      config: this.config,
       list: this.list.persist(),
       indexes: serialize_indexes(this.indexes),
-      indexDefs: store_index(this, this.indexDefs)
+      indexDefs: store_index(this, this.indexDefs),
+      id: this.id,
+      ttl: this.ttl,
+      rotate: this.rotate ? parseInt(this.rotate) : undefined
     };
   }
   async persist(name2) {
@@ -1289,7 +1356,7 @@ class Collection {
   async save(res2) {
     const id2 = res2[this.id];
     const item = await this.findById(id2);
-    update_index(this, item, res2, id2);
+    await update_index(this, item, res2, id2);
     await this.list.update(id2, res2);
     return return_one_if_valid(this, res2);
   }
@@ -1318,18 +1385,22 @@ class Collection {
       return this.last();
   }
   async findById(id2) {
-    const { process } = this.indexDefs[this.id];
-    if (process) {
-      id2 = process(id2);
+    const indexDef = this.indexDefs[this.id];
+    if (indexDef?.process) {
+      id2 = indexDef.process(id2);
     }
-    const result = await this.list.get(this.indexes[this.id].findFirst(id2));
+    const index = this.indexes[this.id];
+    if (!index) {
+      throw new Error(`Index for ${this.id} not found`);
+    }
+    const result = await this.list.get(index.findFirst(id2));
     return return_one_if_valid(this, result);
   }
   async findBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const { process } = this.indexDefs[key2];
-      if (process) {
-        id2 = process(id2);
+      const indexDef = this.indexDefs[key2];
+      if (indexDef?.process) {
+        id2 = indexDef.process(id2);
       }
       const result = [];
       if (this.indexDefs.hasOwnProperty(key2)) {
@@ -1342,9 +1413,9 @@ class Collection {
   }
   async findFirstBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const { process } = this.indexDefs[key2];
-      if (process) {
-        id2 = process(id2);
+      const indexDef = this.indexDefs[key2];
+      if (indexDef?.process) {
+        id2 = indexDef.process(id2);
       }
       if (this.indexDefs.hasOwnProperty(key2)) {
         const result = await get_first_indexed_value(this, key2, id2);
@@ -1355,9 +1426,9 @@ class Collection {
   }
   async findLastBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const { process } = this.indexDefs[key2];
-      if (process) {
-        id2 = process(id2);
+      const indexDef = this.indexDefs[key2];
+      if (indexDef?.process) {
+        id2 = indexDef.process(id2);
       }
       if (this.indexDefs.hasOwnProperty(key2)) {
         const result = await get_last_indexed_value(this, key2, id2);
@@ -1381,43 +1452,51 @@ class Collection {
     const result = await (await last(this, condition).next()).value;
     return return_one_if_valid(this, result);
   }
-  async update(condition, update, merge = true) {
+  async update(condition, update, merge2 = true) {
     const result = [];
     for await (const item of all(this, condition)) {
-      const res2 = merge ? _3.merge({}, item, update) : _3.assign({}, item, update);
-      update_index(this, item, res2, item[this.id]);
+      const res2 = merge2 ? _3.merge({}, item, update) : _3.assign({}, item, update);
+      await update_index(this, item, res2, item[this.id]);
       await this.list.update(item[this.id], res2);
       result.push(res2);
     }
     return return_list_if_valid(this, result);
   }
-  async updateFirst(condition, update, merge = true) {
+  async updateFirst(condition, update, merge2 = true) {
     const item = await (await first(this, condition).next()).value;
-    const res2 = merge ? _3.merge({}, item, update) : _3.assign({}, item, update);
-    update_index(this, item, res2, item[this.id]);
+    const res2 = merge2 ? _3.merge({}, item, update) : _3.assign({}, item, update);
+    await update_index(this, item, res2, item[this.id]);
     await this.list.update(item[this.id], res2);
     return return_one_if_valid(this, res2);
   }
-  async updateLast(condition, update, merge = true) {
+  async updateLast(condition, update, merge2 = true) {
     const item = await (await last(this, condition).next()).value;
-    const res2 = merge ? _3.merge({}, item, update) : _3.assign({}, item, update);
-    update_index(this, item, res2, item[this.id]);
+    const res2 = merge2 ? _3.merge({}, item, update) : _3.assign({}, item, update);
+    await update_index(this, item, res2, item[this.id]);
     await this.list.update(item[this.id], res2);
     return return_one_if_valid(this, res2);
   }
-  async updateWithId(id2, update, merge = true) {
+  async updateWithId(id2, update, merge2 = true) {
     const item = await this.findById(id2);
-    const res2 = merge ? _3.merge({}, item, update) : _3.assign({}, item, update);
-    update_index(this, res2, update, id2);
-    this.list.update(id2, res2);
+    const res2 = merge2 ? _3.merge({}, item, update) : _3.assign({}, item, update);
+    await update_index(this, item, res2, id2);
+    await this.list.update(id2, res2);
     return return_one_if_valid(this, res2);
   }
   async removeWithId(id2) {
-    const i = this.indexes[this.id].findFirst(id2);
+    const indexDef = this.indexDefs[this.id];
+    if (indexDef?.process) {
+      id2 = indexDef.process(id2);
+    }
+    const index = this.indexes[this.id];
+    if (!index) {
+      throw new Error(`Index for ${this.id} not found`);
+    }
+    const i = index.findFirst(id2);
     const cur = await this.list.get(i);
-    if (~i && cur) {
+    if (i !== undefined && cur) {
       remove_index(this, cur);
-      const result = await this.list.delete(i);
+      const result = await this.list.delete(id2);
       return return_one_if_valid(this, result);
     }
   }
@@ -1443,24 +1522,47 @@ class Collection {
     return return_one_if_valid(this, item);
   }
 }
+function serializeIndex(res2) {
+  return {
+    key: res2.key,
+    auto: res2.auto ? true : undefined,
+    unique: res2.unique ? true : undefined,
+    sparse: res2.sparse ? true : undefined,
+    ignoreCase: res2.ignoreCase ? true : undefined,
+    required: res2.required ? true : undefined,
+    gen: res2.gen?.name ?? undefined,
+    process: res2.process?.toString() ?? undefined
+  };
+}
+function deserializeIndex(res) {
+  return {
+    key: res.key,
+    auto: res.auto ? true : undefined,
+    unique: res.unique ? true : undefined,
+    sparse: res.sparse ? true : undefined,
+    ignoreCase: res.ignoreCase ? true : undefined,
+    required: res.required ? true : undefined,
+    gen: res.gen ? Collection.genCache[res.gen] : undefined,
+    process: res.process ? eval(res.process) : undefined
+  };
+}
 
-// src/async/storage/FileStorage.ts
-import {BPlusTree as BPlusTree4} from "b-pl-tree";
-import fs2 from "fs-extra";
-import pathlib from "path";
-import {cloneDeep as cloneDeep2} from "lodash-es";
-import {fromZodError} from "zod-validation-error";
-
+// src/storage/FileStorage.ts
+var import_b_pl_tree3 = require("b-pl-tree");
+var import_fs_extra2 = __toESM(require("fs-extra"));
+var import_path2 = __toESM(require("path"));
+var import_lodash_es5 = require("lodash-es");
+var import_zod_validation_error = require("zod-validation-error");
 class FileStorage {
-  keyField;
   get name() {
     return "FileStorage";
   }
   singlefile = false;
-  tree = new BPlusTree4(32, true);
+  tree = new import_b_pl_tree3.BPlusTree(32, true);
   get folder() {
-    return pathlib.join(this.collection.root, this.collection.name);
+    return import_path2.default.join(this.collection.root, this.collection.name);
   }
+  keyField;
   constructor(keyField) {
     this.keyField = keyField;
   }
@@ -1469,18 +1571,18 @@ class FileStorage {
   construct() {
     return new FileStorage;
   }
-  init(collection9) {
-    this.collection = collection9;
+  init(collection2) {
+    this.collection = collection2;
     if (this.keyField && !this.collection.indexDefs[this.keyField].unique) {
       throw new Error(`key field ${this.keyField} is not unique`);
     }
-    this.exists = fs2.ensureDir(this.folder).then((_4) => true).catch((_4) => false);
+    this.exists = import_fs_extra2.default.ensureDir(this.folder).then((_4) => true).catch((_4) => false);
     return this;
   }
   async clone() {
     if (await this.exists) {
       const res2 = new FileStorage;
-      BPlusTree4.deserialize(res2.tree, BPlusTree4.serialize(this.tree));
+      res2.tree = cloneBPlusTree(this.tree);
       return res2;
     }
     throw new Error("folder not found");
@@ -1489,13 +1591,13 @@ class FileStorage {
     return {
       keyField: this.keyField,
       counter: this._counter,
-      tree: BPlusTree4.serialize(this.tree)
+      tree: serializeBPlusTree(this.tree)
     };
   }
   load(obj) {
     this._counter = obj.counter;
     this.keyField = !obj.keyField ? this.keyField : this.keyField ? this.keyField : obj.keyField;
-    BPlusTree4.deserialize(this.tree, obj.tree);
+    this.tree = deserializeBPlusTree(obj.tree);
     return this;
   }
   get forward() {
@@ -1512,8 +1614,10 @@ class FileStorage {
     const res2 = await this.exists;
     if (res2) {
       const it = this.tree.each()(this.tree);
-      for (const path of it) {
-        yield await fs2.readJSON(this.get_path(path.value));
+      let cursor = it.next();
+      while (!cursor.done && cursor.value) {
+        yield await import_fs_extra2.default.readJSON(this.get_path(cursor.value.value));
+        cursor = it.next();
       }
     } else
       throw new Error("folder not found");
@@ -1521,26 +1625,28 @@ class FileStorage {
   async* toArrayReverse() {
     if (await this.exists) {
       const it = this.tree.each(false)(this.tree);
-      for (const path of it) {
-        yield await fs2.readJSON(this.get_path(path.value));
+      let cursor = it.next();
+      while (!cursor.done && cursor.value) {
+        yield await import_fs_extra2.default.readJSON(this.get_path(cursor.value.value));
+        cursor = it.next();
       }
     } else
       throw new Error("folder not found");
   }
   key_filename(key2) {
-    return `${key2.toString()}.json`;
+    return `${key2?.toString() ?? "undefined"}.json`;
   }
   set_path(key2) {
-    return pathlib.join(this.folder, this.key_filename(key2));
+    return import_path2.default.join(this.folder, this.key_filename(key2));
   }
   get_path(value) {
-    return pathlib.join(this.folder, value);
+    return import_path2.default.join(this.folder, value);
   }
   async reset() {
     if (await this.exists) {
-      await fs2.remove(this.folder);
+      await import_fs_extra2.default.remove(this.folder);
       this.tree.reset();
-      this.exists = fs2.ensureDir(this.folder).then((_4) => true).catch((_4) => false);
+      this.exists = import_fs_extra2.default.ensureDir(this.folder).then((_4) => true).catch((_4) => false);
     } else
       throw new Error("folder not found");
   }
@@ -1549,10 +1655,10 @@ class FileStorage {
       const value = this.tree.findFirst(key2);
       if (value) {
         const location = this.get_path(value);
-        const result = await fs2.readJSON(location);
+        const result = await import_fs_extra2.default.readJSON(location);
         if (is_stored_record(result)) {
           if (!this.collection.audit) {
-            await fs2.writeJSON(location, result);
+            await import_fs_extra2.default.writeJSON(location, result);
           }
           return result.data;
         } else {
@@ -1570,15 +1676,15 @@ class FileStorage {
         const uid = this.keyField ? item[this.keyField] ? item[this.keyField] : key2 : key2;
         let result;
         if (this.collection.audit) {
-          result = entity_create(item[this.collection.id], cloneDeep2(item), this.collection.validation);
+          result = entity_create(item[this.collection.id], import_lodash_es5.cloneDeep(item), this.collection.validation);
         } else {
-          result = cloneDeep2(item);
+          result = import_lodash_es5.cloneDeep(item);
         }
-        await fs2.writeJSON(this.set_path(uid), result);
+        await import_fs_extra2.default.writeJSON(this.set_path(uid), result);
         this.tree.insert(key2, this.key_filename(uid));
         return this.collection.audit ? result.data : result;
       } else {
-        console.log(fromZodError(valiadtor.errors));
+        console.log(import_zod_validation_error.fromZodError(valiadtor.errors));
         throw new Error("Validation error");
       }
     }
@@ -1590,22 +1696,22 @@ class FileStorage {
       if (valiadtor.success) {
         const location = this.get_path(this.tree.findFirst(key2));
         let result = item;
-        const record = await fs2.readJSON(location);
+        const record = await import_fs_extra2.default.readJSON(location);
         if (this.collection.audit) {
           let res2;
           if (!is_stored_record(record)) {
-            res2 = entity_create(item[this.collection.id], cloneDeep2(item), this.collection.validation);
+            res2 = entity_create(item[this.collection.id], import_lodash_es5.cloneDeep(item), this.collection.validation);
           } else {
-            res2 = entity_update(record, cloneDeep2(item));
+            res2 = entity_update(record, import_lodash_es5.cloneDeep(item));
           }
           result = res2.data;
-          await fs2.writeJSON(location, res2);
+          await import_fs_extra2.default.writeJSON(location, res2);
         } else {
-          await fs2.writeJSON(location, result);
+          await import_fs_extra2.default.writeJSON(location, result);
         }
         return result;
       } else {
-        console.log(fromZodError(valiadtor.errors));
+        console.log(import_zod_validation_error.fromZodError(valiadtor.errors));
         throw new Error("Validation error");
       }
     }
@@ -1616,15 +1722,15 @@ class FileStorage {
       const value = this.tree.findFirst(key2);
       if (value) {
         const location = this.get_path(value);
-        const item = await fs2.readJSON(location);
+        const item = await import_fs_extra2.default.readJSON(location);
         let result;
         if (is_stored_record(item)) {
           result = item.data;
           const res2 = entity_delete(item);
-          await fs2.writeJSON(location, res2);
+          await import_fs_extra2.default.writeJSON(location, res2);
         } else {
           result = item;
-          await fs2.unlink(location);
+          await import_fs_extra2.default.unlink(location);
         }
         this.tree.remove(key2);
         return result;
@@ -1642,11 +1748,11 @@ class FileStorage {
 }
 
 // src/CSDatabase.ts
-import fs3 from "fs";
-import path from "path";
-import fse from "fs-extra/esm";
+var import_fs = __toESM(require("fs"));
+var import_path3 = __toESM(require("path"));
+var import_fs_extra3 = __toESM(require("fs-extra"));
 
-// src/async/collection/deserialize_collection_config.ts
+// src/collection/deserialize_collection_config.ts
 function deserialize_collection_config(config2) {
   const res2 = {};
   res2.name = config2.name;
@@ -1675,60 +1781,63 @@ class CSDatabase {
   }
   async writeSchema() {
     const result = {};
-    for (const [name2, collection11] of this.collections) {
-      result[name2] = serialize_collection_config(collection11);
-    }
-    await fse.ensureDir(this.root);
-    fs3.writeFileSync(path.join(this.root, `${this.name}.json`), JSON.stringify(result, null, 2));
+    this.collections.forEach((collection2, name2) => {
+      result[name2] = serialize_collection_config(collection2);
+    });
+    await import_fs_extra3.default.ensureDir(this.root);
+    import_fs.default.writeFileSync(import_path3.default.join(this.root, `${this.name}.json`), JSON.stringify(result, null, 2));
   }
   async connect() {
     await this.load();
   }
   async load() {
-    const exists = fs3.existsSync(path.join(this.root, `${this.name}.json`));
+    const exists = import_fs.default.existsSync(import_path3.default.join(this.root, `${this.name}.json`));
     if (!exists) {
-      fse.ensureDirSync(this.root);
+      import_fs_extra3.default.ensureDirSync(this.root);
     } else {
-      const result = fse.readJSONSync(path.join(this.root, `${this.name}.json`));
+      const result = import_fs_extra3.default.readJSONSync(import_path3.default.join(this.root, `${this.name}.json`));
       this.collections.clear();
       for (const name2 in result) {
         const config2 = result[name2];
-        const collection11 = Collection.create(deserialize_collection_config(config2));
-        await collection11.load();
-        this.registerCollection(collection11);
+        const collection2 = Collection.create(deserialize_collection_config(config2));
+        await collection2.load();
+        this.registerCollection(collection2);
       }
     }
   }
-  async close() {
-  }
+  async close() {}
   collectionList = new Map;
-  registerCollection(collection11) {
-    if (!this.collections.has(collection11.name)) {
-      this.collections.set(collection11.name, collection11);
+  registerCollection(collection2) {
+    if (!this.collections.has(collection2.name)) {
+      this.collections.set(collection2.name, collection2);
       return;
     }
-    throw new Error(`collection ${collection11.name} already exists`);
+    throw new Error(`collection ${collection2.name} already exists`);
   }
   async createCollection(name2) {
     const [, collectionType = "List"] = name2.split(":");
-    const collection11 = Collection.create({
+    const collection2 = Collection.create({
       name: name2,
       list: collectionType === "List" ? new List : new FileStorage,
       adapter: new AdapterFile,
-      root: path.join(this.root, this.name)
+      root: import_path3.default.join(this.root, this.name)
     });
-    this.registerCollection(collection11);
+    this.registerCollection(collection2);
     await this.writeSchema();
-    return collection11;
+    return collection2;
   }
   listCollections() {
-    return [...this.collections.values()];
+    const result = [];
+    this.collections.forEach((collection2) => {
+      result.push(collection2);
+    });
+    return result;
   }
   async dropCollection(name2) {
     let result = false;
     if (this.collections.has(name2)) {
-      const collection11 = this.collections.get(name2);
-      await collection11.reset();
+      const collection2 = this.collections.get(name2);
+      await collection2.reset();
       result = this.collections.delete(name2);
       await this.writeSchema();
     }
@@ -1740,9 +1849,9 @@ class CSDatabase {
     }
     throw new Error(`collection ${name2} not found`);
   }
-  async createIndex(collection11, name2, def) {
-    if (this.collections.has(collection11)) {
-      const col = this.collections.get(collection11);
+  async createIndex(collection2, name2, def) {
+    if (this.collections.has(collection2)) {
+      const col = this.collections.get(collection2);
       if (col.listIndexes(name2)) {
         col.dropIndex(name2);
         await col.createIndex(name2, def);
@@ -1750,21 +1859,21 @@ class CSDatabase {
       await this.writeSchema();
       return;
     }
-    throw new Error(`collection ${collection11} not found`);
+    throw new Error(`collection ${collection2} not found`);
   }
-  async dropIndex(collection11, name2) {
-    if (this.collections.has(collection11)) {
-      this.collections.get(collection11)?.dropIndex(name2);
+  async dropIndex(collection2, name2) {
+    if (this.collections.has(collection2)) {
+      this.collections.get(collection2)?.dropIndex(name2);
       await this.writeSchema();
       return;
     }
-    throw new Error(`collection ${collection11} not found`);
+    throw new Error(`collection ${collection2} not found`);
   }
   async persist() {
     const res2 = [];
-    for (const collection11 of this.collections) {
-      res2.push(collection11[1].persist());
-    }
+    this.collections.forEach((collection2) => {
+      res2.push(collection2.persist());
+    });
     return Promise.all(res2);
   }
   async startSession() {
@@ -1786,43 +1895,36 @@ class CSDatabase {
     await this.persist();
     this.inTransaction = false;
   }
-  async first(collection11) {
-    return this.collections.get(collection11).first();
+  async first(collection2) {
+    return this.collections.get(collection2).first();
   }
-  async last(collection11) {
-    return this.collections.get(collection11).last();
+  async last(collection2) {
+    return this.collections.get(collection2).last();
   }
-  async lowest(collection11, key2) {
-    return this.collections.get(collection11).lowest(key2);
+  async lowest(collection2, key2) {
+    return this.collections.get(collection2).lowest(key2);
   }
-  async greatest(collection11, key2) {
-    return this.collections.get(collection11).greatest(key2);
+  async greatest(collection2, key2) {
+    return this.collections.get(collection2).greatest(key2);
   }
-  async oldest(collection11) {
-    return this.collections.get(collection11).oldest();
+  async oldest(collection2) {
+    return this.collections.get(collection2).oldest();
   }
-  async latest(collection11) {
-    return this.collections.get(collection11).latest();
+  async latest(collection2) {
+    return this.collections.get(collection2).latest();
   }
-  async findById(collection11, id2) {
-    return this.collections.get(collection11).findById(id2);
+  async findById(collection2, id2) {
+    return this.collections.get(collection2).findById(id2);
   }
-  async findBy(collection11, key2, id2) {
-    return this.collections.get(collection11).findBy(key2, id2);
+  async findBy(collection2, key2, id2) {
+    return this.collections.get(collection2).findBy(key2, id2);
   }
-  async findFirstBy(collection11, key2, id2) {
-    return this.collections.get(collection11).findFirstBy(key2, id2);
+  async findFirstBy(collection2, key2, id2) {
+    return this.collections.get(collection2).findFirstBy(key2, id2);
   }
-  async findLastBy(collection11, key2, id2) {
-    return this.collections.get(collection11).findLastBy(key2, id2);
+  async findLastBy(collection2, key2, id2) {
+    return this.collections.get(collection2).findLastBy(key2, id2);
   }
 }
-export {
-  copy_collection,
-  List,
-  FileStorage,
-  Collection,
-  CSDatabase,
-  AdapterMemory,
-  AdapterFile
-};
+
+//# debugId=9765C6D93F4AC5C264756E2164756E21
