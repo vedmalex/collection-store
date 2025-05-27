@@ -410,19 +410,26 @@ function remove_index(collection2, val) {
 }
 
 // src/collection/create_index.ts
-import { get as get3 } from "lodash-es";
+import { get as get4 } from "lodash-es";
 import { BPlusTree } from "b-pl-tree";
 
 // src/collection/ensure_indexed_value.ts
 import { get, set } from "lodash-es";
 function ensure_indexed_value(item, key2, collection2, gen, auto2, process) {
-  let value = get(item, key2);
-  if (value == null && auto2) {
-    value = gen?.(item, collection2.name, collection2.list) ?? value;
-    set(item, key2, value);
-  }
-  if (process) {
-    value = process(value);
+  let value;
+  const indexDef = collection2.indexDefs[key2];
+  const isCompoundIndex = !!(indexDef?.keys || indexDef?.composite);
+  if (process && isCompoundIndex) {
+    value = process(item);
+  } else {
+    value = get(item, key2);
+    if (value == null && auto2) {
+      value = gen?.(item, collection2.name, collection2.list) ?? value;
+      set(item, key2, value);
+    }
+    if (process && !isCompoundIndex) {
+      value = process(value);
+    }
   }
   return value;
 }
@@ -430,9 +437,11 @@ function ensure_indexed_value(item, key2, collection2, gen, auto2, process) {
 // src/collection/get_value.ts
 import { get as get2 } from "lodash-es";
 function get_value(item, key2, process) {
-  let value = get2(item, key2);
+  let value;
   if (process) {
-    value = process(value);
+    value = process(item);
+  } else {
+    value = get2(item, key2);
   }
   return value;
 }
@@ -476,6 +485,191 @@ async function ensure_indexes(collection2) {
   }
 }
 
+// src/utils/CompositeKeyUtils.ts
+import { get as get3 } from "lodash-es";
+
+class CompositeKeyUtils {
+  static DEFAULT_SEPARATOR = "\x00";
+  static serialize(values, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    return values.map((value) => {
+      if (value === null || value === undefined) {
+        return "";
+      }
+      const stringValue = String(value);
+      return stringValue.replace(/\\/g, "\\\\").replace(new RegExp(separator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"), `\\${separator}`);
+    }).join(separator);
+  }
+  static deserialize(serialized, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    if (!serialized) {
+      return [];
+    }
+    const parts = [];
+    let current = "";
+    let i = 0;
+    while (i < serialized.length) {
+      if (serialized[i] === "\\" && i + 1 < serialized.length) {
+        current += serialized[i + 1];
+        i += 2;
+      } else if (serialized[i] === separator) {
+        parts.push(current === "" ? null : current);
+        current = "";
+        i++;
+      } else {
+        current += serialized[i];
+        i++;
+      }
+    }
+    parts.push(current === "" ? null : current);
+    return parts;
+  }
+  static compare(a, b) {
+    if (a < b)
+      return -1;
+    if (a > b)
+      return 1;
+    return 0;
+  }
+  static extractValues(item, keyPaths) {
+    return keyPaths.map((path) => {
+      if (typeof path === "string") {
+        return get3(item, path);
+      }
+      return get3(item, path);
+    });
+  }
+  static createKey(item, keyPaths, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    const values = CompositeKeyUtils.extractValues(item, keyPaths);
+    return CompositeKeyUtils.serialize(values, separator);
+  }
+  static validateKeyPaths(keyPaths) {
+    if (!Array.isArray(keyPaths) || keyPaths.length === 0) {
+      return false;
+    }
+    return keyPaths.every((path) => typeof path === "string" && path.length > 0);
+  }
+  static generateIndexName(keyPaths) {
+    return keyPaths.map((path) => String(path)).join(",");
+  }
+  static isEmptyValue(value) {
+    return value === null || value === undefined || value === "";
+  }
+  static createPartialKey(values, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    const filteredValues = [];
+    for (let i = 0;i < values.length; i++) {
+      if (values[i] !== undefined) {
+        filteredValues.push(values[i]);
+      } else {
+        break;
+      }
+    }
+    return CompositeKeyUtils.serialize(filteredValues, separator);
+  }
+  static normalizeCompositeKeys(keys) {
+    return keys.map((key2) => {
+      if (typeof key2 === "string") {
+        return { key: key2, order: "asc" };
+      } else if (typeof key2 === "object" && "key" in key2) {
+        return { key: key2.key, order: key2.order || "asc" };
+      } else {
+        return { key: key2, order: "asc" };
+      }
+    });
+  }
+  static extractValuesWithOrder(item, fields) {
+    return fields.map((field) => {
+      const value = get3(item, field.key);
+      return value;
+    });
+  }
+  static createComparator(fields, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    return (a, b) => {
+      const valuesA = CompositeKeyUtils.deserialize(a, separator);
+      const valuesB = CompositeKeyUtils.deserialize(b, separator);
+      for (let i = 0;i < Math.min(valuesA.length, valuesB.length, fields.length); i++) {
+        const field = fields[i];
+        const valueA = valuesA[i];
+        const valueB = valuesB[i];
+        if (valueA === null && valueB === null)
+          continue;
+        if (valueA === null)
+          return field.order === "asc" ? -1 : 1;
+        if (valueB === null)
+          return field.order === "asc" ? 1 : -1;
+        let comparison = 0;
+        if (typeof valueA === "string" && typeof valueB === "string") {
+          comparison = valueA.localeCompare(valueB);
+        } else if (typeof valueA === "number" && typeof valueB === "number") {
+          comparison = valueA - valueB;
+        } else if (valueA instanceof Date && valueB instanceof Date) {
+          comparison = valueA.getTime() - valueB.getTime();
+        } else {
+          comparison = String(valueA).localeCompare(String(valueB));
+        }
+        if (comparison !== 0) {
+          return field.order === "desc" ? -comparison : comparison;
+        }
+      }
+      return 0;
+    };
+  }
+  static createKeyWithOrder(item, fields, separator = CompositeKeyUtils.DEFAULT_SEPARATOR) {
+    const values = CompositeKeyUtils.extractValuesWithOrder(item, fields);
+    return CompositeKeyUtils.serialize(values, separator);
+  }
+  static validateCompositeKeyFields(fields) {
+    if (!Array.isArray(fields) || fields.length === 0) {
+      return false;
+    }
+    return fields.every((field) => field && typeof field === "object" && ("key" in field) && (typeof field.key === "string" && field.key.length > 0) && (!field.order || field.order === "asc" || field.order === "desc"));
+  }
+  static generateIndexNameFromFields(fields) {
+    return fields.map((field) => {
+      const keyStr = String(field.key);
+      return field.order === "desc" ? `${keyStr}:desc` : keyStr;
+    }).join(",");
+  }
+}
+
+// src/utils/SingleKeyUtils.ts
+class SingleKeyUtils {
+  static createComparator(order = "asc") {
+    return (a, b) => {
+      if (a === null && b === null)
+        return 0;
+      if (a === null)
+        return order === "asc" ? -1 : 1;
+      if (b === null)
+        return order === "asc" ? 1 : -1;
+      if (a === undefined && b === undefined)
+        return 0;
+      if (a === undefined)
+        return order === "asc" ? -1 : 1;
+      if (b === undefined)
+        return order === "asc" ? 1 : -1;
+      let result = 0;
+      if (typeof a === "number" && typeof b === "number") {
+        result = a - b;
+      } else if (typeof a === "string" && typeof b === "string") {
+        result = a.localeCompare(b);
+      } else if (typeof a === "boolean" && typeof b === "boolean") {
+        result = a === b ? 0 : a ? 1 : -1;
+      } else if (a instanceof Date && b instanceof Date) {
+        result = a.getTime() - b.getTime();
+      } else {
+        result = String(a).localeCompare(String(b));
+      }
+      const finalResult = order === "desc" ? -result : result;
+      return finalResult === 0 ? 0 : finalResult;
+    };
+  }
+  static validateSortOrder(order) {
+    return order === "asc" || order === "desc";
+  }
+  static normalizeSortOrder(order) {
+    return this.validateSortOrder(order) ? order : "asc";
+  }
+}
+
 // src/collection/create_index.ts
 function create_index(collection2, key2, indexDef) {
   const {
@@ -483,20 +677,47 @@ function create_index(collection2, key2, indexDef) {
     unique: unique2 = false,
     sparse: sparse2 = false,
     required: required2 = false,
-    ignoreCase: ignoreCase2
+    ignoreCase: ignoreCase2,
+    keys,
+    composite,
+    order
   } = indexDef;
   let { gen, process } = indexDef;
+  const isCompositeIndex = !!(keys || composite);
+  const keyPaths = keys || composite?.keys;
+  const separator = composite?.separator || CompositeKeyUtils.DEFAULT_SEPARATOR;
+  let compositeDef = composite;
   if (auto2 && !gen) {
     gen = Collection.genCache["autoIncIdGen"];
   }
   if (ignoreCase2) {
     process = (value) => value?.toString ? value.toString().toLowerCase() : value;
   }
-  if (!key2) {
-    throw new Error(`key is required field for index`);
+  if (isCompositeIndex) {
+    if (!keyPaths) {
+      throw new Error(`Composite key paths are required for composite index`);
+    }
+    const normalizedFields = CompositeKeyUtils.normalizeCompositeKeys(keyPaths);
+    if (!CompositeKeyUtils.validateCompositeKeyFields(normalizedFields)) {
+      throw new Error(`Invalid composite key fields for index`);
+    }
+    if (!key2) {
+      key2 = CompositeKeyUtils.generateIndexNameFromFields(normalizedFields);
+    }
+    process = (item) => {
+      return CompositeKeyUtils.createKeyWithOrder(item, normalizedFields, separator);
+    };
+    compositeDef = { keys: normalizedFields, separator };
+  } else {
+    if (!key2) {
+      throw new Error(`key is required field for index`);
+    }
   }
   collection2.indexDefs[key2] = {
-    key: key2,
+    key: isCompositeIndex ? undefined : indexDef.key || key2,
+    keys: isCompositeIndex ? keys || undefined : undefined,
+    composite: isCompositeIndex ? compositeDef : undefined,
+    order: !isCompositeIndex ? order : undefined,
     auto: auto2,
     unique: unique2,
     gen,
@@ -564,16 +785,27 @@ function create_index(collection2, key2, indexDef) {
     }
   } : undefined;
   const remove = key2 !== "*" ? (item) => {
-    console.log(key2, collection2.indexes[key2].removeSpecific(get3(item, key2) ?? null, (pointer) => key2 != collection2.id ? pointer == item[collection2.id] : true));
+    let value;
+    if (isCompositeIndex && process) {
+      value = process(item);
+    } else {
+      value = get4(item, key2) ?? null;
+      if (process && !isCompositeIndex) {
+        value = process(value);
+      }
+    }
+    collection2.indexes[key2].removeSpecific(value, (pointer) => key2 != collection2.id ? pointer == item[collection2.id] : true);
   } : undefined;
   const ensure = key2 !== "*" ? () => {
     if (!collection2.indexes.hasOwnProperty(key2)) {
-      collection2.indexes[key2] = new BPlusTree;
+      const comparator = !isCompositeIndex && order ? SingleKeyUtils.createComparator(order) : undefined;
+      collection2.indexes[key2] = new BPlusTree(undefined, unique2, comparator);
     }
   } : undefined;
   const rebuild = key2 !== "*" ? async () => {
     if (!collection2.indexes.hasOwnProperty(key2)) {
-      collection2.indexes[key2] = new BPlusTree;
+      const comparator = !isCompositeIndex && order ? SingleKeyUtils.createComparator(order) : undefined;
+      collection2.indexes[key2] = new BPlusTree(undefined, unique2, comparator);
       if (collection2.list.length > 0) {
         for await (const item of collection2.list.forward) {
           insert?.(item)?.(item[collection2.id]);
@@ -807,7 +1039,7 @@ async function rebuild_indexes(collection2) {
 }
 
 // src/storage/List.ts
-import { get as get4, set as set2, unset, cloneDeep } from "lodash-es";
+import { get as get5, set as set2, unset, cloneDeep } from "lodash-es";
 
 // src/utils/entity_create.ts
 import { diff } from "jsondiffpatch";
@@ -892,7 +1124,7 @@ class List {
     return list2;
   }
   async get(key2) {
-    const item = get4(this.hash, String(key2));
+    const item = get5(this.hash, String(key2));
     let result;
     if (is_stored_record(item)) {
       result = cloneDeep(item.data);
@@ -939,7 +1171,7 @@ class List {
     let valiadtor = this.collection.validator(item);
     if (valiadtor.success) {
       let result = item;
-      const record = get4(this.hash, String(key2));
+      const record = get5(this.hash, String(key2));
       if (this.collection.audit) {
         let res2;
         if (!is_stored_record(record)) {
@@ -957,7 +1189,7 @@ class List {
     throw new Error("Validation error");
   }
   async delete(i) {
-    const item = get4(this.hash, i?.toString() ?? "undefined");
+    const item = get5(this.hash, i?.toString() ?? "undefined");
     let result;
     if (is_stored_record(item)) {
       entity_delete(item);
@@ -1008,12 +1240,12 @@ class List {
   }
   async* toArray() {
     for (const key2 of this.keys) {
-      yield get4(this.hash, key2);
+      yield get5(this.hash, key2);
     }
   }
   async* toArrayReverse() {
     for (const key2 of this.keys.reverse()) {
-      yield get4(this.hash, key2);
+      yield get5(this.hash, key2);
     }
   }
 }
@@ -1223,8 +1455,23 @@ class Collection {
           ignoreCase: true
         };
       } else {
-        prev[curr.key] = {
-          key: curr.key,
+        const isCompositeIndex = !!(curr.keys || curr.composite);
+        let indexKey;
+        if (isCompositeIndex) {
+          const keyPaths = curr.keys || curr.composite?.keys;
+          if (keyPaths && CompositeKeyUtils.validateKeyPaths(keyPaths)) {
+            indexKey = CompositeKeyUtils.generateIndexName(keyPaths);
+          } else {
+            throw new Error(`Invalid composite key paths for index`);
+          }
+        } else {
+          indexKey = curr.key;
+        }
+        prev[indexKey] = {
+          key: isCompositeIndex ? undefined : curr.key,
+          keys: isCompositeIndex ? curr.keys || curr.composite?.keys : undefined,
+          composite: isCompositeIndex ? curr.composite || { keys: curr.keys } : undefined,
+          order: !isCompositeIndex ? curr.order : undefined,
           auto: curr.auto || false,
           unique: curr.unique || false,
           gen: curr.gen || (curr.auto ? Collection.genCache["autoIncIdGen"] : undefined),
@@ -1349,7 +1596,8 @@ class Collection {
   async findBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
       const indexDef = this.indexDefs[key2];
-      if (indexDef?.process) {
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite);
+      if (indexDef?.process && !isCompositeIndex) {
         id2 = indexDef.process(id2);
       }
       const result = [];
@@ -1364,7 +1612,8 @@ class Collection {
   async findFirstBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
       const indexDef = this.indexDefs[key2];
-      if (indexDef?.process) {
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite);
+      if (indexDef?.process && !isCompositeIndex) {
         id2 = indexDef.process(id2);
       }
       if (this.indexDefs.hasOwnProperty(key2)) {
@@ -1377,7 +1626,8 @@ class Collection {
   async findLastBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
       const indexDef = this.indexDefs[key2];
-      if (indexDef?.process) {
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite);
+      if (indexDef?.process && !isCompositeIndex) {
         id2 = indexDef.process(id2);
       }
       if (this.indexDefs.hasOwnProperty(key2)) {
@@ -1475,6 +1725,9 @@ class Collection {
 function serializeIndex(res2) {
   return {
     key: res2.key,
+    keys: res2.keys,
+    composite: res2.composite,
+    order: res2.order,
     auto: res2.auto ? true : undefined,
     unique: res2.unique ? true : undefined,
     sparse: res2.sparse ? true : undefined,
@@ -1487,6 +1740,9 @@ function serializeIndex(res2) {
 function deserializeIndex(res) {
   return {
     key: res.key,
+    keys: res.keys,
+    composite: res.composite,
+    order: res.order,
     auto: res.auto ? true : undefined,
     unique: res.unique ? true : undefined,
     sparse: res.sparse ? true : undefined,
@@ -1886,4 +2142,4 @@ export {
   AdapterFile
 };
 
-//# debugId=352BD352F1F6430564756E2164756E21
+//# debugId=84174A58D9289A4564756E2164756E21

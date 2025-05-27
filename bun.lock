@@ -15,7 +15,7 @@
       "name": "collection-store",
       "version": "3.0.0-beta.23",
       "dependencies": {
-        "b-pl-tree": "^1.2.4",
+        "b-pl-tree": "^1.2.5",
         "cron": "^4.3.0",
         "fs-extra": "^11.3.0",
         "jsondiffpatch": "^0.7.3",
@@ -735,7 +735,7 @@
 
     "axios": ["axios@1.9.0", "", { "dependencies": { "follow-redirects": "^1.15.6", "form-data": "^4.0.0", "proxy-from-env": "^1.1.0" } }, "sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg=="],
 
-    "b-pl-tree": ["b-pl-tree@1.2.4", "", {}, "sha512-81/g9XU5I0r+9Hu9WVh5aOurljGFF+O6Jwb2ojjMeQgHHVII2tnKHq+QFItEmJRQ0Pu0v+ahTiTJerSl0jjoFQ=="],
+    "b-pl-tree": ["b-pl-tree@1.2.5", "", {}, "sha512-Dodv21a+FQIZLtXKhb0eodQQO+2rpvyLmF4YxDNs4LE+30w9W9xmtQVWbs2Jk2I0i5p3qkVEGYdvz+go2FRg4A=="],
 
     "babel-jest": ["babel-jest@29.7.0", "", { "dependencies": { "@jest/transform": "^29.7.0", "@types/babel__core": "^7.1.14", "babel-plugin-istanbul": "^6.1.1", "babel-preset-jest": "^29.6.3", "chalk": "^4.0.0", "graceful-fs": "^4.2.9", "slash": "^3.0.0" }, "peerDependencies": { "@babel/core": "^7.8.0" } }, "sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg=="],
 
@@ -2392,6 +2392,8 @@
     "collection-store-sync/@typescript-eslint/eslint-plugin": ["@typescript-eslint/eslint-plugin@5.62.0", "", { "dependencies": { "@eslint-community/regexpp": "^4.4.0", "@typescript-eslint/scope-manager": "5.62.0", "@typescript-eslint/type-utils": "5.62.0", "@typescript-eslint/utils": "5.62.0", "debug": "^4.3.4", "graphemer": "^1.4.0", "ignore": "^5.2.0", "natural-compare-lite": "^1.4.0", "semver": "^7.3.7", "tsutils": "^3.21.0" }, "peerDependencies": { "@typescript-eslint/parser": "^5.0.0", "eslint": "^6.0.0 || ^7.0.0 || ^8.0.0" } }, "sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag=="],
 
     "collection-store-sync/@typescript-eslint/parser": ["@typescript-eslint/parser@6.21.0", "", { "dependencies": { "@typescript-eslint/scope-manager": "6.21.0", "@typescript-eslint/types": "6.21.0", "@typescript-eslint/typescript-estree": "6.21.0", "@typescript-eslint/visitor-keys": "6.21.0", "debug": "^4.3.4" }, "peerDependencies": { "eslint": "^7.0.0 || ^8.0.0" } }, "sha512-tbsV1jPne5CkFQCgPBcDOt30ItF7aJoZL997JSF7MhGQqOeT3svWRYxiqlfA5RUdlHN6Fi+EI9bxqbdyAUZjYQ=="],
+
+    "collection-store-sync/b-pl-tree": ["b-pl-tree@1.2.4", "", {}, "sha512-81/g9XU5I0r+9Hu9WVh5aOurljGFF+O6Jwb2ojjMeQgHHVII2tnKHq+QFItEmJRQ0Pu0v+ahTiTJerSl0jjoFQ=="],
 
     "collection-store-sync/cron": ["cron@2.4.4", "", { "dependencies": { "@types/luxon": "~3.3.0", "luxon": "~3.3.0" } }, "sha512-MHlPImXJj3K7x7lyUHjtKEOl69CSlTOWxS89jiFgNkzXfvhVjhMz/nc7/EIfN9vgooZp8XTtXJ1FREdmbyXOiQ=="],
 

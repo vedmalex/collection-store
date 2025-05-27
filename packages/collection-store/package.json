@@ -61,7 +61,7 @@
     "typescript": "next"
   },
   "dependencies": {
-    "b-pl-tree": "^1.2.4",
+    "b-pl-tree": "^1.2.5",
     "cron": "^4.3.0",
     "fs-extra": "^11.3.0",
     "jsondiffpatch": "^0.7.3",

@@ -22,7 +22,7 @@
       "t": 32,
       "next_node_id": 1,
       "root": 1,
-      "unique": false,
+      "unique": true,
       "nodes": [
         {
           "id": 1,
@@ -50,7 +50,7 @@
       "t": 32,
       "next_node_id": 1,
       "root": 1,
-      "unique": false,
+      "unique": true,
       "nodes": [
         {
           "id": 1,

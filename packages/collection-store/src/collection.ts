@@ -51,6 +51,7 @@ import { ProcessRebuild } from './ProcessRebuild'
 import { create_index } from './collection/create_index'
 import { ZodError, ZodSchema, ZodType } from 'zod'
 import { serialize_collection_config } from './collection/serialize_collection_config'
+import { CompositeKeyUtils } from './utils/CompositeKeyUtils'
 
 export const ttl_key = '__ttltime'
 
@@ -269,8 +270,28 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
             ignoreCase: true,
           }
         } else {
-          prev[curr.key as string] = {
-            key: curr.key,
+          // Determine if this is a composite index
+          const isCompositeIndex = !!(curr.keys || curr.composite)
+          let indexKey: string
+
+          if (isCompositeIndex) {
+            // Generate key from composite key paths
+            const keyPaths = curr.keys || curr.composite?.keys
+            if (keyPaths && CompositeKeyUtils.validateKeyPaths(keyPaths)) {
+              indexKey = CompositeKeyUtils.generateIndexName(keyPaths)
+            } else {
+              throw new Error(`Invalid composite key paths for index`)
+            }
+          } else {
+            // Use single key
+            indexKey = curr.key as string
+          }
+
+          prev[indexKey] = {
+            key: isCompositeIndex ? undefined : curr.key,
+            keys: isCompositeIndex ? (curr.keys || curr.composite?.keys) as any : undefined,
+            composite: isCompositeIndex ? (curr.composite || { keys: curr.keys }) : undefined,
+            order: !isCompositeIndex ? curr.order : undefined, // Sort order for single keys only
             auto: curr.auto || false,
             unique: curr.unique || false,
             gen:
@@ -432,7 +453,11 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async findBy(key: Paths<T>, id: ValueType): Promise<Array<T>> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const indexDef = this.indexDefs[key as string]
-      if (indexDef?.process) {
+
+      // For composite indexes, don't apply process function when searching
+      // because we expect the caller to pass an already serialized composite key
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
+              if (indexDef?.process && !isCompositeIndex) {
         id = indexDef.process(id)
       }
 
@@ -449,7 +474,10 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async findFirstBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const indexDef = this.indexDefs[key as string]
-      if (indexDef?.process) {
+
+      // For composite indexes, don't apply process function when searching
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
+      if (indexDef?.process && !isCompositeIndex) {
         id = indexDef.process(id)
       }
 
@@ -464,7 +492,10 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   async findLastBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
       const indexDef = this.indexDefs[key as string]
-      if (indexDef?.process) {
+
+      // For composite indexes, don't apply process function when searching
+      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
+      if (indexDef?.process && !isCompositeIndex) {
         id = indexDef.process(id)
       }
 
@@ -593,6 +624,9 @@ export function serializeIndex<T extends Item>(
 ): SerializedIndexDef {
   return {
     key: res.key as string,
+    keys: res.keys as any,
+    composite: res.composite as any,
+    order: res.order,
     auto: res.auto ? true : undefined,
     unique: res.unique ? true : undefined,
     sparse: res.sparse ? true : undefined,
@@ -608,6 +642,9 @@ export function deserializeIndex<T extends Item>(
 ): IndexDef<T> {
   return {
     key: res.key,
+    keys: res.keys as any,
+    composite: res.composite as any,
+    order: res.order,
     auto: res.auto ? true : undefined,
     unique: res.unique ? true : undefined,
     sparse: res.sparse ? true : undefined,

@@ -6,9 +6,15 @@ export function get_value<T extends Item>(
   key: string,
   process?: (value: any) => any,
 ) {
-  let value = get(item, key)
+  let value: any
+
+  // For compound indexes, use the process function directly
   if (process) {
-    value = process(value)
+    value = process(item)
+  } else {
+    // For single key indexes, use lodash get
+    value = get(item, key)
   }
+
   return value
 }
