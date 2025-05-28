@@ -4,21 +4,37 @@ import { Paths } from './Paths'
 
 export type SortOrder = 'asc' | 'desc'
 
-export interface CompositeKeyField<T extends Item> {
+/**
+ * Unified field definition for both single and composite keys
+ * Supports sort order specification for each field
+ */
+export interface IndexField<T extends Item> {
   key: string | Paths<T>
   order?: SortOrder  // Default: 'asc'
 }
 
-export interface CompositeKeyDef<T extends Item> {
-  keys: Array<string | Paths<T> | CompositeKeyField<T>>
-  separator?: string
-}
-
+/**
+ * Unified Index Definition
+ * Supports both single and composite keys with consistent API
+ */
 export interface IndexDef<T extends Item> {
-  key?: string | Paths<T>           // For single keys (optional when using composite)
-  keys?: Array<string | Paths<T>>   // For composite keys
-  composite?: CompositeKeyDef<T>    // Alternative composite key syntax
-  order?: SortOrder                 // Sort order for single keys (default: 'asc')
+  // === KEY DEFINITION (choose one) ===
+
+  // Option 1: Single key (string or path)
+  key?: string | Paths<T>
+
+  // Option 2: Multiple keys (unified approach)
+  keys?: Array<string | Paths<T> | IndexField<T>>
+
+  // === INDEX CONFIGURATION ===
+
+  // Sort order for single keys only (ignored for composite)
+  order?: SortOrder
+
+  // Composite key separator (default: '\u0000')
+  separator?: string
+
+  // Standard index options
   auto?: boolean
   unique?: boolean
   sparse?: boolean
@@ -28,19 +44,21 @@ export interface IndexDef<T extends Item> {
   process?: (value: any) => any
 }
 
-export interface SerializedCompositeKeyField {
+
+
+/**
+ * Serialized version for storage/transmission
+ */
+export interface SerializedIndexField {
   key: string
   order?: SortOrder
 }
 
 export interface SerializedIndexDef {
-  key?: string                      // For single keys
-  keys?: Array<string>              // For composite keys (legacy)
-  composite?: {                     // For composite key configuration
-    keys: Array<string | SerializedCompositeKeyField>
-    separator?: string
-  }
-  order?: SortOrder                 // Sort order for single keys
+  key?: string
+  keys?: Array<string | SerializedIndexField>
+  order?: SortOrder
+  separator?: string
   auto?: boolean
   unique?: boolean
   sparse?: boolean

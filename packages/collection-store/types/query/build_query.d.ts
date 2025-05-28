@@ -1,4 +1,9 @@
-import { UnaryCondition, UnaryConditionOperation } from './UnaryCondition';
-export declare function build_query(_obj: unknown, options?: {
+import { type QueryType } from './QueryType';
+import type { UnaryCondition } from './UnaryCondition';
+import type { ValueType } from './ValueType';
+export declare function buildIt_new(obj: unknown, options?: {
     [op: string]: (...args: Array<any>) => UnaryCondition;
-}): UnaryCondition | UnaryConditionOperation;
+}): UnaryCondition;
+export declare function build_query_new(input: QueryType | ValueType | unknown, options?: {
+    [op: string]: (...args: Array<any>) => UnaryCondition;
+}): UnaryCondition;

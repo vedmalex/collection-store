@@ -1,0 +1,418 @@
+{
+  "list": {
+    "counter": 8,
+    "tree": {},
+    "_count": 8,
+    "_counter": 8,
+    "hash": {
+      "0": {
+        "id": 0,
+        "name": "alex",
+        "age": 42,
+        "ssn": "000-0000-000001",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "Los Angeles"
+        }
+      },
+      "1": {
+        "id": 1,
+        "name": "jame",
+        "age": 45,
+        "ssn": "000-0000-000002",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "Los Angeles"
+        }
+      },
+      "2": {
+        "id": 2,
+        "name": "mark",
+        "age": 30,
+        "ssn": "000-0000-000003",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "3": {
+        "id": 3,
+        "name": "simon",
+        "age": 24,
+        "ssn": "000-0000-00004",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "1a",
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "4": {
+        "id": 4,
+        "name": "jason",
+        "age": 19,
+        "ssn": "000-0000-000005",
+        "page": "http://ya.ru",
+        "address": {
+          "home": "3481",
+          "city": "New York"
+        }
+      },
+      "5": {
+        "id": 5,
+        "name": "jim",
+        "age": 18,
+        "ssn": "000-0000-000006",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "penthouse",
+          "home": "23310",
+          "city": "Los Angeles"
+        }
+      },
+      "6": {
+        "id": 6,
+        "name": "jach",
+        "age": 29,
+        "ssn": "000-0000-000007",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "3f",
+          "home": "5431",
+          "city": "Los Angeles"
+        }
+      },
+      "7": {
+        "id": 7,
+        "name": "monika",
+        "age": 30,
+        "ssn": "000-0000-000008",
+        "page": "http://ya.ru",
+        "address": {
+          "appart": "5c",
+          "home": "54481",
+          "city": "Los Angeles"
+        }
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 1,
+          "keys": [
+            null
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 8,
+          "keys": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "children": []
+        }
+      ]
+    },
+    "ssn": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 1,
+          "keys": [
+            null
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "age": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 8,
+          "keys": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "children": []
+        }
+      ]
+    },
+    "address.home": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 8,
+          "keys": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "children": []
+        }
+      ]
+    },
+    "address.city": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 8,
+          "keys": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "children": []
+        }
+      ]
+    },
+    "address.appart": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": null,
+          "min": null,
+          "size": 8,
+          "keys": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "key_num": 8,
+          "pointers": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "children": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "ssn": {
+      "key": "ssn",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "age": {
+      "key": "age",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "address.home": {
+      "key": "address.home",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "address.city": {
+      "key": "address.city",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "address.appart": {
+      "key": "address.appart",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    }
+  },
+  "id": "id"
+}

@@ -1,5 +1,5 @@
 import { UnaryCondition } from '../query/UnaryCondition' // unused
-import { query } from '../query/query'
+import { query } from '../query'
 import { create } from './create'
 import { collection_config } from './collection_4'
 
@@ -29,6 +29,7 @@ const run = async () => {
       address: { home: '54481', appart: '20' },
     },
     {
+      // @ts-ignore - legacy custom operator
       $and: (cond: Array<{ [key: string]: UnaryCondition }>) => {
         debugger
         cond.sort((a, b) => {

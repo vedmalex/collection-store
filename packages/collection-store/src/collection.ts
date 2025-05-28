@@ -270,37 +270,36 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
             ignoreCase: true,
           }
         } else {
-          // Determine if this is a composite index
-          const isCompositeIndex = !!(curr.keys || curr.composite)
-          let indexKey: string
+          // Use unified approach for index processing
+          try {
+            const normalizedFields = CompositeKeyUtils.normalizeIndexFields(curr)
+            const isCompositeIndex = normalizedFields.length > 1
+            const indexKey = CompositeKeyUtils.generateIndexName(normalizedFields)
 
-          if (isCompositeIndex) {
-            // Generate key from composite key paths
-            const keyPaths = curr.keys || curr.composite?.keys
-            if (keyPaths && CompositeKeyUtils.validateKeyPaths(keyPaths)) {
-              indexKey = CompositeKeyUtils.generateIndexName(keyPaths)
-            } else {
-              throw new Error(`Invalid composite key paths for index`)
+                        // Determine separator for composite indexes
+            let separator: string | undefined
+            if (isCompositeIndex) {
+              separator = curr.separator || CompositeKeyUtils.DEFAULT_SEPARATOR
             }
-          } else {
-            // Use single key
-            indexKey = curr.key as string
-          }
 
-          prev[indexKey] = {
-            key: isCompositeIndex ? undefined : curr.key,
-            keys: isCompositeIndex ? (curr.keys || curr.composite?.keys) as any : undefined,
-            composite: isCompositeIndex ? (curr.composite || { keys: curr.keys }) : undefined,
-            order: !isCompositeIndex ? curr.order : undefined, // Sort order for single keys only
-            auto: curr.auto || false,
-            unique: curr.unique || false,
-            gen:
-              curr.gen ||
-              (curr.auto ? Collection.genCache['autoIncIdGen'] : undefined),
-            sparse: curr.sparse || false,
-            required: curr.required || false,
-            ignoreCase: curr.ignoreCase,
-            process: curr.process,
+            prev[indexKey] = {
+              key: isCompositeIndex ? undefined : normalizedFields[0].key,
+              keys: isCompositeIndex ? normalizedFields : undefined,
+              order: !isCompositeIndex ? normalizedFields[0].order : undefined,
+              separator: separator,
+              auto: curr.auto || false,
+              unique: curr.unique || false,
+              gen:
+                curr.gen ||
+                (curr.auto ? Collection.genCache['autoIncIdGen'] : undefined),
+              sparse: curr.sparse || false,
+              required: curr.required || false,
+              ignoreCase: curr.ignoreCase,
+              process: curr.process,
+            }
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            throw new Error(`Invalid index definition: ${errorMessage}`)
           }
         }
         return prev
@@ -438,10 +437,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   }
 
   async findById(id: ValueType): Promise<T | undefined> {
-    const indexDef = this.indexDefs[this.id]
-    if (indexDef?.process) {
-      id = indexDef.process(id)
-    }
+    // Don't apply process function when searching by ID - it's only used for creating index values from items
     const index = this.indexes[this.id]
     if (!index) {
       throw new Error(`Index for ${this.id} not found`)
@@ -452,18 +448,13 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
   async findBy(key: Paths<T>, id: ValueType): Promise<Array<T>> {
     if (this.indexDefs.hasOwnProperty(key)) {
-      const indexDef = this.indexDefs[key as string]
+      // Don't apply process function when searching - it's only used for creating index values from items
+      // The search value should be used as-is
 
-      // For composite indexes, don't apply process function when searching
-      // because we expect the caller to pass an already serialized composite key
-      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
-              if (indexDef?.process && !isCompositeIndex) {
-        id = indexDef.process(id)
-      }
-
-      const result = []
+      const result: Array<T> = []
       if (this.indexDefs.hasOwnProperty(key)) {
-        result.push(...(await get_indexed_value(this, key, id)))
+        const indexedValues = await get_indexed_value(this, key, id)
+        result.push(...indexedValues)
       }
       return return_list_if_valid(this, result)
     } else {
@@ -473,13 +464,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
   async findFirstBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
-      const indexDef = this.indexDefs[key as string]
-
-      // For composite indexes, don't apply process function when searching
-      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
-      if (indexDef?.process && !isCompositeIndex) {
-        id = indexDef.process(id)
-      }
+      // Don't apply process function when searching - it's only used for creating index values from items
 
       if (this.indexDefs.hasOwnProperty(key)) {
         const result = await get_first_indexed_value(this, key, id)
@@ -491,13 +476,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
 
   async findLastBy(key: Paths<T>, id: ValueType): Promise<T | undefined> {
     if (this.indexDefs.hasOwnProperty(key)) {
-      const indexDef = this.indexDefs[key as string]
-
-      // For composite indexes, don't apply process function when searching
-      const isCompositeIndex = !!(indexDef.keys || indexDef.composite)
-      if (indexDef?.process && !isCompositeIndex) {
-        id = indexDef.process(id)
-      }
+      // Don't apply process function when searching - it's only used for creating index values from items
 
       if (this.indexDefs.hasOwnProperty(key)) {
         const result = await get_last_indexed_value(this, key, id)
@@ -578,10 +557,7 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   }
 
   async removeWithId(id: ValueType): Promise<T | undefined> {
-    const indexDef = this.indexDefs[this.id]
-    if (indexDef?.process) {
-      id = indexDef.process(id)
-    }
+    // Don't apply process function when searching by ID - it's only used for creating index values from items
     const index = this.indexes[this.id]
     if (!index) {
       throw new Error(`Index for ${this.id} not found`)
@@ -625,8 +601,8 @@ export function serializeIndex<T extends Item>(
   return {
     key: res.key as string,
     keys: res.keys as any,
-    composite: res.composite as any,
     order: res.order,
+    separator: res.separator,
     auto: res.auto ? true : undefined,
     unique: res.unique ? true : undefined,
     sparse: res.sparse ? true : undefined,
@@ -643,8 +619,8 @@ export function deserializeIndex<T extends Item>(
   return {
     key: res.key,
     keys: res.keys as any,
-    composite: res.composite as any,
     order: res.order,
+    separator: res.separator,
     auto: res.auto ? true : undefined,
     unique: res.unique ? true : undefined,
     sparse: res.sparse ? true : undefined,

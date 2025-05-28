@@ -1,21 +1,10 @@
 {
   "list": {
-    "counter": 3,
+    "counter": 0,
     "tree": {},
-    "_count": 2,
-    "_counter": 3,
-    "hash": {
-      "1": {
-        "DeviceId": "1112221",
-        "Username": "testuser01",
-        "id": 1
-      },
-      "2": {
-        "DeviceId": "111222",
-        "Username": "testuser01",
-        "id": 2
-      }
-    }
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
   },
   "indexes": {
     "id": {
@@ -28,20 +17,12 @@
           "id": 1,
           "leaf": true,
           "t": 32,
-          "isEmpty": false,
+          "isEmpty": true,
           "isFull": false,
-          "max": 2,
-          "min": 1,
-          "size": 2,
-          "keys": [
-            1,
-            2
-          ],
-          "key_num": 2,
-          "pointers": [
-            1,
-            2
-          ],
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
           "children": []
         }
       ]
@@ -56,20 +37,12 @@
           "id": 1,
           "leaf": true,
           "t": 32,
-          "isEmpty": false,
+          "isEmpty": true,
           "isFull": false,
-          "max": "1112221",
-          "min": "111222",
-          "size": 2,
-          "keys": [
-            "111222",
-            "1112221"
-          ],
-          "key_num": 2,
-          "pointers": [
-            2,
-            1
-          ],
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
           "children": []
         }
       ]
@@ -84,20 +57,12 @@
           "id": 1,
           "leaf": true,
           "t": 32,
-          "isEmpty": false,
+          "isEmpty": true,
           "isFull": false,
-          "max": "testuser01",
-          "min": "testuser01",
-          "size": 2,
-          "keys": [
-            "testuser01",
-            "testuser01"
-          ],
-          "key_num": 2,
-          "pointers": [
-            1,
-            2
-          ],
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
           "children": []
         }
       ]
@@ -110,6 +75,7 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
     },
     "DeviceId": {
@@ -117,14 +83,16 @@
       "auto": false,
       "unique": true,
       "sparse": true,
-      "required": true
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     },
     "Username": {
       "key": "Username",
       "auto": false,
       "unique": false,
       "sparse": false,
-      "required": true
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
   },
   "id": "id"

@@ -1,3 +1,2 @@
-export type TraverseCondition<T> = {
-    [key: string]: unknown;
-} | ((arg: T) => boolean);
+import { QueryType } from '../query/QueryType';
+export type TraverseCondition<T> = QueryType | ((arg: T) => boolean);

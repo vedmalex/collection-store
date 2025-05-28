@@ -1,2 +1,2 @@
-import { Item } from '../types/Item';
-export declare function get_value<T extends Item>(item: T, key: string, process?: (value: any) => any): any;
+import { ValueType } from 'b-pl-tree';
+export declare function get_value(item: any, key: unknown, process?: (value: any) => any): ValueType;

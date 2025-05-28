@@ -1,11 +1,12 @@
 import { get } from 'lodash-es'
 import { Item } from '../types/Item'
 import { Paths } from '../types/Paths'
-import { CompositeKeyField } from '../types/IndexDef'
+import { IndexField } from '../types/IndexDef'
 
 /**
  * Utilities for working with composite keys in indexes
  * Provides serialization, deserialization, and comparison functions
+ * Updated to work with unified IndexDef structure
  */
 export class CompositeKeyUtils {
   /**
@@ -13,6 +14,168 @@ export class CompositeKeyUtils {
    * Using null character to avoid conflicts with user data
    */
   static readonly DEFAULT_SEPARATOR = '\u0000'
+
+  /**
+   * Determines if an index definition represents a composite index
+   * @param indexDef Index definition to check
+   * @returns True if composite, false if single key
+   */
+  static isCompositeIndex<T extends Item>(indexDef: {
+    key?: string | Paths<T>
+    keys?: Array<string | Paths<T> | IndexField<T>>
+  }): boolean {
+    return !!(indexDef.keys && indexDef.keys.length > 1)
+  }
+
+  /**
+   * Normalizes index definition to unified IndexField array
+   * @param indexDef Index definition
+   * @returns Array of normalized IndexField objects
+   */
+  static normalizeIndexFields<T extends Item>(indexDef: {
+    key?: string | Paths<T>
+    keys?: Array<string | Paths<T> | IndexField<T>>
+    order?: 'asc' | 'desc'
+  }): Array<IndexField<T>> {
+    // Single key case
+    if (indexDef.key && !indexDef.keys) {
+      return [{
+        key: indexDef.key,
+        order: indexDef.order || 'asc'
+      }]
+    }
+
+    // Multiple keys case
+    if (indexDef.keys) {
+      return indexDef.keys.map(keyDef => {
+        if (typeof keyDef === 'string') {
+          return { key: keyDef, order: 'asc' }
+        } else if (typeof keyDef === 'object' && 'key' in keyDef) {
+          return { key: keyDef.key, order: keyDef.order || 'asc' }
+        } else {
+          return { key: keyDef as Paths<T>, order: 'asc' }
+        }
+      })
+    }
+
+    throw new Error('Invalid index definition: must specify either key or keys')
+  }
+
+  /**
+   * Generates index name from normalized fields or legacy string array
+   * @param input Array of IndexField objects or legacy string array
+   * @returns Generated index name
+   */
+  static generateIndexName(keyPaths: Array<string>): string
+  static generateIndexName<T extends Item>(fields: Array<IndexField<T>>): string
+  static generateIndexName<T extends Item>(
+    input: Array<string> | Array<IndexField<T>>
+  ): string {
+    // Handle legacy string array format
+    if (input.length > 0 && typeof input[0] === 'string') {
+      return (input as string[]).join(',')
+    }
+
+    // Handle new IndexField array format
+    const fields = input as Array<IndexField<T>>
+    if (fields.length === 1) {
+      // Single key: just the key name
+      return String(fields[0].key)
+    }
+
+    // Composite key: include sort order information
+    return fields.map(field => {
+      const keyStr = String(field.key)
+      return field.order === 'desc' ? `${keyStr}:desc` : keyStr
+    }).join(',')
+  }
+
+  /**
+   * Creates a process function for the index
+   * @param fields Normalized index fields
+   * @param separator Separator for composite keys
+   * @returns Process function
+   */
+  static createProcessFunction<T extends Item>(
+    fields: Array<IndexField<T>>,
+    separator: string = CompositeKeyUtils.DEFAULT_SEPARATOR
+  ): ((item: T) => any) | undefined {
+    if (fields.length === 0) {
+      return undefined
+    }
+
+    if (fields.length === 1) {
+      // Single key: extract and return the value
+      const field = fields[0]
+      return (item: T) => get(item, field.key as string)
+    }
+
+    // Composite key: extract values and serialize
+    return (item: T) => {
+      const values = fields.map(field => get(item, field.key as string))
+      return CompositeKeyUtils.serialize(values, separator)
+    }
+  }
+
+  /**
+   * Creates a comparator function for B+ Tree
+   * @param fields Normalized index fields
+   * @param separator Separator for composite keys
+   * @returns Comparator function or undefined for default comparison
+   */
+  static createComparator<T extends Item>(
+    fields: Array<IndexField<T>>,
+    separator: string = CompositeKeyUtils.DEFAULT_SEPARATOR
+  ): ((a: any, b: any) => number) | undefined {
+    if (fields.length === 1) {
+      const field = fields[0]
+      if (field.order === 'desc') {
+        return (a: any, b: any) => {
+          if (a < b) return 1
+          if (a > b) return -1
+          return 0
+        }
+      }
+      // For 'asc' or default, use natural comparison (return undefined)
+      return undefined
+    }
+
+    // Composite key with mixed sort orders
+    return (a: string, b: string): number => {
+      const valuesA = CompositeKeyUtils.deserialize(a, separator)
+      const valuesB = CompositeKeyUtils.deserialize(b, separator)
+
+      for (let i = 0; i < Math.min(valuesA.length, valuesB.length, fields.length); i++) {
+        const field = fields[i]
+        const valueA = valuesA[i]
+        const valueB = valuesB[i]
+
+        // Handle null/undefined values
+        if (valueA === null && valueB === null) continue
+        if (valueA === null) return field.order === 'asc' ? -1 : 1
+        if (valueB === null) return field.order === 'asc' ? 1 : -1
+
+        // Compare values
+        let comparison = 0
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+          comparison = valueA.localeCompare(valueB)
+        } else if (typeof valueA === 'number' && typeof valueB === 'number') {
+          comparison = valueA - valueB
+        } else if (valueA instanceof Date && valueB instanceof Date) {
+          comparison = valueA.getTime() - valueB.getTime()
+        } else {
+          // Fallback to string comparison
+          comparison = String(valueA).localeCompare(String(valueB))
+        }
+
+        if (comparison !== 0) {
+          return field.order === 'desc' ? -comparison : comparison
+        }
+      }
+
+      return 0
+    }
+  }
 
     /**
    * Serializes an array of values into a single string key
@@ -138,7 +301,7 @@ export class CompositeKeyUtils {
    * @param keyPaths Array of paths
    * @returns Generated index name
    */
-  static generateIndexName(keyPaths: Array<string | any>): string {
+  static generateIndexNameLegacy(keyPaths: Array<string | any>): string {
     return keyPaths.map(path => String(path)).join(',')
   }
 
@@ -174,135 +337,4 @@ export class CompositeKeyUtils {
     return CompositeKeyUtils.serialize(filteredValues, separator)
   }
 
-  /**
-   * Normalizes composite key definition to array of CompositeKeyField objects
-   * @param keys Array of keys (can be strings, Paths, or CompositeKeyField objects)
-   * @returns Array of normalized CompositeKeyField objects
-   */
-  static normalizeCompositeKeys<T extends Item>(
-    keys: Array<string | Paths<T> | CompositeKeyField<T>>
-  ): Array<CompositeKeyField<T>> {
-    return keys.map(key => {
-      if (typeof key === 'string') {
-        return { key, order: 'asc' }
-      } else if (typeof key === 'object' && 'key' in key) {
-        return { key: key.key, order: key.order || 'asc' }
-      } else {
-        return { key: key as Paths<T>, order: 'asc' }
-      }
-    })
-  }
-
-  /**
-   * Extracts values from an item using normalized composite key fields
-   * @param item Item to extract values from
-   * @param fields Array of normalized composite key fields
-   * @returns Array of extracted values
-   */
-  static extractValuesWithOrder<T extends Item>(
-    item: T,
-    fields: Array<CompositeKeyField<T>>
-  ): any[] {
-    return fields.map(field => {
-      const value = get(item, field.key as string)
-      return value
-    })
-  }
-
-  /**
-   * Creates a comparator function for composite keys with mixed sort orders
-   * @param fields Array of composite key fields with sort orders
-   * @param separator Separator used for serialization
-   * @returns Comparator function for B+ Tree
-   */
-  static createComparator<T extends Item>(
-    fields: Array<CompositeKeyField<T>>,
-    separator: string = CompositeKeyUtils.DEFAULT_SEPARATOR
-  ): (a: string, b: string) => number {
-    return (a: string, b: string): number => {
-      const valuesA = CompositeKeyUtils.deserialize(a, separator)
-      const valuesB = CompositeKeyUtils.deserialize(b, separator)
-
-      for (let i = 0; i < Math.min(valuesA.length, valuesB.length, fields.length); i++) {
-        const field = fields[i]
-        const valueA = valuesA[i]
-        const valueB = valuesB[i]
-
-        // Handle null/undefined values
-        if (valueA === null && valueB === null) continue
-        if (valueA === null) return field.order === 'asc' ? -1 : 1
-        if (valueB === null) return field.order === 'asc' ? 1 : -1
-
-        // Compare values
-        let comparison = 0
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          comparison = valueA.localeCompare(valueB)
-        } else if (typeof valueA === 'number' && typeof valueB === 'number') {
-          comparison = valueA - valueB
-        } else if (valueA instanceof Date && valueB instanceof Date) {
-          comparison = valueA.getTime() - valueB.getTime()
-        } else {
-          // Fallback to string comparison
-          comparison = String(valueA).localeCompare(String(valueB))
-        }
-
-        if (comparison !== 0) {
-          return field.order === 'desc' ? -comparison : comparison
-        }
-      }
-
-      return 0
-    }
-  }
-
-  /**
-   * Creates a composite key with sort order consideration
-   * @param item Item to create key from
-   * @param fields Array of composite key fields with sort orders
-   * @param separator Separator character
-   * @returns Serialized composite key
-   */
-  static createKeyWithOrder<T extends Item>(
-    item: T,
-    fields: Array<CompositeKeyField<T>>,
-    separator: string = CompositeKeyUtils.DEFAULT_SEPARATOR
-  ): string {
-    const values = CompositeKeyUtils.extractValuesWithOrder(item, fields)
-    return CompositeKeyUtils.serialize(values, separator)
-  }
-
-  /**
-   * Validates composite key fields configuration
-   * @param fields Array of composite key fields to validate
-   * @returns True if valid, false otherwise
-   */
-  static validateCompositeKeyFields<T extends Item>(
-    fields: Array<CompositeKeyField<T>>
-  ): boolean {
-    if (!Array.isArray(fields) || fields.length === 0) {
-      return false
-    }
-
-    return fields.every(field =>
-      field &&
-      typeof field === 'object' &&
-      'key' in field &&
-      (typeof field.key === 'string' && field.key.length > 0) &&
-      (!field.order || field.order === 'asc' || field.order === 'desc')
-    )
-  }
-
-  /**
-   * Generates index name from composite key fields
-   * @param fields Array of composite key fields
-   * @returns Generated index name
-   */
-  static generateIndexNameFromFields<T extends Item>(
-    fields: Array<CompositeKeyField<T>>
-  ): string {
-    return fields.map(field => {
-      const keyStr = String(field.key)
-      return field.order === 'desc' ? `${keyStr}:desc` : keyStr
-    }).join(',')
-  }
 }

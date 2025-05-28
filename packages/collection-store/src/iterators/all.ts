@@ -1,6 +1,6 @@
 import { Item } from '../types/Item'
 import Collection from '../collection'
-import { query } from '../query/query'
+import { query } from '../query'
 import { TraverseCondition } from '../types/TraverseCondition'
 
 // возможно не работает TTL не удаляются значения индекса.
@@ -9,9 +9,9 @@ export async function* all<T extends Item>(
   collection: Collection<T>,
   condition: TraverseCondition<T>,
 ): AsyncGenerator<T> {
-  if (typeof condition == 'object') condition = query(condition)
+  const conditionFn = typeof condition === 'function' ? condition : query(condition)
   for await (const current of collection.list.forward) {
-    if (condition(current)) {
+    if (conditionFn(current)) {
       yield current
     }
   }

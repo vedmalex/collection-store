@@ -14,23 +14,22 @@ export function ensure_indexed_value<T extends Item>(
 ): ValueType {
   let value: ValueType
 
-  // Check if this is a compound index by looking at the indexDef
-  const indexDef = collection.indexDefs[key as string]
-  const isCompoundIndex = !!(indexDef?.keys || indexDef?.composite)
+  // Check if this is a composite index by looking at the indexDef
+  // const indexDef = collection.indexDefs[key as string]
+  // const isCompositeIndex = !!(indexDef?.keys && indexDef.keys.length > 1)
 
-  if (process && isCompoundIndex) {
-    // For compound indexes, pass the entire item to process function
+  if (process) {
+    // For both composite and single key indexes, pass the entire item to process function
+    // The process function knows how to extract the correct value(s)
     value = process(item)
   } else {
-    // For single key indexes, use lodash get
-    value = get<T>(item as T, key as any) as unknown as ValueType
-    if (value == null && auto) {
-      value = gen?.(item, collection.name, collection.list) ?? value
-      set(item, key as any, value)
-    }
-    // For single key indexes, apply process to the extracted value
-    if (process && !isCompoundIndex) {
-      value = process(value)
+    value = get(item, key as string)
+  }
+
+  if (value === undefined || value === null) {
+    if (auto && gen) {
+      value = gen(item as T, collection.name, collection.list)
+      set(item, key as string, value)
     }
   }
 

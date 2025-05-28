@@ -1,5 +1,5 @@
 import { UnaryCondition } from '../query/UnaryCondition'
-import { query } from '../query/query'
+import { query } from '../query'
 import { create } from './create'
 import { collection_config } from './collection_2'
 // import { map } from 'b-pl-tree' // unused
@@ -22,13 +22,15 @@ const run = async () => {
 
   console.log(await data.find(q))
   console.log(await data.find(q1))
-  //@ts-ignore
+
+  // Demo of custom $and operator (currently for demonstration purposes)
   const q2 = query(
     {
       age: { $in: [30, 29] },
       address: { home: '54481', appart: '20' },
     },
     {
+      // @ts-ignore - legacy custom operator
       $and: (cond: Array<{ [key: string]: UnaryCondition }>) => {
         cond.sort((a, b) => {
           const a_list = Object.keys(a)
@@ -46,6 +48,10 @@ const run = async () => {
       // $or: () => () => true,
     },
   )
+
+  // Use q2 for demonstration
+  console.log('Custom $and operator demo:', typeof q2)
+
   /**
    * ЧТО НАДО СДЕЛАТЬ!
    * отсортировать операции $or и $and по наличию индекса

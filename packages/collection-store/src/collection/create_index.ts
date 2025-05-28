@@ -10,7 +10,6 @@ import { validate_indexed_value_for_update } from './validate_indexed_value_for_
 import { ensure_indexes } from './ensure_indexes'
 import { build_indexes } from './build_indexes'
 import { CompositeKeyUtils } from '../utils/CompositeKeyUtils'
-import { SingleKeyUtils } from '../utils/SingleKeyUtils'
 
 export function create_index<T extends Item>(
   collection: Collection<T>,
@@ -23,18 +22,19 @@ export function create_index<T extends Item>(
     sparse = false,
     required = false,
     ignoreCase,
-    keys,
-    composite,
-    order,
+    separator = CompositeKeyUtils.DEFAULT_SEPARATOR,
   } = indexDef
 
   let { gen, process } = indexDef
 
-  // Determine if this is a composite index
-  const isCompositeIndex = !!(keys || composite)
-  const keyPaths = keys || composite?.keys
-  const separator = composite?.separator || CompositeKeyUtils.DEFAULT_SEPARATOR
-  let compositeDef = composite
+  // Normalize the index definition to unified format
+  const normalizedFields = CompositeKeyUtils.normalizeIndexFields(indexDef)
+  const isCompositeIndex = normalizedFields.length > 1
+
+  // Generate index name if not provided
+  if (!key) {
+    key = CompositeKeyUtils.generateIndexName(normalizedFields)
+  }
 
   if (auto && !gen) {
     gen = Collection.genCache['autoIncIdGen']
@@ -45,43 +45,17 @@ export function create_index<T extends Item>(
       value?.toString ? value.toString().toLowerCase() : value
   }
 
-  // Validate index configuration
-  if (isCompositeIndex) {
-    if (!keyPaths) {
-      throw new Error(`Composite key paths are required for composite index`)
-    }
-
-    // Normalize composite keys to support sort order
-    const normalizedFields = CompositeKeyUtils.normalizeCompositeKeys(keyPaths)
-
-    // Validate normalized fields
-    if (!CompositeKeyUtils.validateCompositeKeyFields(normalizedFields)) {
-      throw new Error(`Invalid composite key fields for index`)
-    }
-
-    // Generate index name from key paths if not provided
-    if (!key) {
-      key = CompositeKeyUtils.generateIndexNameFromFields(normalizedFields)
-    }
-
-    // Override process function for composite keys with sort order support
-    process = (item: T) => {
-      return CompositeKeyUtils.createKeyWithOrder(item, normalizedFields, separator)
-    }
-
-    // Store normalized fields in composite definition
-    compositeDef = { keys: normalizedFields as any, separator }
-  } else {
-    if (!key) {
-      throw new Error(`key is required field for index`)
-    }
+  // Create process function if not provided
+  if (!process) {
+    process = CompositeKeyUtils.createProcessFunction(normalizedFields, separator)
   }
 
+  // Store the normalized index definition
   collection.indexDefs[key] = {
-    key: isCompositeIndex ? undefined : (indexDef.key || key),
-    keys: isCompositeIndex ? (keys || undefined) : undefined, // Use original keys for legacy support
-    composite: isCompositeIndex ? compositeDef : undefined,
-    order: !isCompositeIndex ? order : undefined, // Sort order for single keys only
+    key: isCompositeIndex ? undefined : normalizedFields[0].key,
+    keys: isCompositeIndex ? normalizedFields : undefined,
+    order: !isCompositeIndex ? normalizedFields[0].order : undefined,
+    separator: isCompositeIndex ? separator : undefined,
     auto,
     unique,
     gen,
@@ -167,7 +141,7 @@ export function create_index<T extends Item>(
               sparse,
               required,
               unique,
-              (ov as any)[collection.id],
+              ov ? (ov as any)[collection.id] : undefined,
             )
             if (!valid) throw new Error(message)
             if (valueOld !== valueNew) {
@@ -175,7 +149,7 @@ export function create_index<T extends Item>(
                 collection.indexes[key].remove(valueOld)
               } else {
                 collection.indexes[key].removeSpecific(valueOld, (pointer) =>
-                  key != collection.id ? pointer == (ov as any)[collection.id] : true,
+                  key != collection.id ? pointer == (ov && (ov as any)[collection.id]) : true,
                 )
               }
               collection.indexes[key].insert(
@@ -188,7 +162,7 @@ export function create_index<T extends Item>(
               collection.indexes[key].remove(valueOld)
             } else {
               collection.indexes[key].removeSpecific(valueOld, (pointer) =>
-                key != collection.id ? pointer == (ov as any)[collection.id] : true,
+                key != collection.id ? pointer == (ov && (ov as any)[collection.id]) : true,
               )
             }
           }
@@ -198,18 +172,7 @@ export function create_index<T extends Item>(
   const remove: any =
     key !== '*'
       ? (item: T) => {
-          let value: any
-          if (isCompositeIndex && process) {
-            // For composite indexes, pass the entire item to process function
-            value = process(item)
-          } else {
-            // For single key indexes, get the field value first
-            value = get(item, key) ?? null
-            // Then apply process to the value if it exists
-            if (process && !isCompositeIndex) {
-              value = process(value)
-            }
-          }
+          const value = process ? process(item) : get(item, key) ?? null
           collection.indexes[key].removeSpecific(
             value,
             (pointer) =>
@@ -222,10 +185,8 @@ export function create_index<T extends Item>(
     key !== '*'
       ? () => {
           if (!collection.indexes.hasOwnProperty(key)) {
-            // Create comparator for single keys with sort order support
-            const comparator = !isCompositeIndex && order
-              ? SingleKeyUtils.createComparator(order)
-              : undefined
+            // Create comparator using unified approach
+            const comparator = CompositeKeyUtils.createComparator(normalizedFields, separator)
             collection.indexes[key] = new BPlusTree<any, number>(undefined, unique, comparator)
           }
         }
@@ -235,10 +196,8 @@ export function create_index<T extends Item>(
     key !== '*'
       ? async () => {
           if (!collection.indexes.hasOwnProperty(key)) {
-            // Create comparator for single keys with sort order support
-            const comparator = !isCompositeIndex && order
-              ? SingleKeyUtils.createComparator(order)
-              : undefined
+            // Create comparator using unified approach
+            const comparator = CompositeKeyUtils.createComparator(normalizedFields, separator)
             collection.indexes[key] = new BPlusTree<any, number>(undefined, unique, comparator)
             if (collection.list.length > 0) {
               for await (const item of collection.list.forward) {

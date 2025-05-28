@@ -11,6 +11,10 @@ export const collection_config: ICollectionConfig<Person> = {
   adapter: new AdapterFile(),
   indexList: [
     {
+      key: 'id',
+      unique: true,
+    },
+    {
       key: 'name',
     },
     {

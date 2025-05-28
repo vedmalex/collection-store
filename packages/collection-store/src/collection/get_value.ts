@@ -1,20 +1,16 @@
 import { get } from 'lodash-es'
-import { Item } from '../types/Item'
+import { ValueType } from 'b-pl-tree'
 
-export function get_value<T extends Item>(
-  item: T,
-  key: string,
+export function get_value(
+  item: any,
+  key: unknown,
   process?: (value: any) => any,
-) {
-  let value: any
-
-  // For compound indexes, use the process function directly
+): ValueType {
   if (process) {
-    value = process(item)
-  } else {
-    // For single key indexes, use lodash get
-    value = get(item, key)
+    // If process function exists, it handles both single and composite keys
+    return process(item)
   }
 
-  return value
+  // Fallback: extract single key value
+  return get(item, key as any) as unknown as ValueType
 }

@@ -12,9 +12,15 @@ import { serialize_collection_config } from './collection/serialize_collection_c
 import { FileStorage } from './storage/FileStorage'
 import { List } from './storage/List'
 import { IndexDef } from './types/IndexDef'
+import {
+  TransactionManager,
+  TransactionOptions,
+  ChangeRecord,
+  CollectionStoreTransaction
+} from './TransactionManager'
 
 // biome-ignore lint/complexity/noBannedTypes: будет обновлен
-export type TransactionOptions = {}
+export type { TransactionOptions }
 
 export interface CSTransaction {
   startTransaction(options: TransactionOptions): Promise<void>
@@ -28,11 +34,14 @@ export class CSDatabase implements CSTransaction {
   private name: string
   private inTransaction = false
   private collections: Map<string, Collection<any>>
+  private transactionManager: TransactionManager
+  private currentTransactionId?: string
 
   constructor(root: string, name?: string) {
     this.root = root
     this.name = name || 'default'
     this.collections = new Map()
+    this.transactionManager = new TransactionManager()
   }
 
   private async writeSchema() {
@@ -158,19 +167,80 @@ export class CSDatabase implements CSTransaction {
   }
 
   async endSession(): Promise<void> {
+    if (this.currentTransactionId) {
+      try {
+        await this.transactionManager.rollbackTransaction(this.currentTransactionId)
+      } catch (error) {
+        console.error('Error rolling back transaction during endSession:', error)
+      }
+      this.currentTransactionId = undefined
+    }
     this.inTransaction = false
   }
-  async startTransaction(options: TransactionOptions): Promise<void> {
+
+  async startTransaction(options: TransactionOptions = {}): Promise<void> {
+    if (this.inTransaction && this.currentTransactionId) {
+      throw new Error('Transaction already active. Call commitTransaction() or abortTransaction() first.')
+    }
+
+    this.currentTransactionId = await this.transactionManager.beginTransaction(options)
     this.inTransaction = true
   }
+
   async abortTransaction(): Promise<void> {
-    this.inTransaction = false
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error('No active transaction to abort')
+    }
+
+    try {
+      await this.transactionManager.rollbackTransaction(this.currentTransactionId)
+    } finally {
+      this.currentTransactionId = undefined
+      this.inTransaction = false
+    }
   }
+
   async commitTransaction(): Promise<void> {
-    // проверять какие значения были внесены, что изменилось и создавать транзакцию для изменения
-    await this.persist()
-    this.inTransaction = false
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error('No active transaction to commit')
+    }
+
+    try {
+      await this.transactionManager.commitTransaction(this.currentTransactionId)
+      await this.persist()
+    } finally {
+      this.currentTransactionId = undefined
+      this.inTransaction = false
+    }
   }
+
+  getCurrentTransaction(): CollectionStoreTransaction | undefined {
+    if (this.currentTransactionId) {
+      return this.transactionManager.getTransaction(this.currentTransactionId)
+    }
+    return undefined
+  }
+
+  getCurrentTransactionId(): string | undefined {
+    return this.currentTransactionId
+  }
+
+  addChangeListener(listener: (changes: readonly ChangeRecord[]) => void): void {
+    this.transactionManager.addChangeListener(listener)
+  }
+
+  removeChangeListener(listener: (changes: readonly ChangeRecord[]) => void): void {
+    this.transactionManager.removeChangeListener(listener)
+  }
+
+  async cleanupTransactions(): Promise<void> {
+    await this.transactionManager.cleanup()
+  }
+
+  get activeTransactionCount(): number {
+    return this.transactionManager.activeTransactionCount
+  }
+
   // extra operations
 
   async first(collection: string): Promise<any> {
