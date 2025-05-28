@@ -41,6 +41,11 @@ export async function bootstrap(port = 3001, seed = false) {
 
   // register global error handler to process 404 errors from `findOneOrFail` calls
   app.setErrorHandler((error, request, reply) => {
+    // Check if response has already been sent
+    if (reply.sent) {
+      return
+    }
+
     if (error instanceof AuthError) {
       return reply.status(401).send({ error: error.message })
     }
@@ -50,7 +55,7 @@ export async function bootstrap(port = 3001, seed = false) {
     }
 
     app.log.error(error)
-    reply.status(500).send({ error: error.message })
+    return reply.status(500).send({ error: error.message })
   })
 
   // shut down the connection when closing the app

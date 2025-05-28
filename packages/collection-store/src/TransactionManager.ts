@@ -19,6 +19,43 @@ export interface ChangeRecord {
   timestamp: number
 }
 
+// ✅ НОВЫЕ ИНТЕРФЕЙСЫ: Savepoint support для CSDatabase
+export interface SavepointInfo {
+  savepointId: string
+  name: string
+  timestamp: number
+  transactionId: string
+  collectionsCount: number
+  btreeContextsCount: number
+}
+
+export interface CSDBSavepointData {
+  savepointId: string
+  name: string
+  timestamp: number
+  transactionId: string
+  collectionsSnapshot: Map<string, any[]>
+  btreeContextSnapshots: Map<string, string> // collection name -> savepoint ID в B+ Tree
+}
+
+// ✅ РАСШИРЕННЫЙ ИНТЕРФЕЙС: CSTransaction с savepoint методами
+export interface CSTransaction {
+  startTransaction(options?: TransactionOptions): Promise<void>
+  abortTransaction(): Promise<void>
+  commitTransaction(): Promise<void>
+  endSession(): Promise<void>
+  getCurrentTransactionId(): string | undefined
+  getCurrentTransaction(): CollectionStoreTransaction | undefined
+  activeTransactionCount: number
+
+  // Savepoint support
+  createSavepoint(name: string): Promise<string>
+  rollbackToSavepoint(savepointId: string): Promise<void>
+  releaseSavepoint(savepointId: string): Promise<void>
+  listSavepoints(): string[]
+  getSavepointInfo(savepointId: string): SavepointInfo | undefined
+}
+
 export interface ITransactionResource {
   prepareCommit(transactionId: string): Promise<boolean>
   finalizeCommit(transactionId: string): Promise<void>

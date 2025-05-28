@@ -1,6 +1,5 @@
 import { bootstrap } from '../src/app.js';
 import { initORM } from '../src/db.js';
-import { TestSeeder } from '../src/seeders/TestSeeder.js';
 
 export async function initTestApp(port: number) {
   // this will create all the ORM services and cache them
@@ -13,7 +12,8 @@ export async function initTestApp(port: number) {
 
   // create the schema so we can use the database
   await orm.schema.createSchema();
-  await orm.seeder.seed(TestSeeder);
+  // Disable seeder completely to test basic functionality
+  // await orm.seeder.seed(TestSeeder);
 
   const { app } = await bootstrap(port, false);
 

@@ -2,18 +2,19 @@ import { ICollectionConfig } from './ICollectionConfig';
 import { IDataCollection } from './IDataCollection';
 import { Item } from './types/Item';
 import { IndexDef } from './types/IndexDef';
-export type TransactionOptions = {};
-export interface CSTransaction {
-    startTransaction(options: TransactionOptions): Promise<void>;
-    abortTransaction(): Promise<void>;
-    commitTransaction(): Promise<void>;
-    endSession(): Promise<void>;
-}
+import { TransactionOptions, ChangeRecord, CollectionStoreTransaction, CSTransaction, SavepointInfo } from './TransactionManager';
+export type { TransactionOptions };
 export declare class CSDatabase implements CSTransaction {
     private root;
     private name;
     private inTransaction;
     private collections;
+    private transactionManager;
+    private currentTransactionId?;
+    private transactionSnapshots;
+    private transactionSavepoints;
+    private savepointCounter;
+    private savepointNameToId;
     constructor(root: string, name?: string);
     private writeSchema;
     connect(): Promise<void>;
@@ -30,9 +31,16 @@ export declare class CSDatabase implements CSTransaction {
     persist(): Promise<void[]>;
     startSession(): Promise<CSTransaction>;
     endSession(): Promise<void>;
-    startTransaction(options: TransactionOptions): Promise<void>;
+    startTransaction(options?: TransactionOptions): Promise<void>;
     abortTransaction(): Promise<void>;
     commitTransaction(): Promise<void>;
+    getCurrentTransaction(): CollectionStoreTransaction | undefined;
+    getCurrentTransactionId(): string | undefined;
+    addChangeListener(listener: (changes: readonly ChangeRecord[]) => void): void;
+    removeChangeListener(listener: (changes: readonly ChangeRecord[]) => void): void;
+    cleanupTransactions(): Promise<void>;
+    forceResetTransactionState(): Promise<void>;
+    get activeTransactionCount(): number;
     first(collection: string): Promise<any>;
     last(collection: string): Promise<any>;
     lowest(collection: string, key: string): Promise<any>;
@@ -43,4 +51,9 @@ export declare class CSDatabase implements CSTransaction {
     findBy(collection: string, key: string, id: any): Promise<any[]>;
     findFirstBy(collection: string, key: string, id: any): Promise<any>;
     findLastBy(collection: string, key: string, id: any): Promise<any>;
+    createSavepoint(name: string): Promise<string>;
+    rollbackToSavepoint(savepointId: string): Promise<void>;
+    releaseSavepoint(savepointId: string): Promise<void>;
+    listSavepoints(): string[];
+    getSavepointInfo(savepointId: string): SavepointInfo | undefined;
 }

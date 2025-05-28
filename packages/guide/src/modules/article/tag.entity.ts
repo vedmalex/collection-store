@@ -9,7 +9,7 @@ import { BaseEntity } from '../common/base.entity.js'
 
 @Entity()
 export class Tag extends BaseEntity {
-  @Property({ length: 20 })
+  @Property({ length: 20, type: 'string' })
   name!: string
 
   @ManyToMany({ mappedBy: 'tags', entity: () => Article })

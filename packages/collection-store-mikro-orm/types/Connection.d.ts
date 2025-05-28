@@ -5,14 +5,16 @@ export declare class CollectionStoreConnection extends Connection {
     db: CSDatabase;
     constructor(config: Configuration, options?: ConnectionOptions, type?: ConnectionType);
     getDb(): CSDatabase;
-    getCollection<T extends Item>(name: EntityName<T>): import("collection-store").IDataCollection<T> | undefined;
+    getCollection<T extends Item>(name: EntityName<T>): import("collection-store").IDataCollection<T>;
     private getCollectionName;
     connect(): Promise<void>;
     isConnected(): Promise<boolean>;
     checkConnection(): Promise<{
-        ok: boolean;
-        reason?: string | undefined;
-        error?: Error | undefined;
+        ok: true;
+    } | {
+        ok: false;
+        reason: string;
+        error?: Error;
     }>;
     getDefaultClientUrl(): string;
     getClientUrl(): string;

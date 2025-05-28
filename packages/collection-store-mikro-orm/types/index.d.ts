@@ -1,6 +1,7 @@
 export * from './Connection';
 export * from './Driver';
 export * from './Platform';
+export { CollectionStoreSchemaGenerator } from './SchemaGenerator';
 export * from '@mikro-orm/core';
 export { CollectionStoreEntityManager as EntityManager } from './EntityManager';
 export { CollectionStoreEntityRepository as EntityRepository } from './EntityRepository';

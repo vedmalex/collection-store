@@ -5,7 +5,7 @@ import { BaseEntity } from '../common/base.entity.js'
 
 @Entity()
 export class Comment extends BaseEntity {
-  @Property({ length: 1000 })
+  @Property({ length: 1000, type: 'string' })
   text!: string
 
   @ManyToOne(() => Article)

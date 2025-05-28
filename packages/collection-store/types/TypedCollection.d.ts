@@ -1,8 +1,8 @@
-import Collection from './collection';
 import { Item } from './types/Item';
-import { ICollectionConfig } from './ICollectionConfig';
-import { TypedSchemaDefinition, TypedQuery, TypedInsert, TypedUpdate, CompleteTypedSchema, IndexOptions, SchemaValidationOptions } from './types/typed-schema';
 import { ValueType } from 'b-pl-tree';
+import Collection from './collection';
+import { TypedSchemaDefinition, CompleteTypedSchema, TypedQuery, TypedInsert, TypedUpdate, AtomicUpdateOperation, BulkUpdateOperation, UpdateResult, IndexOptions, SchemaValidationOptions } from './types/typed-schema';
+import { ICollectionConfig } from './ICollectionConfig';
 export interface TypedSchemaValidationResult<T> {
     valid: boolean;
     data?: T;
@@ -60,6 +60,14 @@ export declare class TypedCollection<T extends Item, S extends TypedSchemaDefini
     removeWithId(id: ValueType): Promise<T | undefined>;
     private convertToLegacySchema;
     private convertToIndexDef;
+    updateAtomic(operation: AtomicUpdateOperation<T, S>): Promise<UpdateResult<T>>;
+    updateBulk(bulkOperation: BulkUpdateOperation<T, S>): Promise<UpdateResult<T>[]>;
+    private applyUpdateToDocument;
+    private isDirectUpdate;
+    private hasUpdateOperators;
+    private applyUpdateOperators;
+    private applyArrayOperators;
+    private matchesCondition;
 }
 export declare function createTypedCollection<T extends Item, S extends TypedSchemaDefinition<T>>(config: TypedCollectionConfig<T, S>): TypedCollection<T, S>;
 export declare function createSchemaCollection<T extends Item>(schema: CompleteTypedSchema<T>, config: Omit<TypedCollectionConfig<T, any>, 'schema'>): TypedCollection<T, TypedSchemaDefinition<T>>;

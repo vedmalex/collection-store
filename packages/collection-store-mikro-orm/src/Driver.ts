@@ -3,17 +3,20 @@ import {
   DatabaseDriver,
   EntityData,
   EntityDictionary,
-  EntityManagerType,
   EntityName,
   FilterQuery,
   FindOptions,
   QueryResult,
+  EntityManagerType,
+  EntityRepository,
+  Constructor,
 } from '@mikro-orm/core'
 //@ts-ignore
 import { Item } from 'collection-store'
 import { CollectionStoreConnection } from './Connection'
-import { CollectionStoreEntityManager } from './EntityManager'
 import { CollectionStorePlatform } from './Platform'
+import { CollectionStoreEntityManager } from './EntityManager'
+import { CollectionStoreEntityRepository } from './EntityRepository'
 
 export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
   override [EntityManagerType]!: CollectionStoreEntityManager<this>
@@ -23,6 +26,15 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   constructor(config: Configuration) {
     super(config, ['collection-store'])
   }
+
+  getRepositoryClass(): Constructor<EntityRepository<any>> {
+    return CollectionStoreEntityRepository as any
+  }
+
+  override createEntityManager<T extends object = object>(useContext?: boolean): CollectionStoreEntityManager {
+    return new CollectionStoreEntityManager(this.config, this, this.metadata, useContext)
+  }
+
   override async find<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T>[]> {
     if (this.metadata.find(entityName)?.virtual) {
       return this.findVirtual(entityName, where, {})
@@ -126,7 +138,7 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     const meta = this.metadata.find(entityName)!
 
     if (meta.expression instanceof Function) {
-      const em = this.createEntityManager<CollectionStoreDriver>()
+      const em = this.createEntityManager()
       return meta.expression(em, where, options as any) as any
     }
 

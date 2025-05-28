@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@mikro-orm/core": "^6.0.1",
-    "@mikro-orm/reflection": "^6.0.1",
-    "@mikro-orm/sqlite": "^6.0.1",
+    "@mikro-orm/core": "^6.4.15",
+    "@mikro-orm/reflection": "^6.4.15",
+    "@mikro-orm/sqlite": "^6.4.15",
     "bun-types": "latest",
     "fastify": "^4.25.2"
   },
@@ -14,7 +14,7 @@
     "typescript": "next"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^6.0.1",
+    "@mikro-orm/cli": "^6.4.15",
     "@types/node": "^20.10.4",
     "acorn-loose": "^8.4.0",
     "acorn-walk": "^8.3.1",

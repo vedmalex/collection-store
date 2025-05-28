@@ -417,11 +417,33 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
   }
 
   lowest(key: Paths<T>): Promise<T | undefined> {
-    return this.findFirstBy(key, this.indexes[key].min)
+    if (!this.indexes[key]) {
+      throw new Error(`Index for ${key} not found`)
+    }
+
+    // Get the minimum key from the B+ tree
+    const minKey = this.indexes[key].min
+
+    if (minKey === undefined || minKey === null) {
+      return Promise.resolve(undefined)
+    }
+
+    return this.findFirstBy(key, minKey)
   }
 
   greatest(key: Paths<T>): Promise<T | undefined> {
-    return this.findLastBy(key, this.indexes[key].max)
+    if (!this.indexes[key]) {
+      throw new Error(`Index for ${key} not found`)
+    }
+
+    // Get the maximum key from the B+ tree
+    const maxKey = this.indexes[key].max
+
+    if (maxKey === undefined || maxKey === null) {
+      return Promise.resolve(undefined)
+    }
+
+    return this.findFirstBy(key, maxKey)
   }
 
   oldest(): Promise<T | undefined> {

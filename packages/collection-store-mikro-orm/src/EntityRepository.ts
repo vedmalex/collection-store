@@ -1,4 +1,4 @@
-import { EntityRepository, type EntityName } from '@mikro-orm/core'
+import { EntityRepository, EntityName } from '@mikro-orm/core'
 import type { CollectionStoreEntityManager } from './EntityManager'
 //@ts-ignore
 import { Item } from 'collection-store'
@@ -7,51 +7,61 @@ export class CollectionStoreEntityRepository<
   T extends Item,
 > extends EntityRepository<T> {
   constructor(
-    protected override readonly em: CollectionStoreEntityManager,
+    em: CollectionStoreEntityManager,
     entityName: EntityName<T>,
   ) {
     super(em, entityName)
-  }
-
-  async first(entityName: EntityName<any>): Promise<any> {
-    return this.getEntityManager().first(entityName)
-  }
-  async last(entityName: EntityName<any>): Promise<any> {
-    return this.getEntityManager().last(entityName)
-  }
-  async lowest(entityName: EntityName<any>, key: string): Promise<any> {
-    return this.getEntityManager().lowest(entityName, key)
-  }
-  async greatest(entityName: EntityName<any>, key: string): Promise<any> {
-    return this.getEntityManager().greatest(entityName, key)
-  }
-  async oldest(entityName: EntityName<any>): Promise<any> {
-    return this.getEntityManager().oldest(entityName)
-  }
-  async latest(entityName: EntityName<any>): Promise<any> {
-    return this.getEntityManager().latest(entityName)
-  }
-  async findById(entityName: EntityName<any>, id: any) {
-    return this.getEntityManager().findById(entityName, id)
-  }
-  async findBy(entityName: EntityName<any>, key: string, id: any) {
-    return this.getEntityManager().findBy(entityName, key, id)
-  }
-  async findFirstBy(entityName: EntityName<any>, key: string, id: any) {
-    return this.getEntityManager().findFirstBy(entityName, key, id)
-  }
-  async findLastBy(entityName: EntityName<any>, key: string, id: any) {
-    return this.getEntityManager().findLastBy(entityName, key, id)
-  }
-
-  getCollection() {
-    return this.getEntityManager().getCollection<T>(this.entityName)
   }
 
   /**
    * @inheritDoc
    */
   override getEntityManager(): CollectionStoreEntityManager {
-    return this.em
+    return this.em as CollectionStoreEntityManager
+  }
+
+  // Collection Store custom methods
+  async first(): Promise<T | undefined> {
+    return this.getEntityManager().first(this.entityName)
+  }
+
+  async last(): Promise<T | undefined> {
+    return this.getEntityManager().last(this.entityName)
+  }
+
+  async lowest(key: string): Promise<T | undefined> {
+    return this.getEntityManager().lowest(this.entityName, key)
+  }
+
+  async greatest(key: string): Promise<T | undefined> {
+    return this.getEntityManager().greatest(this.entityName, key)
+  }
+
+  async oldest(): Promise<T | undefined> {
+    return this.getEntityManager().oldest(this.entityName)
+  }
+
+  async latest(): Promise<T | undefined> {
+    return this.getEntityManager().latest(this.entityName)
+  }
+
+  async findById(id: any): Promise<T | undefined> {
+    return this.getEntityManager().findById(this.entityName, id)
+  }
+
+  async findBy(key: string, id: any): Promise<T[]> {
+    return this.getEntityManager().findBy(this.entityName, key, id)
+  }
+
+  async findFirstBy(key: string, id: any): Promise<T | undefined> {
+    return this.getEntityManager().findFirstBy(this.entityName, key, id)
+  }
+
+  async findLastBy(key: string, id: any): Promise<T | undefined> {
+    return this.getEntityManager().findLastBy(this.entityName, key, id)
+  }
+
+  getCollection() {
+    return this.getEntityManager().getCollection(this.entityName)
   }
 }

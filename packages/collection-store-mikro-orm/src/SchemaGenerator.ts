@@ -9,7 +9,7 @@ import type { CollectionStoreDriver } from './Driver'
 
 export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<CollectionStoreDriver> {
   static register(orm: MikroORM): void {
-    orm.config.registerExtension('@mikro-orm/schema-generator', () => new CollectionStoreSchemaGenerator(orm.em))
+    orm.config.registerExtension('@mikro-orm/schema-generator', () => new CollectionStoreSchemaGenerator(orm.em as any))
   }
 
   override async createSchema(options: CreateSchemaOptions = {}) {
@@ -84,6 +84,9 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
       for (const prop of meta.props) {
         this.createPropertyIndexes(meta, prop, 'index')
         this.createPropertyIndexes(meta, prop, 'unique')
+
+        // Create indexes for all properties to support findBy, lowest, greatest methods
+        await this.createAutoIndexes(meta, prop)
       }
     }
   }
@@ -132,6 +135,38 @@ export class CollectionStoreSchemaGenerator extends AbstractSchemaGenerator<Coll
       sparse: prop.nullable === true,
       required: !prop.nullable,
     })
+  }
+
+  private async createAutoIndexes(meta: EntityMetadata, prop: EntityProperty) {
+    // Skip if already has explicit index or unique constraint
+    if (prop.index || prop.unique || !meta.collection) {
+      return
+    }
+
+    // Skip primary keys as they already have indexes
+    if (prop.primary) {
+      return
+    }
+
+    // Skip relations and embedded properties
+    if (prop.kind && (prop.kind.toString().includes('m:') || prop.kind.toString().includes('1:') || prop.kind.toString().includes('embedded'))) {
+      return
+    }
+
+    const db = this.connection.getDb()
+    const fieldOrSpec = prop.embeddedPath ? prop.embeddedPath.join('.') : prop.fieldNames[0]
+
+    try {
+      await db.createIndex(meta.className, fieldOrSpec, {
+        key: fieldOrSpec,
+        unique: false,
+        sparse: prop.nullable === true,
+        required: !prop.nullable,
+      })
+    } catch (error) {
+      // Ignore errors if index already exists
+      console.warn(`Failed to create auto-index for ${meta.className}.${fieldOrSpec}:`, error.message)
+    }
   }
 }
 

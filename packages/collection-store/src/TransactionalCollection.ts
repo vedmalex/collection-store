@@ -103,6 +103,61 @@ export class TransactionalListWrapper<T extends Item> implements ITransactionalL
   }
 
   async rollback(transactionId: string): Promise<void> {
+    if (!this.transactionChanges.has(transactionId)) {
+      // Transaction doesn't exist, nothing to rollback
+      return
+    }
+
+    const changes = this.transactionChanges.get(transactionId)!
+
+    // Rollback changes in reverse order
+    for (let i = changes.length - 1; i >= 0; i--) {
+      const change = changes[i]
+
+      try {
+        switch (change.type) {
+          case 'insert':
+            // Remove the inserted item
+            if (this.collection) {
+              await this.collection.removeWithId(change.id)
+            } else {
+              await this.list.delete(change.id)
+            }
+            break
+          case 'update':
+            // Restore the old value
+            if (change.oldValue) {
+              if (this.collection) {
+                await this.collection.updateWithId(change.id, change.oldValue, false)
+              } else {
+                await this.list.set(change.id, change.oldValue)
+              }
+            } else {
+              // If there was no old value, remove the item
+              if (this.collection) {
+                await this.collection.removeWithId(change.id)
+              } else {
+                await this.list.delete(change.id)
+              }
+            }
+            break
+          case 'remove':
+            // Restore the removed item
+            if (change.oldValue) {
+              if (this.collection) {
+                await this.collection.push(change.oldValue)
+              } else {
+                await this.list.set(change.id, change.oldValue)
+              }
+            }
+            break
+        }
+      } catch (error) {
+        console.error(`Failed to rollback change in transaction ${transactionId}:`, error)
+        // Continue with other rollback operations
+      }
+    }
+
     this.cleanupTransaction(transactionId)
   }
 

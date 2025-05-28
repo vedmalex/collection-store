@@ -1,13 +1,14 @@
-import { Configuration, DatabaseDriver, EntityData, EntityDictionary, EntityManagerType, EntityName, FilterQuery, FindOptions, QueryResult } from '@mikro-orm/core';
+import { Configuration, DatabaseDriver, EntityData, EntityDictionary, EntityName, FilterQuery, FindOptions, QueryResult, EntityManagerType } from '@mikro-orm/core';
 import { Item } from 'collection-store';
 import { CollectionStoreConnection } from './Connection';
-import { CollectionStoreEntityManager } from './EntityManager';
 import { CollectionStorePlatform } from './Platform';
+import { CollectionStoreEntityManager } from './EntityManager';
 export declare class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnection> {
     [EntityManagerType]: CollectionStoreEntityManager<this>;
     protected readonly platform: CollectionStorePlatform;
     protected readonly connection: CollectionStoreConnection;
     constructor(config: Configuration);
+    createEntityManager<T extends object = object>(useContext?: boolean): CollectionStoreEntityManager;
     find<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T>[]>;
     findOne<T extends object>(entityName: string, where: FilterQuery<T>): Promise<EntityData<T> | null>;
     connect(): Promise<CollectionStoreConnection>;

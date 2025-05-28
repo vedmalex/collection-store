@@ -28,13 +28,13 @@ function convertToSlug(title: string) {
 export class Article extends BaseEntity<'slug'> {
   [EntityRepositoryType]?: ArticleRepository
 
-  @Property({ unique: true })
+  @Property({ unique: true, type: 'string' })
   slug: string
 
-  @Property({ index: true })
+  @Property({ index: true, type: 'string' })
   title: string
 
-  @Property({ length: 1000 })
+  @Property({ length: 1000, type: 'string' })
   description: string
 
   @Property({ type: t.text, lazy: true })

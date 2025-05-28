@@ -97,34 +97,10 @@ export type TypedInsert<T extends Item, S extends TypedSchemaDefinition<T>> = {
         default: infer D;
     } ? U | undefined : U | undefined : T[K];
 };
-export type TypedUpdate<T extends Item, S extends TypedSchemaDefinition<T>> = {
-    [K in keyof T]?: S[K] extends TypedFieldDefinition<infer U> ? U | {
-        $set?: U;
-        $unset?: boolean;
-        $inc?: U extends number ? number : never;
-        $mul?: U extends number ? number : never;
-        $min?: U;
-        $max?: U;
-        $currentDate?: U extends Date ? boolean | {
-            $type: 'date' | 'timestamp';
-        } : never;
-        $addToSet?: U extends Array<infer V> ? V | {
-            $each: V[];
-        } : never;
-        $push?: U extends Array<infer V> ? V | {
-            $each: V[];
-            $position?: number;
-            $slice?: number;
-            $sort?: any;
-        } : never;
-        $pull?: U extends Array<infer V> ? V | any : never;
-        $pullAll?: U extends Array<infer V> ? V[] : never;
-        $pop?: U extends Array<any> ? 1 | -1 : never;
-    } : any;
-} & {
+export type TypedUpdateOperators<T extends Item, S extends TypedSchemaDefinition<T>> = {
     $set?: Partial<T>;
     $unset?: {
-        [K in keyof T]?: boolean;
+        [K in keyof T]?: boolean | 1;
     };
     $inc?: {
         [K in keyof T]?: T[K] extends number ? number : never;
@@ -149,11 +125,11 @@ export type TypedUpdate<T extends Item, S extends TypedSchemaDefinition<T>> = {
             $each: V[];
             $position?: number;
             $slice?: number;
-            $sort?: any;
+            $sort?: 1 | -1 | Record<string, 1 | -1>;
         } : never;
     };
     $pull?: {
-        [K in keyof T]?: T[K] extends Array<infer V> ? V | any : never;
+        [K in keyof T]?: T[K] extends Array<infer V> ? V | Partial<V> | TypedQuery<V, any> : never;
     };
     $pullAll?: {
         [K in keyof T]?: T[K] extends Array<infer V> ? V[] : never;
@@ -161,6 +137,40 @@ export type TypedUpdate<T extends Item, S extends TypedSchemaDefinition<T>> = {
     $pop?: {
         [K in keyof T]?: T[K] extends Array<any> ? 1 | -1 : never;
     };
+    $rename?: {
+        [K in keyof T]?: string;
+    };
+};
+export type TypedUpdate<T extends Item, S extends TypedSchemaDefinition<T>> = Partial<T> | TypedUpdateOperators<T, S> | (Partial<T> & TypedUpdateOperators<T, S>);
+export type AtomicUpdateOperation<T extends Item, S extends TypedSchemaDefinition<T>> = {
+    filter: TypedQuery<T, S>;
+    update: TypedUpdate<T, S>;
+    options?: {
+        upsert?: boolean;
+        multi?: boolean;
+        merge?: boolean;
+        validateSchema?: boolean;
+    };
+};
+export type BulkUpdateOperation<T extends Item, S extends TypedSchemaDefinition<T>> = {
+    operations: AtomicUpdateOperation<T, S>[];
+    options?: {
+        ordered?: boolean;
+        validateAll?: boolean;
+    };
+};
+export type UpdateResult<T extends Item> = {
+    matchedCount: number;
+    modifiedCount: number;
+    upsertedCount: number;
+    upsertedIds: Array<T[keyof T]>;
+    modifiedDocuments: T[];
+};
+export type ValidFieldPath<T> = {
+    [K in keyof T]: K extends string ? T[K] extends object ? K | `${K}.${ValidFieldPath<T[K]> extends string ? ValidFieldPath<T[K]> : never}` : K : never;
+}[keyof T];
+export type NestedFieldUpdate<T extends Item> = {
+    [K in string]?: any;
 };
 export type InferSchemaType<S extends TypedSchemaDefinition<any>> = {
     [K in keyof S]: S[K] extends TypedFieldDefinition<infer T> ? T : any;

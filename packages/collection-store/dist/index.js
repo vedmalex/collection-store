@@ -1,48 +1,10 @@
-var __create = Object.create;
-var __getProtoOf = Object.getPrototypeOf;
-var __defProp = Object.defineProperty;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __toESM = (mod, isNodeMode, target) => {
-  target = mod != null ? __create(__getProtoOf(mod)) : {};
-  const to = isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target;
-  for (let key2 of __getOwnPropNames(mod))
-    if (!__hasOwnProp.call(to, key2))
-      __defProp(to, key2, {
-        get: () => mod[key2],
-        enumerable: true
-      });
-  return to;
-};
-var __moduleCache = /* @__PURE__ */ new WeakMap;
-var __toCommonJS = (from) => {
-  var entry = __moduleCache.get(from), desc;
-  if (entry)
-    return entry;
-  entry = __defProp({}, "__esModule", { value: true });
-  if (from && typeof from === "object" || typeof from === "function")
-    __getOwnPropNames(from).map((key2) => !__hasOwnProp.call(entry, key2) && __defProp(entry, key2, {
-      get: () => from[key2],
-      enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable
-    }));
-  __moduleCache.set(from, entry);
-  return entry;
-};
-var __export = (target, all) => {
-  for (var name2 in all)
-    __defProp(target, name2, {
-      get: all[name2],
-      enumerable: true,
-      configurable: true,
-      set: (newValue) => all[name2] = () => newValue
-    });
-};
-
 // src/index.ts
 var exports_src = {};
 __export(exports_src, {
+  createTypedCollection: () => createTypedCollection,
+  createSchemaCollection: () => createSchemaCollection,
   copy_collection: () => copy_collection,
+  TypedCollection: () => TypedCollection,
   List: () => List,
   FileStorage: () => FileStorage,
   Collection: () => Collection,
@@ -1767,11 +1729,6 @@ function prepare_index_insert(collection2, val) {
   };
 }
 
-// src/collection/update_index.ts
-async function update_index(collection2, ov, nv, i) {
-  await Promise.all(collection2.updates.map((item) => item(ov, nv, i)));
-}
-
 // src/collection/ensure_ttl.ts
 async function ensure_ttl(collection2) {
   if (collection2.ttl) {
@@ -1811,23 +1768,14 @@ var import_b_pl_tree = require("b-pl-tree");
 var import_lodash_es = require("lodash-es");
 function ensure_indexed_value(item, key2, collection2, gen, auto2, process) {
   let value;
-  const indexDef = collection2.indexDefs[key2];
-  const isCompositeIndex = !!(indexDef?.keys && indexDef.keys.length > 1);
   if (process) {
-    if (isCompositeIndex) {
-      value = process(item);
-    } else {
-      value = import_lodash_es.get(item, key2);
-      if (value == null && auto2) {
-        value = gen?.(item, collection2.name, collection2.list) ?? value;
-        import_lodash_es.set(item, key2, value);
-      }
-      value = process(value);
-    }
+    value = process(item);
   } else {
     value = import_lodash_es.get(item, key2);
-    if (value == null && auto2) {
-      value = gen?.(item, collection2.name, collection2.list) ?? value;
+  }
+  if (value === undefined || value === null) {
+    if (auto2 && gen) {
+      value = gen(item, collection2.name, collection2.list);
       import_lodash_es.set(item, key2, value);
     }
   }
@@ -2133,14 +2081,14 @@ function create_index(collection2, key2, indexDef) {
     const valueOld = ensure_indexed_value(ov, key2, collection2, gen, auto2, process);
     const valueNew = get_value(nv, key2, process);
     if (valueNew != null) {
-      const [valid, message] = await validate_indexed_value_for_update(collection2, valueNew, key2, sparse2, required2, unique2, ov[collection2.id]);
+      const [valid, message] = await validate_indexed_value_for_update(collection2, valueNew, key2, sparse2, required2, unique2, ov ? ov[collection2.id] : undefined);
       if (!valid)
         throw new Error(message);
       if (valueOld !== valueNew) {
         if (unique2) {
           collection2.indexes[key2].remove(valueOld);
         } else {
-          collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == ov[collection2.id] : true);
+          collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == (ov && ov[collection2.id]) : true);
         }
         collection2.indexes[key2].insert(valueNew !== undefined ? valueNew : null, index_payload);
       }
@@ -2148,7 +2096,7 @@ function create_index(collection2, key2, indexDef) {
       if (unique2) {
         collection2.indexes[key2].remove(valueOld);
       } else {
-        collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == ov[collection2.id] : true);
+        collection2.indexes[key2].removeSpecific(valueOld, (pointer) => key2 != collection2.id ? pointer == (ov && ov[collection2.id]) : true);
       }
     }
   } : undefined;
@@ -2833,7 +2781,8 @@ class Collection {
             process: curr.process
           };
         } catch (error) {
-          throw new Error(`Invalid index definition: ${error.message}`);
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          throw new Error(`Invalid index definition: ${errorMessage}`);
         }
       }
       return prev;
@@ -2919,10 +2868,24 @@ class Collection {
     return (await last(this, () => true).next()).value;
   }
   lowest(key2) {
-    return this.findFirstBy(key2, this.indexes[key2].min);
+    if (!this.indexes[key2]) {
+      throw new Error(`Index for ${key2} not found`);
+    }
+    const minKey = this.indexes[key2].min;
+    if (minKey === undefined || minKey === null) {
+      return Promise.resolve(undefined);
+    }
+    return this.findFirstBy(key2, minKey);
   }
   greatest(key2) {
-    return this.findLastBy(key2, this.indexes[key2].max);
+    if (!this.indexes[key2]) {
+      throw new Error(`Index for ${key2} not found`);
+    }
+    const maxKey = this.indexes[key2].max;
+    if (maxKey === undefined || maxKey === null) {
+      return Promise.resolve(undefined);
+    }
+    return this.findFirstBy(key2, maxKey);
   }
   oldest() {
     if (this.ttl) {
@@ -2937,10 +2900,6 @@ class Collection {
       return this.last();
   }
   async findById(id2) {
-    const indexDef = this.indexDefs[this.id];
-    if (indexDef?.process) {
-      id2 = indexDef.process(id2);
-    }
     const index = this.indexes[this.id];
     if (!index) {
       throw new Error(`Index for ${this.id} not found`);
@@ -2950,14 +2909,10 @@ class Collection {
   }
   async findBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const indexDef = this.indexDefs[key2];
-      const isCompositeIndex = !!(indexDef.keys && indexDef.keys.length > 1);
-      if (indexDef?.process && !isCompositeIndex) {
-        id2 = indexDef.process(id2);
-      }
       const result = [];
       if (this.indexDefs.hasOwnProperty(key2)) {
-        result.push(...await get_indexed_value(this, key2, id2));
+        const indexedValues = await get_indexed_value(this, key2, id2);
+        result.push(...indexedValues);
       }
       return return_list_if_valid(this, result);
     } else {
@@ -2966,11 +2921,6 @@ class Collection {
   }
   async findFirstBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const indexDef = this.indexDefs[key2];
-      const isCompositeIndex = !!(indexDef.keys && indexDef.keys.length > 1);
-      if (indexDef?.process && !isCompositeIndex) {
-        id2 = indexDef.process(id2);
-      }
       if (this.indexDefs.hasOwnProperty(key2)) {
         const result = await get_first_indexed_value(this, key2, id2);
         return return_one_if_valid(this, result);
@@ -2980,11 +2930,6 @@ class Collection {
   }
   async findLastBy(key2, id2) {
     if (this.indexDefs.hasOwnProperty(key2)) {
-      const indexDef = this.indexDefs[key2];
-      const isCompositeIndex = !!(indexDef.keys && indexDef.keys.length > 1);
-      if (indexDef?.process && !isCompositeIndex) {
-        id2 = indexDef.process(id2);
-      }
       if (this.indexDefs.hasOwnProperty(key2)) {
         const result = await get_last_indexed_value(this, key2, id2);
         return return_one_if_valid(this, result);
@@ -3039,10 +2984,6 @@ class Collection {
     return return_one_if_valid(this, res2);
   }
   async removeWithId(id2) {
-    const indexDef = this.indexDefs[this.id];
-    if (indexDef?.process) {
-      id2 = indexDef.process(id2);
-    }
     const index = this.indexes[this.id];
     if (!index) {
       throw new Error(`Index for ${this.id} not found`);
@@ -3308,6 +3249,1064 @@ class FileStorage {
   }
 }
 
+// src/types/typed-schema.ts
+function extractIndexesFromSchema(schema) {
+  const indexes = [];
+  for (const [fieldPath, fieldDef] of Object.entries(schema)) {
+    if (fieldDef.index) {
+      const options = typeof fieldDef.index === "boolean" ? {} : fieldDef.index;
+      if (fieldDef.unique)
+        options.unique = true;
+      if (fieldDef.sparse)
+        options.sparse = true;
+      indexes.push({ field: fieldPath, options });
+    }
+  }
+  return indexes;
+}
+
+// src/types/field-types.ts
+function detectBSONType(value) {
+  const jsType = getJsType(value);
+  switch (jsType) {
+    case "null":
+      return "null";
+    case "undefined":
+      return "undefined";
+    case "number":
+      return typeof value === "number" && Number.isInteger(value) ? "int" : "double";
+    case "string":
+      return "string";
+    case "boolean":
+      return "boolean";
+    case "date":
+      return "date";
+    case "regexp":
+      return "regex";
+    case "array":
+      return "array";
+    case "buffer":
+      return "binary";
+    case "object":
+      return "object";
+    default:
+      return "object";
+  }
+}
+
+class TypeCoercion {
+  static toString(value) {
+    if (value === null || value === undefined)
+      return null;
+    if (typeof value === "string")
+      return value;
+    if (typeof value === "number")
+      return value.toString();
+    if (typeof value === "boolean")
+      return value.toString();
+    if (value instanceof Date)
+      return value.toISOString();
+    if (Array.isArray(value))
+      return JSON.stringify(value);
+    if (typeof value === "object")
+      return JSON.stringify(value);
+    return String(value);
+  }
+  static toNumber(value) {
+    if (value === null || value === undefined)
+      return null;
+    if (typeof value === "number")
+      return value;
+    if (typeof value === "bigint")
+      return Number(value);
+    if (typeof value === "boolean")
+      return value ? 1 : 0;
+    if (typeof value === "string") {
+      const parsed = Number(value);
+      return isNaN(parsed) ? null : parsed;
+    }
+    if (value instanceof Date)
+      return value.getTime();
+    return null;
+  }
+  static toBoolean(value) {
+    if (value === null || value === undefined)
+      return null;
+    if (typeof value === "boolean")
+      return value;
+    if (typeof value === "number")
+      return value !== 0;
+    if (typeof value === "string") {
+      const lower = value.toLowerCase();
+      if (lower === "true" || lower === "1")
+        return true;
+      if (lower === "false" || lower === "0")
+        return false;
+      return null;
+    }
+    return Boolean(value);
+  }
+  static toDate(value) {
+    if (value === null || value === undefined)
+      return null;
+    if (value instanceof Date)
+      return value;
+    if (typeof value === "number")
+      return new Date(value);
+    if (typeof value === "string") {
+      const parsed = new Date(value);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+    return null;
+  }
+  static toArray(value) {
+    if (value === null || value === undefined)
+      return null;
+    if (Array.isArray(value))
+      return value;
+    return [value];
+  }
+}
+
+class TypeCompatibility {
+  static isCompatible(value, expectedTypes) {
+    const actualType = detectBSONType(value);
+    const types2 = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
+    return types2.includes(actualType) || this.canCoerce(actualType, types2);
+  }
+  static canCoerce(sourceType, targetTypes) {
+    const coercionRules = {
+      string: ["number", "double", "int", "long", "boolean", "date"],
+      number: ["string", "boolean", "date", "double", "int", "long"],
+      double: ["string", "boolean", "date", "number", "int", "long"],
+      int: ["string", "boolean", "date", "number", "double", "long"],
+      long: ["string", "boolean", "date", "number", "double", "int"],
+      boolean: ["string", "number", "double", "int", "long"],
+      date: ["string", "number", "double", "int", "long"],
+      null: [],
+      undefined: [],
+      array: [],
+      object: ["string"],
+      regex: ["string"],
+      regexp: ["string"],
+      objectId: ["string"],
+      binary: ["string"],
+      binData: ["string"],
+      buffer: ["string"]
+    };
+    return targetTypes.some((target) => coercionRules[sourceType]?.includes(target));
+  }
+  static coerceValue(value, targetType) {
+    switch (targetType) {
+      case "string":
+        return TypeCoercion.toString(value);
+      case "number":
+      case "double":
+      case "int":
+      case "long":
+        return TypeCoercion.toNumber(value);
+      case "boolean":
+        return TypeCoercion.toBoolean(value);
+      case "date":
+        return TypeCoercion.toDate(value);
+      case "array":
+        return TypeCoercion.toArray(value);
+      default:
+        return value;
+    }
+  }
+}
+
+class FieldValidator {
+  schema;
+  constructor(schema) {
+    this.schema = schema;
+  }
+  validateField(fieldPath, value) {
+    const fieldDef = this.schema[fieldPath];
+    if (!fieldDef) {
+      return { valid: true, coercedValue: value };
+    }
+    const warnings = [];
+    let coercedValue = value;
+    if (fieldDef.required && (value === null || value === undefined)) {
+      return {
+        valid: false,
+        error: `Field '${fieldPath}' is required but got ${value}`
+      };
+    }
+    if ((value === null || value === undefined) && fieldDef.default !== undefined) {
+      coercedValue = fieldDef.default;
+    }
+    if (coercedValue === null || coercedValue === undefined) {
+      return { valid: true, coercedValue, warnings };
+    }
+    const actualType = detectBSONType(coercedValue);
+    const expectedTypes = Array.isArray(fieldDef.type) ? fieldDef.type : [fieldDef.type];
+    if (!expectedTypes.includes(actualType)) {
+      if (fieldDef.coerce !== false) {
+        let coerced = false;
+        for (const targetType of expectedTypes) {
+          if (TypeCompatibility.canCoerce(actualType, [targetType])) {
+            const newValue = TypeCompatibility.coerceValue(coercedValue, targetType);
+            if (newValue !== null) {
+              coercedValue = newValue;
+              coerced = true;
+              warnings.push(`Coerced ${actualType} to ${targetType} for field '${fieldPath}'`);
+              break;
+            }
+          }
+        }
+        if (!coerced && fieldDef.strict) {
+          return {
+            valid: false,
+            error: `Field '${fieldPath}' expected ${expectedTypes.join(" or ")} but got ${actualType}`
+          };
+        }
+      } else if (fieldDef.strict) {
+        return {
+          valid: false,
+          error: `Field '${fieldPath}' expected ${expectedTypes.join(" or ")} but got ${actualType}`
+        };
+      }
+    }
+    if (fieldDef.validator && !fieldDef.validator(coercedValue)) {
+      return {
+        valid: false,
+        error: `Field '${fieldPath}' failed custom validation`
+      };
+    }
+    return { valid: true, coercedValue, warnings };
+  }
+  validateDocument(doc) {
+    const errors = [];
+    const warnings = [];
+    const processedDoc = { ...doc };
+    for (const fieldPath of Object.keys(this.schema)) {
+      const value = this.getNestedValue(doc, fieldPath);
+      const result = this.validateField(fieldPath, value);
+      if (!result.valid) {
+        errors.push(result.error);
+      } else {
+        if (result.coercedValue !== value) {
+          this.setNestedValue(processedDoc, fieldPath, result.coercedValue);
+        }
+        if (result.warnings) {
+          warnings.push(...result.warnings);
+        }
+      }
+    }
+    return {
+      valid: errors.length === 0,
+      processedDoc: errors.length === 0 ? processedDoc : undefined,
+      errors,
+      warnings
+    };
+  }
+  getNestedValue(obj, path) {
+    return path.split(".").reduce((current, key2) => current && typeof current === "object" ? current[key2] : undefined, obj);
+  }
+  setNestedValue(obj, path, value) {
+    const keys = path.split(".");
+    const lastKey = keys.pop();
+    const target = keys.reduce((current, key2) => {
+      if (!current[key2] || typeof current[key2] !== "object") {
+        current[key2] = {};
+      }
+      return current[key2];
+    }, obj);
+    target[lastKey] = value;
+  }
+}
+
+class OperatorTypeChecker {
+  static operatorTypeMap = {
+    $eq: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object"],
+    $ne: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object"],
+    $gt: ["number", "double", "int", "long", "string", "date"],
+    $gte: ["number", "double", "int", "long", "string", "date"],
+    $lt: ["number", "double", "int", "long", "string", "date"],
+    $lte: ["number", "double", "int", "long", "string", "date"],
+    $in: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object"],
+    $nin: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object"],
+    $regex: ["string"],
+    $text: ["string"],
+    $all: ["array"],
+    $size: ["array"],
+    $elemMatch: ["array"],
+    $bitsAllSet: ["number", "double", "int", "long"],
+    $bitsAnySet: ["number", "double", "int", "long"],
+    $bitsAllClear: ["number", "double", "int", "long"],
+    $bitsAnyClear: ["number", "double", "int", "long"],
+    $type: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object", "regex", "regexp", "binary", "binData", "buffer", "objectId"],
+    $exists: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object", "regex", "regexp", "binary", "binData", "buffer", "objectId"],
+    $mod: ["number", "double", "int", "long"],
+    $where: ["null", "undefined", "number", "double", "int", "long", "string", "boolean", "date", "array", "object"]
+  };
+  static isOperatorCompatible(operator, fieldType) {
+    const supportedTypes = this.operatorTypeMap[operator];
+    return supportedTypes ? supportedTypes.includes(fieldType) : true;
+  }
+  static getIncompatibleOperators(fieldType) {
+    return Object.entries(this.operatorTypeMap).filter(([_4, types2]) => !types2.includes(fieldType)).map(([op, _4]) => op);
+  }
+  static validateOperatorUsage(operator, fieldType, queryValue) {
+    if (!this.isOperatorCompatible(operator, fieldType)) {
+      return {
+        valid: false,
+        error: `Operator ${operator} is not compatible with field type ${fieldType}`,
+        suggestion: `Consider using operators: ${this.operatorTypeMap[operator]?.join(", ") || "none available"}`
+      };
+    }
+    switch (operator) {
+      case "$regex":
+        if (typeof queryValue !== "string" && !(queryValue instanceof RegExp)) {
+          return {
+            valid: false,
+            error: "$regex requires string or RegExp value"
+          };
+        }
+        break;
+      case "$bitsAllSet":
+      case "$bitsAnySet":
+      case "$bitsAllClear":
+      case "$bitsAnyClear":
+        if (typeof queryValue !== "number" && !Array.isArray(queryValue)) {
+          return {
+            valid: false,
+            error: `${operator} requires number or array of bit positions`
+          };
+        }
+        break;
+      case "$size":
+        if (typeof queryValue !== "number" || queryValue < 0) {
+          return {
+            valid: false,
+            error: "$size requires non-negative number"
+          };
+        }
+        break;
+    }
+    return { valid: true };
+  }
+}
+function createFieldValidator(schema) {
+  return new FieldValidator(schema);
+}
+function validateOperator(operator, fieldType, queryValue) {
+  return OperatorTypeChecker.validateOperatorUsage(operator, fieldType, queryValue);
+}
+
+// src/query/schema-aware-query.ts
+class SchemaAwareQueryBuilder {
+  schema;
+  validator;
+  options;
+  constructor(schema, options = {}) {
+    this.schema = schema;
+    this.validator = createFieldValidator(schema);
+    this.options = {
+      validateTypes: true,
+      coerceValues: true,
+      strictMode: false,
+      allowUnknownFields: true,
+      ...options
+    };
+  }
+  validateQuery(query3) {
+    const errors = [];
+    const warnings = [];
+    let processedQuery = { ...query3 };
+    try {
+      const result = this.validateQueryRecursive(processedQuery, "");
+      errors.push(...result.errors);
+      warnings.push(...result.warnings);
+      processedQuery = result.processedQuery || processedQuery;
+    } catch (error) {
+      errors.push(`Query validation failed: ${error.message}`);
+    }
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+      processedQuery: errors.length === 0 ? processedQuery : undefined
+    };
+  }
+  buildQuery(query3, options = {}) {
+    const validation2 = this.validateQuery(query3);
+    if (!validation2.valid && this.options.strictMode) {
+      throw new Error(`Schema validation failed: ${validation2.errors.join(", ")}`);
+    }
+    const queryToUse = validation2.processedQuery || query3;
+    if (options.interpreted) {
+      const queryFn = build_query_new(queryToUse);
+      return { queryFn, validation: validation2 };
+    }
+    try {
+      const compiledResult = compileQuery(queryToUse);
+      if (compiledResult.func) {
+        return { queryFn: compiledResult.func, validation: validation2 };
+      } else {
+        console.warn("Schema-aware query compilation failed, falling back to interpreted mode:", compiledResult.error);
+        const queryFn = build_query_new(queryToUse);
+        return { queryFn, validation: validation2 };
+      }
+    } catch (error) {
+      console.warn("Schema-aware query compilation error, falling back to interpreted mode:", error.message);
+      const queryFn = build_query_new(queryToUse);
+      return { queryFn, validation: validation2 };
+    }
+  }
+  compileQuery(query3) {
+    const validation2 = this.validateQuery(query3);
+    if (!validation2.valid && this.options.strictMode) {
+      throw new Error(`Schema validation failed: ${validation2.errors.join(", ")}`);
+    }
+    const queryToUse = validation2.processedQuery || query3;
+    const compiledResult = compileQuery(queryToUse);
+    return { compiledResult, validation: validation2 };
+  }
+  validateDocument(doc) {
+    return this.validator.validateDocument(doc);
+  }
+  getFieldType(fieldPath) {
+    return this.schema[fieldPath]?.type;
+  }
+  hasField(fieldPath) {
+    return fieldPath in this.schema;
+  }
+  getSchema() {
+    return { ...this.schema };
+  }
+  validateQueryRecursive(query3, currentPath) {
+    const errors = [];
+    const warnings = [];
+    let processedQuery = { ...query3 };
+    if (typeof query3 !== "object" || query3 === null) {
+      return { processedQuery, errors, warnings };
+    }
+    for (const [key2, value] of Object.entries(query3)) {
+      const fieldPath = currentPath ? `${currentPath}.${key2}` : key2;
+      if (key2.startsWith("$") && ["$and", "$or", "$nor"].includes(key2)) {
+        if (Array.isArray(value)) {
+          const processedArray = value.map((subQuery) => {
+            const result = this.validateQueryRecursive(subQuery, currentPath);
+            errors.push(...result.errors);
+            warnings.push(...result.warnings);
+            return result.processedQuery;
+          });
+          processedQuery[key2] = processedArray;
+        }
+        continue;
+      }
+      if (key2.startsWith("$")) {
+        const fieldType = this.getFieldTypeForPath(currentPath);
+        if (fieldType && this.options.validateTypes) {
+          const validation2 = this.validateOperatorForType(key2, fieldType, value);
+          if (!validation2.valid) {
+            if (this.options.strictMode) {
+              errors.push(validation2.error);
+            } else {
+              warnings.push(validation2.error);
+            }
+          }
+        }
+        continue;
+      }
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        const hasOperators = Object.keys(value).some((k) => k.startsWith("$"));
+        if (hasOperators) {
+          const fieldType = this.getFieldTypeForPath(fieldPath);
+          if (fieldType && this.options.validateTypes) {
+            for (const [operator, operatorValue] of Object.entries(value)) {
+              if (operator.startsWith("$")) {
+                const validation2 = this.validateOperatorForType(operator, fieldType, operatorValue);
+                if (!validation2.valid) {
+                  if (this.options.strictMode) {
+                    errors.push(`Field '${fieldPath}': ${validation2.error}`);
+                  } else {
+                    warnings.push(`Field '${fieldPath}': ${validation2.error}`);
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          const result = this.validateQueryRecursive(value, fieldPath);
+          errors.push(...result.errors);
+          warnings.push(...result.warnings);
+          processedQuery[key2] = result.processedQuery;
+        }
+      } else {
+        const fieldType = this.getFieldTypeForPath(fieldPath);
+        if (fieldType && this.options.validateTypes) {
+          const validation2 = this.validateFieldValue(fieldPath, value);
+          if (!validation2.valid) {
+            if (this.options.strictMode) {
+              errors.push(validation2.error);
+            } else {
+              warnings.push(validation2.error);
+            }
+          } else if (validation2.coercedValue !== value && this.options.coerceValues) {
+            processedQuery[key2] = validation2.coercedValue;
+            if (validation2.warnings) {
+              warnings.push(...validation2.warnings);
+            }
+          }
+        } else if (!this.options.allowUnknownFields && !this.hasField(fieldPath)) {
+          const message = `Unknown field '${fieldPath}' not defined in schema`;
+          if (this.options.strictMode) {
+            errors.push(message);
+          } else {
+            warnings.push(message);
+          }
+        }
+      }
+    }
+    return { processedQuery, errors, warnings };
+  }
+  getFieldTypeForPath(fieldPath) {
+    if (this.schema[fieldPath]) {
+      return this.schema[fieldPath].type;
+    }
+    const parts = fieldPath.split(".");
+    for (let i = parts.length - 1;i > 0; i--) {
+      const parentPath = parts.slice(0, i).join(".");
+      if (this.schema[parentPath]) {
+        const parentType = this.schema[parentPath].type;
+        if (Array.isArray(parentType)) {
+          if (parentType.includes("object") || parentType.includes("array")) {
+            return;
+          }
+        } else if (parentType === "object" || parentType === "array") {
+          return;
+        }
+      }
+    }
+    return;
+  }
+  validateOperatorForType(operator, fieldType, value) {
+    const types2 = Array.isArray(fieldType) ? fieldType : [fieldType];
+    for (const type of types2) {
+      const validation2 = validateOperator(operator, type, value);
+      if (validation2.valid) {
+        return validation2;
+      }
+    }
+    return validateOperator(operator, types2[0], value);
+  }
+  validateFieldValue(fieldPath, value) {
+    return this.validator.validateField(fieldPath, value);
+  }
+}
+function createSchemaAwareQuery(schema, options) {
+  return new SchemaAwareQueryBuilder(schema, options);
+}
+
+// src/TypedCollection.ts
+class TypedCollection {
+  collection;
+  schema;
+  validator;
+  queryBuilder;
+  schemaOptions;
+  constructor(config2) {
+    const { schema, schemaOptions = {}, ...collectionConfig } = config2;
+    if ("fields" in schema) {
+      this.schema = schema.fields;
+      this.schemaOptions = { ...schema.options, ...schemaOptions };
+    } else {
+      this.schema = schema;
+      this.schemaOptions = schemaOptions;
+    }
+    const legacySchema = this.convertToLegacySchema(this.schema);
+    this.validator = new FieldValidator(legacySchema);
+    this.queryBuilder = createSchemaAwareQuery(legacySchema, {
+      validateTypes: true,
+      coerceValues: this.schemaOptions.coerceTypes,
+      strictMode: this.schemaOptions.strict,
+      allowUnknownFields: this.schemaOptions.allowUnknownFields
+    });
+    const schemaIndexes = extractIndexesFromSchema(this.schema);
+    const indexList2 = schemaIndexes.map(({ field, options }) => this.convertToIndexDef(field, options));
+    this.collection = Collection.create({
+      ...collectionConfig,
+      indexList: indexList2
+    });
+  }
+  async find(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.find(queryFn);
+  }
+  async findFirst(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.findFirst(queryFn);
+  }
+  async findLast(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.findLast(queryFn);
+  }
+  async findBy(field, value) {
+    return this.collection.findBy(field, value);
+  }
+  async findFirstBy(field, value) {
+    return this.collection.findFirstBy(field, value);
+  }
+  async findLastBy(field, value) {
+    return this.collection.findLastBy(field, value);
+  }
+  async insert(item) {
+    const validation2 = this.validateDocument(item);
+    if (!validation2.valid) {
+      if (this.schemaOptions.strict) {
+        throw new Error(`Document validation failed: ${validation2.errors.map((e) => e.message).join(", ")}`);
+      } else {
+        console.warn("Document validation warnings:", validation2.warnings);
+      }
+    }
+    const processedItem = validation2.data || item;
+    return this.collection.create(processedItem);
+  }
+  async create(item) {
+    return this.insert(item);
+  }
+  async save(item) {
+    const validation2 = this.validateDocument(item);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Document validation failed: ${validation2.errors.map((e) => e.message).join(", ")}`);
+    }
+    return this.collection.save(item);
+  }
+  async update(query3, update, merge2 = true) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.update(queryFn, update, merge2);
+  }
+  async updateFirst(query3, update, merge2 = true) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.updateFirst(queryFn, update, merge2);
+  }
+  async updateLast(query3, update, merge2 = true) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.updateLast(queryFn, update, merge2);
+  }
+  async remove(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.remove(queryFn);
+  }
+  async removeFirst(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.removeFirst(queryFn);
+  }
+  async removeLast(query3) {
+    const { queryFn, validation: validation2 } = this.queryBuilder.buildQuery(query3);
+    if (!validation2.valid && this.schemaOptions.strict) {
+      throw new Error(`Query validation failed: ${validation2.errors.join(", ")}`);
+    }
+    return this.collection.removeLast(queryFn);
+  }
+  get underlying() {
+    return this.collection;
+  }
+  validateDocument(doc) {
+    const result = this.validator.validateDocument(doc);
+    return {
+      valid: result.valid,
+      data: result.processedDoc,
+      errors: result.errors.map((error) => ({
+        field: "unknown",
+        message: error,
+        value: undefined
+      })),
+      warnings: result.warnings.map((warning) => ({
+        field: "unknown",
+        message: warning,
+        value: undefined
+      }))
+    };
+  }
+  validateQuery(query3) {
+    return this.queryBuilder.validateQuery(query3);
+  }
+  getSchema() {
+    return this.schema;
+  }
+  async createIndex(name2, field, options) {
+    const indexDef = this.convertToIndexDef(field, options || {});
+    return this.collection.createIndex(name2, indexDef);
+  }
+  listIndexes(name2) {
+    return this.collection.listIndexes(name2);
+  }
+  dropIndex(name2) {
+    return this.collection.dropIndex(name2);
+  }
+  async load(name2) {
+    return this.collection.load(name2);
+  }
+  async persist(name2) {
+    return this.collection.persist(name2);
+  }
+  async reset() {
+    return this.collection.reset();
+  }
+  async first() {
+    return this.collection.first();
+  }
+  async last() {
+    return this.collection.last();
+  }
+  async findById(id2) {
+    return this.collection.findById(id2);
+  }
+  async updateWithId(id2, update, merge2 = true) {
+    return this.collection.updateWithId(id2, update, merge2);
+  }
+  async removeWithId(id2) {
+    return this.collection.removeWithId(id2);
+  }
+  convertToLegacySchema(schema) {
+    const legacySchema = {};
+    for (const [fieldPath, fieldDef] of Object.entries(schema)) {
+      legacySchema[fieldPath] = {
+        type: fieldDef.type || "object",
+        required: fieldDef.required,
+        default: fieldDef.default,
+        coerce: fieldDef.coerce,
+        strict: this.schemaOptions.strict,
+        validator: fieldDef.validator,
+        description: fieldDef.description
+      };
+    }
+    return legacySchema;
+  }
+  convertToIndexDef(field, options) {
+    return {
+      key: field,
+      order: options.order,
+      unique: options.unique,
+      sparse: options.sparse,
+      auto: false,
+      process: (value) => value
+    };
+  }
+  async updateAtomic(operation) {
+    const { filter, update, options = {} } = operation;
+    const { upsert = false, multi = true, merge: merge2 = true, validateSchema = true } = options;
+    let matchedCount = 0;
+    let modifiedCount = 0;
+    let upsertedCount = 0;
+    const upsertedIds = [];
+    const modifiedDocuments = [];
+    const matches = await this.find(filter);
+    matchedCount = matches.length;
+    if (matches.length === 0 && upsert) {
+      const baseDoc = { ...filter };
+      const newDoc = this.applyUpdateToDocument(baseDoc, update, merge2, false);
+      for (const [field, fieldDef] of Object.entries(this.schema)) {
+        if (fieldDef.default !== undefined && newDoc[field] === undefined) {
+          newDoc[field] = typeof fieldDef.default === "function" ? fieldDef.default() : fieldDef.default;
+        }
+      }
+      if (validateSchema) {
+        const validation2 = this.validateDocument(newDoc);
+        if (!validation2.valid) {
+          throw new Error(`Schema validation failed: ${validation2.errors.map((e) => e.message).join(", ")}`);
+        }
+      }
+      const inserted = await this.insert(newDoc);
+      if (inserted) {
+        upsertedCount = 1;
+        upsertedIds.push(inserted[this.collection.id]);
+        modifiedDocuments.push(inserted);
+      }
+    } else {
+      const documentsToUpdate = multi ? matches : matches.slice(0, 1);
+      for (const doc of documentsToUpdate) {
+        const updatedDoc = this.applyUpdateToDocument(doc, update, merge2, validateSchema);
+        const hasUnset = this.hasUpdateOperators(update) && update.$unset;
+        let result;
+        if (hasUnset) {
+          const { update_index: update_index2 } = await import("./chunk-c29tdcfe.js");
+          await update_index2(this.collection, doc, updatedDoc, doc[this.collection.id]);
+          await this.collection.list.update(doc[this.collection.id], updatedDoc);
+          result = updatedDoc;
+        } else {
+          result = await this.collection.updateWithId(doc[this.collection.id], updatedDoc, merge2);
+        }
+        if (result) {
+          modifiedCount++;
+          modifiedDocuments.push(result);
+        }
+      }
+    }
+    return {
+      matchedCount,
+      modifiedCount,
+      upsertedCount,
+      upsertedIds,
+      modifiedDocuments
+    };
+  }
+  async updateBulk(bulkOperation) {
+    const { operations, options = {} } = bulkOperation;
+    const { ordered = true, validateAll = true } = options;
+    const results = [];
+    if (ordered) {
+      for (const operation of operations) {
+        try {
+          const result = await this.updateAtomic(operation);
+          results.push(result);
+        } catch (error) {
+          if (validateAll) {
+            throw error;
+          }
+        }
+      }
+    } else {
+      const promises = operations.map((operation) => this.updateAtomic(operation));
+      const parallelResults = await Promise.allSettled(promises);
+      for (const result of parallelResults) {
+        if (result.status === "fulfilled") {
+          results.push(result.value);
+        } else if (validateAll) {
+          throw result.reason;
+        }
+      }
+    }
+    return results;
+  }
+  applyUpdateToDocument(doc, update, merge2 = true, validateSchema = true) {
+    let result = merge2 ? { ...doc } : {};
+    if (this.isDirectUpdate(update)) {
+      result = merge2 ? { ...result, ...update } : update;
+    }
+    if (this.hasUpdateOperators(update)) {
+      result = this.applyUpdateOperators(result, update);
+    }
+    if (validateSchema) {
+      const validation2 = this.validateDocument(result);
+      if (!validation2.valid) {
+        throw new Error(`Schema validation failed: ${validation2.errors.map((e) => e.message).join(", ")}`);
+      }
+    }
+    return result;
+  }
+  isDirectUpdate(update) {
+    return Object.keys(update).some((key2) => !key2.startsWith("$"));
+  }
+  hasUpdateOperators(update) {
+    return Object.keys(update).some((key2) => key2.startsWith("$"));
+  }
+  applyUpdateOperators(doc, operators) {
+    let result = { ...doc };
+    if (operators.$set) {
+      result = { ...result, ...operators.$set };
+    }
+    if (operators.$unset) {
+      const fieldsToUnset = Object.keys(operators.$unset).filter((field) => operators.$unset[field]);
+      if (fieldsToUnset.length > 0) {
+        const newResult = {};
+        for (const [key2, value] of Object.entries(result)) {
+          if (!fieldsToUnset.includes(key2)) {
+            newResult[key2] = value;
+          }
+        }
+        result = newResult;
+      }
+    }
+    if (operators.$inc) {
+      for (const [field, increment] of Object.entries(operators.$inc)) {
+        if (typeof increment === "number" && typeof result[field] === "number") {
+          result[field] = (result[field] || 0) + increment;
+        }
+      }
+    }
+    if (operators.$mul) {
+      for (const [field, multiplier] of Object.entries(operators.$mul)) {
+        if (typeof multiplier === "number" && typeof result[field] === "number") {
+          result[field] = (result[field] || 0) * multiplier;
+        }
+      }
+    }
+    if (operators.$min) {
+      for (const [field, minValue] of Object.entries(operators.$min)) {
+        const currentValue = result[field];
+        if (currentValue !== undefined && minValue !== undefined && minValue < currentValue) {
+          result[field] = minValue;
+        }
+      }
+    }
+    if (operators.$max) {
+      for (const [field, maxValue] of Object.entries(operators.$max)) {
+        const currentValue = result[field];
+        if (currentValue !== undefined && maxValue !== undefined && maxValue > currentValue) {
+          result[field] = maxValue;
+        }
+      }
+    }
+    if (operators.$currentDate) {
+      for (const [field, dateSpec] of Object.entries(operators.$currentDate)) {
+        if (dateSpec === true || typeof dateSpec === "object" && dateSpec.$type === "date") {
+          result[field] = new Date;
+        } else if (typeof dateSpec === "object" && dateSpec.$type === "timestamp") {
+          result[field] = new Date;
+        }
+      }
+    }
+    this.applyArrayOperators(result, operators);
+    return result;
+  }
+  applyArrayOperators(doc, operators) {
+    if (operators.$addToSet) {
+      for (const [field, valueSpec] of Object.entries(operators.$addToSet)) {
+        const currentArray = doc[field];
+        if (Array.isArray(currentArray)) {
+          if (typeof valueSpec === "object" && valueSpec.$each) {
+            for (const value of valueSpec.$each) {
+              if (!currentArray.includes(value)) {
+                currentArray.push(value);
+              }
+            }
+          } else {
+            if (!currentArray.includes(valueSpec)) {
+              currentArray.push(valueSpec);
+            }
+          }
+        }
+      }
+    }
+    if (operators.$push) {
+      for (const [field, valueSpec] of Object.entries(operators.$push)) {
+        const currentArray = doc[field];
+        if (Array.isArray(currentArray)) {
+          if (typeof valueSpec === "object" && valueSpec.$each) {
+            let valuesToPush = valueSpec.$each;
+            if (valueSpec.$sort !== undefined) {
+              if (typeof valueSpec.$sort === "number") {
+                valuesToPush = valuesToPush.sort((a, b) => valueSpec.$sort === 1 ? a > b ? 1 : -1 : a < b ? 1 : -1);
+              }
+            }
+            if (valueSpec.$position !== undefined) {
+              currentArray.splice(valueSpec.$position, 0, ...valuesToPush);
+            } else {
+              currentArray.push(...valuesToPush);
+            }
+            if (valueSpec.$slice !== undefined) {
+              if (valueSpec.$slice > 0) {
+                currentArray.splice(valueSpec.$slice);
+              } else if (valueSpec.$slice < 0) {
+                currentArray.splice(0, currentArray.length + valueSpec.$slice);
+              }
+            }
+          } else {
+            currentArray.push(valueSpec);
+          }
+        }
+      }
+    }
+    if (operators.$pull) {
+      for (const [field, condition] of Object.entries(operators.$pull)) {
+        const currentArray = doc[field];
+        if (Array.isArray(currentArray)) {
+          for (let i = currentArray.length - 1;i >= 0; i--) {
+            if (this.matchesCondition(currentArray[i], condition)) {
+              currentArray.splice(i, 1);
+            }
+          }
+        }
+      }
+    }
+    if (operators.$pullAll) {
+      for (const [field, valuesToRemove] of Object.entries(operators.$pullAll)) {
+        const currentArray = doc[field];
+        if (Array.isArray(currentArray) && Array.isArray(valuesToRemove)) {
+          for (let i = currentArray.length - 1;i >= 0; i--) {
+            if (valuesToRemove.includes(currentArray[i])) {
+              currentArray.splice(i, 1);
+            }
+          }
+        }
+      }
+    }
+    if (operators.$pop) {
+      for (const [field, direction] of Object.entries(operators.$pop)) {
+        const currentArray = doc[field];
+        if (Array.isArray(currentArray)) {
+          if (direction === 1) {
+            currentArray.pop();
+          } else if (direction === -1) {
+            currentArray.shift();
+          }
+        }
+      }
+    }
+  }
+  matchesCondition(value, condition) {
+    if (typeof condition === "object" && condition !== null) {
+      return Object.entries(condition).every(([key2, condValue]) => {
+        if (key2.startsWith("$")) {
+          switch (key2) {
+            case "$eq":
+              return value === condValue;
+            case "$ne":
+              return value !== condValue;
+            case "$gt":
+              return value > condValue;
+            case "$gte":
+              return value >= condValue;
+            case "$lt":
+              return value < condValue;
+            case "$lte":
+              return value <= condValue;
+            case "$in":
+              return Array.isArray(condValue) && condValue.includes(value);
+            case "$nin":
+              return Array.isArray(condValue) && !condValue.includes(value);
+            default:
+              return false;
+          }
+        } else {
+          return value && value[key2] === condValue;
+        }
+      });
+    } else {
+      return value === condition;
+    }
+  }
+}
+function createTypedCollection(config2) {
+  return new TypedCollection(config2);
+}
+function createSchemaCollection(schema, config2) {
+  return new TypedCollection({
+    ...config2,
+    schema
+  });
+}
 // src/CSDatabase.ts
 var import_fs = __toESM(require("fs"));
 var import_path3 = __toESM(require("path"));
@@ -3329,16 +4328,196 @@ function deserialize_collection_config(config2) {
   return res2;
 }
 
+// src/TransactionManager.ts
+var import_crypto = require("crypto");
+
+class CollectionStoreTransaction {
+  transactionId;
+  startTime;
+  options;
+  _affectedResources = new Set;
+  _changes = [];
+  _status = "ACTIVE";
+  constructor(transactionId, options = {}) {
+    this.transactionId = transactionId;
+    this.startTime = Date.now();
+    this.options = {
+      timeout: 30000,
+      isolationLevel: "SNAPSHOT_ISOLATION",
+      ...options
+    };
+  }
+  get status() {
+    return this._status;
+  }
+  get changes() {
+    return this._changes;
+  }
+  get affectedResources() {
+    return this._affectedResources;
+  }
+  addAffectedResource(resource) {
+    if (this._status !== "ACTIVE") {
+      throw new Error(`Cannot add resource to transaction in ${this._status} state`);
+    }
+    this._affectedResources.add(resource);
+  }
+  recordChange(change) {
+    if (this._status !== "ACTIVE") {
+      throw new Error(`Cannot record change in transaction in ${this._status} state`);
+    }
+    this._changes.push(change);
+  }
+  async prepare() {
+    if (this._status !== "ACTIVE") {
+      throw new Error(`Cannot prepare transaction in ${this._status} state`);
+    }
+    this._status = "PREPARING";
+    try {
+      if (Date.now() - this.startTime > this.options.timeout) {
+        this._status = "ABORTED";
+        return false;
+      }
+      const prepareResults = await Promise.all(Array.from(this._affectedResources).map((resource) => resource.prepareCommit(this.transactionId)));
+      const canCommit = prepareResults.every((result) => result === true);
+      if (canCommit) {
+        this._status = "PREPARED";
+        return true;
+      } else {
+        this._status = "ABORTED";
+        return false;
+      }
+    } catch (error) {
+      this._status = "ABORTED";
+      throw error;
+    }
+  }
+  async commit() {
+    if (this._status !== "PREPARED") {
+      throw new Error(`Cannot commit transaction in ${this._status} state`);
+    }
+    try {
+      await Promise.all(Array.from(this._affectedResources).map((resource) => resource.finalizeCommit(this.transactionId)));
+      this._status = "COMMITTED";
+    } catch (error) {
+      this._status = "ABORTED";
+      throw error;
+    }
+  }
+  async rollback() {
+    if (this._status === "COMMITTED") {
+      throw new Error("Cannot rollback committed transaction");
+    }
+    try {
+      await Promise.all(Array.from(this._affectedResources).map((resource) => resource.rollback(this.transactionId)));
+      this._status = "ABORTED";
+    } catch (error) {
+      this._status = "ABORTED";
+      throw error;
+    }
+  }
+}
+
+class TransactionManager {
+  _activeTransactions = new Map;
+  _changeListeners = [];
+  async beginTransaction(options = {}) {
+    const transactionId = import_crypto.randomUUID();
+    const transaction = new CollectionStoreTransaction(transactionId, options);
+    this._activeTransactions.set(transactionId, transaction);
+    return transactionId;
+  }
+  getTransaction(transactionId) {
+    const transaction = this._activeTransactions.get(transactionId);
+    if (!transaction) {
+      throw new Error(`Transaction ${transactionId} not found`);
+    }
+    return transaction;
+  }
+  async commitTransaction(transactionId) {
+    const transaction = this.getTransaction(transactionId);
+    try {
+      const canCommit = await transaction.prepare();
+      if (!canCommit) {
+        await transaction.rollback();
+        throw new Error(`Transaction ${transactionId} failed to prepare`);
+      }
+      await transaction.commit();
+      if (transaction.changes.length > 0) {
+        this._notifyChanges(transaction.changes);
+      }
+    } finally {
+      this._activeTransactions.delete(transactionId);
+    }
+  }
+  async rollbackTransaction(transactionId) {
+    const transaction = this.getTransaction(transactionId);
+    try {
+      await transaction.rollback();
+    } finally {
+      this._activeTransactions.delete(transactionId);
+    }
+  }
+  addChangeListener(listener) {
+    this._changeListeners.push(listener);
+  }
+  removeChangeListener(listener) {
+    const index = this._changeListeners.indexOf(listener);
+    if (index !== -1) {
+      this._changeListeners.splice(index, 1);
+    }
+  }
+  _notifyChanges(changes) {
+    for (const listener of this._changeListeners) {
+      try {
+        listener(changes);
+      } catch (error) {
+        console.error("Error in change listener:", error);
+      }
+    }
+  }
+  async cleanup() {
+    const now = Date.now();
+    const expiredTransactions = [];
+    for (const [txId, transaction] of this._activeTransactions) {
+      const timeout = transaction.options.timeout || 30000;
+      if (now - transaction.startTime > timeout) {
+        expiredTransactions.push(txId);
+      }
+    }
+    for (const txId of expiredTransactions) {
+      try {
+        await this.rollbackTransaction(txId);
+      } catch (error) {
+        console.error(`Failed to rollback expired transaction ${txId}:`, error);
+      }
+    }
+  }
+  get activeTransactionCount() {
+    return this._activeTransactions.size;
+  }
+  getActiveTransactionIds() {
+    return Array.from(this._activeTransactions.keys());
+  }
+}
+
 // src/CSDatabase.ts
 class CSDatabase {
   root;
   name;
   inTransaction = false;
   collections;
+  transactionManager;
+  currentTransactionId;
+  transactionSnapshots = new Map;
+  transactionSavepoints = new Map;
+  savepointCounter = 0;
+  savepointNameToId = new Map;
   constructor(root2, name2) {
     this.root = root2;
     this.name = name2 || "default";
     this.collections = new Map;
+    this.transactionManager = new TransactionManager;
   }
   async writeSchema() {
     const result = {};
@@ -3444,17 +4623,93 @@ class CSDatabase {
     return this;
   }
   async endSession() {
+    if (this.currentTransactionId) {
+      try {
+        await this.transactionManager.rollbackTransaction(this.currentTransactionId);
+      } catch (error) {
+        console.error("Error rolling back transaction during endSession:", error);
+      }
+      this.transactionSnapshots.delete(this.currentTransactionId);
+      this.currentTransactionId = undefined;
+    }
     this.inTransaction = false;
   }
-  async startTransaction(options) {
+  async startTransaction(options = {}) {
+    if (this.inTransaction && this.currentTransactionId) {
+      throw new Error("Transaction already active. Call commitTransaction() or abortTransaction() first.");
+    }
+    this.currentTransactionId = await this.transactionManager.beginTransaction(options);
     this.inTransaction = true;
+    const snapshot = new Map;
+    for (const [name2, collection2] of this.collections) {
+      const data = await collection2.find({});
+      snapshot.set(name2, JSON.parse(JSON.stringify(data)));
+    }
+    this.transactionSnapshots.set(this.currentTransactionId, snapshot);
   }
   async abortTransaction() {
-    this.inTransaction = false;
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error("No active transaction to abort");
+    }
+    try {
+      const snapshot = this.transactionSnapshots.get(this.currentTransactionId);
+      if (snapshot) {
+        for (const [collectionName, snapshotData] of snapshot) {
+          const collection2 = this.collections.get(collectionName);
+          if (collection2) {
+            await collection2.reset();
+            for (const item of snapshotData) {
+              await collection2.push(item);
+            }
+          }
+        }
+      }
+      await this.transactionManager.rollbackTransaction(this.currentTransactionId);
+    } finally {
+      this.transactionSnapshots.delete(this.currentTransactionId);
+      this.currentTransactionId = undefined;
+      this.inTransaction = false;
+    }
   }
   async commitTransaction() {
-    await this.persist();
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error("No active transaction to commit");
+    }
+    try {
+      await this.transactionManager.commitTransaction(this.currentTransactionId);
+      await this.persist();
+    } finally {
+      this.transactionSnapshots.delete(this.currentTransactionId);
+      this.currentTransactionId = undefined;
+      this.inTransaction = false;
+    }
+  }
+  getCurrentTransaction() {
+    if (this.currentTransactionId) {
+      return this.transactionManager.getTransaction(this.currentTransactionId);
+    }
+    return;
+  }
+  getCurrentTransactionId() {
+    return this.currentTransactionId;
+  }
+  addChangeListener(listener) {
+    this.transactionManager.addChangeListener(listener);
+  }
+  removeChangeListener(listener) {
+    this.transactionManager.removeChangeListener(listener);
+  }
+  async cleanupTransactions() {
+    await this.transactionManager.cleanup();
+  }
+  async forceResetTransactionState() {
     this.inTransaction = false;
+    this.currentTransactionId = undefined;
+    this.transactionSnapshots.clear();
+    await this.transactionManager.cleanup();
+  }
+  get activeTransactionCount() {
+    return this.transactionManager.activeTransactionCount;
   }
   async first(collection2) {
     return this.collections.get(collection2).first();
@@ -3484,8 +4739,182 @@ class CSDatabase {
     return this.collections.get(collection2).findFirstBy(key2, id2);
   }
   async findLastBy(collection2, key2, id2) {
-    return this.collections.get(collection2).findLastBy(key2, id2);
+    return this.collections.get(collection2)?.findLastBy(key2, id2);
+  }
+  async createSavepoint(name2) {
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error("No active transaction. Call startTransaction() first.");
+    }
+    const txSavepointNames = this.savepointNameToId.get(this.currentTransactionId);
+    if (txSavepointNames?.has(name2)) {
+      throw new Error(`Savepoint with name '${name2}' already exists in transaction ${this.currentTransactionId}`);
+    }
+    const savepointId = `csdb-sp-${this.currentTransactionId}-${++this.savepointCounter}-${Date.now()}`;
+    console.log(`[CSDatabase] Creating savepoint '${name2}' (${savepointId}) for transaction ${this.currentTransactionId}`);
+    const collectionsSnapshot = new Map;
+    for (const [collectionName, collection2] of this.collections) {
+      const data = await collection2.find({});
+      collectionsSnapshot.set(collectionName, JSON.parse(JSON.stringify(data)));
+    }
+    const btreeContextSnapshots = new Map;
+    for (const [collectionName, collection2] of this.collections) {
+      const btreeContext = collection2._transactionContext;
+      if (btreeContext && typeof btreeContext.createSavepoint === "function") {
+        try {
+          const btreeSavepointId = await btreeContext.createSavepoint(`${name2}-${collectionName}`);
+          btreeContextSnapshots.set(collectionName, btreeSavepointId);
+          console.log(`[CSDatabase] Created B+ Tree savepoint for collection '${collectionName}': ${btreeSavepointId}`);
+        } catch (error) {
+          console.warn(`[CSDatabase] Failed to create B+ Tree savepoint for collection '${collectionName}':`, error);
+        }
+      }
+    }
+    const savepointData = {
+      savepointId,
+      name: name2,
+      timestamp: Date.now(),
+      transactionId: this.currentTransactionId,
+      collectionsSnapshot,
+      btreeContextSnapshots
+    };
+    if (!this.transactionSavepoints.has(this.currentTransactionId)) {
+      this.transactionSavepoints.set(this.currentTransactionId, new Map);
+    }
+    if (!this.savepointNameToId.has(this.currentTransactionId)) {
+      this.savepointNameToId.set(this.currentTransactionId, new Map);
+    }
+    this.transactionSavepoints.get(this.currentTransactionId).set(savepointId, savepointData);
+    this.savepointNameToId.get(this.currentTransactionId).set(name2, savepointId);
+    console.log(`[CSDatabase] Created savepoint '${name2}' (${savepointId}) with ${collectionsSnapshot.size} collections and ${btreeContextSnapshots.size} B+ Tree contexts`);
+    return savepointId;
+  }
+  async rollbackToSavepoint(savepointId) {
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error("No active transaction. Call startTransaction() first.");
+    }
+    const txSavepoints = this.transactionSavepoints.get(this.currentTransactionId);
+    if (!txSavepoints) {
+      throw new Error(`No savepoints found for transaction ${this.currentTransactionId}`);
+    }
+    const savepointData = txSavepoints.get(savepointId);
+    if (!savepointData) {
+      throw new Error(`Savepoint ${savepointId} not found in transaction ${this.currentTransactionId}`);
+    }
+    console.log(`[CSDatabase] Rolling back to savepoint '${savepointData.name}' (${savepointId})`);
+    try {
+      for (const [collectionName, btreeSavepointId] of savepointData.btreeContextSnapshots) {
+        const collection2 = this.collections.get(collectionName);
+        if (collection2) {
+          const btreeContext = collection2._transactionContext;
+          if (btreeContext && typeof btreeContext.rollbackToSavepoint === "function") {
+            try {
+              await btreeContext.rollbackToSavepoint(btreeSavepointId);
+              console.log(`[CSDatabase] Rolled back B+ Tree context for collection '${collectionName}' to savepoint ${btreeSavepointId}`);
+            } catch (error) {
+              console.error(`[CSDatabase] Failed to rollback B+ Tree context for collection '${collectionName}':`, error);
+              throw error;
+            }
+          }
+        }
+      }
+      for (const [collectionName, snapshotData] of savepointData.collectionsSnapshot) {
+        const collection2 = this.collections.get(collectionName);
+        if (collection2) {
+          await collection2.reset();
+          for (const item of snapshotData) {
+            await collection2.push(item);
+          }
+          console.log(`[CSDatabase] Restored collection '${collectionName}' with ${snapshotData.length} items`);
+        }
+      }
+      const savePointsToRemove = [];
+      for (const [spId, sp] of txSavepoints) {
+        if (sp.timestamp > savepointData.timestamp) {
+          savePointsToRemove.push(spId);
+        }
+      }
+      for (const spId of savePointsToRemove) {
+        const sp = txSavepoints.get(spId);
+        if (sp) {
+          this.savepointNameToId.get(this.currentTransactionId)?.delete(sp.name);
+          txSavepoints.delete(spId);
+          console.log(`[CSDatabase] Removed savepoint '${sp.name}' (${spId}) created after rollback point`);
+        }
+      }
+      console.log(`[CSDatabase] Rollback completed. Restored ${savepointData.collectionsSnapshot.size} collections`);
+    } catch (error) {
+      console.error(`[CSDatabase] Error during rollback to savepoint ${savepointId}:`, error);
+      throw error;
+    }
+  }
+  async releaseSavepoint(savepointId) {
+    if (!this.inTransaction || !this.currentTransactionId) {
+      throw new Error("No active transaction. Call startTransaction() first.");
+    }
+    const txSavepoints = this.transactionSavepoints.get(this.currentTransactionId);
+    if (!txSavepoints) {
+      throw new Error(`No savepoints found for transaction ${this.currentTransactionId}`);
+    }
+    const savepointData = txSavepoints.get(savepointId);
+    if (!savepointData) {
+      throw new Error(`Savepoint ${savepointId} not found in transaction ${this.currentTransactionId}`);
+    }
+    console.log(`[CSDatabase] Releasing savepoint '${savepointData.name}' (${savepointId})`);
+    for (const [collectionName, btreeSavepointId] of savepointData.btreeContextSnapshots) {
+      const collection2 = this.collections.get(collectionName);
+      if (collection2) {
+        const btreeContext = collection2._transactionContext;
+        if (btreeContext && typeof btreeContext.releaseSavepoint === "function") {
+          try {
+            await btreeContext.releaseSavepoint(btreeSavepointId);
+            console.log(`[CSDatabase] Released B+ Tree savepoint for collection '${collectionName}': ${btreeSavepointId}`);
+          } catch (error) {
+            console.warn(`[CSDatabase] Failed to release B+ Tree savepoint for collection '${collectionName}':`, error);
+          }
+        }
+      }
+    }
+    txSavepoints.delete(savepointId);
+    this.savepointNameToId.get(this.currentTransactionId)?.delete(savepointData.name);
+    savepointData.collectionsSnapshot.clear();
+    savepointData.btreeContextSnapshots.clear();
+    console.log(`[CSDatabase] Released savepoint '${savepointData.name}' (${savepointId})`);
+  }
+  listSavepoints() {
+    if (!this.inTransaction || !this.currentTransactionId) {
+      return [];
+    }
+    const txSavepoints = this.transactionSavepoints.get(this.currentTransactionId);
+    if (!txSavepoints) {
+      return [];
+    }
+    const savepoints = [];
+    for (const savepointData of txSavepoints.values()) {
+      savepoints.push(`${savepointData.name} (${savepointData.savepointId}) - ${new Date(savepointData.timestamp).toISOString()}`);
+    }
+    return savepoints.sort();
+  }
+  getSavepointInfo(savepointId) {
+    if (!this.inTransaction || !this.currentTransactionId) {
+      return;
+    }
+    const txSavepoints = this.transactionSavepoints.get(this.currentTransactionId);
+    if (!txSavepoints) {
+      return;
+    }
+    const savepointData = txSavepoints.get(savepointId);
+    if (!savepointData) {
+      return;
+    }
+    return {
+      savepointId: savepointData.savepointId,
+      name: savepointData.name,
+      timestamp: savepointData.timestamp,
+      transactionId: savepointData.transactionId,
+      collectionsCount: savepointData.collectionsSnapshot.size,
+      btreeContextsCount: savepointData.btreeContextSnapshots.size
+    };
   }
 }
 
-//# debugId=EB3B7A12DD67919364756E2164756E21
+//# debugId=260A91480F04941064756E2164756E21

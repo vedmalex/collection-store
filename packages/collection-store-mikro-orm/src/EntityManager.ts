@@ -18,8 +18,8 @@ export class CollectionStoreEntityManager<
 > extends EntityManager<D> {
   override fork(
     options?: ForkOptions | undefined,
-  ): CollectionStoreEntityManager {
-    return super.fork(options) as CollectionStoreEntityManager
+  ): this {
+    return super.fork(options) as this
   }
   async first(entityName: EntityName<any>): Promise<any> {
     return this.getDriver().first(entityName)

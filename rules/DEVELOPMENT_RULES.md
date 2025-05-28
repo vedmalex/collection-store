@@ -16,7 +16,7 @@
 ### 1. **Фазовый подход к разработке**
 ```markdown
 ## Phase 1: Stabilize Core & Fix Bugs ✅
-1. Fix critical memory/performance issues
+1. Fix critical memory/performance issue
 2. Implement basic functionality with CoW
 3. Fix parent-child relationship corruption
 4. Implement commit() logic

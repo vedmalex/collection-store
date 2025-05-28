@@ -8,14 +8,15 @@ import {
   IsolationLevel,
   Transaction,
   TransactionEventBroadcaster,
-  TransactionOptions,
+  TransactionOptions as MikroTransactionOptions,
   Utils,
 } from '@mikro-orm/core'
 
-import { CSDatabase, Item } from 'collection-store'
+import { CSDatabase, Item, type TransactionOptions } from 'collection-store'
 import type { CSTransaction } from 'collection-store'
+import type { SavepointConnection } from './types'
 
-export class CollectionStoreConnection extends Connection {
+export class CollectionStoreConnection extends Connection implements SavepointConnection {
   db!: CSDatabase
 
   constructor(config: Configuration, options?: ConnectionOptions, type: ConnectionType = 'write') {
@@ -48,11 +49,7 @@ export class CollectionStoreConnection extends Connection {
     return !!this.db
   }
 
-  override checkConnection(): Promise<{
-    ok: boolean
-    reason?: string | undefined
-    error?: Error | undefined
-  }> {
+  override checkConnection(): Promise<{ ok: true } | { ok: false; reason: string; error?: Error }> {
     return Promise.resolve({ ok: true })
   }
 
@@ -72,7 +69,7 @@ export class CollectionStoreConnection extends Connection {
 
   async last(entityName: EntityName<any>): Promise<any> {
     const collection = Utils.className(entityName)
-    return this.db.first(collection)
+    return this.db.last(collection)
   }
 
   async lowest(entityName: EntityName<any>, key: string) {
@@ -135,18 +132,49 @@ export class CollectionStoreConnection extends Connection {
     } & TransactionOptions = {},
   ): Promise<T> {
     await this.ensureConnection()
-    const session = await this.begin(options)
 
-    try {
-      const ret = await cb(session)
-      await this.commit(session, options?.eventBroadcaster)
+    // ✅ НОВОЕ: Если есть родительская транзакция, создаем savepoint вместо новой транзакции
+    if (options.ctx) {
+      const savepointName = `nested_tx_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
-      return ret
-    } catch (error) {
-      await this.rollback(session, options?.eventBroadcaster)
-      throw error
-    } finally {
-      await session.endSession()
+      try {
+        // Создаем savepoint в существующей транзакции
+        const savepointId = await this.createSavepoint(options.ctx, savepointName)
+
+        console.log(`[CollectionStoreConnection] Created savepoint '${savepointName}' for nested transaction`)
+
+        try {
+          const ret = await cb(options.ctx)
+
+          // Успешное выполнение - release savepoint
+          await this.releaseSavepoint(options.ctx, savepointId)
+          console.log(`[CollectionStoreConnection] Released savepoint '${savepointName}' after successful nested transaction`)
+
+          return ret
+        } catch (error) {
+          // Ошибка - rollback к savepoint
+          await this.rollbackToSavepoint(options.ctx, savepointId)
+          console.log(`[CollectionStoreConnection] Rolled back to savepoint '${savepointName}' after nested transaction error`)
+          throw error
+        }
+      } catch (savepointError) {
+        console.error(`[CollectionStoreConnection] Failed to manage savepoint for nested transaction:`, savepointError)
+        throw savepointError
+      }
+    } else {
+      // Обычная транзакция (корневая)
+      const session = await this.begin(options)
+
+      try {
+        const ret = await cb(session)
+        await this.commit(session, options?.eventBroadcaster)
+        return ret
+      } catch (error) {
+        await this.rollback(session, options?.eventBroadcaster)
+        throw error
+      } finally {
+        await session.endSession()
+      }
     }
   }
   override async begin(
@@ -159,10 +187,18 @@ export class CollectionStoreConnection extends Connection {
     await this.ensureConnection()
     const { ctx, isolationLevel, eventBroadcaster, ...txOptions } = options
 
+    // ✅ НОВОЕ: Если есть родительская транзакция, возвращаем её (savepoint будет создан в transactional)
+    if (ctx) {
+      console.log(`[CollectionStoreConnection] Using existing transaction context for nested transaction`)
+      return ctx
+    }
+
+    // Создаем новую корневую транзакцию
     if (!ctx) {
       await eventBroadcaster?.dispatchEvent(EventType.beforeTransactionStart)
     }
-    const session = ctx || (await this.db.startSession())
+
+    const session = await this.db.startSession()
     session.startTransaction(txOptions)
     this.logQuery('db.begin();')
     await eventBroadcaster?.dispatchEvent(EventType.afterTransactionStart, session)
@@ -185,5 +221,43 @@ export class CollectionStoreConnection extends Connection {
     await ctx.abortTransaction()
     this.logQuery('db.rollback();')
     await eventBroadcaster?.dispatchEvent(EventType.afterTransactionRollback, ctx)
+  }
+
+  // ✅ НОВЫЕ МЕТОДЫ: Savepoint support
+  async createSavepoint(ctx: CSTransaction, name: string): Promise<string> {
+    await this.ensureConnection()
+
+    try {
+      const savepointId = await ctx.createSavepoint(name)
+      this.logQuery(`SAVEPOINT ${name}; -- ${savepointId}`)
+      return savepointId
+    } catch (error) {
+      this.logQuery(`SAVEPOINT ${name}; -- FAILED: ${(error as Error).message}`)
+      throw error
+    }
+  }
+
+  async rollbackToSavepoint(ctx: CSTransaction, savepointId: string): Promise<void> {
+    await this.ensureConnection()
+
+    try {
+      await ctx.rollbackToSavepoint(savepointId)
+      this.logQuery(`ROLLBACK TO SAVEPOINT ${savepointId};`)
+    } catch (error) {
+      this.logQuery(`ROLLBACK TO SAVEPOINT ${savepointId}; -- FAILED: ${(error as Error).message}`)
+      throw error
+    }
+  }
+
+  async releaseSavepoint(ctx: CSTransaction, savepointId: string): Promise<void> {
+    await this.ensureConnection()
+
+    try {
+      await ctx.releaseSavepoint(savepointId)
+      this.logQuery(`RELEASE SAVEPOINT ${savepointId};`)
+    } catch (error) {
+      this.logQuery(`RELEASE SAVEPOINT ${savepointId}; -- FAILED: ${(error as Error).message}`)
+      throw error
+    }
   }
 }

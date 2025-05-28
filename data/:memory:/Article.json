@@ -1,0 +1,201 @@
+{
+  "list": {
+    "counter": 3,
+    "tree": {},
+    "_count": 3,
+    "_counter": 3,
+    "hash": {
+      "0": {
+        "slug": "title-13",
+        "title": "title 1/3",
+        "description": "desc 1/3",
+        "text": "text text text 1/3",
+        "author": 0,
+        "tags": [
+          1,
+          2
+        ],
+        "id": 0
+      },
+      "1": {
+        "slug": "title-23",
+        "title": "title 2/3",
+        "description": "desc 2/3",
+        "text": "text text text 2/3",
+        "author": 0,
+        "tags": [
+          2
+        ],
+        "id": 1
+      },
+      "2": {
+        "slug": "title-33",
+        "title": "title 3/3",
+        "description": "desc 3/3",
+        "text": "text text text 3/3",
+        "author": 0,
+        "tags": [
+          2,
+          3
+        ],
+        "id": 2
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 2,
+          "min": 0,
+          "size": 3,
+          "keys": [
+            0,
+            1,
+            2
+          ],
+          "key_num": 3,
+          "pointers": [
+            0,
+            1,
+            2
+          ],
+          "children": []
+        }
+      ]
+    },
+    "slug": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "title": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "description": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "text": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)",
+      "gen": "autoIncIdGen"
+    },
+    "slug": {
+      "key": "slug",
+      "auto": false,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "title": {
+      "key": "title",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "description": {
+      "key": "description",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "text": {
+      "key": "text",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    }
+  },
+  "id": "id"
+}

@@ -10,19 +10,20 @@ import {
   OneToMany,
   Property,
 } from 'collection-store-mikro-orm'
+import { createHash } from 'crypto'
 import { BaseEntity } from '../common/base.entity.js'
 import { Article } from '../article/article.entity.js'
 import { UserRepository } from './user.repository.js'
 
 @Embeddable()
 export class Social {
-  @Property()
+  @Property({ type: 'string' })
   twitter?: string
 
-  @Property()
+  @Property({ type: 'string' })
   facebook?: string
 
-  @Property()
+  @Property({ type: 'string' })
   linkedin?: string
 }
 
@@ -30,13 +31,13 @@ export class Social {
 export class User extends BaseEntity<'bio' | 'social'> {
   [EntityRepositoryType]?: UserRepository
 
-  @Property()
+  @Property({ type: 'string' })
   fullName: string
 
-  @Property({ hidden: true })
+  @Property({ hidden: true, type: 'string' })
   email: string
 
-  @Property({ hidden: true, lazy: true })
+  @Property({ hidden: true, lazy: true, type: 'string' })
   password: string
 
   @Property({ type: 'text' })
@@ -45,7 +46,7 @@ export class User extends BaseEntity<'bio' | 'social'> {
   @OneToMany(() => Article, (article) => article.author, { hidden: true })
   articles = new Collection<Article>(this)
 
-  @Property({ persist: false })
+  @Property({ persist: false, type: 'string' })
   token?: string
 
   @Embedded(() => Social, { object: true })
@@ -65,12 +66,12 @@ export class User extends BaseEntity<'bio' | 'social'> {
     const password = args.changeSet?.payload.password
 
     if (password) {
-      this.password = Bun.hash(password).toString()
+      this.password = createHash('sha256').update(password).digest('hex')
     }
   }
 
   verifyPassword(password: string) {
-    const pwd = Bun.hash(password).toString()
+    const pwd = createHash('sha256').update(password).digest('hex')
     return this.password === pwd
   }
 }

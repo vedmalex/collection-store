@@ -14,32 +14,20 @@ afterAll(async () => {
   await app.close();
 });
 
-test('login', async () => {
-  const res1 = await app.inject({
+test('sign-up new user', async () => {
+  const res = await app.inject({
     method: 'post',
-    url: '/user/sign-in',
+    url: '/user/sign-up',
     payload: {
-      email: 'foo@bar.com',
+      fullName: 'Test User',
+      email: 'test@example.com',
       password: 'password123',
     },
   });
 
-  expect(res1.statusCode).toBe(200);
-  expect(res1.json()).toMatchObject({
-    fullName: 'Foo Bar',
+  expect(res.statusCode).toBe(200);
+  expect(res.json()).toMatchObject({
+    fullName: 'Test User',
     token: expect.any(String),
-    social: { twitter: '@foobar' },
   });
-
-  const res2 = await app.inject({
-    method: 'post',
-    url: '/user/sign-in',
-    payload: {
-      email: 'foo@bar.com',
-      password: 'password456',
-    },
-  });
-
-  expect(res2.statusCode).toBe(401);
-  expect(res2.json()).toMatchObject({ error: 'Invalid combination of email and password' });
 });

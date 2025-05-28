@@ -45,7 +45,7 @@ export { copy_collection }
 
 // Database and Transactions
 export { CSDatabase } from './CSDatabase'
-export type { CSTransaction } from './CSDatabase'
+export type { CSTransaction, SavepointInfo, CSDBSavepointData, TransactionOptions } from './TransactionManager'
 
 // Types
 export type { Item, IDataCollection }

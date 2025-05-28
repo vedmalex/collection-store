@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": ["../src/collection/update_index.ts"],
+  "sourcesContent": [
+    "import { Item } from '../types/Item'\nimport Collection from '../collection'\nimport { ValueType } from 'b-pl-tree'\n\nexport async function update_index<T extends Item>(\n  collection: Collection<T>,\n  ov: T | Partial<T>,\n  nv: T | Partial<T>,\n  i: ValueType,\n) {\n  await Promise.all(collection.updates.map((item) => item(ov, nv, i)))\n}\n"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAIA,eAAsB,YAA4B,CAChD,YACA,IACA,IACA,GACA;AAAA,EACA,MAAM,QAAQ,IAAI,WAAW,QAAQ,IAAI,CAAC,SAAS,KAAK,IAAI,IAAI,CAAC,CAAC,CAAC;AAAA;",
+  "debugId": "D41DF95E947BDAD064756E2164756E21",
+  "names": []
+}
