@@ -1,21 +1,13 @@
 {
   "extends": "../../shared/tsconfig.base.json",
+
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./types",
-    "types": ["bun-types"],
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "types": ["@types/bun"],
+    "noEmit": true
   },
-  "files": [
-    "./src/index.ts",
-    "./src/Connection.ts",
-    "src/Driver.ts",
-    "./src/Platform.ts",
-    "./src/MikroORM.ts",
-    "./src/SchemaGenerator.ts",
-    "./src/EntityManager.ts",
-    "./src/EntityRepository.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.*", "**/node_modules/**", "types/**/*"]
 }

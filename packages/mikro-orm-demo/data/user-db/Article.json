@@ -1,31 +1,7 @@
 {
-  "config": {
-    "root": "data/user-db",
-    "name": "Article",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
-      },
-      {
-        "key": "slug",
-        "unique": true,
-        "required": true
-      },
-      {
-        "key": "title",
-        "required": true
-      }
-    ]
-  },
   "list": {
+    "counter": 4,
+    "tree": {},
     "_count": 4,
     "_counter": 4,
     "hash": {
@@ -35,11 +11,11 @@
         "description": "Lorem impsum dolor sit amet…",
         "text": "Lorem impsum dolor sit amet",
         "author": 0,
-        "id": 0,
         "tags": [
           0,
           1
-        ]
+        ],
+        "id": 0
       },
       "1": {
         "slug": "title-13",
@@ -82,11 +58,11 @@
     "id": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
-      "unique": false,
+      "root": 1,
+      "unique": true,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
           "isEmpty": false,
@@ -106,18 +82,19 @@
             1,
             2,
             3
-          ]
+          ],
+          "children": []
         }
       ]
     },
     "slug": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
-      "unique": false,
+      "root": 1,
+      "unique": true,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
           "isEmpty": false,
@@ -137,18 +114,19 @@
             1,
             2,
             3
-          ]
+          ],
+          "children": []
         }
       ]
     },
     "title": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
+      "root": 1,
       "unique": false,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
           "isEmpty": false,
@@ -168,7 +146,72 @@
             1,
             2,
             3
-          ]
+          ],
+          "children": []
+        }
+      ]
+    },
+    "description": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "desc 3/3",
+          "min": "Lorem impsum dolor sit amet…",
+          "size": 4,
+          "keys": [
+            "Lorem impsum dolor sit amet…",
+            "desc 1/3",
+            "desc 2/3",
+            "desc 3/3"
+          ],
+          "key_num": 4,
+          "pointers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "children": []
+        }
+      ]
+    },
+    "text": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "text text text 3/3",
+          "min": "Lorem impsum dolor sit amet",
+          "size": 4,
+          "keys": [
+            "Lorem impsum dolor sit amet",
+            "text text text 1/3",
+            "text text text 2/3",
+            "text text text 3/3"
+          ],
+          "key_num": 4,
+          "pointers": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "children": []
         }
       ]
     }
@@ -180,6 +223,7 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
     },
     "slug": {
@@ -187,14 +231,33 @@
       "auto": false,
       "unique": true,
       "sparse": false,
-      "required": true
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     },
     "title": {
       "key": "title",
       "auto": false,
       "unique": false,
       "sparse": false,
-      "required": true
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "description": {
+      "key": "description",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "text": {
+      "key": "text",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
-  }
+  },
+  "id": "id"
 }

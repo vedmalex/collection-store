@@ -17,13 +17,13 @@ import { UserRepository } from './user.repository.js'
 
 @Embeddable()
 export class Social {
-  @Property({ type: 'string' })
+  @Property({ type: 'string', nullable: true })
   twitter?: string
 
-  @Property({ type: 'string' })
+  @Property({ type: 'string', nullable: true })
   facebook?: string
 
-  @Property({ type: 'string' })
+  @Property({ type: 'string', nullable: true })
   linkedin?: string
 }
 
@@ -46,7 +46,7 @@ export class User extends BaseEntity<'bio' | 'social'> {
   @OneToMany(() => Article, (article) => article.author, { hidden: true })
   articles = new Collection<Article>(this)
 
-  @Property({ persist: false, type: 'string' })
+  @Property({ type: 'string', nullable: true })
   token?: string
 
   @Embedded(() => Social, { object: true })

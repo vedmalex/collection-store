@@ -74,7 +74,7 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
     return {
       insertId: res?.[pk],
       affectedRows: 1,
-      row: { [pk]: res?.[pk] },
+      row: res, // Return full record data instead of just ID
     }
   }
 
@@ -98,6 +98,8 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       },
       { insertIds: [], affectedRows: 0, rows: [] } as unknown as QueryResult<T>,
     )
+
+    console.log(`[nativeInsertMany] final result:`, JSON.stringify(result, null, 2))
     return result
   }
 

@@ -4,11 +4,14 @@
   "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
   "exports": {
     ".": {
+      "types": "./types/index.d.ts",
       "bun": "./src/index.ts",
-      "default": "./dist/index.js"
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
     }
   },
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mikro-orm/mikro-orm.git"
@@ -44,14 +47,17 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
-    "prepublish": "bun build.ts && bun run compile",
-    "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
-    "compile": "tsc --build tsconfig.json",
-    "compile:clean": "tsc --build tsconfig.json --clean",
-    "watch": "tsc --build tsconfig.json --watch",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "bun test test/index.test.ts",
-    "test:watch": "bun test --watch test/index.test.ts"
+    "prepublish": "npm run clean && npm run build",
+    "build": "npm run build:all",
+    "watch": "tsc -w -p tsconfig.json",
+    "clean": "git clean -dfqX -- {types,dist,node_modules}/** && rm -rf tsconfig.tsbuildinfo dist types",
+    "build:esm": "TOOL=esbuild FORMAT=esm bun build.ts",
+    "build:cjs": "TOOL=esbuild FORMAT=cjs bun build.ts",
+    "build:bun:esm": "TOOL=bun FORMAT=esm bun build.ts",
+    "build:bun:cjs": "TOOL=bun FORMAT=cjs bun build.ts",
+    "build:bun": "npm run build:bun:cjs && npm run build:bun:esm",
+    "build:all": "npm run build:bun && tsc -p tsconfig.build.json"
   },
   "publishConfig": {
     "access": "public"

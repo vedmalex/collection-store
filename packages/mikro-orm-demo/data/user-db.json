@@ -9,10 +9,12 @@
     "indexList": [
       {
         "key": "id",
+        "order": "asc",
         "auto": true,
         "unique": true,
         "required": true,
-        "gen": "autoIncIdGen"
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
       }
     ]
   },
@@ -26,10 +28,18 @@
     "indexList": [
       {
         "key": "id",
+        "order": "asc",
         "auto": true,
         "unique": true,
         "required": true,
-        "gen": "autoIncIdGen"
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "name",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       }
     ]
   },
@@ -43,10 +53,36 @@
     "indexList": [
       {
         "key": "id",
+        "order": "asc",
         "auto": true,
         "unique": true,
         "required": true,
-        "gen": "autoIncIdGen"
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "fullName",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "email",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "password",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "bio",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       }
     ]
   },
@@ -60,19 +96,37 @@
     "indexList": [
       {
         "key": "id",
+        "order": "asc",
         "auto": true,
         "unique": true,
         "required": true,
-        "gen": "autoIncIdGen"
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
       },
       {
         "key": "slug",
+        "order": "asc",
         "unique": true,
-        "required": true
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       },
       {
         "key": "title",
-        "required": true
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "description",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "text",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       }
     ]
   }

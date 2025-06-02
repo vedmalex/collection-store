@@ -41,7 +41,42 @@ export class CollectionStoreMikroORM<
 
 export type CollectionStoreOptions = Options<CollectionStoreDriver>
 
-/* istanbul ignore next */
-export function defineCollectionStoreConfig(options: CollectionStoreOptions) {
-  return defineConfig({ driver: CollectionStoreDriver, ...options })
+/**
+ * Helper function to define Collection Store MikroORM configuration with smart defaults
+ * @param options - Configuration options
+ * @returns Complete MikroORM configuration
+ */
+export function defineCollectionStoreConfig(options: Partial<CollectionStoreOptions> = {}) {
+  const config = {
+    // Collection Store driver
+    driver: CollectionStoreDriver,
+
+    // Smart defaults for Collection Store
+    dbName: options.dbName || ':memory:',
+    debug: options.debug ?? true,
+
+    // Entity discovery
+    entities: options.entities || [],
+    entitiesTs: options.entitiesTs || ['src/**/*.entity.ts'],
+
+    // Optimized settings for in-memory database
+    cache: {
+      enabled: true,
+      adapter: 'memory' as const,
+      ...(options as any).cache,
+    },
+
+    // Performance optimizations
+    forceEntityConstructor: true,
+    forceUndefined: false,
+
+    // Development helpers
+    validate: options.validate ?? true,
+    strict: options.strict ?? true,
+
+    // Override with user options
+    ...options,
+  }
+
+  return defineConfig(config as Options<CollectionStoreDriver>)
 }

@@ -1,5 +1,9 @@
 import type { CSTransaction } from 'collection-store'
 
+/**
+ * Collection Store specific types for savepoint operations
+ */
+
 // ✅ НОВЫЕ ТИПЫ: Savepoint операции
 export interface SavepointConnection {
   createSavepoint(ctx: CSTransaction, name: string): Promise<string>

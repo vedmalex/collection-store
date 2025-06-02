@@ -24,7 +24,7 @@
     "module": "Preserve",
     "moduleResolution": "bundler",
     "lib": ["ESNext"],
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "types": ["@types/bun", "@types/node"]
   },
   "include": [],

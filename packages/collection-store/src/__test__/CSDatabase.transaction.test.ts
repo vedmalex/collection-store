@@ -231,10 +231,8 @@ describe('CSDatabase Transaction Integration', () => {
 
   describe('Concurrent Transaction Handling', () => {
     it('should handle multiple databases independently', async () => {
-      const database2 = new CSDatabase(
-        path.join(process.cwd(), 'test-data', `db2-${Date.now()}`),
-        'test-db2'
-      )
+      const db2Path = path.join(process.cwd(), 'test-data', `db2-${Date.now()}`)
+      const database2 = new CSDatabase(db2Path, 'test-db2')
       await database2.connect()
 
       try {
@@ -251,6 +249,10 @@ describe('CSDatabase Transaction Integration', () => {
         expect(database2.activeTransactionCount).toBe(0)
       } finally {
         await database2.close()
+        // Clean up the test directory
+        if (fs.existsSync(db2Path)) {
+          fs.rmSync(db2Path, { recursive: true, force: true })
+        }
       }
     })
   })

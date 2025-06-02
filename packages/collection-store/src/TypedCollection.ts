@@ -4,6 +4,7 @@
 import { Item } from './types/Item'
 import { ValueType } from 'b-pl-tree'
 import Collection from './collection'
+import { update_index } from './collection/update_index'
 import {
   TypedSchemaDefinition,
   CompleteTypedSchema,
@@ -428,7 +429,6 @@ export class TypedCollection<T extends Item, S extends TypedSchemaDefinition<T>>
         if (hasUnset) {
           // For $unset, we need to completely replace the document
           // First update indexes
-          const { update_index } = await import('./collection/update_index')
           await update_index(this.collection, doc, updatedDoc as T, doc[this.collection.id as keyof T] as ValueType)
           // Then update the document
           await this.collection.list.update(doc[this.collection.id as keyof T] as ValueType, updatedDoc as T)

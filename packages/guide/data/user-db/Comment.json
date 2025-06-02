@@ -1,96 +1,89 @@
 {
-  "config": {
-    "root": "data/user-db",
-    "name": "Comment",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
-      }
-    ]
-  },
   "list": {
-    "_count": 6,
-    "_counter": 6,
-    "hash": {
-      "0": {
-        "text": "random comment 0.44545365801930925",
-        "article": 0,
-        "author": 0,
-        "id": 0
-      },
-      "1": {
-        "text": "random comment 0.17980190946446772",
-        "article": 0,
-        "author": 0,
-        "id": 1
-      },
-      "2": {
-        "text": "random comment 0.5013308757200035",
-        "article": 1,
-        "author": 0,
-        "id": 2
-      },
-      "3": {
-        "text": "random comment 0.5560828348346918",
-        "article": 2,
-        "author": 0,
-        "id": 3
-      },
-      "4": {
-        "text": "random comment 0.6162402001269027",
-        "article": 2,
-        "author": 0,
-        "id": 4
-      },
-      "5": {
-        "text": "random comment 0.7395807469250623",
-        "article": 2,
-        "author": 0,
-        "id": 5
-      }
-    }
+    "counter": 0,
+    "tree": {},
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
   },
   "indexes": {
     "id": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "createdAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
       "unique": false,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
-          "isEmpty": false,
+          "isEmpty": true,
           "isFull": false,
-          "max": 5,
-          "min": 0,
-          "size": 6,
-          "keys": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "key_num": 6,
-          "pointers": [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5
-          ]
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "updatedAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "text": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
         }
       ]
     }
@@ -102,7 +95,33 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
+    },
+    "createdAt": {
+      "key": "createdAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "updatedAt": {
+      "key": "updatedAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "text": {
+      "key": "text",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
-  }
+  },
+  "id": "id"
 }

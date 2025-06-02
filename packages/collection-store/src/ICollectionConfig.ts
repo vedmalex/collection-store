@@ -7,10 +7,12 @@ import { IList } from './IList'
 import { ZodType } from 'zod'
 
 export interface ICollectionConfig<T extends Item> {
-  root: string
+  root?: string
   name: string
-  list: IList<T>
-  adapter: IStorageAdapter<T>
+  list?: IList<T>
+  adapter?: IStorageAdapter<T>
+  /** Database name - use ':memory:' for in-memory storage (like MikroORM) */
+  dbName?: string
   ttl?: string | number
   /** crontab format */
   rotate?: string
@@ -35,4 +37,5 @@ export interface ISerializedCollectionConfig {
   indexList: Array<SerializedIndexDef>
   adapter: 'AdapterMemory' | 'AdapterFile'
   root: string
+  dbName?: string
 }

@@ -1,7 +1,8 @@
-import { Configuration, Connection, ConnectionOptions, ConnectionType, EntityName, IsolationLevel, Transaction, TransactionEventBroadcaster, TransactionOptions } from '@mikro-orm/core';
+import { Configuration, Connection, ConnectionOptions, ConnectionType, EntityName, IsolationLevel, Transaction, TransactionEventBroadcaster } from '@mikro-orm/core';
 import { CSDatabase, Item } from 'collection-store';
 import type { CSTransaction } from 'collection-store';
-export declare class CollectionStoreConnection extends Connection {
+import type { SavepointConnection } from './types';
+export declare class CollectionStoreConnection extends Connection implements SavepointConnection {
     db: CSDatabase;
     constructor(config: Configuration, options?: ConnectionOptions, type?: ConnectionType);
     getDb(): CSDatabase;
@@ -35,12 +36,15 @@ export declare class CollectionStoreConnection extends Connection {
         isolationLevel?: IsolationLevel;
         ctx?: Transaction<CSTransaction>;
         eventBroadcaster?: TransactionEventBroadcaster;
-    } & TransactionOptions): Promise<T>;
+    }): Promise<T>;
     begin(options?: {
         isolationLevel?: IsolationLevel;
         ctx?: Transaction<CSTransaction>;
         eventBroadcaster?: TransactionEventBroadcaster;
-    } & TransactionOptions): Promise<CSTransaction>;
+    }): Promise<CSTransaction>;
     commit(ctx: CSTransaction, eventBroadcaster?: TransactionEventBroadcaster): Promise<void>;
     rollback(ctx: CSTransaction, eventBroadcaster?: TransactionEventBroadcaster): Promise<void>;
+    createSavepoint(ctx: CSTransaction, name: string): Promise<string>;
+    rollbackToSavepoint(ctx: CSTransaction, savepointId: string): Promise<void>;
+    releaseSavepoint(ctx: CSTransaction, savepointId: string): Promise<void>;
 }

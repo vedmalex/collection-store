@@ -21,6 +21,18 @@
         "order": "asc",
         "required": true,
         "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       }
     ]
   },
@@ -68,23 +80,35 @@
       {
         "key": "token",
         "order": "asc",
-        "required": true,
+        "sparse": true,
         "process": "(item) => get(item, field.key)"
       },
       {
         "key": "social.twitter",
         "order": "asc",
-        "required": true,
+        "sparse": true,
         "process": "(item) => get(item, field.key)"
       },
       {
         "key": "social.facebook",
         "order": "asc",
-        "required": true,
+        "sparse": true,
         "process": "(item) => get(item, field.key)"
       },
       {
         "key": "social.linkedin",
+        "order": "asc",
+        "sparse": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
         "order": "asc",
         "required": true,
         "process": "(item) => get(item, field.key)"
@@ -132,6 +156,18 @@
         "order": "asc",
         "required": true,
         "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
       }
     ]
   },
@@ -154,6 +190,18 @@
       },
       {
         "key": "text",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
         "order": "asc",
         "required": true,
         "process": "(item) => get(item, field.key)"

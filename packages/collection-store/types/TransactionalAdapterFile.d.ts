@@ -1,0 +1,30 @@
+import { Item } from './types/Item';
+import { ITransactionalStorageAdapter } from './ITransactionalStorageAdapter';
+import { StoredData } from './types/StoredData';
+import Collection from './collection';
+import { WALEntry } from './wal/WALTypes';
+export default class TransactionalAdapterFile<T extends Item> implements ITransactionalStorageAdapter<T> {
+    private walManager;
+    private transactionData;
+    private checkpoints;
+    collection: Collection<T>;
+    constructor(walPath?: string);
+    get name(): "AdapterFile";
+    get file(): string;
+    clone(): TransactionalAdapterFile<T>;
+    init(collection: Collection<T>): this;
+    isTransactional(): boolean;
+    restore(name?: string): Promise<any>;
+    store(name?: string): Promise<void>;
+    writeWALEntry(entry: WALEntry): Promise<void>;
+    readWALEntries(fromSequence?: number): Promise<WALEntry[]>;
+    store_in_transaction(transactionId: string, name?: string): Promise<void>;
+    restore_in_transaction(transactionId: string, name?: string): Promise<StoredData<T>>;
+    prepareCommit(transactionId: string): Promise<boolean>;
+    finalizeCommit(transactionId: string): Promise<void>;
+    rollback(transactionId: string): Promise<void>;
+    createCheckpoint(transactionId: string): Promise<string>;
+    restoreFromCheckpoint(checkpointId: string): Promise<void>;
+    private writeDataToFile;
+    close(): Promise<void>;
+}

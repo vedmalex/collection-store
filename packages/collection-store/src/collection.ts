@@ -154,11 +154,21 @@ export default class Collection<T extends Item> implements IDataCollection<T> {
       auto = true,
       indexList,
       list = new List<T>() as IList<T>,
-      adapter = new AdapterMemory<T>(),
       validation,
       audit,
       root,
+      dbName,
     } = config ?? {}
+
+    // Determine adapter based on dbName (MikroORM convention)
+    let adapter = config?.adapter
+    if (!adapter) {
+      if (dbName === ':memory:') {
+        adapter = new AdapterMemory<T>()
+      } else {
+        adapter = new AdapterMemory<T>() // Default to memory for backward compatibility
+      }
+    }
 
     collection.audit = !!audit
     if (validation) {

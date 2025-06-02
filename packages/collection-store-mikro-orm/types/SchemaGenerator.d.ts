@@ -13,6 +13,7 @@ export declare class CollectionStoreSchemaGenerator extends AbstractSchemaGenera
     private createIndexes;
     private createUniqueIndexes;
     private createPropertyIndexes;
+    private createAutoIndexes;
 }
 export interface CreateSchemaOptions {
     ensureIndexes?: boolean;

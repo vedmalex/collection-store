@@ -7,4 +7,4 @@ export declare class CollectionStoreMikroORM<EM extends EntityManager = Collecti
     static initSync<D extends IDatabaseDriver = CollectionStoreDriver, EM extends EntityManager = D[typeof EntityManagerType] & EntityManager>(options: Options<D, EM>): MikroORM<D, EM>;
 }
 export type CollectionStoreOptions = Options<CollectionStoreDriver>;
-export declare function defineCollectionStoreConfig(options: CollectionStoreOptions): Options<CollectionStoreDriver, CollectionStoreEntityManager<CollectionStoreDriver> & EntityManager<IDatabaseDriver<import("@mikro-orm/core").Connection>>>;
+export declare function defineCollectionStoreConfig(options?: Partial<CollectionStoreOptions>): Options<CollectionStoreDriver, CollectionStoreEntityManager<CollectionStoreDriver> & EntityManager<IDatabaseDriver<import("@mikro-orm/core").Connection>>>;

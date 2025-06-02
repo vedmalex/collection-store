@@ -1,66 +1,89 @@
 {
-  "config": {
-    "root": "data/user-db",
-    "name": "Tag",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
-      }
-    ]
-  },
   "list": {
-    "_count": 3,
-    "_counter": 3,
-    "hash": {
-      "0": {
-        "id": 1,
-        "name": "foo1"
-      },
-      "1": {
-        "id": 2,
-        "name": "foo2"
-      },
-      "2": {
-        "id": 3,
-        "name": "foo3"
-      }
-    }
+    "counter": 0,
+    "tree": {},
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
   },
   "indexes": {
     "id": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "createdAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
       "unique": false,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
-          "isEmpty": false,
+          "isEmpty": true,
           "isFull": false,
-          "max": 3,
-          "min": 1,
-          "size": 3,
-          "keys": [
-            1,
-            2,
-            3
-          ],
-          "key_num": 3,
-          "pointers": [
-            1,
-            2,
-            3
-          ]
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "updatedAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
         }
       ]
     }
@@ -72,7 +95,33 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
+    },
+    "createdAt": {
+      "key": "createdAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "updatedAt": {
+      "key": "updatedAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
-  }
+  },
+  "id": "id"
 }

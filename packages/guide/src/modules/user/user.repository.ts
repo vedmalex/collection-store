@@ -23,7 +23,7 @@ export class UserRepository extends EntityRepository<User> {
         },
       )
 
-    if (await user.verifyPassword(password)) {
+    if (user.verifyPassword(password)) {
       return user
     }
 

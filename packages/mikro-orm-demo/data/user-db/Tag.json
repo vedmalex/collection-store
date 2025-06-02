@@ -1,22 +1,7 @@
 {
-  "config": {
-    "root": "data/user-db",
-    "name": "Tag",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
-      }
-    ]
-  },
   "list": {
+    "counter": 4,
+    "tree": {},
     "_count": 4,
     "_counter": 4,
     "hash": {
@@ -42,11 +27,11 @@
     "id": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
-      "unique": false,
+      "root": 1,
+      "unique": true,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
           "isEmpty": false,
@@ -66,7 +51,40 @@
             1,
             2,
             3
-          ]
+          ],
+          "children": []
+        }
+      ]
+    },
+    "name": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "old",
+          "min": "foo2",
+          "size": 4,
+          "keys": [
+            "foo2",
+            "foo3",
+            "new",
+            "old"
+          ],
+          "key_num": 4,
+          "pointers": [
+            2,
+            3,
+            0,
+            1
+          ],
+          "children": []
         }
       ]
     }
@@ -78,7 +96,17 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
+    },
+    "name": {
+      "key": "name",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
-  }
+  },
+  "id": "id"
 }

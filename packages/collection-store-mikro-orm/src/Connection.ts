@@ -8,11 +8,10 @@ import {
   IsolationLevel,
   Transaction,
   TransactionEventBroadcaster,
-  TransactionOptions as MikroTransactionOptions,
   Utils,
 } from '@mikro-orm/core'
 
-import { CSDatabase, Item, type TransactionOptions } from 'collection-store'
+import { CSDatabase, Item } from 'collection-store'
 import type { CSTransaction } from 'collection-store'
 import type { SavepointConnection } from './types'
 
@@ -129,7 +128,7 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
       isolationLevel?: IsolationLevel
       ctx?: Transaction<CSTransaction>
       eventBroadcaster?: TransactionEventBroadcaster
-    } & TransactionOptions = {},
+    } = {},
   ): Promise<T> {
     await this.ensureConnection()
 
@@ -182,7 +181,7 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
       isolationLevel?: IsolationLevel
       ctx?: Transaction<CSTransaction>
       eventBroadcaster?: TransactionEventBroadcaster
-    } & TransactionOptions = {},
+    } = {},
   ): Promise<CSTransaction> {
     await this.ensureConnection()
     const { ctx, isolationLevel, eventBroadcaster, ...txOptions } = options

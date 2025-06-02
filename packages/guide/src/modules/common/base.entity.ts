@@ -1,4 +1,4 @@
-import { OptionalProps, PrimaryKey, Property } from 'collection-store-mikro-orm'
+import { OptionalProps, PrimaryKey, Property } from '@mikro-orm/core'
 
 export abstract class BaseEntity<Optional = never> {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | Optional
@@ -6,9 +6,9 @@ export abstract class BaseEntity<Optional = never> {
   @PrimaryKey({ type: 'number' })
   id!: number
 
-  // @Property()
-  // createdAt = new Date()
+  @Property({ type: 'date' })
+  createdAt = new Date()
 
-  // @Property({ onUpdate: () => new Date() })
-  // updatedAt = new Date()
+  @Property({ type: 'date', onUpdate: () => new Date() })
+  updatedAt = new Date()
 }

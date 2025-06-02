@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test } from 'vitest';
+import { afterAll, beforeAll, expect, test } from 'bun:test';
 import { initTestApp } from './utils.js';
 import { FastifyInstance } from 'fastify';
 

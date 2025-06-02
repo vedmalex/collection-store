@@ -40,6 +40,20 @@ export { AdapterFile as AdapterFile }
 export { List }
 export { FileStorage }
 
+// WAL and Transactional Storage
+export * from './wal'
+export { WALTransactionManager } from './WALTransactionManager'
+export { default as TransactionalAdapterFile } from './TransactionalAdapterFile'
+export { default as TransactionalAdapterMemory } from './TransactionalAdapterMemory'
+export type { ITransactionalStorageAdapter } from './ITransactionalStorageAdapter'
+export type { WALTransactionOptions } from './WALTransactionManager'
+
+// WAL-Enhanced Collection and Database (PHASE 3)
+export { WALCollection } from './WALCollection'
+export { WALDatabase } from './WALDatabase'
+export type { WALCollectionConfig } from './WALCollection'
+export type { WALDatabaseConfig } from './WALDatabase'
+
 // Utilities
 export { copy_collection }
 
@@ -67,3 +81,23 @@ export type {
   IndexDef,
   SortOrder
 } from './types/IndexDef'
+
+// Advanced Features - WAL Compression
+export {
+  WALCompression,
+  createWALCompression,
+  compressBatch,
+  decompressBatch
+} from './wal/WALCompression'
+export type {
+  CompressionOptions,
+  CompressedWALEntry
+} from './wal/WALCompression'
+
+// Advanced Features - Performance Monitoring
+export { PerformanceMonitor } from './monitoring/PerformanceMonitor'
+export type {
+  PerformanceMetrics,
+  PerformanceAlert,
+  MonitoringConfig
+} from './monitoring/PerformanceMonitor'

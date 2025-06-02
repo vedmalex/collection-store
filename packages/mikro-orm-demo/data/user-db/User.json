@@ -1,22 +1,7 @@
 {
-  "config": {
-    "root": "data/user-db",
-    "name": "User",
-    "adapter": "AdapterFile",
-    "list": "List",
-    "id": "id",
-    "auto": true,
-    "indexList": [
-      {
-        "key": "id",
-        "auto": true,
-        "unique": true,
-        "required": true,
-        "gen": "autoIncIdGen"
-      }
-    ]
-  },
   "list": {
+    "counter": 2,
+    "tree": {},
     "_count": 2,
     "_counter": 2,
     "hash": {
@@ -40,11 +25,11 @@
     "id": {
       "t": 32,
       "next_node_id": 1,
-      "root": 0,
-      "unique": false,
+      "root": 1,
+      "unique": true,
       "nodes": [
         {
-          "id": 0,
+          "id": 1,
           "leaf": true,
           "t": 32,
           "isEmpty": false,
@@ -60,7 +45,120 @@
           "pointers": [
             0,
             1
-          ]
+          ],
+          "children": []
+        }
+      ]
+    },
+    "fullName": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "Foo Bar",
+          "min": "Foo Bar",
+          "size": 2,
+          "keys": [
+            "Foo Bar",
+            "Foo Bar"
+          ],
+          "key_num": 2,
+          "pointers": [
+            0,
+            1
+          ],
+          "children": []
+        }
+      ]
+    },
+    "email": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "foo@bar.com",
+          "min": "foo@bar.com",
+          "size": 2,
+          "keys": [
+            "foo@bar.com",
+            "foo@bar.com"
+          ],
+          "key_num": 2,
+          "pointers": [
+            0,
+            1
+          ],
+          "children": []
+        }
+      ]
+    },
+    "password": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441",
+          "min": "498c81ea3c7c52027981967388f9fbce0ae0e3c54deb8eb5b249968c07aaf1c9",
+          "size": 2,
+          "keys": [
+            "498c81ea3c7c52027981967388f9fbce0ae0e3c54deb8eb5b249968c07aaf1c9",
+            "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441"
+          ],
+          "key_num": 2,
+          "pointers": [
+            1,
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "bio": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "",
+          "min": "",
+          "size": 2,
+          "keys": [
+            "",
+            ""
+          ],
+          "key_num": 2,
+          "pointers": [
+            0,
+            1
+          ],
+          "children": []
         }
       ]
     }
@@ -72,7 +170,41 @@
       "unique": true,
       "sparse": false,
       "required": true,
+      "process": "(item) => get(item, field.key)",
       "gen": "autoIncIdGen"
+    },
+    "fullName": {
+      "key": "fullName",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "email": {
+      "key": "email",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "password": {
+      "key": "password",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "bio": {
+      "key": "bio",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
     }
-  }
+  },
+  "id": "id"
 }

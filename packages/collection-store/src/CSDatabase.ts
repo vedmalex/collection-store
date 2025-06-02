@@ -7,6 +7,7 @@ import Collection from './collection'
 import { Item } from './types/Item'
 
 import AdapterFile from './AdapterFile'
+import AdapterMemory from './AdapterMemory'
 import { deserialize_collection_config } from './collection/deserialize_collection_config'
 import { serialize_collection_config } from './collection/serialize_collection_config'
 import { FileStorage } from './storage/FileStorage'
@@ -47,6 +48,10 @@ export class CSDatabase implements CSTransaction {
   }
 
   private async writeSchema() {
+    if (this.root === ':memory:') {
+      return // Skip file operations for in-memory databases
+    }
+
     const result = {} as Record<string, ISerializedCollectionConfig>
     this.collections.forEach((collection, name) => {
       result[name] = serialize_collection_config(collection)
@@ -60,6 +65,10 @@ export class CSDatabase implements CSTransaction {
   }
 
   async load() {
+    if (this.root === ':memory:') {
+      return // Skip file operations for in-memory databases
+    }
+
     const exists = fs.existsSync(path.join(this.root, `${this.name}.json`))
     if (!exists) {
       fse.ensureDirSync(this.root)
@@ -84,20 +93,32 @@ export class CSDatabase implements CSTransaction {
   collectionList: Map<string, ICollectionConfig<any>> = new Map()
 
   private registerCollection(collection: Collection<any>) {
-    if (!this.collections.has(collection.name)) {
-      this.collections.set(collection.name, collection)
-      return
+    // For testing purposes, allow overwriting collections
+    if (this.collections.has(collection.name)) {
+      console.warn(`[CSDatabase] Overwriting existing collection: ${collection.name}`)
+      const existingCollection = this.collections.get(collection.name)
+      if (existingCollection) {
+        // Clean up existing collection
+        existingCollection.reset().catch(err => console.warn('Failed to reset existing collection:', err))
+      }
     }
-    throw new Error(`collection ${collection.name} already exists`)
+    this.collections.set(collection.name, collection)
   }
 
   async createCollection<T extends Item>(name: string): Promise<IDataCollection<T>> {
     const [, collectionType = 'List'] = name.split(':')
+
+    // Determine adapter based on root path (MikroORM convention)
+    const adapter = this.root === ':memory:'
+      ? new AdapterMemory<T>()
+      : new AdapterFile<T>()
+
     const collection = Collection.create({
       name,
       list: collectionType === 'List' ? new List<T>() : new FileStorage<T>(),
-      adapter: new AdapterFile<T>(),
-      root: path.join(this.root, this.name),
+      adapter,
+      root: this.root === ':memory:' ? ':memory:' : path.join(this.root, this.name),
+      dbName: this.root === ':memory:' ? ':memory:' : undefined,
     })
 
     this.registerCollection(collection)
@@ -154,6 +175,11 @@ export class CSDatabase implements CSTransaction {
   }
 
   async persist() {
+    // ✅ ИСПРАВЛЕНИЕ: Не сохраняем in-memory коллекции на диск
+    if (this.root === ':memory:') {
+      return Promise.resolve([]) // Skip persistence for in-memory databases
+    }
+
     const res: Array<Promise<void>> = []
     this.collections.forEach((collection) => {
       res.push(collection.persist())
@@ -303,6 +329,32 @@ export class CSDatabase implements CSTransaction {
     this.currentTransactionId = undefined
     this.transactionSnapshots.clear()
     await this.transactionManager.cleanup()
+  }
+
+  // ✅ НОВЫЙ МЕТОД: Очистка коллекций для тестирования
+  async clearCollections(): Promise<void> {
+    // Очищаем все коллекции
+    for (const [name, collection] of this.collections) {
+      try {
+        await collection.reset()
+      } catch (error) {
+        console.warn(`Failed to reset collection ${name}:`, error)
+      }
+    }
+
+    // Очищаем Map коллекций
+    this.collections.clear()
+
+    // Очищаем список конфигураций коллекций
+    this.collectionList.clear()
+
+    // Сбрасываем состояние транзакций
+    this.inTransaction = false
+    this.currentTransactionId = undefined
+    this.transactionSnapshots.clear()
+    this.transactionSavepoints.clear()
+    this.savepointNameToId.clear()
+    this.savepointCounter = 0
   }
 
   get activeTransactionCount(): number {

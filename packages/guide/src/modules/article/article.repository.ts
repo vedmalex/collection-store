@@ -2,7 +2,7 @@ import {
   FindOptions,
   EntityRepository,
   LoadStrategy,
-} from 'collection-store-mikro-orm'
+} from '@mikro-orm/core'
 import { Article } from './article.entity.js'
 import { ArticleListing } from './article-listing.entity.js'
 

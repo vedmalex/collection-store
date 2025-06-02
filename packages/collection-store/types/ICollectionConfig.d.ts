@@ -6,10 +6,11 @@ import { IStorageAdapter } from './IStorageAdapter';
 import { IList } from './IList';
 import { ZodType } from 'zod';
 export interface ICollectionConfig<T extends Item> {
-    root: string;
+    root?: string;
     name: string;
-    list: IList<T>;
-    adapter: IStorageAdapter<T>;
+    list?: IList<T>;
+    adapter?: IStorageAdapter<T>;
+    dbName?: string;
     ttl?: string | number;
     rotate?: string;
     audit?: boolean;
@@ -31,4 +32,5 @@ export interface ISerializedCollectionConfig {
     indexList: Array<SerializedIndexDef>;
     adapter: 'AdapterMemory' | 'AdapterFile';
     root: string;
+    dbName?: string;
 }
