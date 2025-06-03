@@ -1,0 +1,160 @@
+bun test v1.2.15 (df017990)
+
+src/auth/authorization/tests/RBACEngine.test.ts:
+(pass) RBACEngine > Basic Permission Checking > should allow access when RBAC is disabled
+(pass) RBACEngine > Basic Permission Checking > should deny access when user has no roles [0.47ms]
+(pass) RBACEngine > Basic Permission Checking > should handle permission matching correctly [2.70ms]
+(pass) RBACEngine > Admin Override > should allow admin override when not in strict mode [0.26ms]
+(pass) RBACEngine > Admin Override > should not allow admin override in strict mode [0.07ms]
+(pass) RBACEngine > Resource String Conversion > should convert database resource correctly [0.10ms]
+(pass) RBACEngine > Resource String Conversion > should convert document resource correctly [0.13ms]
+(pass) RBACEngine > Resource String Conversion > should convert field resource correctly [0.06ms]
+(pass) RBACEngine > Configuration Management > should get current configuration [0.02ms]
+(pass) RBACEngine > Configuration Management > should update configuration [0.03ms]
+(pass) RBACEngine > Health Check > should perform health check successfully [0.25ms]
+(pass) RBACEngine > Error Handling > should handle evaluation errors gracefully [0.27ms]
+(pass) RBACEngine > Default Deny Policy > should respect default deny configuration [0.09ms]
+
+src/auth/authorization/tests/ABACEngine.test.ts:
+(pass) ABACEngine > Basic ABAC Functionality > should allow access when ABAC is disabled [0.59ms]
+(pass) ABACEngine > Basic ABAC Functionality > should evaluate user attributes [2.95ms]
+Error evaluating authorization attributes: warn: collection users not found
+      at collection (/Users/vedmalex/work/collection-store/packages/collection-store/src/CSDatabase.ts:152:11)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:270:46)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:227:5)
+      at evaluateABACPermission (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:193:48)
+
+(pass) ABACEngine > Basic ABAC Functionality > should handle document attributes for document resources [1.03ms]
+(pass) ABACEngine > Access Level Control > should deny access to high security resources for medium access users [0.11ms]
+(pass) ABACEngine > Access Level Control > should allow access to high security resources for high access users [0.10ms]
+(pass) ABACEngine > Time-Based Access Control > should deny sensitive operations outside business hours [0.18ms]
+(pass) ABACEngine > Time-Based Access Control > should allow sensitive operations during business hours [0.13ms]
+(pass) ABACEngine > Region-Based Access Control > should deny access from unauthorized regions [0.04ms]
+(pass) ABACEngine > Region-Based Access Control > should allow access from authorized regions [0.29ms]
+(pass) ABACEngine > Activity-Based Access Control > should deny sensitive operations for stale sessions
+Error evaluating authorization attributes: warn: collection user-documents not found
+      at collection (/Users/vedmalex/work/collection-store/packages/collection-store/src/CSDatabase.ts:152:11)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:270:46)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:227:5)
+      at evaluateABACPermission (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:193:48)
+
+(pass) ABACEngine > Document Ownership > should allow access to owned documents
+(pass) ABACEngine > Configuration Management > should get current configuration
+(pass) ABACEngine > Configuration Management > should update configuration [0.33ms]
+(pass) ABACEngine > Health Check > should perform health check successfully [0.10ms]
+(pass) ABACEngine > Error Handling > should handle attribute evaluation errors gracefully [0.10ms]
+Error evaluating authorization attributes: warn: collection non-existent-collection not found
+      at collection (/Users/vedmalex/work/collection-store/packages/collection-store/src/CSDatabase.ts:152:11)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:270:46)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:227:5)
+      at evaluateABACPermission (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:193:48)
+
+(pass) ABACEngine > Error Handling > should handle ComputedAttributeEngine errors [0.31ms]
+(pass) ABACEngine > Default Deny Policy > should respect default deny configuration [0.29ms]
+(pass) ABACEngine > Sensitive Actions Detection > should identify sensitive actions correctly [0.33ms]
+(pass) ABACEngine > High Security Resources Detection > should identify high security resources correctly [0.70ms]
+
+src/auth/authorization/tests/Integration.test.ts:
+(pass) Phase 2 Authorization System Integration > Core Engine Initialization > should initialize all engines successfully [0.03ms]
+(pass) Phase 2 Authorization System Integration > Core Engine Initialization > should create individual engines [0.55ms]
+(pass) Phase 2 Authorization System Integration > Basic Permission Checking > should handle permission requests without errors [1.47ms]
+Error evaluating authorization attributes: warn: collection users not found
+      at collection (/Users/vedmalex/work/collection-store/packages/collection-store/src/CSDatabase.ts:152:11)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:270:46)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:227:5)
+      at evaluateABACPermission (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:193:48)
+
+(pass) Phase 2 Authorization System Integration > Basic Permission Checking > should handle different resource types [1.61ms]
+(pass) Phase 2 Authorization System Integration > Cache Functionality > should provide cache statistics [0.26ms]
+(pass) Phase 2 Authorization System Integration > Cache Functionality > should clear cache without errors [0.25ms]
+(pass) Phase 2 Authorization System Integration > Cache Functionality > should invalidate cache by pattern [0.13ms]
+(pass) Phase 2 Authorization System Integration > Dynamic Rules > should add and remove dynamic rules [0.11ms]
+(pass) Phase 2 Authorization System Integration > Dynamic Rules > should validate dynamic rules [0.19ms]
+(pass) Phase 2 Authorization System Integration > Configuration Management > should get and update configuration [0.12ms]
+(pass) Phase 2 Authorization System Integration > Health Monitoring > should provide health status [0.30ms]
+(pass) Phase 2 Authorization System Integration > Batch Operations > should handle batch permission checks [0.80ms]
+(pass) Phase 2 Authorization System Integration > Error Handling > should handle invalid resource types gracefully [0.17ms]
+(pass) Phase 2 Authorization System Integration > Error Handling > should handle missing context gracefully [0.15ms]
+(pass) Phase 2 Authorization System Integration > Security Policies > should handle admin override detection [0.13ms]
+(pass) Phase 2 Authorization System Integration > Performance > should handle multiple concurrent requests [2.67ms]
+(pass) Phase 2 Authorization System Integration > Performance > should track performance metrics [0.56ms]
+
+src/auth/authorization/tests/PolicyEvaluator.test.ts:
+(pass) PolicyEvaluator > Basic Policy Evaluation > should allow when policies are disabled [0.12ms]
+(pass) PolicyEvaluator > Basic Policy Evaluation > should apply deny by default principle [0.12ms]
+(pass) PolicyEvaluator > Basic Policy Evaluation > should allow when all engines allow [0.09ms]
+(pass) PolicyEvaluator > Basic Policy Evaluation > should apply default policy when no explicit allows [0.02ms]
+(pass) PolicyEvaluator > Evaluation Order > should apply evaluation order correctly [0.03ms]
+(pass) PolicyEvaluator > Evaluation Order > should handle missing engines in evaluation order [0.02ms]
+(pass) PolicyEvaluator > Security Policies > should allow admin override [0.03ms]
+(pass) PolicyEvaluator > Security Policies > should allow emergency access [0.03ms]
+(pass) PolicyEvaluator > Security Policies > should deny during maintenance mode [0.03ms]
+(pass) PolicyEvaluator > Security Policies > should deny when rate limited [0.04ms]
+(pass) PolicyEvaluator > Security Policies > should allow when no security policies apply [0.03ms]
+(pass) PolicyEvaluator > Engine Identification > should identify engines from metadata [0.03ms]
+(pass) PolicyEvaluator > Engine Identification > should identify engines from applied rules [0.06ms]
+(pass) PolicyEvaluator > Engine Identification > should handle unknown engines [0.02ms]
+(pass) PolicyEvaluator > Applied Rules Combination > should combine applied rules from all engines [0.03ms]
+(pass) PolicyEvaluator > Applied Rules Combination > should deduplicate applied rules [0.05ms]
+(pass) PolicyEvaluator > Configuration Management > should get current configuration [0.03ms]
+(pass) PolicyEvaluator > Configuration Management > should update configuration [0.03ms]
+(pass) PolicyEvaluator > Health Check > should perform health check successfully
+(pass) PolicyEvaluator > Health Check > should fail health check with invalid configuration [0.02ms]
+(pass) PolicyEvaluator > Edge Cases > should handle empty results array [0.02ms]
+(pass) PolicyEvaluator > Edge Cases > should handle results with no metadata [0.03ms]
+(pass) PolicyEvaluator > Edge Cases > should handle mixed allow/deny results [0.03ms]
+(pass) PolicyEvaluator > Admin Override Detection > should detect system super admin [0.01ms]
+(pass) PolicyEvaluator > Admin Override Detection > should detect admin roles [0.03ms]
+(pass) PolicyEvaluator > Admin Override Detection > should not detect admin for regular users
+
+src/auth/authorization/tests/AuthorizationEngine.test.ts:
+ 99 | 
+100 |       expect(result.allowed).toBe(true)
+101 |       expect(result.reason).toContain('combined policy evaluation')
+102 |       expect(result.appliedRules.length).toBeGreaterThan(0)
+103 |       expect(result.cacheHit).toBe(false)
+104 |       expect(result.evaluationTime).toBeGreaterThan(0)
+                                          ^
+error: expect(received).toBeGreaterThan(expected)
+
+Expected: > 0
+Received: 0
+
+      at <anonymous> (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/tests/AuthorizationEngine.test.ts:104:37)
+(fail) AuthorizationEngine > Basic Permission Checking > should allow access when no restrictions apply [3.64ms]
+Error evaluating authorization attributes: warn: collection test-collection not found
+      at collection (/Users/vedmalex/work/collection-store/packages/collection-store/src/CSDatabase.ts:152:11)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:270:46)
+      at evaluateAuthorizationAttributes (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:227:5)
+      at evaluateABACPermission (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/ABACEngine.ts:193:48)
+
+(pass) AuthorizationEngine > Basic Permission Checking > should cache permission results [0.64ms]
+(pass) AuthorizationEngine > Basic Permission Checking > should handle batch permission checks [0.42ms]
+(pass) AuthorizationEngine > Dynamic Rules > should add and evaluate dynamic rules [0.45ms]
+(pass) AuthorizationEngine > Dynamic Rules > should remove dynamic rules [0.12ms]
+(pass) AuthorizationEngine > Cache Management > should clear permission cache [0.15ms]
+(pass) AuthorizationEngine > Cache Management > should provide cache statistics [0.16ms]
+(pass) AuthorizationEngine > Cache Management > should invalidate cache by pattern [0.32ms]
+(pass) AuthorizationEngine > Configuration Management > should update configuration [0.04ms]
+(pass) AuthorizationEngine > Configuration Management > should perform health check [0.18ms]
+(pass) AuthorizationEngine > Error Handling > should handle invalid dynamic rules [0.08ms]
+Error evaluating rule error-rule: warn: Rule evaluation error
+      at <anonymous> (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/tests/AuthorizationEngine.test.ts:379:17)
+      at evaluator (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/tests/AuthorizationEngine.test.ts:378:32)
+      at <anonymous> (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:515:29)
+      at new Promise (1:11)
+      at evaluateRule (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:509:12)
+      at evaluateRule (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:502:5)
+      at evaluateRules (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:268:41)
+      at evaluateRules (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:239:5)
+      at evaluateAllEngines (/Users/vedmalex/work/collection-store/packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts:222:38)
+
+(pass) AuthorizationEngine > Error Handling > should handle rule evaluation errors gracefully [1.92ms]
+
+1 tests failed:
+(fail) AuthorizationEngine > Basic Permission Checking > should allow access when no restrictions apply [3.64ms]
+
+ 86 pass
+ 1 fail
+ 237 expect() calls
+Ran 87 tests across 5 files. [444.00ms]

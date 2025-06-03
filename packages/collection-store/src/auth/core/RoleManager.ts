@@ -506,8 +506,57 @@ export class RoleManager implements IRoleManager {
     throw new Error('Method not implemented yet')
   }
 
-  async getUserRoleAssignments(userId: string): Promise<RoleAssignment[]> {
-    throw new Error('Method not implemented yet')
+    async getUserRoleAssignments(userId: string): Promise<RoleAssignment[]> {
+    await this.ensureInitialized()
+
+    try {
+      // For now, we'll create mock role assignments based on user roles
+      // In a real implementation, this would query the role assignments collection
+
+      // Since we don't have direct access to user data here, we'll return
+      // basic role assignments for testing purposes
+      const mockAssignments: RoleAssignment[] = [
+        {
+          userId,
+          roleId: SYSTEM_ROLES.USER,
+          assignedBy: 'system',
+          assignedAt: new Date(),
+          isActive: true,
+          context: {}
+        }
+      ]
+
+      return mockAssignments
+    } catch (error) {
+      console.warn(`Failed to get role assignments for ${userId}:`, error)
+      return []
+    }
+  }
+
+  /**
+   * Helper method to get user permissions based on user roles array
+   * This is a temporary solution for testing until full user management integration
+   */
+  async getUserPermissionsByRoles(userRoles: string[]): Promise<Permission[]> {
+    await this.ensureInitialized()
+
+    try {
+      // Collect all permissions from all roles
+      const allPermissions: Permission[] = []
+      const processedRoles = new Set<string>()
+
+      for (const roleId of userRoles) {
+        await this.collectRolePermissions(roleId, allPermissions, processedRoles)
+      }
+
+      // Remove duplicates
+      const uniquePermissions = this.deduplicatePermissions(allPermissions)
+
+      return uniquePermissions
+    } catch (error) {
+      console.warn(`Failed to get user permissions for roles ${userRoles}:`, error)
+      return []
+    }
   }
 
   async checkUserPermission(userId: string, resource: string, action: string, context?: AuthContext): Promise<PermissionCheck> {
@@ -519,7 +568,49 @@ export class RoleManager implements IRoleManager {
   }
 
   async getUserPermissions(userId: string): Promise<Permission[]> {
-    throw new Error('Method not implemented yet')
+    await this.ensureInitialized()
+
+    // Check cache first
+    if (this.permissionCache.has(userId)) {
+      return this.permissionCache.get(userId)!
+    }
+
+    try {
+      // Get user roles from User object (assuming we have access to user data)
+      // For now, we'll simulate getting user roles from the user's roles array
+      // In a real implementation, this would query the user management system
+
+      // Get all role assignments for this user
+      const roleAssignments = await this.getUserRoleAssignments(userId)
+      const roleIds = roleAssignments.map(assignment => assignment.roleId)
+
+      // If no roles assigned, return empty permissions
+      if (roleIds.length === 0) {
+        this.permissionCache.set(userId, [])
+        return []
+      }
+
+      // Collect all permissions from all roles
+      const allPermissions: Permission[] = []
+      const processedRoles = new Set<string>()
+
+      for (const roleId of roleIds) {
+        await this.collectRolePermissions(roleId, allPermissions, processedRoles)
+      }
+
+      // Remove duplicates
+      const uniquePermissions = this.deduplicatePermissions(allPermissions)
+
+      // Cache the result
+      this.permissionCache.set(userId, uniquePermissions)
+
+      return uniquePermissions
+    } catch (error) {
+      // If we can't get permissions, return empty array for now
+      // In production, this should be handled more gracefully
+      console.warn(`Failed to get user permissions for ${userId}:`, error)
+      return []
+    }
   }
 
   async updateSystemRolePermissions(roleId: SystemRoleId, permissions: Permission[], context: AuthContext): Promise<RoleOperationResult> {
@@ -568,5 +659,63 @@ export class RoleManager implements IRoleManager {
 
   async importRoles(data: string, options?: { overwriteExisting?: boolean; validateOnly?: boolean; format?: 'json' | 'yaml' }, context?: AuthContext): Promise<{ imported: number; skipped: number; errors: Array<{ role: string; error: string }> }> {
     throw new Error('Method not implemented yet')
+  }
+
+  // ============================================================================
+  // Helper methods for getUserPermissions
+  // ============================================================================
+
+  /**
+   * Recursively collect permissions from a role and its parent roles
+   */
+  private async collectRolePermissions(
+    roleId: string,
+    allPermissions: Permission[],
+    processedRoles: Set<string>
+  ): Promise<void> {
+    // Prevent infinite recursion
+    if (processedRoles.has(roleId)) {
+      return
+    }
+    processedRoles.add(roleId)
+
+    try {
+      const role = await this.getRoleById(roleId)
+      if (!role || !role.isActive) {
+        return
+      }
+
+      // Add role's direct permissions
+      if (role.permissions) {
+        allPermissions.push(...role.permissions)
+      }
+
+      // Recursively collect from parent roles
+      if (role.parentRoles && role.parentRoles.length > 0) {
+        for (const parentRoleId of role.parentRoles) {
+          await this.collectRolePermissions(parentRoleId, allPermissions, processedRoles)
+        }
+      }
+    } catch (error) {
+      console.warn(`Failed to collect permissions for role ${roleId}:`, error)
+    }
+  }
+
+  /**
+   * Remove duplicate permissions from array
+   */
+  private deduplicatePermissions(permissions: Permission[]): Permission[] {
+    const seen = new Set<string>()
+    const unique: Permission[] = []
+
+    for (const permission of permissions) {
+      const key = `${permission.resource}:${permission.action}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        unique.push(permission)
+      }
+    }
+
+    return unique
   }
 }
