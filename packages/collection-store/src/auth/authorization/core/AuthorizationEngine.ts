@@ -64,7 +64,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
     action: string,
     context?: AuthContext
   ): Promise<AuthorizationResult> {
-    const startTime = Date.now()
+    const startTime = performance.now()
     this.metrics.totalChecks++
 
     try {
@@ -93,7 +93,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
           const result = {
             ...cached.result,
             cacheHit: true,
-            evaluationTime: Date.now() - startTime
+            evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
           }
 
           await this.auditLogger.logAuthorization(
@@ -121,7 +121,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
       finalResult.cacheHit = false
       // Only set evaluationTime if not already set by PolicyEvaluator
       if (finalResult.evaluationTime === undefined || finalResult.evaluationTime === 0) {
-        finalResult.evaluationTime = Date.now() - startTime
+        finalResult.evaluationTime = Math.max(1, Math.round(performance.now() - startTime))
       }
 
       // Update metrics
@@ -161,7 +161,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
         reason: `Authorization error: ${error.message}`,
         appliedRules: ['auth:error'],
         cacheHit: false,
-        evaluationTime: Date.now() - startTime
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
       }
 
       await this.auditLogger.logSecurity(
@@ -244,7 +244,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
     action: string,
     context: EvaluationContext
   ): Promise<AuthorizationResult> {
-    const startTime = Date.now()
+    const startTime = performance.now()
     const appliedRules: string[] = []
 
     try {
@@ -257,7 +257,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
           reason: 'No dynamic rules applicable',
           appliedRules: ['rules:none_applicable'],
           cacheHit: false,
-          evaluationTime: Date.now() - startTime,
+          evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
           metadata: { engine: 'dynamic_rules' }
         }
       }
@@ -278,7 +278,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
               reason: `Denied by rule: ${rule.name}`,
               appliedRules,
               cacheHit: false,
-              evaluationTime: Date.now() - startTime,
+              evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
               metadata: { engine: 'dynamic_rules', denyingRule: rule.id }
             }
           }
@@ -299,7 +299,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
         reason: 'No deny rules triggered',
         appliedRules,
         cacheHit: false,
-        evaluationTime: Date.now() - startTime,
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
         metadata: { engine: 'dynamic_rules', rulesEvaluated: sortedRules.length }
       }
 
@@ -309,7 +309,7 @@ export class AuthorizationEngine implements IAuthorizationEngine {
         reason: `Dynamic rules evaluation error: ${error.message}`,
         appliedRules: ['rules:error'],
         cacheHit: false,
-        evaluationTime: Date.now() - startTime,
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
         metadata: { engine: 'dynamic_rules', error: error.message }
       }
     }

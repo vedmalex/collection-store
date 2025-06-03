@@ -78,7 +78,7 @@ export class ABACEngine {
     action: string,
     context: EvaluationContext
   ): Promise<AuthorizationResult> {
-    const startTime = Date.now()
+    const startTime = performance.now()
 
     try {
       // Initialize authorization attributes if not done yet
@@ -91,7 +91,7 @@ export class ABACEngine {
           reason: 'ABAC disabled',
           appliedRules: ['abac:disabled'],
           cacheHit: false,
-          evaluationTime: Date.now() - startTime
+          evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
         }
       }
 
@@ -108,7 +108,7 @@ export class ABACEngine {
         reason: hasPermission.reason,
         appliedRules: hasPermission.appliedRules,
         cacheHit: false,
-        evaluationTime: Date.now() - startTime,
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
         metadata: {
           engine: 'abac',
           evaluatedAttributes: hasPermission.evaluatedAttributes,
@@ -138,7 +138,7 @@ export class ABACEngine {
         reason: `ABAC evaluation error: ${error.message}`,
         appliedRules: ['abac:error'],
         cacheHit: false,
-        evaluationTime: Date.now() - startTime
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
       }
 
       await this.auditLogger.logSecurity(

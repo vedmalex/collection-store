@@ -17,6 +17,8 @@
 - **Ensure test context isolation** - clean up context between tests to prevent interference
 - **Create tests for every feature** - no feature should be implemented without corresponding tests
 - **Verify functional coverage** at the end of each step/phase to ensure all planned functionality is tested
+- **Use high-precision timing** - prefer `performance.now()` over `Date.now()` for performance measurements and time-sensitive operations
+- **Implement collision-resistant ID generation** - avoid time-based IDs that can collide under high load; use counters, UUIDs, or hybrid approaches
 
 ### Debugging Methodology
 - **Before debugging complex tests**, perform manual tracing with expected results
@@ -63,3 +65,9 @@
 - Keep dependency maps updated as tests evolve
 - Preserve failed attempt documentation for learning
 - **Document integration plans and test coverage reports**
+
+### Performance and Reliability Considerations
+- **Time Precision:** Use `performance.now()` for accurate timing measurements, especially in performance tests
+- **ID Generation:** Implement collision-resistant ID generation strategies for high-throughput scenarios
+- **Load Testing:** Design tests that can handle multiple operations within the same millisecond
+- **Concurrency Safety:** Ensure ID generators and timing mechanisms work correctly under concurrent access

@@ -15,6 +15,8 @@
 - **Ensure test context cleanup between tests**
 - **Create tests for every new feature**
 - **Verify functional coverage at end of each step/phase**
+- **Use performance.now() for timing measurements**
+- **Implement collision-resistant ID generation**
 
 ### Integration Protocol
 - **Design phases/steps in isolation when possible**
@@ -52,3 +54,9 @@
 - Preserve working functionality during development
 - **Validate test coverage for all planned functionality**
 - **Test integration points between components**
+
+### Performance Protocol
+- **Use `performance.now()` instead of `Date.now()` for timing**
+- **Design ID generators to handle high-load scenarios**
+- **Test for timing collisions in concurrent operations**
+- **Validate ID uniqueness under load**

@@ -34,7 +34,7 @@ export class RBACEngine {
     action: string,
     context: EvaluationContext
   ): Promise<AuthorizationResult> {
-    const startTime = Date.now()
+    const startTime = performance.now()
 
     try {
       // If RBAC is disabled, allow by default
@@ -44,7 +44,7 @@ export class RBACEngine {
           reason: 'RBAC disabled',
           appliedRules: ['rbac:disabled'],
           cacheHit: false,
-          evaluationTime: Date.now() - startTime
+          evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
         }
       }
 
@@ -61,7 +61,7 @@ export class RBACEngine {
         reason: hasPermission.reason,
         appliedRules: hasPermission.appliedRules,
         cacheHit: false,
-        evaluationTime: Date.now() - startTime,
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime)),
         metadata: {
           engine: 'rbac',
           userRoles: user.roles,
@@ -90,7 +90,7 @@ export class RBACEngine {
         reason: `RBAC evaluation error: ${error.message}`,
         appliedRules: ['rbac:error'],
         cacheHit: false,
-        evaluationTime: Date.now() - startTime
+        evaluationTime: Math.max(1, Math.round(performance.now() - startTime))
       }
 
       await this.auditLogger.logSecurity(

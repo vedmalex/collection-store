@@ -321,11 +321,203 @@ describe('Performance', () => {
 // Урок: RangeError: Out of memory был обнаружен через тесты производительности
 ```
 
+### 14. **Высокоточное измерение времени**
+```typescript
+// ❌ НЕПРАВИЛЬНО: Использование Date.now() для измерений
+function measureOperationTime() {
+  const start = Date.now() // Точность только до миллисекунды
+  performOperation()
+  const duration = Date.now() - start
+  return duration
+}
+
+// ✅ ПРАВИЛЬНО: Использование performance.now() для точных измерений
+function measureOperationTime() {
+  const start = performance.now() // Микросекундная точность
+  performOperation()
+  const duration = performance.now() - start
+  return duration
+}
+
+// Пример высоконагруженного теста
+describe('High Load Performance', () => {
+  it('should handle rapid consecutive operations', () => {
+    const operations = []
+
+    for (let i = 0; i < 1000; i++) {
+      const start = performance.now()
+      tree.insert(i, `value${i}`)
+      const duration = performance.now() - start
+      operations.push(duration)
+    }
+
+    // Проверяем что операции выполняются стабильно быстро
+    const avgDuration = operations.reduce((a, b) => a + b) / operations.length
+    expect(avgDuration).toBeLessThan(1) // Менее 1мс в среднем
+
+    // Проверяем что нет аномально медленных операций
+    const maxDuration = Math.max(...operations)
+    expect(maxDuration).toBeLessThan(10) // Не более 10мс для любой операции
+  })
+})
+
+// Урок: Date.now() может давать одинаковые значения для быстрых операций
+```
+
+### 15. **Устойчивая генерация ID**
+```typescript
+// ❌ НЕПРАВИЛЬНО: ID на основе времени без защиты от коллизий
+class BadIdGenerator {
+  generateId(): string {
+    return Date.now().toString() // Коллизии при высокой нагрузке!
+  }
+}
+
+// ✅ ПРАВИЛЬНО: Устойчивая к коллизиям генерация ID
+class RobustIdGenerator {
+  private counter = 0
+  private lastTimestamp = 0
+
+  generateId(): string {
+    const timestamp = performance.now()
+
+    // Если в той же миллисекунде - увеличиваем счетчик
+    if (timestamp === this.lastTimestamp) {
+      this.counter++
+    } else {
+      this.counter = 0
+      this.lastTimestamp = timestamp
+    }
+
+    // Комбинируем время + счетчик для уникальности
+    return `${Math.floor(timestamp)}-${this.counter}`
+  }
+}
+
+// Альтернативный подход: UUID для полной уникальности
+import { v4 as uuidv4 } from 'uuid'
+
+class UUIDGenerator {
+  generateId(): string {
+    return uuidv4() // Гарантированно уникальный ID
+  }
+}
+
+// Гибридный подход: время + случайность + счетчик
+class HybridIdGenerator {
+  private counter = 0
+
+  generateId(): string {
+    const timestamp = Math.floor(performance.now())
+    const random = Math.floor(Math.random() * 1000)
+    const count = this.counter++
+
+    return `${timestamp}-${random}-${count}`
+  }
+}
+
+// Тестирование генератора ID на коллизии
+describe('ID Generator Collision Test', () => {
+  it('should generate unique IDs under high load', () => {
+    const generator = new RobustIdGenerator()
+    const ids = new Set<string>()
+    const iterations = 10000
+
+    // Генерируем много ID быстро
+    for (let i = 0; i < iterations; i++) {
+      const id = generator.generateId()
+
+      // Проверяем уникальность
+      expect(ids.has(id)).toBe(false)
+      ids.add(id)
+    }
+
+    // Все ID должны быть уникальными
+    expect(ids.size).toBe(iterations)
+  })
+
+  it('should handle concurrent ID generation', async () => {
+    const generator = new RobustIdGenerator()
+    const ids = new Set<string>()
+
+    // Параллельная генерация ID
+    const promises = Array.from({ length: 1000 }, async () => {
+      return generator.generateId()
+    })
+
+    const results = await Promise.all(promises)
+
+    // Проверяем уникальность всех ID
+    results.forEach(id => {
+      expect(ids.has(id)).toBe(false)
+      ids.add(id)
+    })
+
+    expect(ids.size).toBe(1000)
+  })
+})
+
+// Урок: Простые time-based ID ломаются при высокой нагрузке
+```
+
+### 16. **Тестирование временных коллизий**
+```typescript
+// ✅ ПРАВИЛЬНО: Тестируй операции в одной миллисекунде
+describe('Timing Collision Tests', () => {
+  it('should handle multiple operations in same millisecond', () => {
+    const results = []
+    const startTime = performance.now()
+
+    // Выполняем много операций очень быстро
+    while (performance.now() - startTime < 1) { // В течение 1мс
+      const operationStart = performance.now()
+      tree.insert(Math.random(), `value-${Math.random()}`)
+      const operationEnd = performance.now()
+
+      results.push({
+        start: operationStart,
+        end: operationEnd,
+        duration: operationEnd - operationStart
+      })
+    }
+
+    console.log(`Executed ${results.length} operations in ~1ms`)
+
+    // Проверяем что все операции корректно обработаны
+    expect(results.length).toBeGreaterThan(0)
+    results.forEach(result => {
+      expect(result.duration).toBeGreaterThanOrEqual(0)
+    })
+  })
+
+  it('should maintain data consistency under rapid operations', () => {
+    const operations = 1000
+    const keys = []
+
+    // Быстрая вставка множества элементов
+    for (let i = 0; i < operations; i++) {
+      const key = `key-${i}-${performance.now()}`
+      tree.insert(key, `value-${i}`)
+      keys.push(key)
+    }
+
+    // Проверяем что все элементы на месте
+    keys.forEach(key => {
+      expect(tree.has(key)).toBe(true)
+    })
+
+    expect(tree.size).toBe(operations)
+  })
+})
+
+// Урок: Высокая нагрузка выявляет проблемы с временной точностью
+```
+
 ---
 
 ## 🔗 Правила интеграции
 
-### 14. **Изолированное проектирование фаз**
+### 17. **Изолированное проектирование фаз**
 ```markdown
 # Правило изолированного проектирования
 
@@ -356,7 +548,7 @@ describe('Performance', () => {
 - Не планировать интеграционные шаги
 ```
 
-### 15. **Планирование интеграционных шагов**
+### 18. **Планирование интеграционных шагов**
 ```typescript
 // ✅ ПРАВИЛЬНО: Явное планирование интеграции
 interface IntegrationPlan {
@@ -408,7 +600,7 @@ const transactionIntegrationPlan: IntegrationPlan = {
 // Каждый шаг интеграции планируется как отдельная фаза
 ```
 
-### 16. **Тестирование интеграционных точек**
+### 19. **Тестирование интеграционных точек**
 ```typescript
 // ✅ ПРАВИЛЬНО: Отдельные тесты для интеграции
 describe('Integration Tests', () => {
@@ -440,7 +632,7 @@ describe('Integration Tests', () => {
 // Интеграционные тесты отдельно от unit тестов
 ```
 
-### 17. **Документирование интеграционных зависимостей**
+### 20. **Документирование интеграционных зависимостей**
 ```markdown
 # Правило документирования интеграционных зависимостей
 
@@ -473,7 +665,7 @@ describe('Integration Tests', () => {
 
 ## 🐛 Правила отладки
 
-### 18. **Трассировка перед исправлением**
+### 21. **Трассировка перед исправлением**
 ```markdown
 # Правило трассировки
 
@@ -489,7 +681,7 @@ describe('Integration Tests', () => {
 - failed.transaction.abort.md
 ```
 
-### 19. **Детальное логирование**
+### 22. **Детальное логирование**
 ```typescript
 // ✅ ПРАВИЛЬНО: Подробное логирование для сложных операций
 function remove_in_transaction<T, K extends ValueType>(
@@ -514,7 +706,7 @@ function remove_in_transaction<T, K extends ValueType>(
 }
 ```
 
-### 20. **Валидация инвариантов**
+### 23. **Валидация инвариантов**
 ```typescript
 // ✅ ПРАВИЛЬНО: Проверка инвариантов на каждом шаге
 function validateTreeInvariants<T, K extends ValueType>(
@@ -549,7 +741,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 
 ## 📚 Правила документирования
 
-### 21. **Документирование решений**
+### 24. **Документирование решений**
 ```markdown
 # Правило документирования решений
 
@@ -577,7 +769,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 - **Файлы:** `src/TransactionContext.ts`, `src/BPlusTree.ts`
 ```
 
-### 22. **Ведение статистики**
+### 25. **Ведение статистики**
 ```markdown
 # Правило ведения статистики
 
@@ -594,7 +786,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 Это помогает видеть общую картину прогресса.
 ```
 
-### 23. **Создание примеров использования**
+### 26. **Создание примеров использования**
 ```typescript
 // ✅ ПРАВИЛЬНО: Создавай рабочие примеры для каждой функции
 // examples/transaction-example.ts
@@ -622,7 +814,7 @@ async function transactionExample() {
 
 ## 🔄 Правила рефакторинга
 
-### 24. **Постепенный рефакторинг**
+### 27. **Постепенный рефакторинг**
 ```typescript
 // ✅ ПРАВИЛЬНО: Рефакторинг по одной функции за раз
 // Шаг 1: Создаем новую функцию с улучшенной логикой
@@ -641,7 +833,7 @@ describe('merge_with_left_cow_v2', () => {
 // ❌ НЕПРАВИЛЬНО: Переписываем все сразу
 ```
 
-### 25. **Сохранение обратной совместимости**
+### 28. **Сохранение обратной совместимости**
 ```typescript
 // ✅ ПРАВИЛЬНО: Сохраняем старый API при рефакторинге
 // Старый API (deprecated)
@@ -659,7 +851,7 @@ function insert_in_transaction(key: K, value: T, txCtx: TransactionContext<T, K>
 }
 ```
 
-### 26. **Метрики качества кода**
+### 29. **Метрики качества кода**
 ```typescript
 // ✅ ПРАВИЛЬНО: Отслеживай метрики качества
 interface CodeQualityMetrics {
