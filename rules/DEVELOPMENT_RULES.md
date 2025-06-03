@@ -171,7 +171,119 @@ describe('Merge Operations', () => {
 // Группируй связанные тесты, но тестируй каждый аспект отдельно
 ```
 
-### 9. **Тестирование edge cases**
+### 9. **Изоляция контекста между тестами**
+```typescript
+// ✅ ПРАВИЛЬНО: Обеспечивай очистку контекста между тестами
+describe('Transaction Tests', () => {
+  let tree: BPlusTree<User, number>
+  let txCtx: TransactionContext<User, number>
+
+  beforeEach(() => {
+    // Создаем чистое состояние для каждого теста
+    tree = new BPlusTree<User, number>(3, false)
+    txCtx = new TransactionContext(tree)
+  })
+
+  afterEach(() => {
+    // Очищаем ресурсы после каждого теста
+    if (txCtx) {
+      txCtx.cleanup()
+    }
+    tree = null
+    txCtx = null
+  })
+
+  it('should handle transaction isolation', () => {
+    // Тест работает с чистым состоянием
+    tree.insert_in_transaction(1, { name: 'Alice' }, txCtx)
+    expect(tree.size).toBe(1)
+  })
+})
+
+// ❌ НЕПРАВИЛЬНО: Переиспользование состояния между тестами
+// Это может привести к зависимостям и ложным результатам
+```
+
+### 10. **Обязательное тестирование каждой фичи**
+```typescript
+// ✅ ПРАВИЛЬНО: Каждая новая функция должна иметь тесты
+// Правило: Нет фичи без тестов
+
+// Новая функция
+function findOptimalMergeCandidate<T, K extends ValueType>(
+  node: Node<T, K>,
+  txCtx: TransactionContext<T, K>
+): Node<T, K> | null {
+  // Реализация функции
+}
+
+// Обязательные тесты для новой функции
+describe('findOptimalMergeCandidate', () => {
+  it('should return null for nodes without siblings', () => { /* ... */ })
+  it('should prefer left sibling when both available', () => { /* ... */ })
+  it('should handle edge cases with minimum capacity', () => { /* ... */ })
+  it('should work correctly in transaction context', () => { /* ... */ })
+})
+
+// Правило: Функция не считается завершенной без тестов
+```
+
+### 11. **Проверка покрытия функционала на каждом этапе**
+```typescript
+// ✅ ПРАВИЛЬНО: Проверяй покрытие в конце каждого этапа
+// coverage-check.ts
+interface PhaseRequirements {
+  phase: string
+  requiredFunctions: string[]
+  requiredTestCoverage: number
+  integrationPoints: string[]
+}
+
+const phase1Requirements: PhaseRequirements = {
+  phase: "Core Operations",
+  requiredFunctions: [
+    "insert_in_transaction",
+    "remove_in_transaction",
+    "find_in_transaction"
+  ],
+  requiredTestCoverage: 95, // Минимум 95% покрытия
+  integrationPoints: ["TransactionContext", "Node operations"]
+}
+
+function validatePhaseCompletion(phase: PhaseRequirements): boolean {
+  // Проверяем что все функции реализованы
+  for (const func of phase.requiredFunctions) {
+    if (!isFunctionImplemented(func)) {
+      console.error(`❌ Function ${func} not implemented`)
+      return false
+    }
+  }
+
+  // Проверяем покрытие тестами
+  const coverage = calculateTestCoverage(phase.requiredFunctions)
+  if (coverage < phase.requiredTestCoverage) {
+    console.error(`❌ Test coverage ${coverage}% < required ${phase.requiredTestCoverage}%`)
+    return false
+  }
+
+  // Проверяем интеграционные точки
+  for (const point of phase.integrationPoints) {
+    if (!isIntegrationTested(point)) {
+      console.error(`❌ Integration point ${point} not tested`)
+      return false
+    }
+  }
+
+  console.log(`✅ Phase "${phase.phase}" completed successfully`)
+  return true
+}
+
+// Пример использования в конце этапа:
+// npm run test:coverage
+// node coverage-check.js --phase=1
+```
+
+### 12. **Тестирование edge cases**
 ```typescript
 // ✅ ПРАВИЛЬНО: Покрывай все граничные случаи
 describe('Edge Cases', () => {
@@ -189,7 +301,7 @@ describe('Edge Cases', () => {
 // Урок из проекта: Edge cases часто выявляют фундаментальные проблемы
 ```
 
-### 10. **Тестирование производительности**
+### 13. **Тестирование производительности**
 ```typescript
 // ✅ ПРАВИЛЬНО: Включай тесты производительности
 describe('Performance', () => {
@@ -211,9 +323,157 @@ describe('Performance', () => {
 
 ---
 
+## 🔗 Правила интеграции
+
+### 14. **Изолированное проектирование фаз**
+```markdown
+# Правило изолированного проектирования
+
+## ✅ ПРАВИЛЬНО: Проектируй фазы изолированно
+### Phase 1: Core Data Structures (изолированно)
+- Implement Node class
+- Implement basic tree operations
+- No dependencies on transactions
+
+### Phase 2: Transaction System (изолированно)
+- Implement TransactionContext
+- Implement Copy-on-Write logic
+- No dependencies on advanced operations
+
+### Phase 3: Advanced Operations (изолированно)
+- Implement merge/split operations
+- Implement rebalancing
+- Uses interfaces from Phase 1 & 2
+
+### Phase 4: Integration (планируется отдельно)
+- Integrate transaction system with core operations
+- Integrate advanced operations with transactions
+- End-to-end testing
+
+## ❌ НЕПРАВИЛЬНО: Смешанная разработка
+- Разрабатывать все компоненты одновременно
+- Создавать зависимости между фазами во время разработки
+- Не планировать интеграционные шаги
+```
+
+### 15. **Планирование интеграционных шагов**
+```typescript
+// ✅ ПРАВИЛЬНО: Явное планирование интеграции
+interface IntegrationPlan {
+  name: string
+  components: string[]
+  integrationSteps: IntegrationStep[]
+  testStrategy: string
+  rollbackPlan: string
+}
+
+interface IntegrationStep {
+  step: number
+  description: string
+  dependencies: string[]
+  validation: string[]
+  estimatedTime: string
+}
+
+const transactionIntegrationPlan: IntegrationPlan = {
+  name: "Transaction System Integration",
+  components: ["Core Tree", "Transaction Context", "CoW Operations"],
+  integrationSteps: [
+    {
+      step: 1,
+      description: "Integrate TransactionContext with basic tree operations",
+      dependencies: ["Core Tree Phase", "Transaction System Phase"],
+      validation: ["Basic insert/remove with transactions", "Context isolation"],
+      estimatedTime: "2 days"
+    },
+    {
+      step: 2,
+      description: "Integrate CoW with advanced operations",
+      dependencies: ["Step 1", "Advanced Operations Phase"],
+      validation: ["Merge/split with CoW", "Parent-child consistency"],
+      estimatedTime: "3 days"
+    },
+    {
+      step: 3,
+      description: "End-to-end transaction scenarios",
+      dependencies: ["Step 2"],
+      validation: ["2PC protocol", "Isolation guarantees", "Performance tests"],
+      estimatedTime: "2 days"
+    }
+  ],
+  testStrategy: "Integration tests separate from unit tests",
+  rollbackPlan: "Revert to previous stable interfaces"
+}
+
+// Каждый шаг интеграции планируется как отдельная фаза
+```
+
+### 16. **Тестирование интеграционных точек**
+```typescript
+// ✅ ПРАВИЛЬНО: Отдельные тесты для интеграции
+describe('Integration Tests', () => {
+  describe('Transaction-Tree Integration', () => {
+    it('should maintain tree invariants during transactions', () => {
+      // Тестируем интеграцию между деревом и транзакциями
+      const tree = new BPlusTree<number, number>(3, false)
+      const txCtx = new TransactionContext(tree)
+
+      // Выполняем операции через транзакционный интерфейс
+      tree.insert_in_transaction(1, 100, txCtx)
+      tree.insert_in_transaction(2, 200, txCtx)
+
+      // Проверяем что инварианты дерева сохраняются
+      validateTreeInvariants(tree)
+
+      // Проверяем что транзакционный контекст корректен
+      validateTransactionState(txCtx)
+    })
+  })
+
+  describe('CoW-Operations Integration', () => {
+    it('should handle CoW during complex operations', () => {
+      // Тестируем интеграцию CoW с операциями merge/split
+    })
+  })
+})
+
+// Интеграционные тесты отдельно от unit тестов
+```
+
+### 17. **Документирование интеграционных зависимостей**
+```markdown
+# Правило документирования интеграционных зависимостей
+
+## Integration Dependency Map
+
+### Core Tree → Transaction System
+- **Interface:** TreeOperationInterface
+- **Dependencies:** Node access, tree traversal
+- **Potential Conflicts:** Direct node modification vs CoW
+- **Resolution Strategy:** Wrapper pattern with transaction-aware operations
+
+### Transaction System → Advanced Operations
+- **Interface:** TransactionAwareOperations
+- **Dependencies:** Node copying, state management
+- **Potential Conflicts:** Memory management, parent-child updates
+- **Resolution Strategy:** Event-driven coordination
+
+### Integration Testing Points
+1. **Tree-Transaction boundary:** Verify CoW semantics
+2. **Transaction-Operations boundary:** Verify state consistency
+3. **End-to-end scenarios:** Verify complete workflows
+
+### Rollback Strategies
+- **Phase 1 rollback:** Revert to non-transactional operations
+- **Phase 2 rollback:** Disable CoW, use direct modifications
+- **Phase 3 rollback:** Fallback to simple transaction model
+```
+
+---
+
 ## 🐛 Правила отладки
 
-### 11. **Трассировка перед исправлением**
+### 18. **Трассировка перед исправлением**
 ```markdown
 # Правило трассировки
 
@@ -229,7 +489,7 @@ describe('Performance', () => {
 - failed.transaction.abort.md
 ```
 
-### 12. **Детальное логирование**
+### 19. **Детальное логирование**
 ```typescript
 // ✅ ПРАВИЛЬНО: Подробное логирование для сложных операций
 function remove_in_transaction<T, K extends ValueType>(
@@ -254,7 +514,7 @@ function remove_in_transaction<T, K extends ValueType>(
 }
 ```
 
-### 13. **Валидация инвариантов**
+### 20. **Валидация инвариантов**
 ```typescript
 // ✅ ПРАВИЛЬНО: Проверка инвариантов на каждом шаге
 function validateTreeInvariants<T, K extends ValueType>(
@@ -289,7 +549,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 
 ## 📚 Правила документирования
 
-### 14. **Документирование решений**
+### 21. **Документирование решений**
 ```markdown
 # Правило документирования решений
 
@@ -317,7 +577,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 - **Файлы:** `src/TransactionContext.ts`, `src/BPlusTree.ts`
 ```
 
-### 15. **Ведение статистики**
+### 22. **Ведение статистики**
 ```markdown
 # Правило ведения статистики
 
@@ -334,7 +594,7 @@ function validateTreeInvariants<T, K extends ValueType>(
 Это помогает видеть общую картину прогресса.
 ```
 
-### 16. **Создание примеров использования**
+### 23. **Создание примеров использования**
 ```typescript
 // ✅ ПРАВИЛЬНО: Создавай рабочие примеры для каждой функции
 // examples/transaction-example.ts
@@ -362,7 +622,7 @@ async function transactionExample() {
 
 ## 🔄 Правила рефакторинга
 
-### 17. **Постепенный рефакторинг**
+### 24. **Постепенный рефакторинг**
 ```typescript
 // ✅ ПРАВИЛЬНО: Рефакторинг по одной функции за раз
 // Шаг 1: Создаем новую функцию с улучшенной логикой
@@ -381,7 +641,7 @@ describe('merge_with_left_cow_v2', () => {
 // ❌ НЕПРАВИЛЬНО: Переписываем все сразу
 ```
 
-### 18. **Сохранение обратной совместимости**
+### 25. **Сохранение обратной совместимости**
 ```typescript
 // ✅ ПРАВИЛЬНО: Сохраняем старый API при рефакторинге
 // Старый API (deprecated)
@@ -399,7 +659,7 @@ function insert_in_transaction(key: K, value: T, txCtx: TransactionContext<T, K>
 }
 ```
 
-### 19. **Метрики качества кода**
+### 26. **Метрики качества кода**
 ```typescript
 // ✅ ПРАВИЛЬНО: Отслеживай метрики качества
 interface CodeQualityMetrics {
