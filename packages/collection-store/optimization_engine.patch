@@ -1,0 +1,23 @@
+--- a/src/performance/monitoring/AutomatedOptimizationEngine.ts
++++ b/src/performance/monitoring/AutomatedOptimizationEngine.ts
+@@ -783,8 +783,16 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngin
+   }
+
+   private async simulateRollbackExecution(optimizationId: string): Promise<void> {
+-    // Simulate rollback execution time
+-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
++    // Reduce simulation time and add logging
++    const simulationTime = 100 + Math.random() * 200; // Max 300ms instead of 1500ms
++    this.logOptimizationEvent(optimizationId, 'Starting rollback simulation', {
++      estimatedDuration: simulationTime
++    });
++
++    await new Promise(resolve => setTimeout(resolve, simulationTime));
++
++    this.logOptimizationEvent(optimizationId, 'Rollback simulation completed', {
++      actualDuration: simulationTime
++    });
+   }
+
+   private generateRestoredMetrics(): PerformanceMetrics {
+}

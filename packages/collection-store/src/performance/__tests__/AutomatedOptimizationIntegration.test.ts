@@ -109,16 +109,25 @@ describe('Automated Optimization Integration', () => {
 
   afterEach(async () => {
     try {
-      await engine.stopEngine();
+      // Stop engine and clear all state
+      if (engine.getOptimizationStatus().isRunning) {
+        await engine.stopEngine();
+      }
     } catch {
       // Ignore if already stopped
     }
 
     try {
+      // Stop real-time optimizer
       await realTimeOptimizer.stopRealTimeOptimization();
     } catch {
       // Ignore if already stopped
     }
+
+    // Create fresh instances to avoid state pollution between tests
+    engine = new AutomatedOptimizationEngine();
+    realTimeOptimizer = new RealTimeOptimizer();
+    validator = new OptimizationValidator();
 
     vi.restoreAllMocks();
   });
@@ -172,19 +181,25 @@ describe('Automated Optimization Integration', () => {
       const results = await engine.executeOptimizations(recommendations);
       const optimizationId = results[0].optimizationId;
 
+      // Verify optimization is in history before rollback
+      const history = engine.getOptimizationHistory();
+      const optimizationInHistory = history.find(h => h.optimizationId === optimizationId);
+      expect(optimizationInHistory).toBeDefined();
+
       // Validate rollback safety
       const rollbackSafety = await validator.validateRollbackSafety(optimizationId);
       expect(rollbackSafety.isSafeToRollback).toBeDefined();
 
       if (rollbackSafety.isSafeToRollback) {
-        // Execute rollback using validator
-        const rollbackExecution = await validator.executeRollback(optimizationId);
-        expect(rollbackExecution.status).toBe('completed');
-
-        // Also test engine rollback
+        // Execute rollback using engine (not validator to avoid double rollback)
         const rollbackResult = await engine.rollbackOptimization(optimizationId);
         expect(rollbackResult.status).toBe('success');
         expect(rollbackResult.rollbackId).toBeDefined();
+
+        // Verify rollback was recorded in history
+        const updatedHistory = engine.getOptimizationHistory();
+        const rolledBackOptimization = updatedHistory.find(h => h.optimizationId === optimizationId);
+        expect(rolledBackOptimization?.rollbackInfo).toBeDefined();
       }
     }, 20000); // Increase timeout to 20 seconds
   });

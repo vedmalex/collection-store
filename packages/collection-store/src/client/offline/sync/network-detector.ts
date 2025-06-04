@@ -53,7 +53,7 @@ export class NetworkDetector implements INetworkDetector {
   private eventListeners: Map<string, ((networkInfo: NetworkInfo) => void)[]> = new Map();
 
   private currentNetworkInfo: NetworkInfo = {
-    isOnline: navigator.onLine,
+    isOnline: this.isBrowserEnvironment() ? (globalThis as any).navigator?.onLine || false : false,
     quality: 'offline',
     lastChecked: Date.now(),
     connectionType: 'unknown'
@@ -80,7 +80,18 @@ export class NetworkDetector implements INetworkDetector {
 
   constructor() {
     this.config = this.getDefaultConfig();
-    this.setupBrowserEventListeners();
+    if (this.isBrowserEnvironment()) {
+      this.setupBrowserEventListeners();
+    }
+  }
+
+  /**
+   * Check if running in browser environment
+   */
+  private isBrowserEnvironment(): boolean {
+    return typeof globalThis !== 'undefined' &&
+           typeof (globalThis as any).window !== 'undefined' &&
+           typeof (globalThis as any).navigator !== 'undefined';
   }
 
   /**
@@ -138,6 +149,17 @@ export class NetworkDetector implements INetworkDetector {
   }
 
   /**
+   * Check if currently online
+   */
+  async isOnline(): Promise<boolean> {
+    if (!this.isBrowserEnvironment()) {
+      return false;
+    }
+    const networkInfo = await this.getNetworkInfo();
+    return networkInfo.isOnline;
+  }
+
+  /**
    * Get current network information
    */
   async getNetworkInfo(): Promise<NetworkInfo> {
@@ -157,12 +179,71 @@ export class NetworkDetector implements INetworkDetector {
   }
 
   /**
+   * Force a network check
+   */
+  async forceCheck(): Promise<NetworkInfo> {
+    await this.checkNetworkStatus();
+    return { ...this.currentNetworkInfo };
+  }
+
+  /**
+   * Get network history
+   */
+  async getNetworkHistory(limit = 100): Promise<NetworkInfo[]> {
+    return this.networkHistory
+      .slice(-limit)
+      .map(entry => ({
+        isOnline: entry.isOnline,
+        quality: entry.quality,
+        latency: entry.latency,
+        bandwidth: entry.bandwidth,
+        lastChecked: entry.timestamp,
+        connectionType: 'unknown'
+      }));
+  }
+
+  /**
+   * Set custom test URLs for connectivity testing
+   */
+  async setTestUrls(urls: string[]): Promise<void> {
+    this.config.testUrls = urls;
+  }
+
+  /**
+   * Test connectivity to specific URL
+   */
+  async testConnectivity(url: string): Promise<boolean> {
+    if (!this.isBrowserEnvironment()) {
+      return false;
+    }
+    try {
+      const latency = await this.measureLatency(url);
+      return latency > 0 && latency < this.config.timeoutDuration;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Estimate data transfer time
+   */
+  async estimateTransferTime(dataSize: number): Promise<number> {
+    const networkInfo = await this.getNetworkInfo();
+    if (!networkInfo.isOnline || !networkInfo.bandwidth) {
+      return Infinity;
+    }
+    // Convert bandwidth from Mbps to bytes per second
+    const bytesPerSecond = (networkInfo.bandwidth * 1024 * 1024) / 8;
+    return dataSize / bytesPerSecond;
+  }
+
+  /**
    * Test network quality
    */
   async testNetworkQuality(): Promise<NetworkQuality> {
     const startTime = performance.now();
 
-    if (!navigator.onLine) {
+    if (!this.isBrowserEnvironment() || !(globalThis as any).navigator?.onLine) {
       return 'offline';
     }
 
@@ -207,17 +288,32 @@ export class NetworkDetector implements INetworkDetector {
    * Measure network latency
    */
   async measureLatency(url?: string): Promise<number> {
+    // Return 0 in Node.js environment (no network access)
+    if (!this.isBrowserEnvironment()) {
+      return 0;
+    }
+
     const testUrl = url || this.config.testUrls[0];
     const startTime = performance.now();
 
     try {
-      const controller = new AbortController();
+      // Check if AbortController is available
+      if (typeof (globalThis as any).AbortController === 'undefined') {
+        // Fallback for environments without AbortController
+        const response = await (globalThis as any).fetch(testUrl, {
+          method: 'HEAD',
+          mode: 'no-cors'
+        });
+        const latency = performance.now() - startTime;
+        return latency;
+      }
+
+      const controller = new (globalThis as any).AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutDuration);
 
-      const response = await fetch(testUrl, {
+      const response = await (globalThis as any).fetch(testUrl, {
         method: 'HEAD',
         mode: 'no-cors',
-        cache: 'no-cache',
         signal: controller.signal
       });
 
@@ -230,7 +326,8 @@ export class NetworkDetector implements INetworkDetector {
       if (error instanceof Error && error.name === 'AbortError') {
         return this.config.timeoutDuration;
       }
-      throw error;
+      // Return 0 for any other errors in Node.js environment
+      return 0;
     }
   }
 
@@ -393,7 +490,7 @@ export class NetworkDetector implements INetworkDetector {
   }> {
     return {
       currentNetworkInfo: this.currentNetworkInfo,
-      stats: await this.getStats(),
+      stats: this.stats,
       history: this.networkHistory,
       config: this.config,
       metadata: {
@@ -447,18 +544,22 @@ export class NetworkDetector implements INetworkDetector {
   }
 
   private setupBrowserEventListeners(): void {
+    if (!this.isBrowserEnvironment()) {
+      return;
+    }
+
     // Listen for browser online/offline events
-    window.addEventListener('online', () => {
+    (globalThis as any).window?.addEventListener('online', () => {
       this.handleBrowserNetworkChange(true);
     });
 
-    window.addEventListener('offline', () => {
+    (globalThis as any).window?.addEventListener('offline', () => {
       this.handleBrowserNetworkChange(false);
     });
 
     // Listen for connection change events (if supported)
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+    if ('connection' in (globalThis as any).navigator) {
+      const connection = ((globalThis as any).navigator as any).connection;
       if (connection) {
         connection.addEventListener('change', () => {
           this.handleConnectionChange();
@@ -493,7 +594,7 @@ export class NetworkDetector implements INetworkDetector {
     this.stats.totalChecks++;
 
     try {
-      const isOnline = navigator.onLine;
+      const isOnline = this.isBrowserEnvironment() ? (globalThis as any).navigator?.onLine || false : false;
       let quality: NetworkQuality = 'offline';
       let latency: number | undefined;
       let bandwidth: number | undefined;
@@ -528,7 +629,7 @@ export class NetworkDetector implements INetworkDetector {
       }
 
       // Get connection type if available
-      const connectionType = this.getConnectionType();
+      const connectionType = this.getConnectionTypeSync();
 
       // Update current network info
       const previousQuality = this.currentNetworkInfo.quality;
@@ -585,8 +686,8 @@ export class NetworkDetector implements INetworkDetector {
    * Get connection type
    */
   async getConnectionType(): Promise<string> {
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+    if (this.isBrowserEnvironment() && 'connection' in (globalThis as any).navigator) {
+      const connection = ((globalThis as any).navigator as any).connection;
       if (connection && connection.effectiveType) {
         return connection.effectiveType;
       }
@@ -595,8 +696,8 @@ export class NetworkDetector implements INetworkDetector {
   }
 
   private getConnectionTypeSync(): string {
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+    if (this.isBrowserEnvironment() && 'connection' in (globalThis as any).navigator) {
+      const connection = ((globalThis as any).navigator as any).connection;
       if (connection && connection.effectiveType) {
         return connection.effectiveType;
       }

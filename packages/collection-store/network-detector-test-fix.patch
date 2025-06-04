@@ -1,0 +1,23 @@
+--- a/src/client/offline/sync/__tests__/network-detector-mocks.test.ts
++++ b/src/client/offline/sync/__tests__/network-detector-mocks.test.ts
+
+# Добавить enabled: true во все конфигурации NetworkDetectionConfig
+
+# Заменить все вхождения:
+# await detector.initialize({
+#   checkInterval: X,
+#   timeoutDuration: Y,
+#   testUrls: [...],
+#   ...
+# });
+
+# На:
+# await detector.initialize({
+#   enabled: true,
+#   checkInterval: X,
+#   timeoutDuration: Y,
+#   testUrls: [...],
+#   ...
+# });
+
+# Всего нужно исправить около 10-12 конфигураций в файле

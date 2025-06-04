@@ -222,8 +222,20 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
    * Rollback optimization
    */
   async rollbackOptimization(optimizationId: string): Promise<RollbackResult> {
+    // Add detailed logging for debugging
+    this.logOptimizationEvent(optimizationId, 'Rollback requested', {
+      historySize: this.optimizationHistory.size,
+      historyKeys: Array.from(this.optimizationHistory.keys())
+    });
+
     const historyEntry = this.optimizationHistory.get(optimizationId);
     if (!historyEntry) {
+      // Log detailed error information
+      this.logOptimizationEvent(optimizationId, 'Rollback failed - optimization not found in history', {
+        availableOptimizations: Array.from(this.optimizationHistory.keys()),
+        historySize: this.optimizationHistory.size,
+        requestedId: optimizationId
+      });
       throw new Error(`Optimization ${optimizationId} not found in history`);
     }
 
@@ -231,8 +243,14 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
     const startTime = performance.now();
 
     try {
-      // Simulate rollback process
-      await this.simulateRollbackExecution(optimizationId);
+      // Add timeout protection for rollback execution
+      const rollbackPromise = this.simulateRollbackExecution(optimizationId);
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Rollback execution timeout')), 15000); // 15 second timeout
+      });
+
+      // Race between rollback execution and timeout
+      await Promise.race([rollbackPromise, timeoutPromise]);
 
       const duration = performance.now() - startTime;
       const result: RollbackResult = {
@@ -255,12 +273,20 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
       };
 
       this.rolledBackCount++;
-      this.logOptimizationEvent(optimizationId, 'Optimization rolled back', { rollbackId });
+      this.logOptimizationEvent(optimizationId, 'Optimization rolled back successfully', {
+        rollbackId,
+        duration
+      });
 
       return result;
 
     } catch (error) {
       const duration = performance.now() - startTime;
+      this.logOptimizationEvent(optimizationId, 'Rollback execution failed', {
+        error: (error as Error).message,
+        duration
+      });
+
       return {
         rollbackId,
         optimizationId,
@@ -356,6 +382,23 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
         logs: executionLog
       };
       this.activeOptimizations.set(optimizationId, execution);
+
+      // ✅ FIXED: Add to history immediately when optimization starts
+      this.optimizationHistory.set(optimizationId, {
+        optimizationId,
+        recommendationId: recommendation.id,
+        type: recommendation.type,
+        status: 'in-progress',
+        startTime: execution.startTime,
+        endTime: new Date(), // Will be updated on completion
+        duration: 0, // Will be updated on completion
+        performanceImpact: this.getEmptyPerformanceImpact() // Will be updated on completion
+      });
+
+      this.logOptimizationEvent(optimizationId, 'Optimization started and added to history', {
+        recommendation: recommendation.id,
+        historySize: this.optimizationHistory.size
+      });
 
       // Execute optimization steps
       const beforeMetrics = this.getCurrentMetrics();
@@ -781,8 +824,17 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
   }
 
   private async simulateRollbackExecution(optimizationId: string): Promise<void> {
-    // Simulate rollback execution time
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+    // Reduce simulation time and add logging
+    const simulationTime = 100 + Math.random() * 200; // Max 300ms instead of 1500ms
+    this.logOptimizationEvent(optimizationId, 'Starting rollback simulation', {
+      estimatedDuration: simulationTime
+    });
+
+    await new Promise(resolve => setTimeout(resolve, simulationTime));
+
+    this.logOptimizationEvent(optimizationId, 'Rollback simulation completed', {
+      actualDuration: simulationTime
+    });
   }
 
   private generateRestoredMetrics(): PerformanceMetrics {
@@ -846,7 +898,11 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
   }
 
   private generateOptimizationId(): string {
-    return `opt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Use collision-resistant ID generation with performance.now() for higher precision
+    const timestamp = performance.now().toString().replace('.', '');
+    const random = Math.random().toString(36).substr(2, 9);
+    const counter = this.completedCount + this.failedCount + this.rolledBackCount;
+    return `opt-${timestamp}-${counter}-${random}`;
   }
 
   private generateRollbackId(): string {

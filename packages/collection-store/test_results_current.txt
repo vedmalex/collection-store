@@ -1,0 +1,274 @@
+[0m[1mbun test [0m[2mv1.2.15 (df017990)[0m
+Starting optimizer...
+[RealTimeOptimizer] Real-time optimizer started {
+  [0mconfig[2m:[0m {
+    [0mmonitoringInterval[2m:[0m [0m[33m1000[0m[0m[2m,[0m
+    [0mcooldownPeriod[2m:[0m [0m[33m5[0m[0m[2m,[0m
+    [0memergencyThresholds[2m:[0m {
+      [0mcriticalCpuUsage[2m:[0m [0m[33m90[0m[0m[2m,[0m
+      [0mcriticalMemoryUsage[2m:[0m [0m[33m95[0m[0m[2m,[0m
+      [0mcriticalErrorRate[2m:[0m [0m[33m10[0m[0m[2m,[0m
+      [0mcriticalResponseTime[2m:[0m [0m[33m500[0m[0m[2m,[0m
+      [0mcriticalThroughputDrop[2m:[0m [0m[33m50[0m[0m[2m,[0m
+    }[0m[2m,[0m
+  }[0m[2m,[0m
+}
+Getting active thresholds...
+Active thresholds: {
+  "responseTime": {
+    "warning": 100,
+    "critical": 150,
+    "unit": "ms",
+    "direction": "above"
+  },
+  "throughput": {
+    "warning": 80,
+    "critical": 50,
+    "unit": "ops/sec",
+    "direction": "below"
+  },
+  "errorRate": {
+    "warning": 5,
+    "critical": 10,
+    "unit": "%",
+    "direction": "above"
+  },
+  "resourceUsage": {
+    "cpu": {
+      "warning": 70,
+      "critical": 80,
+      "unit": "%",
+      "direction": "above"
+    },
+    "memory": {
+      "warning": 75,
+      "critical": 85,
+      "unit": "%",
+      "direction": "above"
+    },
+    "network": {
+      "warning": 80,
+      "critical": 95,
+      "unit": "%",
+      "direction": "above"
+    },
+    "disk": {
+      "warning": 80,
+      "critical": 95,
+      "unit": "%",
+      "direction": "above"
+    }
+  }
+}
+Creating metrics with CPU 80%...
+Metrics: {
+  "timestamp": "2025-06-04T14:00:09.738Z",
+  "responseTime": {
+    "min": 25,
+    "max": 100,
+    "avg": 50,
+    "p50": 45,
+    "p95": 75,
+    "p99": 90
+  },
+  "throughput": {
+    "totalOperations": 1000,
+    "operationsPerSecond": 100,
+    "successfulOperations": 900,
+    "failedOperations": 10
+  },
+  "errors": {
+    "totalErrors": 10,
+    "errorRate": 1,
+    "errorTypes": {}
+  },
+  "system": {
+    "cpuUsage": 80,
+    "memoryUsage": 3435973836,
+    "networkBandwidth": 119.3725031132129,
+    "diskIO": 79.65006926500268
+  }
+}
+Applying dynamic optimization...
+DEBUG: CPU check {
+  [0mcpuUsage[2m:[0m [0m[33m80[0m[0m[2m,[0m
+  [0mthreshold[2m:[0m [0m[33m70[0m[0m[2m,[0m
+  [0mcondition[2m:[0m [0m[33mtrue[0m[0m[2m,[0m
+}
+DEBUG: Adding CPU action
+[RealTimeOptimizer] Dynamic optimization applied {
+  [0mactionsCount[2m:[0m [0m[33m1[0m[0m[2m,[0m
+  [0mmetrics[2m:[0m {
+    [0mresponseTime[2m:[0m [0m[33m50[0m[0m[2m,[0m
+    [0mthroughput[2m:[0m [0m[33m100[0m[0m[2m,[0m
+    [0merrorRate[2m:[0m [0m[33m1[0m[0m[2m,[0m
+    [0mcpuUsage[2m:[0m [0m[33m80[0m[0m[2m,[0m
+  }[0m[2m,[0m
+}
+Actions: [
+  {
+    "type": "configuration",
+    "component": "system",
+    "action": "reduce_cpu_load",
+    "parameters": {
+      "targetUsage": 56,
+      "method": "throttling"
+    },
+    "reversible": true,
+    "impact": "medium"
+  }
+]
+[RealTimeOptimizer] Real-time optimizer stopped 
+Starting optimizer...
+[RealTimeOptimizer] Real-time optimizer started {
+  [0mconfig[2m:[0m {
+    [0mmonitoringInterval[2m:[0m [0m[33m1000[0m[0m[2m,[0m
+    [0mcooldownPeriod[2m:[0m [0m[33m5[0m[0m[2m,[0m
+    [0memergencyThresholds[2m:[0m {
+      [0mcriticalCpuUsage[2m:[0m [0m[33m90[0m[0m[2m,[0m
+      [0mcriticalMemoryUsage[2m:[0m [0m[33m95[0m[0m[2m,[0m
+      [0mcriticalErrorRate[2m:[0m [0m[33m10[0m[0m[2m,[0m
+      [0mcriticalResponseTime[2m:[0m [0m[33m500[0m[0m[2m,[0m
+      [0mcriticalThroughputDrop[2m:[0m [0m[33m50[0m[0m[2m,[0m
+    }[0m[2m,[0m
+  }[0m[2m,[0m
+}
+Getting active thresholds...
+Active thresholds: {
+  "responseTime": {
+    "warning": 100,
+    "critical": 150,
+    "unit": "ms",
+    "direction": "above"
+  },
+  "throughput": {
+    "warning": 80,
+    "critical": 50,
+    "unit": "ops/sec",
+    "direction": "below"
+  },
+  "errorRate": {
+    "warning": 5,
+    "critical": 10,
+    "unit": "%",
+    "direction": "above"
+  },
+  "resourceUsage": {
+    "cpu": {
+      "warning": 70,
+      "critical": 80,
+      "unit": "%",
+      "direction": "above"
+    },
+    "memory": {
+      "warning": 75,
+      "critical": 85,
+      "unit": "%",
+      "direction": "above"
+    },
+    "network": {
+      "warning": 80,
+      "critical": 95,
+      "unit": "%",
+      "direction": "above"
+    },
+    "disk": {
+      "warning": 80,
+      "critical": 95,
+      "unit": "%",
+      "direction": "above"
+    }
+  }
+}
+Creating metrics with CPU 80%...
+Metrics: {
+  "timestamp": "2025-06-04T14:00:09.742Z",
+  "responseTime": {
+    "min": 25,
+    "max": 100,
+    "avg": 50,
+    "p50": 45,
+    "p95": 75,
+    "p99": 90
+  },
+  "throughput": {
+    "totalOperations": 1000,
+    "operationsPerSecond": 100,
+    "successfulOperations": 900,
+    "failedOperations": 10
+  },
+  "errors": {
+    "totalErrors": 10,
+    "errorRate": 1,
+    "errorTypes": {}
+  },
+  "system": {
+    "cpuUsage": 80,
+    "memoryUsage": 3435973836,
+    "networkBandwidth": 134.23851257502034,
+    "diskIO": 62.611082270225644
+  }
+}
+Applying dynamic optimization...
+DEBUG: CPU check {
+  [0mcpuUsage[2m:[0m [0m[33m80[0m[0m[2m,[0m
+  [0mthreshold[2m:[0m [0m[33m70[0m[0m[2m,[0m
+  [0mcondition[2m:[0m [0m[33mtrue[0m[0m[2m,[0m
+}
+DEBUG: Adding CPU action
+[RealTimeOptimizer] Dynamic optimization applied {
+  [0mactionsCount[2m:[0m [0m[33m1[0m[0m[2m,[0m
+  [0mmetrics[2m:[0m {
+    [0mresponseTime[2m:[0m [0m[33m50[0m[0m[2m,[0m
+    [0mthroughput[2m:[0m [0m[33m100[0m[0m[2m,[0m
+    [0merrorRate[2m:[0m [0m[33m1[0m[0m[2m,[0m
+    [0mcpuUsage[2m:[0m [0m[33m80[0m[0m[2m,[0m
+  }[0m[2m,[0m
+}
+Actions: [
+  {
+    "type": "configuration",
+    "component": "system",
+    "action": "reduce_cpu_load",
+    "parameters": {
+      "targetUsage": 56,
+      "method": "throttling"
+    },
+    "reversible": true,
+    "impact": "medium"
+  }
+]
+[RealTimeOptimizer] Real-time optimizer stopped 
+🧹 Running global cleanup of test data...
+✅ Global cleanup completed
+NetworkManager started on node leader, port 8474
+NetworkManager started on node follower-1, port 8475
+NetworkManager started on node follower-2, port 8476
+ReplicatedWALManager initialized with role: LEADER
+ReplicatedWALManager initialized with role: FOLLOWER
+ReplicatedWALManager initialized with role: FOLLOWER
+Node leader connected to follower-2
+Node leader connected to follower-1
+Connected to node follower-2 at localhost:8476
+Connected to node follower-1 at localhost:8475
+WALReplicationManager closed for node leader
+WALReplicationManager closed for node follower-1
+WALReplicationManager closed for node follower-2
+Closing NetworkManager for node leader
+Node follower-2 disconnected from leader
+Node follower-1 disconnected from leader
+Closing NetworkManager for node follower-1
+Node leader disconnected from follower-1
+Closing NetworkManager for node follower-2
+Node leader disconnected from follower-2
+WebSocket server closed for node leader
+NetworkManager started on node leader, port 8645
+NetworkManager started on node follower-1, port 8646
+NetworkManager started on node follower-2, port 8647
+ReplicatedWALManager initialized with role: LEADER
+ReplicatedWALManager initialized with role: FOLLOWER
+ReplicatedWALManager initialized with role: FOLLOWER
+Node leader connected to follower-2
+Node leader connected to follower-1
+Connected to node follower-2 at localhost:8647
+Connected to node follower-1 at localhost:8646

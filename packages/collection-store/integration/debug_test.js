@@ -1,5 +1,5 @@
 // Debug test for RealTimeOptimizer
-import { RealTimeOptimizer } from './src/performance/monitoring/RealTimeOptimizer.ts';
+import { RealTimeOptimizer } from '../src/performance/monitoring/RealTimeOptimizer.ts';
 
 function createMockMetrics(overrides = {}) {
   const defaults = {

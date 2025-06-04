@@ -21,5 +21,5 @@ export * from './conflict-resolver.interface';
 export * from './sync-manager.interface';
 
 // Day 3: Sync Management Interfaces
-export { IOperationQueue } from './operation-queue.interface';
-export { INetworkDetector } from './network-detector.interface';
+export type { IOperationQueue } from './operation-queue.interface';
+export type { INetworkDetector } from './network-detector.interface';

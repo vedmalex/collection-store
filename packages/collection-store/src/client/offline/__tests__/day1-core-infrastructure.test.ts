@@ -307,17 +307,19 @@ describe('Phase 5.3 Day 1: Core Offline Infrastructure', () => {
     });
 
     test('should check if optimization is needed', () => {
+      // StorageOptimizer has maxSize = 50MB and targetUtilization = 0.8
+      // So targetSize = 50MB * 0.8 = 40MB
       const mockStats = {
         totalSize: 100 * 1024 * 1024,
-        usedSize: 90 * 1024 * 1024, // Over 80% target
-        availableSize: 10 * 1024 * 1024,
+        usedSize: 45 * 1024 * 1024, // Over 40MB target (45MB > 40MB)
+        availableSize: 55 * 1024 * 1024,
         entryCount: 100,
         collections: {}
       };
 
       expect(storageOptimizer.isOptimizationNeeded(mockStats)).toBe(true);
 
-      mockStats.usedSize = 70 * 1024 * 1024; // Under 80% target
+      mockStats.usedSize = 35 * 1024 * 1024; // Under 40MB target (35MB < 40MB)
       expect(storageOptimizer.isOptimizationNeeded(mockStats)).toBe(false);
     });
   });
