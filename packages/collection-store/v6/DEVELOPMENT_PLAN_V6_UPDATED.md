@@ -11,7 +11,7 @@
 
 ## Updated Development Phases
 
-### Phase 1: Configuration-Driven Architecture (2-3 weeks)
+### Phase 1: Configuration-Driven Architecture (3-4 weeks)
 **Цель**: Создание унифицированной системы конфигурации для всех компонентов
 
 #### Core Components
@@ -20,10 +20,32 @@
 - [ ] Feature toggles and dynamic configuration
 - [ ] ConfigurationManager for centralized config management
 
+#### Database & Collection Configuration (NEW)
+- [ ] Database-level configuration with collection inheritance
+- [ ] Collection-specific overrides for replication/transactions/subscriptions
+- [ ] Node role hierarchy and capability management
+- [ ] Browser node special adapter framework
+- [ ] Read-only collections (external sources only)
+- [ ] Cross-database transactions (unified data space)
+- [ ] Browser quota management with automatic fallback
+- [ ] Conflict resolution strategies for all node types
+- [ ] External adapters with periodic updates and coordination
+- [ ] Audit logging for all external updates
+- [ ] OAuth/JWT authentication for external sources
+
 #### Success Criteria
 - [ ] Вся функциональность доступна через YAML/JSON конфигурацию
 - [ ] Hot reload конфигурации без перезапуска
 - [ ] Валидация конфигурации с детальными ошибками
+- [ ] База данных и коллекции используют одни и те же инструменты
+- [ ] Клиенты автоматически работают как вторичные источники
+- [ ] Браузерные узлы ограничены без специальных адаптеров
+- [ ] Read-only коллекции защищены от операций обновления
+- [ ] Автоматическое управление квотами браузерных узлов
+- [ ] Cross-database операции в едином пространстве данных
+- [ ] Координация внешних адаптеров через существующую систему репликации
+- [ ] Полный аудит всех внешних обновлений с репликацией
+- [ ] Read-only коллекции участвуют как полноправные во всех операциях
 
 ### Phase 2: Client SDK Development (8 weeks)
 **Цель**: Создание унифицированных SDK для различных фреймворков
@@ -270,15 +292,15 @@ collection-store:
 
 | Phase | Duration | Start | End | Dependencies |
 |-------|----------|-------|-----|--------------|
-| Phase 1: Configuration | 3 weeks | Week 1 | Week 3 | - |
-| Phase 2: Client SDK | 8 weeks | Week 2 | Week 9 | Phase 1 |
-| Phase 3: Query Enhancement | 5 weeks | Week 4 | Week 8 | Phase 1 |
-| Phase 4: External Adapters | 4 weeks | Week 6 | Week 9 | Phase 1, 3 |
-| Phase 5: LMS Demo | 3 weeks | Week 10 | Week 12 | Phase 2, 4 |
-| Phase 6: Browser Build | 2 weeks | Week 11 | Week 12 | Phase 2 |
-| Phase 7-9: Enterprise | 12 weeks | Week 13 | Week 24 | All previous |
+| Phase 1: Configuration + DB/Collection | 4 weeks | Week 1 | Week 4 | - |
+| Phase 2: Client SDK | 8 weeks | Week 3 | Week 10 | Phase 1 |
+| Phase 3: Query Enhancement | 5 weeks | Week 5 | Week 9 | Phase 1 |
+| Phase 4: External Adapters | 4 weeks | Week 7 | Week 10 | Phase 1, 3 |
+| Phase 5: LMS Demo | 3 weeks | Week 11 | Week 13 | Phase 2, 4 |
+| Phase 6: Browser Build | 2 weeks | Week 12 | Week 13 | Phase 2 |
+| Phase 7-9: Enterprise | 12 weeks | Week 14 | Week 25 | All previous |
 
-**Total Timeline**: 24 weeks (6 months)
+**Total Timeline**: 25 weeks (6.25 months)
 
 ## Success Criteria
 
