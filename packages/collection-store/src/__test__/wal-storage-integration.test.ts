@@ -9,6 +9,7 @@ import path from 'path'
 import { WALCollection, WALCollectionConfig } from '../WALCollection'
 import { WALDatabase, WALDatabaseConfig } from '../WALDatabase'
 import { Item } from '../types/Item'
+import { createTestDir, cleanupTestDirectory } from './test-utils'
 
 interface TestItem extends Item {
   id: number
@@ -17,16 +18,18 @@ interface TestItem extends Item {
 }
 
 describe('WAL Storage Integration', () => {
-  const testDir = './test-data/wal-storage-integration'
-  const walPath = path.join(testDir, 'integration.wal')
+  let testDir: string
+  let walPath: string
 
   beforeEach(async () => {
+    testDir = createTestDir('wal-storage-integration')
+    walPath = path.join(testDir, 'integration.wal')
     await fs.ensureDir(testDir)
     await fs.remove(walPath)
   })
 
   afterEach(async () => {
-    await fs.remove(testDir)
+    await cleanupTestDirectory(testDir)
   })
 
   describe('WALCollection Integration', () => {

@@ -101,3 +101,30 @@ export type {
   PerformanceAlert,
   MonitoringConfig
 } from './monitoring/PerformanceMonitor'
+
+// Offline-First Support (Phase 5.3)
+export * from './client/offline'
+
+// Offline Types
+export type {
+  OfflineConfig,
+  CacheConfig,
+  ConflictData,
+  EnhancedConflictData,
+  NetworkInfo,
+  SyncStats,
+  StorageStats,
+  ConflictResolutionStrategy,
+  SyncStrategy,
+  NetworkQuality,
+  QueuedOperation,
+  OperationBatch,
+  SyncProgress,
+  ConflictResolution,
+  IOfflineManager,
+  ILocalDataCache,
+  ISyncManager,
+  IConflictResolver,
+  INetworkDetector,
+  IOperationQueue
+} from './client/offline'

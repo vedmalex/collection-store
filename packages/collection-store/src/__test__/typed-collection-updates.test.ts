@@ -1,9 +1,10 @@
-import { describe, test, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, test, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import { TypedCollection, createTypedCollection } from '../TypedCollection'
 import { TypedSchemaDefinition } from '../types/typed-schema'
 import { Item } from '../types/Item'
 import { List } from '../storage/List'
 import AdapterMemory from '../AdapterMemory'
+import { cleanupTestDirectory, cleanupTestDirectories, createTestDir } from './test-utils'
 
 // Test interfaces
 interface User extends Item {
@@ -118,12 +119,15 @@ const testProductSchema: TypedSchemaDefinition<Product> = {
 describe('TypedCollection Type-safe Update Operations', () => {
   let userCollection: TypedCollection<User, typeof testUserSchema>
   let productCollection: TypedCollection<Product, typeof testProductSchema>
+  let testDir: string
 
   beforeEach(async () => {
+    testDir = createTestDir('typed-collection-updates')
+
     userCollection = createTypedCollection({
       name: 'test-users-updates-separate',
       schema: testUserSchema,
-      root: './test-data-users-updates',
+      root: testDir,
       list: new List<User>(),
       adapter: new AdapterMemory<User>(),
       schemaOptions: { coerceTypes: true, validateRequired: true }
@@ -132,7 +136,7 @@ describe('TypedCollection Type-safe Update Operations', () => {
     productCollection = createTypedCollection({
       name: 'test-products-updates-separate',
       schema: testProductSchema,
-      root: './test-data-products-updates',
+      root: testDir,
       list: new List<Product>(),
       adapter: new AdapterMemory<Product>(),
       schemaOptions: { coerceTypes: true, validateRequired: true }
@@ -169,6 +173,7 @@ describe('TypedCollection Type-safe Update Operations', () => {
   afterEach(async () => {
     await userCollection.reset()
     await productCollection.reset()
+    await cleanupTestDirectory(testDir)
   })
 
   describe('Atomic Update Operations', () => {
@@ -394,4 +399,12 @@ describe('TypedCollection Type-safe Update Operations', () => {
       expect(user.tags).toContain('senior')
     })
   })
+})
+
+// Global cleanup after all tests
+afterAll(async () => {
+  await cleanupTestDirectories([
+    './test-data-users-updates',
+    './test-data-products-updates'
+  ])
 })

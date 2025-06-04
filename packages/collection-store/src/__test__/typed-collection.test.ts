@@ -1,10 +1,11 @@
 // Tests for TypedCollection - demonstrating type safety and schema integration
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import { TypedCollection, createTypedCollection } from '../TypedCollection'
 import { TypedSchemaDefinition, CompleteTypedSchema } from '../types/typed-schema'
 import { Item } from '../types/Item'
 import AdapterMemory from '../AdapterMemory'
 import { List } from '../storage/List'
+import { cleanupTestDirectory, cleanupTestDirectories, createTestDir } from './test-utils'
 
 // Test data types
 interface User extends Item {
@@ -274,12 +275,15 @@ const testProductSchema: TypedSchemaDefinition<Product> = {
 describe('TypedCollection', () => {
   let userCollection: TypedCollection<User, typeof userSchema>
   let productCollection: TypedCollection<Product, TypedSchemaDefinition<Product>>
+  let testDir: string
 
   beforeEach(async () => {
+    testDir = createTestDir('typed-collection-main')
+
     // Create user collection with direct schema
     userCollection = createTypedCollection({
       name: 'test-users-main',
-      root: './test-data-main',
+      root: testDir,
       schema: userSchema,
       list: new List<User>(),
       adapter: new AdapterMemory<User>(),
@@ -293,7 +297,7 @@ describe('TypedCollection', () => {
     productCollection = createTypedCollection({
       name: 'test-products-main',
       schema: productSchema,
-      root: './test-data-main',
+      root: testDir,
       list: new List<Product>(),
       adapter: new AdapterMemory<Product>(),
       schemaOptions: { coerceTypes: true, validateRequired: true }
@@ -301,6 +305,10 @@ describe('TypedCollection', () => {
 
     await userCollection.reset()
     await productCollection.reset()
+  })
+
+  afterEach(async () => {
+    await cleanupTestDirectory(testDir)
   })
 
   describe('Schema Integration', () => {
@@ -342,10 +350,11 @@ describe('TypedCollection', () => {
 
     it('should reject invalid documents in strict mode', async () => {
       // Create a strict collection for this test
+      const strictTestDir = createTestDir('typed-collection-strict')
       const strictProductCollection = createTypedCollection({
         name: 'strict-test-products',
         schema: productSchema,
-        root: './test-data-strict',
+        root: strictTestDir,
         list: new List<Product>(),
         adapter: new AdapterMemory<Product>(),
         schemaOptions: {
@@ -396,9 +405,10 @@ describe('TypedCollection', () => {
   describe('Type-Safe Queries', () => {
     it('should support type-safe field queries', async () => {
       // Create separate collection for this test
+      const queriesTestDir = createTestDir('typed-collection-queries-1')
       const queriesUserCollection = createTypedCollection({
         name: 'test-users-queries-1',
-        root: './test-data-queries-1',
+        root: queriesTestDir,
         schema: testUserSchema, // Use schema without unique constraints
         list: new List<User>(),
         adapter: new AdapterMemory<User>(),
@@ -1357,4 +1367,21 @@ describe('TypedCollection Type-safe Update Operations', () => {
       expect(user.tags).toContain('senior')
     })
   })
+})
+
+// Global cleanup after all tests
+afterAll(async () => {
+  await cleanupTestDirectories([
+    './test-data-queries-2',
+    './test-data-queries-3',
+    './test-data-queries-4',
+    './test-data-validation',
+    './test-data-performance',
+    './test-data-users',
+    './test-data-products',
+    './test-data-mul',
+    './test-data-bulk-1',
+    './test-data-bulk-2',
+    './test-data-upsert'
+  ])
 })

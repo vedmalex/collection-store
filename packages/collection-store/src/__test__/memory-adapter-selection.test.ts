@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import Collection from '../collection'
 import { CSDatabase } from '../CSDatabase'
 import AdapterMemory from '../AdapterMemory'
 import AdapterFile from '../AdapterFile'
 import { List } from '../storage/List'
 import { Item } from '../types/Item'
+import { cleanupTestDirectories } from './test-utils'
 
 interface TestItem extends Item {
   id?: number
@@ -196,4 +197,14 @@ describe('Memory Adapter Selection Tests', () => {
       await db2.clearCollections()
     })
   })
+})
+
+// Global cleanup after all tests
+afterAll(async () => {
+  // Clean up any test-data directories that might have been created
+  const testDataDirs: string[] = []
+  for (let i = 1; i <= testCounter; i++) {
+    testDataDirs.push(`./test-data-${i}`)
+  }
+  await cleanupTestDirectories(testDataDirs)
 })

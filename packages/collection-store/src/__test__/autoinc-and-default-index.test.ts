@@ -2,6 +2,7 @@ import Collection from '../collection'
 import AdapterMemory from '../AdapterMemory'
 import { List } from '../storage/List'
 import { Item } from '../types/Item'
+import { cleanupTestDirectory, createTestDir } from './test-utils'
 
 interface TestItem extends Item {
   id?: number
@@ -16,11 +17,21 @@ interface TestItemCustomId extends Item {
 }
 
 describe('AutoInc and Default Index Tests', () => {
+  let testDir: string
+
+  beforeEach(() => {
+    testDir = createTestDir('autoinc-test')
+  })
+
+  afterEach(async () => {
+    await cleanupTestDirectory(testDir)
+  })
+
   describe('✅ AutoInc ID Generation', () => {
     it('should auto-generate sequential IDs when auto is true', async () => {
       const collection = Collection.create<TestItem>({
         name: 'test-autoinc',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
         // Default config should have auto: true and gen: 'autoIncIdGen'
@@ -43,7 +54,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should use provided ID when auto is false', async () => {
       const collection = Collection.create<TestItem>({
         name: 'test-manual-id',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
         id: {
@@ -63,7 +74,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should handle custom ID field name with autoinc', async () => {
       const collection = Collection.create<TestItemCustomId>({
         name: 'test-custom-id',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItemCustomId>(),
         adapter: new AdapterMemory<TestItemCustomId>(),
         id: {
@@ -86,7 +97,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should automatically create unique required index for ID field', () => {
       const collection = Collection.create<TestItem>({
         name: 'test-default-index',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
       })
@@ -106,7 +117,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should create index with custom ID field name', () => {
       const collection = Collection.create<TestItemCustomId>({
         name: 'test-custom-index',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItemCustomId>(),
         adapter: new AdapterMemory<TestItemCustomId>(),
         id: {
@@ -129,7 +140,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should not override explicitly provided index for ID field', () => {
       const collection = Collection.create<TestItem>({
         name: 'test-explicit-index',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
         indexList: [
@@ -157,7 +168,7 @@ describe('AutoInc and Default Index Tests', () => {
       expect(() => {
         Collection.create<TestItem>({
           // name is missing
-          root: './test-data',
+          root: testDir,
           list: new List<TestItem>(),
           adapter: new AdapterMemory<TestItem>(),
         } as any)
@@ -167,7 +178,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should use default values when config is minimal', () => {
       const collection = Collection.create<TestItem>({
         name: 'test-minimal',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
       })
@@ -180,7 +191,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should handle string ID configuration', () => {
       const collection = Collection.create<TestItem>({
         name: 'test-string-id',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
         id: 'myId',
@@ -196,7 +207,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should work correctly with additional indexes', async () => {
       const collection = Collection.create<TestItem>({
         name: 'test-with-indexes',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
         indexList: [
@@ -224,7 +235,7 @@ describe('AutoInc and Default Index Tests', () => {
     it('should maintain index consistency during operations', async () => {
       const collection = Collection.create<TestItem>({
         name: 'test-consistency',
-        root: './test-data',
+        root: testDir,
         list: new List<TestItem>(),
         adapter: new AdapterMemory<TestItem>(),
       })

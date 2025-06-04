@@ -3,13 +3,14 @@
  * Verifies transactional operations and coordination between data and indexes
  */
 
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import Collection from '../collection'
 import { TransactionalCollection, TransactionalListWrapper } from '../TransactionalCollection'
 import { Item } from '../types/Item'
 import { List } from '../storage/List'
 import AdapterMemory from '../AdapterMemory'
 import { z } from 'zod'
+import { cleanupTestDirectory, createTestDir } from './test-utils'
 
 interface TestItem extends Item {
   id: number
@@ -29,15 +30,18 @@ const TestItemSchema = z.object({
 describe('TransactionalCollection', () => {
   let collection: Collection<TestItem>
   let transactionalCollection: TransactionalCollection<TestItem>
+  let testDir: string
   const transactionId = 'test-tx-1'
 
   beforeEach(async () => {
+    testDir = createTestDir('transactional-collection')
+
     // Create a test collection with indexes first
     collection = Collection.create<TestItem>({
       name: 'test-collection',
       id: { name: 'id', auto: false }, // Disable auto-generation for tests
       list: new List<TestItem>(),
-      root: './test-data/',
+      root: testDir,
       adapter: new AdapterMemory<TestItem>(),
       validation: TestItemSchema, // Use strict validation
       indexList: [
@@ -59,6 +63,10 @@ describe('TransactionalCollection', () => {
 
     // Create transactional wrapper
     transactionalCollection = new TransactionalCollection(collection)
+  })
+
+  afterEach(async () => {
+    await cleanupTestDirectory(testDir)
   })
 
   describe('Basic Transactional Operations', () => {
@@ -311,15 +319,18 @@ describe('TransactionalCollection', () => {
 describe('TransactionalListWrapper', () => {
   let collection: Collection<TestItem>
   let wrapper: TransactionalListWrapper<TestItem>
+  let testDir: string
   const transactionId = 'test-tx-1'
 
   beforeEach(async () => {
+    testDir = createTestDir('transactional-list-wrapper')
+
     // Create a minimal collection for testing
     collection = Collection.create<TestItem>({
       name: 'test-wrapper-collection',
       id: { name: 'id', auto: false },
       list: new List<TestItem>(),
-      root: './test-data/',
+      root: testDir,
       adapter: new AdapterMemory<TestItem>(),
       indexList: [
         { key: 'id', auto: false, unique: true, required: false }
@@ -334,6 +345,10 @@ describe('TransactionalListWrapper', () => {
 
     // Create wrapper with collection reference
     wrapper = new TransactionalListWrapper(collection.list, collection)
+  })
+
+  afterEach(async () => {
+    await cleanupTestDirectory(testDir)
   })
 
   describe('Transactional Operations', () => {
