@@ -97,3 +97,5 @@ export interface ComparisonOperator extends QueryOperator {
 export type OperatorConstructor<T extends QueryOperator> = new (
   value: QueryValue,
 ) => T
+
+export type Query = Record<string, any>;
