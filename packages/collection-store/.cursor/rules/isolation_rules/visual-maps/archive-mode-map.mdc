@@ -11,7 +11,22 @@ alwaysApply: false
 
 ```mermaid
 graph TD
-    Start["START ARCHIVE MODE"] --> ReadTasks["Read tasks.md<br>reflection.md and<br>progress.md"]
+    Start["START ARCHIVE MODE"] --> TaskContinuityCheck["🔄 TASK CONTINUITY CHECK"]
+
+    %% Task Continuity Validation - CRITICAL ADDITION
+    TaskContinuityCheck --> CheckReflection{"Reflection<br>Complete?"}
+    CheckReflection -->|"No"| BlockArchive["🚫 BLOCK ARCHIVE MODE<br>Reflection Incomplete"]
+    CheckReflection -->|"Yes"| CheckDeliverables{"All Deliverables<br>Ready?"}
+
+    CheckDeliverables -->|"No"| WarnMissing["⚠️ WARN: Missing<br>Deliverables"]
+    CheckDeliverables -->|"Yes"| ReadTasks["Read tasks.md<br>reflection.md and<br>progress.md"]
+
+    WarnMissing --> UserChoice{"User Wants to<br>Continue?"}
+    UserChoice -->|"No"| ReturnReflect["Return to<br>REFLECT Mode"]
+    UserChoice -->|"Yes"| CreatePartialArchive["Create Partial<br>Archive"]
+
+    CreatePartialArchive --> ReadTasks
+    BlockArchive --> ReturnReflect
 
     %% Initial Assessment
     ReadTasks --> VerifyReflect{"Reflection<br>Complete?"}
@@ -49,9 +64,20 @@ graph TD
     L34System --> L34Complete["Mark Task<br>Complete"]
 
     %% Completion
-    L1Complete & L2Complete & L34Complete --> CreateArchive["Create Archive<br>Document in<br>docs/archive/"]
+    L1Complete & L2Complete & L34Complete --> PreserveMigration["📦 PRESERVE MIGRATION<br>[TASK CONTINUITY]"]
+    PreserveMigration --> VerifyMigration{"migration.md<br>Exists?"}
+    VerifyMigration -->|"Yes"| ArchiveMigration["📁 Archive migration.md<br>to archive/"]
+    VerifyMigration -->|"No"| CreateArchive["Create Archive<br>Document in<br>docs/archive/"]
+    ArchiveMigration --> CreateArchive
     CreateArchive --> UpdateActive["Update<br>activeContext.md"]
-    UpdateActive --> Reset["Reset for<br>Next Task"]
+    UpdateActive --> ClearTasks["🔄 Clear tasks.md<br>for Next Cycle"]
+    ClearTasks --> Reset["Reset for<br>Next Task"]
+
+    %% Task Continuity Styling
+    style PreserveMigration fill:#80ff80,stroke:#40cc40,color:black,stroke-width:2px
+    style VerifyMigration fill:#b3ffb3,stroke:#80ff80,color:black
+    style ArchiveMigration fill:#b3ffb3,stroke:#80ff80,color:black
+    style ClearTasks fill:#ffcc80,stroke:#ff9900,color:black
 ```
 
 ## 📋 ARCHIVE DOCUMENT STRUCTURE
