@@ -1,0 +1,31 @@
+interaction:
+  mode: "MANUAL"
+  timeout:
+    user_response: 900  # 15 minutes
+    decision_wait: 300   # 5 minutes
+  defaults:
+    fallback_mode: "MANUAL"
+    auto_switch_threshold: 3
+
+behavior:
+  auto_mode:
+    documentation_level: "comprehensive"
+    decision_rationale: true
+    user_notifications: "summary"
+
+  manual_mode:
+    question_detail_level: "detailed"
+    option_presentation: "comprehensive"
+    confirmation_required: true
+
+project:
+  name: "Collection Store v6.0"
+  version: "6.0.0"
+  complexity_level: 3
+  current_phase: "Browser SDK Modernization"
+
+memory_bank:
+  version: "2.0"
+  initialized: true
+  last_update: "2025-01-09"
+  task_continuity: true
