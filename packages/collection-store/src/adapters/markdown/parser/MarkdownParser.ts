@@ -189,8 +189,8 @@ export class MarkdownParser {
         const fileModTime = stats.mtime.getTime();
 
         if (fileModTime <= cachedModTime) {
-          cached.document.timestamps.accessed = new Date();
-          return cached.document;
+        cached.document.timestamps.accessed = new Date();
+        return cached.document;
         }
         // File was modified, invalidate cache
         this.cache.delete(cacheKey);

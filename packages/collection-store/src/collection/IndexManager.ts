@@ -96,7 +96,7 @@ export class IndexManager<T> implements IIndexManager<T> {
 
     // Non-transactional operations
     // b-pl-tree v1.3.1 handles removal correctly for both unique and non-unique indexes
-    index.tree.remove(value);
+      index.tree.remove(value);
   }
 
   public async find(field: keyof T, value: any): Promise<string[]> {
@@ -121,38 +121,38 @@ export class IndexManager<T> implements IIndexManager<T> {
     }
 
     // b-pl-tree v1.3.1 has fully working range queries with proper parameter handling
-    const result = index.tree.range(range);
+      const result = index.tree.range(range);
 
-    if (!result || result.length === 0) return [];
+      if (!result || result.length === 0) return [];
 
-    // Filter the results based on the range conditions
-    const filteredResults = this.filterRangeResults(result, range);
+      // Filter the results based on the range conditions
+      const filteredResults = this.filterRangeResults(result, range);
 
-    if (index.unique) {
-      // For unique indexes, result is array of [key, value] pairs
-      return filteredResults.map(([key, value]) => value as string);
-    } else {
-      // For non-unique indexes, flatten the arrays of docIds
-      const allDocIds: string[] = [];
-      const seenDocIds = new Set<string>(); // Deduplicate
+      if (index.unique) {
+        // For unique indexes, result is array of [key, value] pairs
+        return filteredResults.map(([key, value]) => value as string);
+      } else {
+        // For non-unique indexes, flatten the arrays of docIds
+        const allDocIds: string[] = [];
+        const seenDocIds = new Set<string>(); // Deduplicate
 
-      for (const [key, value] of filteredResults) {
-        if (Array.isArray(value)) {
-          for (const docId of value as string[]) {
+        for (const [key, value] of filteredResults) {
+          if (Array.isArray(value)) {
+            for (const docId of value as string[]) {
+              if (!seenDocIds.has(docId)) {
+                seenDocIds.add(docId);
+                allDocIds.push(docId);
+              }
+            }
+          } else {
+            const docId = value as string;
             if (!seenDocIds.has(docId)) {
               seenDocIds.add(docId);
               allDocIds.push(docId);
             }
           }
-        } else {
-          const docId = value as string;
-          if (!seenDocIds.has(docId)) {
-            seenDocIds.add(docId);
-            allDocIds.push(docId);
-          }
         }
-      }
-      return allDocIds;
+        return allDocIds;
     }
   }
 
@@ -184,7 +184,7 @@ export class IndexManager<T> implements IIndexManager<T> {
       // Phase 1: Prepare all transaction contexts
       for (const txContext of txContexts) {
         await txContext.prepareCommit();
-      }
+    }
 
       // Phase 2: Finalize all transaction contexts
       for (const txContext of txContexts) {
