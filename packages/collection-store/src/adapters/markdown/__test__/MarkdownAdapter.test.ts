@@ -187,6 +187,9 @@ describe('MarkdownAdapter', () => {
       // Create test files
       await fs.writeFile(path.join(testDir, 'doc1.md'), '# Document 1\n\nFirst document content.');
       await fs.writeFile(path.join(testDir, 'doc2.md'), '# Document 2\n\nSecond document content.');
+
+      // Ensure subdir exists before creating file
+      await fs.ensureDir(path.join(testDir, 'subdir'));
       await fs.writeFile(path.join(testDir, 'subdir', 'doc3.md'), '# Document 3\n\nThird document content.');
     });
 

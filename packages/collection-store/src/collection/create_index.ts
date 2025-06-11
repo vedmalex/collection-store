@@ -148,9 +148,7 @@ export function create_index<T extends Item>(
               if (unique) {
                 collection.indexes[key].remove(valueOld)
               } else {
-                collection.indexes[key].removeSpecific(valueOld, (pointer) =>
-                  key != collection.id ? pointer == (ov && (ov as any)[collection.id]) : true,
-                )
+                collection.indexes[key].remove(valueOld)
               }
               collection.indexes[key].insert(
                 valueNew !== undefined ? valueNew : null,
@@ -161,9 +159,7 @@ export function create_index<T extends Item>(
             if (unique) {
               collection.indexes[key].remove(valueOld)
             } else {
-              collection.indexes[key].removeSpecific(valueOld, (pointer) =>
-                key != collection.id ? pointer == (ov && (ov as any)[collection.id]) : true,
-              )
+              collection.indexes[key].remove(valueOld)
             }
           }
         }
@@ -173,11 +169,7 @@ export function create_index<T extends Item>(
     key !== '*'
       ? (item: T) => {
           const value = process ? process(item) : get(item, key) ?? null
-          collection.indexes[key].removeSpecific(
-            value,
-            (pointer) =>
-              key != collection.id ? pointer == item[collection.id] : true,
-          )
+          collection.indexes[key].remove(value)
         }
       : undefined
 

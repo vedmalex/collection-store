@@ -61,16 +61,29 @@ export class GitManager extends EventEmitter {
 
     this.repositoryPath = repositoryPath;
     this.config = this.mergeConfig(config);
-    this.git = simpleGit(repositoryPath);
 
-    // Initialize components
-    this.resourceManager = new ResourceManager(this.config.limits, this.config.performance);
-    this.statusMonitor = new GitStatusMonitor(this.git, this.config, this.resourceManager);
-    this.historyTracker = new GitHistoryTracker(this.git, this.config, this.resourceManager);
-    this.branchWatcher = new GitBranchWatcher(this.git, this.config, this.resourceManager);
-    this.conflictDetector = new GitConflictDetector(this.git, this.config, this.resourceManager);
+    try {
+      this.git = simpleGit(repositoryPath);
 
-    this.setupEventForwarding();
+      // Initialize components
+      this.resourceManager = new ResourceManager(this.config.limits, this.config.performance);
+      this.statusMonitor = new GitStatusMonitor(this.git, this.config, this.resourceManager);
+      this.historyTracker = new GitHistoryTracker(this.git, this.config, this.resourceManager);
+      this.branchWatcher = new GitBranchWatcher(this.git, this.config, this.resourceManager);
+      this.conflictDetector = new GitConflictDetector(this.git, this.config, this.resourceManager);
+
+      this.setupEventForwarding();
+    } catch (error) {
+      // If git initialization fails (e.g., invalid path), disable git features
+      this.config.enabled = false;
+      this.git = null as any; // Will be handled by enabled check
+      this.resourceManager = new ResourceManager(this.config.limits, this.config.performance);
+
+      // Emit error but don't throw - allow adapter to continue without git
+      process.nextTick(() => {
+        this.emit('error', error);
+      });
+    }
   }
 
   private mergeConfig(userConfig: Partial<GitIntegrationConfig>): GitIntegrationConfig {
@@ -115,7 +128,7 @@ export class GitManager extends EventEmitter {
   }
 
   async initialize(): Promise<void> {
-    if (!this.config.enabled) {
+    if (!this.config.enabled || !this.git) {
       return;
     }
 

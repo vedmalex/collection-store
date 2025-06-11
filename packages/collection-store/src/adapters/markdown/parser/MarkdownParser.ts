@@ -170,7 +170,6 @@ export class MarkdownParser {
       gfm: true,
       breaks: false,
       pedantic: false,
-      smartypants: false,
     });
   }
 
@@ -178,18 +177,28 @@ export class MarkdownParser {
     const absolutePath = path.resolve(filePath);
     const cacheKey = this.getCacheKey(absolutePath);
 
+    // Get file stats first to check modification time
+    const stats = await fs.stat(absolutePath);
+
     // Check cache first
     if (this.config.caching.enabled) {
       const cached = this.cache.get(cacheKey);
       if (cached && this.isCacheValid(cached.timestamp)) {
-        cached.document.timestamps.accessed = new Date();
-        return cached.document;
+        // Also check if file was modified since cache entry
+        const cachedModTime = cached.document.timestamps.modified.getTime();
+        const fileModTime = stats.mtime.getTime();
+
+        if (fileModTime <= cachedModTime) {
+          cached.document.timestamps.accessed = new Date();
+          return cached.document;
+        }
+        // File was modified, invalidate cache
+        this.cache.delete(cacheKey);
       }
     }
 
     // Read and parse file
     const rawContent = await fs.readFile(absolutePath, 'utf-8');
-    const stats = await fs.stat(absolutePath);
 
     const document = await this.parseContent(rawContent, {
       path: absolutePath,
@@ -671,5 +680,9 @@ export class MarkdownParser {
       size: this.cache.size,
       entries: this.cache.size,
     };
+  }
+
+  getCacheSize(): number {
+    return this.cache.size;
   }
 }

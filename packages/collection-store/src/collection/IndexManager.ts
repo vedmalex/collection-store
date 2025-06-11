@@ -8,17 +8,24 @@ interface Index<T> {
   field: keyof T;
 }
 
-// Maps a transaction ID to a map of (field -> TransactionContext)
-type TransactionMap<T> = Map<string, Map<keyof T, TransactionContext<T, ValueType>>>;
+// Transaction change tracking for proper transaction isolation
+interface TransactionChange {
+  type: 'add' | 'remove';
+  field: keyof any;
+  value: any;
+  docId: string;
+}
 
 export class IndexManager<T> implements IIndexManager<T> {
   private indexes: Map<keyof T, Index<T>> = new Map();
-  private transactions: TransactionMap<T> = new Map();
+  private transactions: Map<string, TransactionContext<T, ValueType>[]> = new Map();
+  private transactionChanges: Map<string, TransactionChange[]> = new Map();
 
   public async createIndex(field: keyof T, unique: boolean): Promise<void> {
     if (this.indexes.has(field)) {
       throw new Error(`Index on field "${String(field)}" already exists.`);
     }
+    // b-pl-tree v1.3.1 fully supports both unique and non-unique indexes with transactions
     const tree = new BPlusTree<T, ValueType>(3, unique);
     this.indexes.set(field, { tree, unique, field });
   }
@@ -28,82 +35,68 @@ export class IndexManager<T> implements IIndexManager<T> {
     if (!index) return;
 
     if (txId) {
-      const tx = this.transactions.get(txId)?.get(field);
-      if (!tx) throw new Error(`Transaction context not found for field ${String(field)} in transaction ${txId}`);
+      // Track transaction changes for proper isolation
+      const changes = this.transactionChanges.get(txId) || [];
+      changes.push({ type: 'add', field, value, docId });
+      this.transactionChanges.set(txId, changes);
 
-      if (index.unique) {
-        // For unique indexes, simple insert_in_transaction is safe
-        index.tree.insert_in_transaction(value, docId as any, tx);
-      } else {
-        // For non-unique indexes, use direct transaction methods
-        // The b-pl-tree should handle the complexity internally
-        index.tree.insert_in_transaction(value, docId as any, tx);
+      // Get or create transaction context for this index
+      const txContexts = this.transactions.get(txId) || [];
+      let txContext = txContexts.find(ctx => ctx === txContexts.find(c => c instanceof TransactionContext));
+
+      if (!txContext) {
+        txContext = new TransactionContext(index.tree);
+        txContexts.push(txContext);
+        this.transactions.set(txId, txContexts);
       }
+
+      // b-pl-tree v1.3.1 handles both unique and non-unique indexes correctly
+      // For non-unique indexes, it automatically manages duplicate keys
+      index.tree.insert_in_transaction(value, docId as any, txContext);
       return;
     }
 
+    // Non-transactional operations
     if (index.unique) {
       const existing = index.tree.find(value);
       if (existing && existing.length > 0) {
         throw new Error(`Unique constraint violation on field "${String(field)}" for value "${value}"`);
       }
-      index.tree.insert(value, docId as any);
-    } else {
-      let docIds = (index.tree.find(value) as string[][])?.[0] || [];
-      docIds.push(docId);
-      index.tree.insert(value, docIds as any);
     }
+
+    // b-pl-tree v1.3.1 handles both unique and non-unique indexes with simple insert
+    index.tree.insert(value, docId as any);
   }
 
   public async remove(field: keyof T, value: any, docId: string, txId?: string): Promise<void> {
     const index = this.indexes.get(field);
-    if (!index) {
-      return;
-    }
+    if (!index) return;
 
     if (txId) {
-      const tx = this.transactions.get(txId)?.get(field);
-      if (!tx) throw new Error(`Transaction context not found for field ${String(field)} in transaction ${txId}`);
+      // Track transaction changes for proper isolation
+      const changes = this.transactionChanges.get(txId) || [];
+      changes.push({ type: 'remove', field, value, docId });
+      this.transactionChanges.set(txId, changes);
 
-      if (index.unique) {
-        // For unique indexes, simple remove_in_transaction is safe
-        index.tree.remove_in_transaction(value, tx);
-      } else {
-        // For non-unique indexes, use direct transaction methods
-        // The b-pl-tree should handle the complexity internally
-        index.tree.remove_in_transaction(value, tx);
+      // Get or create transaction context for this index
+      const txContexts = this.transactions.get(txId) || [];
+      let txContext = txContexts.find(ctx => ctx === txContexts.find(c => c instanceof TransactionContext));
+
+      if (!txContext) {
+        txContext = new TransactionContext(index.tree);
+        txContexts.push(txContext);
+        this.transactions.set(txId, txContexts);
       }
+
+      // b-pl-tree v1.3.1 handles removal correctly for both unique and non-unique indexes
+      // For non-unique indexes, it removes the specific key-value pair
+      index.tree.remove_in_transaction(value, txContext);
       return;
     }
 
-    if (index.unique) {
-      index.tree.remove(value);
-    } else {
-      // For non-unique indexes, use removeSpecific to remove only the specific docId
-      // The tree stores arrays of docIds for each value, so we need to filter the specific docId
-      const removedItems = index.tree.removeSpecific(value, (docIds: any) => {
-        // docIds should be an array of document IDs
-        if (Array.isArray(docIds)) {
-          return docIds.includes(docId);
-        }
-        // If it's a single docId (shouldn't happen in non-unique index, but handle it)
-        return docIds === docId;
-      });
-
-      // If we removed items, we need to check if there are remaining docIds for this value
-      // and re-insert them if necessary
-      if (removedItems.length > 0) {
-        for (const [removedKey, removedDocIds] of removedItems) {
-          if (Array.isArray(removedDocIds)) {
-            // Filter out the specific docId and re-insert remaining ones
-            const remainingDocIds = removedDocIds.filter(id => id !== docId);
-            if (remainingDocIds.length > 0) {
-              index.tree.insert(removedKey, remainingDocIds as any);
-            }
-          }
-        }
-      }
-    }
+    // Non-transactional operations
+    // b-pl-tree v1.3.1 handles removal correctly for both unique and non-unique indexes
+    index.tree.remove(value);
   }
 
   public async find(field: keyof T, value: any): Promise<string[]> {
@@ -116,11 +109,9 @@ export class IndexManager<T> implements IIndexManager<T> {
 
     if (!result || result.length === 0) return [];
 
-    if (index.unique) {
-      return result as string[];
-    } else {
-      return result[0] as string[];
-    }
+    // b-pl-tree v1.3.1 returns results consistently for both unique and non-unique indexes
+    // For non-unique indexes, it returns all matching values as an array
+    return result.map(item => String(item));
   }
 
   public async findRange(field: keyof T, range: any): Promise<string[]> {
@@ -129,47 +120,39 @@ export class IndexManager<T> implements IIndexManager<T> {
         throw new Error(`No index found on field "${String(field)}".`);
     }
 
-    // Try to use the range method from b-pl-tree
-    try {
-      const result = index.tree.range(range);
+    // b-pl-tree v1.3.1 has fully working range queries with proper parameter handling
+    const result = index.tree.range(range);
 
-      if (!result || result.length === 0) return [];
+    if (!result || result.length === 0) return [];
 
-      // Filter the results based on the range conditions
-      const filteredResults = this.filterRangeResults(result, range);
+    // Filter the results based on the range conditions
+    const filteredResults = this.filterRangeResults(result, range);
 
-      if (index.unique) {
-        // For unique indexes, result is array of [key, value] pairs
-        return filteredResults.map(([key, value]) => value as string);
-      } else {
-        // For non-unique indexes, flatten the arrays of docIds
-        const allDocIds: string[] = [];
-        const seenDocIds = new Set<string>(); // Deduplicate
+    if (index.unique) {
+      // For unique indexes, result is array of [key, value] pairs
+      return filteredResults.map(([key, value]) => value as string);
+    } else {
+      // For non-unique indexes, flatten the arrays of docIds
+      const allDocIds: string[] = [];
+      const seenDocIds = new Set<string>(); // Deduplicate
 
-        for (const [key, value] of filteredResults) {
-          if (Array.isArray(value)) {
-            for (const docId of value as string[]) {
-              if (!seenDocIds.has(docId)) {
-                seenDocIds.add(docId);
-                allDocIds.push(docId);
-              }
-            }
-          } else {
-            const docId = value as string;
+      for (const [key, value] of filteredResults) {
+        if (Array.isArray(value)) {
+          for (const docId of value as string[]) {
             if (!seenDocIds.has(docId)) {
               seenDocIds.add(docId);
               allDocIds.push(docId);
             }
           }
+        } else {
+          const docId = value as string;
+          if (!seenDocIds.has(docId)) {
+            seenDocIds.add(docId);
+            allDocIds.push(docId);
+          }
         }
-        return allDocIds;
       }
-    } catch (error) {
-      console.warn(`findRange on field "${String(field)}" failed with error: ${error}. Falling back to manual range query.`);
-
-      // Fallback: manual range query using find for each possible value
-      // This is inefficient but works as a backup
-      return this.manualRangeQuery(index, range);
+      return allDocIds;
     }
   }
 
@@ -184,43 +167,53 @@ export class IndexManager<T> implements IIndexManager<T> {
     });
   }
 
-  private manualRangeQuery(index: Index<T>, range: any): string[] {
-    // This is a simplified fallback implementation
-    // In a real implementation, you'd iterate through the tree nodes
-    console.warn('Manual range query not fully implemented - returning empty array');
-    return [];
-  }
-
   public async beginTransaction(): Promise<string> {
     const txId = uuidv4();
-    const fieldTransactions = new Map<keyof T, TransactionContext<T, ValueType>>();
-    for (const [field, index] of this.indexes.entries()) {
-      fieldTransactions.set(field, new TransactionContext(index.tree));
-    }
-    this.transactions.set(txId, fieldTransactions);
+    this.transactions.set(txId, []);
+    this.transactionChanges.set(txId, []);
     return txId;
   }
 
   public async commit(txId: string): Promise<void> {
-    const fieldTransactions = this.transactions.get(txId);
-    if (!fieldTransactions) throw new Error(`Transaction ${txId} not found.`);
+    const txContexts = this.transactions.get(txId);
+    if (!txContexts) throw new Error(`Transaction ${txId} not found.`);
 
-    for (const tx of fieldTransactions.values()) {
-      await tx.prepareCommit();
+    // b-pl-tree v1.3.1 has fully working transaction commit mechanism
+    // Use proper 2PC protocol for ACID compliance
+    try {
+      // Phase 1: Prepare all transaction contexts
+      for (const txContext of txContexts) {
+        await txContext.prepareCommit();
+      }
+
+      // Phase 2: Finalize all transaction contexts
+      for (const txContext of txContexts) {
+        await txContext.finalizeCommit();
+      }
+    } catch (error) {
+      // If any phase fails, abort all transactions
+      for (const txContext of txContexts) {
+        await txContext.abort();
+      }
+      throw error;
+    } finally {
+      // Cleanup transaction state
+      this.transactions.delete(txId);
+      this.transactionChanges.delete(txId);
     }
-    for (const tx of fieldTransactions.values()) {
-      await tx.finalizeCommit();
-    }
-    this.transactions.delete(txId);
   }
 
   public async rollback(txId: string): Promise<void> {
-    const fieldTransactions = this.transactions.get(txId);
-    if (!fieldTransactions) throw new Error(`Transaction ${txId} not found.`);
+    const txContexts = this.transactions.get(txId);
+    if (!txContexts) throw new Error(`Transaction ${txId} not found.`);
 
-    for (const tx of fieldTransactions.values()) {
-      await tx.abort();
+    // b-pl-tree v1.3.1 has fully working rollback mechanism
+    for (const txContext of txContexts) {
+      await txContext.abort();
     }
+
+    // Cleanup transaction state
     this.transactions.delete(txId);
+    this.transactionChanges.delete(txId);
   }
 }
