@@ -13,6 +13,7 @@ import {
 import { GoogleSheetsAdapterConfig } from '../../config/schemas/AdapterConfig';
 import { GoogleSheetsAuth, AuthConfig } from './auth/GoogleSheetsAuth';
 import { GoogleSheetsAPI, APIConfig } from './api/GoogleSheetsAPI';
+import { AdapterType, AdapterConfig } from '../base/types/AdapterTypes';
 
 export class GoogleSheetsAdapter extends ExternalAdapter {
   private auth?: GoogleSheetsAuth;
@@ -21,7 +22,8 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
   private spreadsheetMappings: Map<string, string> = new Map();
 
   constructor(config: GoogleSheetsAdapterConfig) {
-    super(config.id, config.type, config);
+    // Ensure config.id is a string, even if optional in schema
+    super(config.id || `googlesheets-adapter-${Date.now()}`, config.type as AdapterType, config as AdapterConfig);
   }
 
   // Abstract method implementations
@@ -30,9 +32,17 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
 
     // Initialize authentication
     const authConfig: AuthConfig = {
-      strategy: sheetsConfig.config.auth.strategy,
-      oauth2: sheetsConfig.config.auth.oauth2,
-      serviceAccount: sheetsConfig.config.auth.serviceAccount,
+      strategy: sheetsConfig.config.auth.type,
+      oauth2: sheetsConfig.config.auth.type === 'oauth2' && sheetsConfig.config.auth.oauth2 ? {
+        clientId: sheetsConfig.config.auth.oauth2.clientId || '',
+        clientSecret: sheetsConfig.config.auth.oauth2.clientSecret || '',
+        redirectUri: sheetsConfig.config.auth.oauth2.redirectUri || '',
+        scopes: sheetsConfig.config.auth.oauth2.scopes || []
+      } : undefined,
+      serviceAccount: sheetsConfig.config.auth.type === 'service_account' && sheetsConfig.config.auth.serviceAccountKey ? {
+        keyFilePath: sheetsConfig.config.auth.serviceAccountKey,
+        scopes: sheetsConfig.config.auth.scopes || [] // Ensure scopes are provided for service account
+      } : undefined,
       tokenRefresh: {
         enabled: true,
         refreshThresholdMs: 300000, // 5 minutes
@@ -60,16 +70,16 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
         requestsPerSecond: sheetsConfig.config.rateLimit.requestsPerSecond,
         requestsPerMinute: sheetsConfig.config.rateLimit.requestsPerMinute,
         requestsPerDay: 1000, // Default daily quota
-        burstLimit: 10,
-        backoffMultiplier: 2,
-        maxRetries: 3,
-        retryDelayMs: 1000
+        burstLimit: sheetsConfig.config.rateLimit.batchSize || 10,
+        backoffMultiplier: sheetsConfig.config.rateLimit.retryDelayMs || 2,
+        maxRetries: sheetsConfig.config.rateLimit.retryAttempts || 3,
+        retryDelayMs: sheetsConfig.config.rateLimit.retryDelayMs || 1000
       },
       quota: {
-        dailyQuota: 1000,
-        quotaResetHour: 0,
-        quotaWarningThreshold: 80,
-        quotaBuffer: 100
+        dailyQuota: sheetsConfig.config.quota?.dailyQuota || 1000,
+        quotaResetHour: sheetsConfig.config.quota?.quotaResetHour || 0,
+        quotaWarningThreshold: sheetsConfig.config.quota?.quotaWarningThreshold || 80,
+        quotaBuffer: sheetsConfig.config.quota?.quotaBuffer || 100
       },
       timeout: 30000,
       retryOnQuotaExceeded: true,
@@ -183,14 +193,19 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
     }
   }
 
-  protected async doConfigUpdate(config: Partial<GoogleSheetsAdapterConfig>): Promise<void> {
+  protected async doConfigUpdate(config: Partial<AdapterConfig>): Promise<void> {
+    const sheetsConfig = config as Partial<GoogleSheetsAdapterConfig>;
     // Handle configuration updates that don't require restart
-    if (config.config?.rateLimit && this.api) {
-      const apiConfig = {
+    if (sheetsConfig.config?.rateLimit && this.api) {
+      const apiConfig: Partial<APIConfig> = {
         rateLimit: {
-          requestsPerSecond: config.config.rateLimit.requestsPerSecond,
-          requestsPerMinute: config.config.rateLimit.requestsPerMinute,
-          requestsPerDay: 1000
+          requestsPerSecond: sheetsConfig.config.rateLimit.requestsPerSecond,
+          requestsPerMinute: sheetsConfig.config.rateLimit.requestsPerMinute,
+          requestsPerDay: 1000, // Default daily quota
+          burstLimit: sheetsConfig.config.rateLimit.batchSize || 10,
+          backoffMultiplier: sheetsConfig.config.rateLimit.retryDelayMs || 2,
+          maxRetries: sheetsConfig.config.rateLimit.retryAttempts || 3,
+          retryDelayMs: sheetsConfig.config.rateLimit.retryDelayMs || 1000
         },
         quota: {
           dailyQuota: 1000
@@ -200,32 +215,33 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
     }
 
     // For auth-related changes, require restart
-    if (config.config?.auth) {
+    if (sheetsConfig.config?.auth) {
       throw new Error('Authentication configuration changes require adapter restart');
     }
   }
 
-  protected async doValidateConfig(config: GoogleSheetsAdapterConfig): Promise<boolean> {
+  protected async doValidateConfig(config: AdapterConfig): Promise<boolean> {
+    const sheetsConfig = config as GoogleSheetsAdapterConfig;
     try {
       // Validate authentication configuration
-      if (config.config.auth.type === 'oauth2') {
-        if (!config.config.auth.clientId || !config.config.auth.clientSecret) {
+      if (sheetsConfig.config.auth.type === 'oauth2') {
+        if (!sheetsConfig.config.auth.clientId || !sheetsConfig.config.auth.clientSecret) {
           return false;
         }
-      } else if (config.config.auth.type === 'service_account') {
-        if (!config.config.auth.serviceAccountKey) {
+      } else if (sheetsConfig.config.auth.type === 'service_account') {
+        if (!sheetsConfig.config.auth.serviceAccountKey) {
           return false;
         }
       }
 
       // Validate rate limit configuration
-      if (config.config.rateLimit.requestsPerSecond <= 0 ||
-          config.config.rateLimit.requestsPerMinute <= 0) {
+      if (sheetsConfig.config.rateLimit.requestsPerSecond <= 0 ||
+          sheetsConfig.config.rateLimit.requestsPerMinute <= 0) {
         return false;
       }
 
       // Validate spreadsheet mappings
-      for (const [name, mapping] of Object.entries(config.config.spreadsheets)) {
+      for (const [name, mapping] of Object.entries(sheetsConfig.config.spreadsheets)) {
         if (!mapping.spreadsheetId) {
           return false;
         }
@@ -256,9 +272,15 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
     }
   }
 
+  public async unsubscribe(subscriptionId: string): Promise<void> {
+    await this.doUnsubscribe(subscriptionId);
+    this._subscriptions.delete(subscriptionId);
+  }
+
   protected async doUnsubscribe(subscriptionId: string): Promise<void> {
     // Google Sheets doesn't have native subscriptions, so we manage polling-based subscriptions
     // This would be handled by stopping specific polling for this subscription
+    console.log(`Unsubscribing from Google Sheets subscription: ${subscriptionId}`);
   }
 
   // Enhanced data operation implementations
@@ -514,61 +536,67 @@ export class GoogleSheetsAdapter extends ExternalAdapter {
   }
 
   private setupAuthEventHandlers(): void {
-    if (!this.auth) {
-      return;
-    }
+    if (!this.auth) return;
 
-    this.auth.on('authentication-success', (event) => {
-      this.emit('AUTH_SUCCESS', {
-        adapterId: this.id,
-        strategy: event.strategy,
-        authTime: event.authTime
-      });
+    this.auth.on('AUTH_SUCCESS', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'AUTH_SUCCESS', strategy: data.strategy } });
     });
 
-    this.auth.on('authentication-failed', (event) => {
-      this.emit('AUTH_FAILED', {
-        adapterId: this.id,
-        strategy: event.strategy,
-        error: event.error
-      });
+    this.auth.on('AUTH_FAILURE', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'AUTH_FAILURE', strategy: data.strategy, error: data.error } });
     });
 
-    this.auth.on('token-refresh-needed', () => {
-      this.emit('TOKEN_REFRESH_NEEDED', {
-        adapterId: this.id
-      });
+    this.auth.on('TOKEN_REFRESH', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'TOKEN_REFRESH', success: data.success } });
+    });
+
+    this.auth.on('TOKEN_EXPIRY_WARNING', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'TOKEN_EXPIRY_WARNING', expiresAt: data.expiresAt } });
     });
   }
 
   private setupAPIEventHandlers(): void {
-    if (!this.api) {
-      return;
-    }
+    if (!this.api) return;
 
-    this.api.on('quota-warning', (event) => {
-      this.emit('QUOTA_WARNING', {
-        adapterId: this.id,
-        usage: event.usage,
-        limit: event.limit,
-        percentage: event.percentage
-      });
+    this.api.on('REQUEST_COMPLETE', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'REQUEST_COMPLETE', usage: data.usage } });
     });
 
-    this.api.on('rate-limit-hit', (event) => {
-      this.emit('RATE_LIMIT_HIT', {
-        adapterId: this.id,
-        throttleUntil: event.throttleUntil,
-        backoffMs: event.backoffMs
-      });
+    this.api.on('RATE_LIMIT_EXCEEDED', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'RATE_LIMIT_EXCEEDED', throttleUntil: data.throttleUntil } });
     });
 
-    this.api.on('quota-reset', (event) => {
-      this.emit('QUOTA_RESET', {
-        adapterId: this.id,
-        newLimit: event.newLimit,
-        resetTime: event.resetTime
-      });
+    this.api.on('QUOTA_EXCEEDED', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'QUOTA_EXCEEDED', newLimit: data.newLimit } });
     });
+
+    this.api.on('API_ERROR', (data) => {
+      this.emit('OPERATION', { type: 'OPERATION', adapterId: this.id, timestamp: new Date(), data: { event: 'API_ERROR', error: data.error } });
+    });
+  }
+
+  async update(filter: Record<string, any>, data: Record<string, any>): Promise<AdapterResult> {
+    // Implementation for update
+    return { success: false, error: 'Not implemented' };
+  }
+
+  async delete(filter: Record<string, any>): Promise<AdapterResult> {
+    // Implementation for delete
+    return { success: false, error: 'Not implemented' };
+  }
+
+  async batchInsert(data: AdapterData[]): Promise<AdapterResult[]> {
+    // Implementation for batchInsert
+    return [{ success: false, error: 'Not implemented' }];
+  }
+
+  async batchUpdate(operations: Array<{ filter: Record<string, any>; data: Record<string, any> }>): Promise<AdapterResult[]> {
+    // Implementation for batchUpdate
+    return [{ success: false, error: 'Not implemented' }];
+  }
+
+  async batchDelete(filters: Record<string, any>[]): Promise<AdapterResult[]> {
+    // Implementation for batchDelete
+    return [{ success: false, error: 'Not implemented' }];
   }
 }

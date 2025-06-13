@@ -6,7 +6,8 @@
     "rootDir": "./src",
     "outDir": "./types",
     "types": ["@types/bun"],
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.*", "**/node_modules/**", "types/**/*"]

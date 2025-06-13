@@ -55,7 +55,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
     try {
       await this.doInitialize();
       this.setState(AdapterState.INACTIVE);
-      this.emit({ type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
+      this.emit('STATE_CHANGE', { type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
     } catch (error) {
       this.setState(AdapterState.ERROR);
       this.recordError(error as Error);
@@ -72,7 +72,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
       await this.doStart();
       this.setState(AdapterState.ACTIVE);
       this._startTime = new Date();
-      this.emit({ type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
+      this.emit('STATE_CHANGE', { type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
     } catch (error) {
       this.setState(AdapterState.ERROR);
       this.recordError(error as Error);
@@ -109,7 +109,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
 
       await this.doStop();
       this.setState(AdapterState.INACTIVE);
-      this.emit({ type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
+      this.emit('STATE_CHANGE', { type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
     } catch (error) {
       this.setState(AdapterState.ERROR);
       this.recordError(error as Error);
@@ -160,16 +160,18 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
   }
 
   // Event handling
-  emit(event: AdapterEvent): void {
-    super.emit(event.type, event);
+  override emit(eventName: string | symbol, event: AdapterEvent): boolean {
+    return super.emit(eventName, event);
   }
 
-  on(event: string, handler: AdapterEventHandler): void {
+  override on(event: string, handler: AdapterEventHandler): this {
     super.on(event, handler);
+    return this;
   }
 
-  off(event: string, handler: AdapterEventHandler): void {
+  override off(event: string, handler: AdapterEventHandler): this {
     super.off(event, handler);
+    return this;
   }
 
   // Utility methods
@@ -205,7 +207,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
   protected recordError(error: Error): void {
     this._metrics.errorCount++;
     this._metrics.lastError = new Date();
-    this.emit({
+    this.emit('ERROR', {
       type: 'ERROR',
       adapterId: this.id,
       timestamp: new Date(),
@@ -243,14 +245,19 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
       this._healthCheckInterval = setInterval(async () => {
         try {
           const health = await this.getHealth();
-          this.emit({
+          this.emit('HEALTH_CHECK', {
             type: 'HEALTH_CHECK',
             adapterId: this.id,
             timestamp: new Date(),
-            data: health
+            data: { health }
           });
         } catch (error) {
-          this.recordError(error as Error);
+          this.emit('ERROR', {
+            type: 'ERROR',
+            adapterId: this.id,
+            timestamp: new Date(),
+            data: { error: (error as Error).message }
+          });
         }
       }, this._config.lifecycle.healthCheckInterval);
     }

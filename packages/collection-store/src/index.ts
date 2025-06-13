@@ -128,3 +128,6 @@ export type {
   INetworkDetector,
   IOperationQueue
 } from './client/offline'
+
+// Browser SDK
+export * from './browser-sdk';

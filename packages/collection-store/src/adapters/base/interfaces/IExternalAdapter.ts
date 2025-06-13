@@ -63,9 +63,9 @@ export interface IExternalAdapter {
   rollbackTransaction(transaction: AdapterTransaction): Promise<void>;
 
   // Event handling
-  on(event: string, handler: AdapterEventHandler): void;
-  off(event: string, handler: AdapterEventHandler): void;
-  emit(event: AdapterEvent): void;
+  on(event: string, handler: AdapterEventHandler): this;
+  off(event: string, handler: AdapterEventHandler): this;
+  emit(eventName: string | symbol, event: AdapterEvent): boolean;
 
   // Utility methods
   ping(): Promise<boolean>;
