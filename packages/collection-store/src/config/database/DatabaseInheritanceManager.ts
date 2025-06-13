@@ -678,12 +678,12 @@ export class DatabaseInheritanceManager extends BaseConfigurationComponent imple
       cacheHitRate
     };
 
+    // Priority 1: No databases configured
     if (stats.totalDatabases === 0) {
       status = ComponentStatus.WARNING;
       details.warning = 'No databases configured';
-    }
-
-    if (cacheHitRate < 0.5 && this.inheritanceConfig.enableCaching) {
+    } else if (this.inheritanceConfig.enableCaching && this.resolutionCache.size > 0 && cacheHitRate < 0.5) {
+      // Priority 2: Low cache hit rate (only if caching is enabled, there are databases, AND cache has been used)
       status = ComponentStatus.WARNING;
       details.warning = 'Low cache hit rate';
     }
@@ -742,11 +742,38 @@ export class DatabaseInheritanceManager extends BaseConfigurationComponent imple
     chain: InheritanceStep[],
     source: 'DATABASE' | 'COLLECTION'
   ): DatabaseConfig {
-    const result = { ...base };
+    const result: DatabaseConfig = { ...base };
 
-    Object.keys(override).forEach(key => {
-      if (key in base && override[key] !== undefined) {
-        result[key] = { ...base[key], ...override[key] };
+    for (const key in override) {
+      if (override.hasOwnProperty(key)) {
+        const typedKey = key as keyof DatabaseConfig;
+        const baseValue = base[typedKey];
+        const overrideValue = override[typedKey];
+
+        if (typedKey === 'validation') {
+          // Special handling for validation to merge customValidators
+          const currentValidation = (baseValue as DatabaseConfig['validation']) || {};
+          const overrideValidation = (overrideValue as DatabaseConfig['validation']) || {};
+
+          const mergedValidators = Array.from(new Set([
+            ...(currentValidation.customValidators || []),
+            ...(overrideValidation.customValidators || [])
+          ]));
+
+          (result as any)[typedKey] = {
+            ...currentValidation,
+            ...overrideValidation,
+            customValidators: mergedValidators
+          };
+        } else if (typeof baseValue === 'object' && baseValue !== null &&
+                   typeof overrideValue === 'object' && overrideValue !== null &&
+                   !Array.isArray(baseValue) && !Array.isArray(overrideValue)) {
+          // Deep merge for other objects
+          (result as any)[typedKey] = { ...(baseValue as any), ...(overrideValue as any) };
+        } else {
+          // Direct assignment for primitives or arrays
+          (result as any)[typedKey] = overrideValue;
+        }
 
         // Mark previous steps as overridden
         chain.forEach(step => {
@@ -760,12 +787,11 @@ export class DatabaseInheritanceManager extends BaseConfigurationComponent imple
           source,
           priority: source === 'DATABASE' ? InheritancePriority.DATABASE : InheritancePriority.COLLECTION,
           configSection: key as ConfigurationScope,
-          value: override[key],
+          value: overrideValue,
           overridden: false
         });
       }
-    });
-
+    }
     return result;
   }
 

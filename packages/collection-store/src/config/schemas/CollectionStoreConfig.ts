@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AdapterConfigSchema } from './AdapterConfig';
+import { AdapterConfigWithoutIdSchema } from './AdapterConfig';
 import {
   ReplicationConfigSchema,
   RealtimeConfigSchema,
@@ -23,7 +23,7 @@ const CoreConfigSchema = z.object({
   }).optional(),
 });
 
-const AdapterEntrySchema = AdapterConfigSchema.extend({
+const AdapterEntrySchema = AdapterConfigWithoutIdSchema.extend({
   enabled: z.boolean(),
   priority: z.number(),
   role: z.enum(['primary', 'backup', 'readonly']),

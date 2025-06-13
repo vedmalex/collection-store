@@ -5,6 +5,7 @@ import {
   InheritancePriority,
   InheritanceRule
 } from '../interfaces/IDatabaseInheritanceManager';
+import { ComponentStatus } from '../../registry/interfaces/IConfigurationComponent';
 
 describe('DatabaseInheritanceManager', () => {
   let manager: DatabaseInheritanceManager;
@@ -484,7 +485,7 @@ describe('DatabaseInheritanceManager', () => {
       await manager.start();
 
       const health = await manager.getHealth();
-      expect(health.status).toBe('HEALTHY');
+      expect(health.status).toBe(ComponentStatus.HEALTHY);
       expect(health.details?.databases).toBe(1);
 
       await manager.stop();
@@ -494,7 +495,7 @@ describe('DatabaseInheritanceManager', () => {
       await manager.start();
 
       const health = await manager.getHealth();
-      expect(health.status).toBe('WARNING');
+      expect(health.status).toBe(ComponentStatus.WARNING);
       expect(health.details?.warning).toContain('No databases configured');
 
       await manager.stop();

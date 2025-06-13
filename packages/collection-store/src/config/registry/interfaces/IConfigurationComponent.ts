@@ -111,6 +111,9 @@ export interface ComponentHealth {
     /** Warning message if status is 'warning' */
     warning?: string;
 
+    /** Number of databases configured */
+    databases?: number;
+
     /** Additional health metrics */
     metrics?: Record<string, any>;
   };

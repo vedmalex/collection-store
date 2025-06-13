@@ -29,6 +29,31 @@ export const BaseAdapterConfigSchema = z.object({
   }).default({})
 });
 
+// Base adapter configuration without id field (for use in CollectionStoreConfig where id is the record key)
+export const AdapterConfigWithoutIdSchema = z.object({
+  type: z.enum(['mongodb', 'googlesheets', 'markdown']),
+  enabled: z.boolean().default(true),
+  description: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+
+  // Lifecycle configuration
+  lifecycle: z.object({
+    autoStart: z.boolean().default(true),
+    startupTimeout: z.number().min(1000).default(30000), // 30 seconds
+    shutdownTimeout: z.number().min(1000).default(10000), // 10 seconds
+    healthCheckInterval: z.number().min(0).default(30000) // 30 seconds, 0 to disable
+  }).default({}),
+
+  // Capabilities
+  capabilities: z.object({
+    read: z.boolean().default(true),
+    write: z.boolean().default(true),
+    realtime: z.boolean().default(false),
+    transactions: z.boolean().default(false),
+    batch: z.boolean().default(false)
+  }).default({})
+});
+
 // MongoDB adapter configuration
 export const MongoDBAdapterConfigSchema = BaseAdapterConfigSchema.extend({
   type: z.literal('mongodb'),
@@ -306,6 +331,13 @@ export type DevelopmentAdapterOverride = z.infer<typeof DevelopmentAdapterOverri
 export type ProductionAdapterOverride = z.infer<typeof ProductionAdapterOverrideSchema>;
 
 export type AdapterConfig = MongoDBAdapterConfig | GoogleSheetsAdapterConfig | MarkdownAdapterConfig;
+
+// Export the union schema for general adapter configuration
+export const AdapterConfigSchema = z.union([
+  MongoDBAdapterConfigSchema,
+  GoogleSheetsAdapterConfigSchema,
+  MarkdownAdapterConfigSchema
+]);
 
 // Schema factory for environment-specific configurations
 export class AdapterSchemaFactory {
