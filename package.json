@@ -1,47 +1,17 @@
 {
-  "name": "collection-store",
-  "version": "1.0.0",
-  "description": "very flexible collection for in-memory operations with flexble indexing",
-  "main": "dist/index.js",
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "prepublish": "tsc --build tsconfig.json",
-    "clean": "git clean -dfqX -- ./node_modules **/{dist,node_modules}/",
-    "compile": "tsc --build tsconfig.json",
-    "compile:clean": "tsc --build tsconfig.json --clean",
-    "watch": "tsc --build tsconfig.json --watch",
-    "format": "prettier --write \"src/**/*.ts\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vedmalex/collection-store.git"
-  },
-  "keywords": [],
-  "author": "vedanta-krit.das <vedmalex@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/vedmalex/collection-store/issues"
-  },
-  "homepage": "https://github.com/vedmalex/collection-store",
-  "devDependencies": {
-    "@types/cron": "^1.7.3",
-    "@types/fs-extra": "^9.0.13",
-    "@types/jest": "^27.0.3",
-    "@types/lodash": "^4.14.178",
-    "@types/node": "^16.11.13",
-    "eslint": "^8.4.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.4.5",
-    "prettier": "^2.5.1",
-    "ts-jest": "^27.1.1",
-    "typescript": "^4.5.4"
+    "clean": "./clean.sh"
   },
   "dependencies": {
-    "cron": "^1.8.2",
-    "fs-extra": "^10.0.0",
-    "lodash": "^4.17.21",
-    "timeparse": "^1.0.0"
+    "@types/bun": "^1.0.5",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "lerna": "^8.0.0"
   }
 }

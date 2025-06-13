@@ -1,0 +1,384 @@
+{
+  "list": {
+    "counter": 1,
+    "tree": {},
+    "_count": 1,
+    "_counter": 1,
+    "hash": {
+      "0": {
+        "createdAt": "2025-05-28T22:01:34.741Z",
+        "updatedAt": "2025-05-28T22:01:34.741Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+        "bio": "",
+        "social": {
+          "twitter": "@foobar"
+        },
+        "id": 0
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": true,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 0,
+          "min": 0,
+          "size": 1,
+          "keys": [
+            0
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "createdAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "2025-05-28T22:01:34.741Z",
+          "min": "2025-05-28T22:01:34.741Z",
+          "size": 1,
+          "keys": [
+            "2025-05-28T22:01:34.741Z"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "updatedAt": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "2025-05-28T22:01:34.741Z",
+          "min": "2025-05-28T22:01:34.741Z",
+          "size": 1,
+          "keys": [
+            "2025-05-28T22:01:34.741Z"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "fullName": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "Foo Bar",
+          "min": "Foo Bar",
+          "size": 1,
+          "keys": [
+            "Foo Bar"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "email": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "foo@bar.com",
+          "min": "foo@bar.com",
+          "size": 1,
+          "keys": [
+            "foo@bar.com"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "password": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+          "min": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+          "size": 1,
+          "keys": [
+            "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "bio": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "",
+          "min": "",
+          "size": 1,
+          "keys": [
+            ""
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "token": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "social.twitter": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": "@foobar",
+          "min": "@foobar",
+          "size": 1,
+          "keys": [
+            "@foobar"
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ],
+          "children": []
+        }
+      ]
+    },
+    "social.facebook": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    },
+    "social.linkedin": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 1,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 1,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": true,
+          "isFull": false,
+          "size": 0,
+          "keys": [],
+          "key_num": 0,
+          "pointers": [],
+          "children": []
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)",
+      "gen": "autoIncIdGen"
+    },
+    "createdAt": {
+      "key": "createdAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "updatedAt": {
+      "key": "updatedAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "fullName": {
+      "key": "fullName",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "email": {
+      "key": "email",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "password": {
+      "key": "password",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "bio": {
+      "key": "bio",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)"
+    },
+    "token": {
+      "key": "token",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "social.twitter": {
+      "key": "social.twitter",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "social.facebook": {
+      "key": "social.facebook",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    },
+    "social.linkedin": {
+      "key": "social.linkedin",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false,
+      "process": "(item) => get(item, field.key)"
+    }
+  },
+  "id": "id"
+}

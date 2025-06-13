@@ -1,0 +1,66 @@
+import { UnaryCondition } from '../query/UnaryCondition'
+import { query } from '../query'
+import { create } from './create'
+import { collection_config } from './collection_2'
+// import { map } from 'b-pl-tree' // unused
+
+const run = async () => {
+  const data = await create(collection_config)
+  await data.load()
+  console.log('reload store')
+
+  console.log(await data.findBy('id', 7))
+
+  // смотреть формирование запроса
+
+  const q = {
+    age: { $in: [30, 29] },
+    address: { home: '54481', appart: '5c', city: 'Los Angeles' },
+  }
+
+  const q1 = query(q)
+
+  console.log(await data.find(q))
+  console.log(await data.find(q1))
+
+  // Demo of custom $and operator (currently for demonstration purposes)
+  const q2 = query(
+    {
+      age: { $in: [30, 29] },
+      address: { home: '54481', appart: '20' },
+    },
+    {
+      // @ts-ignore - legacy custom operator
+      $and: (cond: Array<{ [key: string]: UnaryCondition }>) => {
+        cond.sort((a, b) => {
+          const a_list = Object.keys(a)
+          const b_list = Object.keys(b)
+          if (a_list.length > 1) throw new Error('nonsence')
+          if (b_list.length > 1) throw new Error('nonsence')
+          if (data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return 0
+          if (data.indexDefs[a_list[0]] && !data.indexDefs[b_list[0]]) return 1
+          if (!data.indexDefs[a_list[0]] && data.indexDefs[b_list[0]]) return -1
+          return 0
+        })
+
+        return () => true
+      },
+      // $or: () => () => true,
+    },
+  )
+
+  // Use q2 for demonstration
+  console.log('Custom $and operator demo:', typeof q2)
+
+  /**
+   * ЧТО НАДО СДЕЛАТЬ!
+   * отсортировать операции $or и $and по наличию индекса
+   * берем значения по индексу там где он есть,
+   * а там где нет берем полный обход
+   * создаем план обхода базы данных и можно вывести его в консоль
+   */
+
+  await data.persist()
+}
+
+run().then((_) => console.log('done'))

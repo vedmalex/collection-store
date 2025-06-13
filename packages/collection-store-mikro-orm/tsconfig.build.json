@@ -1,0 +1,11 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "./types",
+    "types": ["@types/bun"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/demo/**", "**/*.test.ts", "**/node_modules/**", "types/**/*"]
+}

@@ -1,0 +1,71 @@
+{
+  "config": {
+    "root": "data/UserDb",
+    "name": "User",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen"
+      }
+    ]
+  },
+  "list": {
+    "_count": 1,
+    "_counter": 1,
+    "hash": {
+      "0": {
+        "createdAt": "2023-12-21T09:35:04.344Z",
+        "updatedAt": "2023-12-21T09:35:04.344Z",
+        "fullName": "Foo Bar",
+        "email": "foo@bar.com",
+        "password": "b946ccc987465afcda7e45b1715219711a13518d1f1663b8c53b848cb0143441",
+        "bio": "",
+        "id": 0
+      }
+    }
+  },
+  "indexes": {
+    "id": {
+      "t": 32,
+      "next_node_id": 1,
+      "root": 0,
+      "unique": false,
+      "nodes": [
+        {
+          "id": 0,
+          "leaf": true,
+          "t": 32,
+          "isEmpty": false,
+          "isFull": false,
+          "max": 0,
+          "min": 0,
+          "size": 1,
+          "keys": [
+            0
+          ],
+          "key_num": 1,
+          "pointers": [
+            0
+          ]
+        }
+      ]
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "gen": "autoIncIdGen"
+    }
+  }
+}

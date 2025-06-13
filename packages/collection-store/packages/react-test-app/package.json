@@ -1,0 +1,21 @@
+{
+  "name": "react-test-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@collection-store/browser-sdk": "file:../../browser-sdk",
+    "@collection-store/shared-test-utils": "file:../shared-test-utils",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

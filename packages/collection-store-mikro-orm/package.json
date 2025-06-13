@@ -1,0 +1,77 @@
+{
+  "name": "collection-store-mikro-orm",
+  "version": "3.0.0-beta.23",
+  "description": "TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. Supports MongoDB, MySQL, PostgreSQL and SQLite databases as well as usage with vanilla JavaScript.",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "bun": "./src/index.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mikro-orm/mikro-orm.git"
+  },
+  "keywords": [
+    "orm",
+    "mongo",
+    "mongodb",
+    "mysql",
+    "mariadb",
+    "postgresql",
+    "sqlite",
+    "sqlite3",
+    "ts",
+    "typescript",
+    "js",
+    "javascript",
+    "entity",
+    "ddd",
+    "mikro-orm",
+    "unit-of-work",
+    "data-mapper",
+    "identity-map"
+  ],
+  "type": "module",
+  "author": "Martin Adámek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mikro-orm/mikro-orm/issues"
+  },
+  "homepage": "https://mikro-orm.io",
+  "engines": {
+    "node": ">= 18.12.0"
+  },
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prepublish": "npm run clean && npm run build",
+    "build": "npm run build:all",
+    "watch": "tsc -w -p tsconfig.json",
+    "clean": "git clean -dfqX -- {types,dist,node_modules}/** && rm -rf tsconfig.tsbuildinfo dist types",
+    "build:esm": "TOOL=esbuild FORMAT=esm bun build.ts",
+    "build:cjs": "TOOL=esbuild FORMAT=cjs bun build.ts",
+    "build:bun:esm": "TOOL=bun FORMAT=esm bun build.ts",
+    "build:bun:cjs": "TOOL=bun FORMAT=cjs bun build.ts",
+    "build:bun": "npm run build:bun:cjs && npm run build:bun:esm",
+    "build:all": "npm run build:bun && tsc -p tsconfig.build.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "collection-store": "^3.0.0-beta.23"
+  },
+  "devDependencies": {
+    "@mikro-orm/core": "^6.4.15",
+    "typescript": "next",
+    "vite-plugin-babel": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@mikro-orm/core": "^6.4.15"
+  },
+  "gitHead": "6be7bf4855f9224dda0b6b8fb97230af8a3296f1"
+}

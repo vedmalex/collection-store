@@ -1,0 +1,26 @@
+{
+  "name": "mikro-orm-demo",
+  "module": "src/server.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@mikro-orm/core": "^6.4.15",
+    "@mikro-orm/reflection": "^6.4.15",
+    "@mikro-orm/sqlite": "^6.4.15",
+    "bun-types": "latest",
+    "fastify": "^4.25.2"
+  },
+  "peerDependencies": {
+    "typescript": "next"
+  },
+  "dependencies": {
+    "@mikro-orm/cli": "^6.4.15",
+    "@types/node": "^20.10.4",
+    "acorn-loose": "^8.4.0",
+    "acorn-walk": "^8.3.1",
+    "collection-store-mikro-orm": "workspace:*",
+    "typescript": "next",
+    "vitest": "^1.0.2"
+  },
+  "version": "3.0.0-beta.23"
+}

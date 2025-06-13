@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/connection.ts","./src/driver.ts","./src/platform.ts","./src/mikroorm.ts","./src/schemagenerator.ts","./src/entitymanager.ts","./src/entityrepository.ts"],"version":"5.9.0-dev.20250528"}

@@ -1,0 +1,230 @@
+{
+  "Tag": {
+    "root": "data/:memory:",
+    "name": "Tag",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "order": "asc",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "name",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      }
+    ]
+  },
+  "User": {
+    "root": "data/:memory:",
+    "name": "User",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "order": "asc",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "fullName",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "email",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "password",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "bio",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "token",
+        "order": "asc",
+        "sparse": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "social.twitter",
+        "order": "asc",
+        "sparse": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "social.facebook",
+        "order": "asc",
+        "sparse": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "social.linkedin",
+        "order": "asc",
+        "sparse": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      }
+    ]
+  },
+  "Article": {
+    "root": "data/:memory:",
+    "name": "Article",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "order": "asc",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "slug",
+        "order": "asc",
+        "unique": true,
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "title",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "description",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "text",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      }
+    ]
+  },
+  "Comment": {
+    "root": "data/:memory:",
+    "name": "Comment",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "order": "asc",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "text",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "createdAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "updatedAt",
+        "order": "asc",
+        "required": true,
+        "process": "(item) => get(item, field.key)"
+      }
+    ]
+  },
+  "mikro_orm_migrations": {
+    "root": "data/:memory:",
+    "name": "mikro_orm_migrations",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "order": "asc",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      }
+    ]
+  }
+}
