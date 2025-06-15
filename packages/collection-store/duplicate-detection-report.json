@@ -1,0 +1,903 @@
+{
+  "totalFiles": 160,
+  "duplicateGroups": [
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/query-integration.test.ts",
+          "relativePath": "src/query/query-integration.test.ts",
+          "size": 11015,
+          "lastModified": "2025-06-15T04:11:30.331Z",
+          "hash": "b9782c051e404f4db828cdf35ba4e5384bfee85f8107ed50f7edae00904f1181",
+          "basename": "query-integration.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/__tests__/query-integration.test.ts",
+          "relativePath": "src/query/__tests__/query-integration.test.ts",
+          "size": 11015,
+          "lastModified": "2025-06-15T05:40:07.493Z",
+          "hash": "b9782c051e404f4db828cdf35ba4e5384bfee85f8107ed50f7edae00904f1181",
+          "basename": "query-integration.test.ts"
+        }
+      ],
+      "type": "EXACT",
+      "confidence": 1,
+      "differences": [],
+      "reason": "Identical file content (hash: b9782c05...)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/query-simple-integration.test.ts",
+          "relativePath": "src/query/query-simple-integration.test.ts",
+          "size": 10726,
+          "lastModified": "2025-06-15T04:11:30.331Z",
+          "hash": "502749f893a702790cc3fbc261f2831a92b5b7377118575e250daf6ed8894f6f",
+          "basename": "query-simple-integration.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/__tests__/query-simple-integration.test.ts",
+          "relativePath": "src/query/__tests__/query-simple-integration.test.ts",
+          "size": 10726,
+          "lastModified": "2025-06-15T05:40:14.460Z",
+          "hash": "502749f893a702790cc3fbc261f2831a92b5b7377118575e250daf6ed8894f6f",
+          "basename": "query-simple-integration.test.ts"
+        }
+      ],
+      "type": "EXACT",
+      "confidence": 1,
+      "differences": [],
+      "reason": "Identical file content (hash: 502749f8...)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/__tests__/query-advanced.test.ts",
+          "relativePath": "src/query/__tests__/query-advanced.test.ts",
+          "size": 12248,
+          "lastModified": "2025-06-15T05:40:21.600Z",
+          "hash": "45c1c9fa5803d6f84d86e31c0872155194d70db51da79550efba9cf4c8d339b1",
+          "basename": "query-advanced.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/query-advanced.test.ts",
+          "relativePath": "src/query/query-advanced.test.ts",
+          "size": 12248,
+          "lastModified": "2025-06-15T04:11:30.331Z",
+          "hash": "45c1c9fa5803d6f84d86e31c0872155194d70db51da79550efba9cf4c8d339b1",
+          "basename": "query-advanced.test.ts"
+        }
+      ],
+      "type": "EXACT",
+      "confidence": 1,
+      "differences": [],
+      "reason": "Identical file content (hash: 45c1c9fa...)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transaction/TransactionManager.test.ts",
+          "relativePath": "src/transaction/TransactionManager.test.ts",
+          "size": 10075,
+          "lastModified": "2025-06-15T04:11:30.321Z",
+          "hash": "8b72b56f1021b51284a4a81774f7c2cdd43e8da2131b0d455fb8c5be26129b9d",
+          "basename": "TransactionManager.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transactions/__tests__/TransactionManager2.test.ts",
+          "relativePath": "src/transactions/__tests__/TransactionManager2.test.ts",
+          "size": 10078,
+          "lastModified": "2025-06-15T04:11:30.336Z",
+          "hash": "4034fd2def244659843497f8611dca9467f61a2152223e481c8291cbd32a9faa",
+          "basename": "TransactionManager2.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transaction/TransactionalCollection.test.ts",
+          "relativePath": "src/transaction/TransactionalCollection.test.ts",
+          "size": 16315,
+          "lastModified": "2025-06-15T05:37:46.361Z",
+          "hash": "21e7cd552453a09a3b603d8e0737b5c050aba59396e56469b7ddbaf85e9afb84",
+          "basename": "TransactionalCollection.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transactions/__tests__/TransactionalCollection.test.ts",
+          "relativePath": "src/transactions/__tests__/TransactionalCollection.test.ts",
+          "size": 16333,
+          "lastModified": "2025-06-15T05:39:04.088Z",
+          "hash": "9ae2c1817fca3107f33550418238eb3e72ba44de182b81202ec207df9bc25e0b",
+          "basename": "TransactionalCollection.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (2 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/database/CSDatabase.transaction.test.ts",
+          "relativePath": "src/database/CSDatabase.transaction.test.ts",
+          "size": 8104,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "2c9e4ae366a2b55df17412dfd9ffa02422cdad922fd1bc24f897a2de2b02d414",
+          "basename": "CSDatabase.transaction.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/CSDatabase.transaction.test.ts",
+          "relativePath": "src/core/__test__/CSDatabase.transaction.test.ts",
+          "size": 8086,
+          "lastModified": "2025-06-15T04:49:03.561Z",
+          "hash": "0c4e13fa4087c66c4a6d68d86769c200df836ed68c3a0e88b0199bcefc32d20f",
+          "basename": "CSDatabase.transaction.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/database/CSDatabase.savepoint.test.ts",
+          "relativePath": "src/database/CSDatabase.savepoint.test.ts",
+          "size": 12320,
+          "lastModified": "2025-06-15T04:11:30.317Z",
+          "hash": "2c254b38f415b4a0d992249ae393be029b6347d534ca3a87683a480f2ba1eca9",
+          "basename": "CSDatabase.savepoint.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/CSDatabase.savepoint.test.ts",
+          "relativePath": "src/core/__test__/CSDatabase.savepoint.test.ts",
+          "size": 12315,
+          "lastModified": "2025-06-15T04:49:04.068Z",
+          "hash": "40ccda74d86ac229e07eaba22d9980e13895398c97474f732de6fbe4730cbdcf",
+          "basename": "CSDatabase.savepoint.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/collection/__test__/typed-collection.test.ts",
+          "relativePath": "src/collection/__test__/typed-collection.test.ts",
+          "size": 38112,
+          "lastModified": "2025-06-15T05:38:22.173Z",
+          "hash": "524475f21e4ac902d880b28d75e78f20dfcffbee3bd30899fd087dc100838446",
+          "basename": "typed-collection.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/typed-collection.test.ts",
+          "relativePath": "src/core/__test__/typed-collection.test.ts",
+          "size": 38104,
+          "lastModified": "2025-06-15T05:39:11.100Z",
+          "hash": "4471b0282169b3ed06545c1ac446904c0523ae7244a60c41eb3696799d31bf60",
+          "basename": "typed-collection.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (2 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/collection/__test__/typed-collection-updates.test.ts",
+          "relativePath": "src/collection/__test__/typed-collection-updates.test.ts",
+          "size": 10606,
+          "lastModified": "2025-06-15T05:38:33.290Z",
+          "hash": "c09e36106e216e231eae8e0a53de2ade4844bc3d8619665974edebd7ef7f4468",
+          "basename": "typed-collection-updates.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/typed-collection-updates.test.ts",
+          "relativePath": "src/core/__test__/typed-collection-updates.test.ts",
+          "size": 10598,
+          "lastModified": "2025-06-15T05:39:38.188Z",
+          "hash": "ad9959baaf379cd3e743b35d330d318ff8de6fce3bbf13a19247031aad12eb39",
+          "basename": "typed-collection-updates.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-transaction-coordination.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-transaction-coordination.test.ts",
+          "size": 10428,
+          "lastModified": "2025-06-15T04:48:31.250Z",
+          "hash": "e5da0c45410d0e44fd12378a13c9c7227af62c18fb4ce707e21f59cf169fec17",
+          "basename": "wal-transaction-coordination.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-transaction-coordination.test.ts",
+          "relativePath": "src/wal/wal-transaction-coordination.test.ts",
+          "size": 10427,
+          "lastModified": "2025-06-15T04:11:30.340Z",
+          "hash": "2bb006fe55d838adc83808fe1f223ab1619cc108dba68b63709933d12f87614c",
+          "basename": "wal-transaction-coordination.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-basic.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-basic.test.ts",
+          "size": 12866,
+          "lastModified": "2025-06-15T04:48:34.794Z",
+          "hash": "8ddb202e41282fe91303da5048f1326fc11cf259954bfe7408d4fee315c4cd56",
+          "basename": "wal-basic.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-basic.test.ts",
+          "relativePath": "src/wal/wal-basic.test.ts",
+          "size": 12848,
+          "lastModified": "2025-06-15T04:11:30.339Z",
+          "hash": "c562748666d1966c0fd43c328f6136ff45a1c575d06320f6128c1ae42b5dac00",
+          "basename": "wal-basic.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-storage-integration.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-storage-integration.test.ts",
+          "size": 13722,
+          "lastModified": "2025-06-15T05:40:33.928Z",
+          "hash": "a01b602b6bfcedc5cac7e5f16aa64da0091835f57e5157922d650afd2619f753",
+          "basename": "wal-storage-integration.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-storage-integration.test.ts",
+          "relativePath": "src/wal/wal-storage-integration.test.ts",
+          "size": 13728,
+          "lastModified": "2025-06-15T05:38:03.007Z",
+          "hash": "5b1348faba6c594cf457673c56c53eac8ad49e3222fb255034e61813b5820e6f",
+          "basename": "wal-storage-integration.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/IndexManager.test.ts",
+          "relativePath": "src/core/__test__/IndexManager.test.ts",
+          "size": 12825,
+          "lastModified": "2025-06-15T04:47:55.220Z",
+          "hash": "7915dd964c1dbaaa06cc29cc69d9bbdcee7a31acc197adc1f15db9e938083b15",
+          "basename": "IndexManager.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/index/IndexManager.test.ts",
+          "relativePath": "src/index/IndexManager.test.ts",
+          "size": 12830,
+          "lastModified": "2025-06-15T04:11:30.319Z",
+          "hash": "80d4ed92eaa387eaf7786b33323512239d7711e5b898591fcb9de80b845ad0c9",
+          "basename": "IndexManager.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/CompositeKeyUtils.unified.test.ts",
+          "relativePath": "src/utils/CompositeKeyUtils.unified.test.ts",
+          "size": 12575,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "01220784d1e261a1d771c92fba8b83226b489a74c44e8d6651e78c18af943055",
+          "basename": "CompositeKeyUtils.unified.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/CompositeKeyUtils.unified.test.ts",
+          "relativePath": "src/utils/__test__/CompositeKeyUtils.unified.test.ts",
+          "size": 12578,
+          "lastModified": "2025-06-15T04:11:30.338Z",
+          "hash": "5af1f75168acb5842f54119599aa8dad5567638413138bc818b905fcb6a080fe",
+          "basename": "CompositeKeyUtils.unified.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/SingleKeyUtils.test.ts",
+          "relativePath": "src/utils/__test__/SingleKeyUtils.test.ts",
+          "size": 4166,
+          "lastModified": "2025-06-15T04:11:30.339Z",
+          "hash": "1e46164a68ebd7398d1f20837a31887d39eef447584d57356370cc37f586cac9",
+          "basename": "SingleKeyUtils.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/SingleKeyUtils.test.ts",
+          "relativePath": "src/utils/SingleKeyUtils.test.ts",
+          "size": 4163,
+          "lastModified": "2025-06-15T04:11:30.321Z",
+          "hash": "75cb08860644bdaea1a6fdccacdf43f6bbb7b4e7f3fcdb2b25382d06f88b6bba",
+          "basename": "SingleKeyUtils.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/CompositeKeyUtils.test.ts",
+          "relativePath": "src/utils/__test__/CompositeKeyUtils.test.ts",
+          "size": 11500,
+          "lastModified": "2025-06-15T04:11:30.338Z",
+          "hash": "df69551e7247ce10c2067394e9c6a546141a9c322a144b5fed7a39b977d836f7",
+          "basename": "CompositeKeyUtils.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/CompositeKeyUtils.test.ts",
+          "relativePath": "src/utils/CompositeKeyUtils.test.ts",
+          "size": 11497,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "af06fed469f925cbeb8c579c826ae93ea17a3257098d072faa84691e63a9004a",
+          "basename": "CompositeKeyUtils.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/storage/adapters/__test__/memory-adapter.test.ts",
+          "relativePath": "src/storage/adapters/__test__/memory-adapter.test.ts",
+          "size": 7666,
+          "lastModified": "2025-06-15T05:40:53.991Z",
+          "hash": "1421d97ca3708141558204e9e520f15ed402d0c08b821ae1eec4547db829039d",
+          "basename": "memory-adapter.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/adapters/__test__/memory-adapter-selection.test.ts",
+          "relativePath": "src/adapters/__test__/memory-adapter-selection.test.ts",
+          "size": 7645,
+          "lastModified": "2025-06-15T05:38:46.296Z",
+          "hash": "0132c574a260638dcd5a3def204947e6b7e08c502d503feab960beda20a0b8a6",
+          "basename": "memory-adapter-selection.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/performance-benchmarks.test.ts",
+          "relativePath": "src/performance/performance-benchmarks.test.ts",
+          "size": 16910,
+          "lastModified": "2025-06-15T04:11:30.330Z",
+          "hash": "9e82d5836fbd0aa61602826db2dde9fca7f826e9f10abc07966c914b68a91ff8",
+          "basename": "performance-benchmarks.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/__tests__/performance.test.ts",
+          "relativePath": "src/performance/__tests__/performance.test.ts",
+          "size": 16922,
+          "lastModified": "2025-06-15T04:55:29.764Z",
+          "hash": "dfb6a3a15169434490428f88c16e59a278e81757316d48db289718dd0e8dc6dc",
+          "basename": "performance.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/__tests__/stress-testing.test.ts",
+          "relativePath": "src/performance/__tests__/stress-testing.test.ts",
+          "size": 18956,
+          "lastModified": "2025-06-15T04:55:29.765Z",
+          "hash": "31b6d1f76380106691d6ab9d60363f01448c5d5056a2006628a0f9722e7a5ec3",
+          "basename": "stress-testing.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/stress-testing.test.ts",
+          "relativePath": "src/performance/stress-testing.test.ts",
+          "size": 18950,
+          "lastModified": "2025-06-15T04:11:30.335Z",
+          "hash": "0e2c8f6d1aa54e15b468ed233669688e25f718a0899395a49bfb3f51867011ea",
+          "basename": "stress-testing.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/compile-query-compatibility.test.ts",
+          "relativePath": "src/query/compile-query-compatibility.test.ts",
+          "size": 13949,
+          "lastModified": "2025-06-15T04:11:30.325Z",
+          "hash": "0cb192fd7c683ab2ea5df391e8dcb1f3244d8ed55059c46fc6acc501e58401bf",
+          "basename": "compile-query-compatibility.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/__tests__/compile-query-compatibility.test.ts",
+          "relativePath": "src/query/__tests__/compile-query-compatibility.test.ts",
+          "size": 13943,
+          "lastModified": "2025-06-15T05:40:00.301Z",
+          "hash": "8fede0332c0555e3f9594567df4c172529457e6be93afb133846579e1dff4077",
+          "basename": "compile-query-compatibility.test.ts"
+        }
+      ],
+      "type": "STRUCTURAL",
+      "confidence": 0.9,
+      "differences": [
+        "Different content but identical test structure"
+      ],
+      "reason": "Same test structure (1 describe blocks)"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transaction/TransactionalCollection.test.ts",
+          "relativePath": "src/transaction/TransactionalCollection.test.ts",
+          "size": 16315,
+          "lastModified": "2025-06-15T05:37:46.361Z",
+          "hash": "21e7cd552453a09a3b603d8e0737b5c050aba59396e56469b7ddbaf85e9afb84",
+          "basename": "TransactionalCollection.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/transactions/__tests__/TransactionalCollection.test.ts",
+          "relativePath": "src/transactions/__tests__/TransactionalCollection.test.ts",
+          "size": 16333,
+          "lastModified": "2025-06-15T05:39:04.088Z",
+          "hash": "9ae2c1817fca3107f33550418238eb3e72ba44de182b81202ec207df9bc25e0b",
+          "basename": "TransactionalCollection.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9858156028368794,
+      "differences": [
+        "Line 7: \"import Collection from '../core/Collection'\" vs \"import Collection from '../../core/Collection'\"",
+        "Line 8: \"import { TransactionalCollection, TransactionalListWrapper } from '../transactions/TransactionalCollection'\" vs \"import { TransactionalCollection, TransactionalListWrapper } from '../../transactions/TransactionalCollection'\"",
+        "Line 9: \"import { Item } from '../types/Item'\" vs \"import { Item } from '../../types/Item'\"",
+        "Line 10: \"import { List } from '../storage/List'\" vs \"import { List } from '../../storage/List'\"",
+        "Line 11: \"import AdapterMemory from '../storage/adapters/AdapterMemory'\" vs \"import AdapterMemory from '../../storage/adapters/AdapterMemory'\"",
+        "Line 13: \"import { cleanupTestDirectory, createTestDir } from '../utils/test-utils'\" vs \"import { cleanupTestDirectory, createTestDir } from '../../utils/test-utils'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/database/CSDatabase.transaction.test.ts",
+          "relativePath": "src/database/CSDatabase.transaction.test.ts",
+          "size": 8104,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "2c9e4ae366a2b55df17412dfd9ffa02422cdad922fd1bc24f897a2de2b02d414",
+          "basename": "CSDatabase.transaction.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/CSDatabase.transaction.test.ts",
+          "relativePath": "src/core/__test__/CSDatabase.transaction.test.ts",
+          "size": 8086,
+          "lastModified": "2025-06-15T04:49:03.561Z",
+          "hash": "0c4e13fa4087c66c4a6d68d86769c200df836ed68c3a0e88b0199bcefc32d20f",
+          "basename": "CSDatabase.transaction.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9922779922779923,
+      "differences": [
+        "Line 7: \"import { CSDatabase } from '../core/Database'\" vs \"import { CSDatabase } from '../Database'\"",
+        "Line 8: \"import { ChangeRecord } from '../transactions/TransactionManager'\" vs \"import { ChangeRecord } from '../TransactionManager'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/database/CSDatabase.savepoint.test.ts",
+          "relativePath": "src/database/CSDatabase.savepoint.test.ts",
+          "size": 12320,
+          "lastModified": "2025-06-15T04:11:30.317Z",
+          "hash": "2c254b38f415b4a0d992249ae393be029b6347d534ca3a87683a480f2ba1eca9",
+          "basename": "CSDatabase.savepoint.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/CSDatabase.savepoint.test.ts",
+          "relativePath": "src/core/__test__/CSDatabase.savepoint.test.ts",
+          "size": 12315,
+          "lastModified": "2025-06-15T04:49:04.068Z",
+          "hash": "40ccda74d86ac229e07eaba22d9980e13895398c97474f732de6fbe4730cbdcf",
+          "basename": "CSDatabase.savepoint.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9972375690607734,
+      "differences": [
+        "Line 2: \"import { CSDatabase } from '../core/Database'\" vs \"import { CSDatabase } from '../Database'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/collection/__test__/typed-collection.test.ts",
+          "relativePath": "src/collection/__test__/typed-collection.test.ts",
+          "size": 38112,
+          "lastModified": "2025-06-15T05:38:22.173Z",
+          "hash": "524475f21e4ac902d880b28d75e78f20dfcffbee3bd30899fd087dc100838446",
+          "basename": "typed-collection.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/typed-collection.test.ts",
+          "relativePath": "src/core/__test__/typed-collection.test.ts",
+          "size": 38104,
+          "lastModified": "2025-06-15T05:39:11.100Z",
+          "hash": "4471b0282169b3ed06545c1ac446904c0523ae7244a60c41eb3696799d31bf60",
+          "basename": "typed-collection.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9992795389048992,
+      "differences": [
+        "Line 3: \"import { TypedCollection, createTypedCollection } from '../../core/TypedCollection'\" vs \"import { TypedCollection, createTypedCollection } from '../TypedCollection'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/collection/__test__/typed-collection-updates.test.ts",
+          "relativePath": "src/collection/__test__/typed-collection-updates.test.ts",
+          "size": 10606,
+          "lastModified": "2025-06-15T05:38:33.290Z",
+          "hash": "c09e36106e216e231eae8e0a53de2ade4844bc3d8619665974edebd7ef7f4468",
+          "basename": "typed-collection-updates.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/typed-collection-updates.test.ts",
+          "relativePath": "src/core/__test__/typed-collection-updates.test.ts",
+          "size": 10598,
+          "lastModified": "2025-06-15T05:39:38.188Z",
+          "hash": "ad9959baaf379cd3e743b35d330d318ff8de6fce3bbf13a19247031aad12eb39",
+          "basename": "typed-collection-updates.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9975609756097561,
+      "differences": [
+        "Line 2: \"import { TypedCollection, createTypedCollection } from '../../core/TypedCollection'\" vs \"import { TypedCollection, createTypedCollection } from '../TypedCollection'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/__test__/IndexManager.test.ts",
+          "relativePath": "src/core/__test__/IndexManager.test.ts",
+          "size": 12825,
+          "lastModified": "2025-06-15T04:47:55.220Z",
+          "hash": "7915dd964c1dbaaa06cc29cc69d9bbdcee7a31acc197adc1f15db9e938083b15",
+          "basename": "IndexManager.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/index/IndexManager.test.ts",
+          "relativePath": "src/index/IndexManager.test.ts",
+          "size": 12830,
+          "lastModified": "2025-06-15T04:11:30.319Z",
+          "hash": "80d4ed92eaa387eaf7786b33323512239d7711e5b898591fcb9de80b845ad0c9",
+          "basename": "IndexManager.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9969604863221885,
+      "differences": [
+        "Line 8: \"import { IndexManager, IndexChange } from '../IndexManager'\" vs \"import { IndexManager, IndexChange } from '../core/IndexManager'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-transaction-coordination.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-transaction-coordination.test.ts",
+          "size": 10428,
+          "lastModified": "2025-06-15T04:48:31.250Z",
+          "hash": "e5da0c45410d0e44fd12378a13c9c7227af62c18fb4ce707e21f59cf169fec17",
+          "basename": "wal-transaction-coordination.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-transaction-coordination.test.ts",
+          "relativePath": "src/wal/wal-transaction-coordination.test.ts",
+          "size": 10427,
+          "lastModified": "2025-06-15T04:11:30.340Z",
+          "hash": "2bb006fe55d838adc83808fe1f223ab1619cc108dba68b63709933d12f87614c",
+          "basename": "wal-transaction-coordination.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9875389408099688,
+      "differences": [
+        "Line 9: \"import { WALTransactionManager } from '../WALTransactionManager'\" vs \"import { WALTransactionManager } from '../core/wal/WALTransactionManager'\"",
+        "Line 10: \"import TransactionalAdapterFile from '../../../storage/adapters/TransactionalAdapterFile'\" vs \"import TransactionalAdapterFile from '../storage/adapters/TransactionalAdapterFile'\"",
+        "Line 11: \"import TransactionalAdapterMemory from '../../../storage/adapters/TransactionalAdapterMemory'\" vs \"import TransactionalAdapterMemory from '../storage/adapters/TransactionalAdapterMemory'\"",
+        "Line 12: \"import Collection from '../../Collection'\" vs \"import Collection from '../core/Collection'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-basic.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-basic.test.ts",
+          "size": 12866,
+          "lastModified": "2025-06-15T04:48:34.794Z",
+          "hash": "8ddb202e41282fe91303da5048f1326fc11cf259954bfe7408d4fee315c4cd56",
+          "basename": "wal-basic.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-basic.test.ts",
+          "relativePath": "src/wal/wal-basic.test.ts",
+          "size": 12848,
+          "lastModified": "2025-06-15T04:11:30.339Z",
+          "hash": "c562748666d1966c0fd43c328f6136ff45a1c575d06320f6128c1ae42b5dac00",
+          "basename": "wal-basic.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9934065934065934,
+      "differences": [
+        "Line 9: \"import { FileWALManager } from '../../../wal/FileWALManager'\" vs \"import { FileWALManager } from '../wal/FileWALManager'\"",
+        "Line 10: \"import { MemoryWALManager } from '../../../wal/MemoryWALManager'\" vs \"import { MemoryWALManager } from '../wal/MemoryWALManager'\"",
+        "Line 11: \"import { WALEntry } from '../../../wal/WALTypes'\" vs \"import { WALEntry } from '../wal/WALTypes'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/core/wal/__test__/wal-storage-integration.test.ts",
+          "relativePath": "src/core/wal/__test__/wal-storage-integration.test.ts",
+          "size": 13722,
+          "lastModified": "2025-06-15T05:40:33.928Z",
+          "hash": "a01b602b6bfcedc5cac7e5f16aa64da0091835f57e5157922d650afd2619f753",
+          "basename": "wal-storage-integration.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/wal/wal-storage-integration.test.ts",
+          "relativePath": "src/wal/wal-storage-integration.test.ts",
+          "size": 13728,
+          "lastModified": "2025-06-15T05:38:03.007Z",
+          "hash": "5b1348faba6c594cf457673c56c53eac8ad49e3222fb255034e61813b5820e6f",
+          "basename": "wal-storage-integration.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9899497487437185,
+      "differences": [
+        "Line 9: \"import { WALCollection, WALCollectionConfig } from '../WALCollection'\" vs \"import { WALCollection, WALCollectionConfig } from '../core/wal/WALCollection'\"",
+        "Line 10: \"import { WALDatabase, WALDatabaseConfig } from '../WALDatabase'\" vs \"import { WALDatabase, WALDatabaseConfig } from '../core/wal/WALDatabase'\"",
+        "Line 11: \"import { Item } from '../../../types/Item'\" vs \"import { Item } from '../types/Item'\"",
+        "Line 12: \"import { createTestDir, cleanupTestDirectory } from '../../../utils/test-utils'\" vs \"import { createTestDir, cleanupTestDirectory } from '../utils/test-utils'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/CompositeKeyUtils.unified.test.ts",
+          "relativePath": "src/utils/CompositeKeyUtils.unified.test.ts",
+          "size": 12575,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "01220784d1e261a1d771c92fba8b83226b489a74c44e8d6651e78c18af943055",
+          "basename": "CompositeKeyUtils.unified.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/CompositeKeyUtils.unified.test.ts",
+          "relativePath": "src/utils/__test__/CompositeKeyUtils.unified.test.ts",
+          "size": 12578,
+          "lastModified": "2025-06-15T04:11:30.338Z",
+          "hash": "5af1f75168acb5842f54119599aa8dad5567638413138bc818b905fcb6a080fe",
+          "basename": "CompositeKeyUtils.unified.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9972375690607734,
+      "differences": [
+        "Line 2: \"import { CompositeKeyUtils } from '../utils/CompositeKeyUtils'\" vs \"import { CompositeKeyUtils } from '../../utils/CompositeKeyUtils'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/SingleKeyUtils.test.ts",
+          "relativePath": "src/utils/__test__/SingleKeyUtils.test.ts",
+          "size": 4166,
+          "lastModified": "2025-06-15T04:11:30.339Z",
+          "hash": "1e46164a68ebd7398d1f20837a31887d39eef447584d57356370cc37f586cac9",
+          "basename": "SingleKeyUtils.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/SingleKeyUtils.test.ts",
+          "relativePath": "src/utils/SingleKeyUtils.test.ts",
+          "size": 4163,
+          "lastModified": "2025-06-15T04:11:30.321Z",
+          "hash": "75cb08860644bdaea1a6fdccacdf43f6bbb7b4e7f3fcdb2b25382d06f88b6bba",
+          "basename": "SingleKeyUtils.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.990909090909091,
+      "differences": [
+        "Line 1: \"import { SingleKeyUtils } from '../../utils/SingleKeyUtils'\" vs \"import { SingleKeyUtils } from '../utils/SingleKeyUtils'\""
+      ],
+      "reason": "99% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/__test__/CompositeKeyUtils.test.ts",
+          "relativePath": "src/utils/__test__/CompositeKeyUtils.test.ts",
+          "size": 11500,
+          "lastModified": "2025-06-15T04:11:30.338Z",
+          "hash": "df69551e7247ce10c2067394e9c6a546141a9c322a144b5fed7a39b977d836f7",
+          "basename": "CompositeKeyUtils.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/utils/CompositeKeyUtils.test.ts",
+          "relativePath": "src/utils/CompositeKeyUtils.test.ts",
+          "size": 11497,
+          "lastModified": "2025-06-15T04:11:30.318Z",
+          "hash": "af06fed469f925cbeb8c579c826ae93ea17a3257098d072faa84691e63a9004a",
+          "basename": "CompositeKeyUtils.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9969512195121951,
+      "differences": [
+        "Line 2: \"import { CompositeKeyUtils } from '../../utils/CompositeKeyUtils'\" vs \"import { CompositeKeyUtils } from '../utils/CompositeKeyUtils'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/__tests__/stress-testing.test.ts",
+          "relativePath": "src/performance/__tests__/stress-testing.test.ts",
+          "size": 18956,
+          "lastModified": "2025-06-15T04:55:29.765Z",
+          "hash": "31b6d1f76380106691d6ab9d60363f01448c5d5056a2006628a0f9722e7a5ec3",
+          "basename": "stress-testing.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/performance/stress-testing.test.ts",
+          "relativePath": "src/performance/stress-testing.test.ts",
+          "size": 18950,
+          "lastModified": "2025-06-15T04:11:30.335Z",
+          "hash": "0e2c8f6d1aa54e15b468ed233669688e25f718a0899395a49bfb3f51867011ea",
+          "basename": "stress-testing.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9967845659163987,
+      "differences": [
+        "Line 10: \"import { WALCollection, WALCollectionConfig } from '../../core/wal/WALCollection'\" vs \"import { WALCollection, WALCollectionConfig } from '../core/wal/WALCollection'\"",
+        "Line 11: \"import { WALDatabase, WALDatabaseConfig } from '../../core/wal/WALDatabase'\" vs \"import { WALDatabase, WALDatabaseConfig } from '../core/wal/WALDatabase'\""
+      ],
+      "reason": "100% content similarity"
+    },
+    {
+      "files": [
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/compile-query-compatibility.test.ts",
+          "relativePath": "src/query/compile-query-compatibility.test.ts",
+          "size": 13949,
+          "lastModified": "2025-06-15T04:11:30.325Z",
+          "hash": "0cb192fd7c683ab2ea5df391e8dcb1f3244d8ed55059c46fc6acc501e58401bf",
+          "basename": "compile-query-compatibility.test.ts"
+        },
+        {
+          "path": "/Users/vedmalex/work/collection-store/packages/collection-store/src/query/__tests__/compile-query-compatibility.test.ts",
+          "relativePath": "src/query/__tests__/compile-query-compatibility.test.ts",
+          "size": 13943,
+          "lastModified": "2025-06-15T05:40:00.301Z",
+          "hash": "8fede0332c0555e3f9594567df4c172529457e6be93afb133846579e1dff4077",
+          "basename": "compile-query-compatibility.test.ts"
+        }
+      ],
+      "type": "PARTIAL",
+      "confidence": 0.9978165938864629,
+      "differences": [
+        "Line 3: \"import { compileQuery } from '../query/compile_query'\" vs \"import { compileQuery } from '../compile_query'\""
+      ],
+      "reason": "100% content similarity"
+    }
+  ],
+  "exactDuplicates": 3,
+  "structuralDuplicates": 17,
+  "partialDuplicates": 14,
+  "processingTime": 400.71000000000004,
+  "riskAssessments": {}
+}

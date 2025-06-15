@@ -1,7 +1,465 @@
 # 📋 MEMORY BANK TASKS - Collection Store V6.0
 
-*Последнее обновление: 2025-06-13*
-*Режим: BUILD MODE - GoogleSheetsAdapter Test Fixes*
+*Последнее обновление: 2025-06-15*
+*Режим: READY FOR NEXT TASK*
+*Статус: 🚀 READY FOR VAN MODE - Memory Bank Reset*
+
+---
+
+## 🚀 READY FOR NEW TASK
+
+Memory Bank готов к инициализации новой задачи через **VAN MODE**.
+
+Для начала новой задачи используйте команду или описание задачи, и система автоматически:
+- Определит сложность задачи (Level 1-4)
+- Создаст план выполнения
+- Инициализирует соответствующий workflow
+
+---
+
+## 📦 COMPLETED TASKS ARCHIVE
+
+### ✅ DUPLICATE TESTS ANALYSIS AND CLEANUP - ARCHIVED
+
+### Task Overview
+- **id**: DUPLICATE-TESTS-CLEANUP-2025-06-15
+- **name**: Find and Remove Duplicate Tests Across Project Structure
+- **status**: COMPLETED ✅
+- **priority**: CRITICAL
+- **complexity**: Level 3 (Intermediate Feature)
+- **start_date**: 2025-06-15
+- **planning_completion_date**: 2025-06-15
+- **creative_completion_date**: 2025-06-15
+- **implementation_completion_date**: 2025-06-15
+- **reflection_completion_date**: 2025-06-15
+- **archive_completion_date**: 2025-06-15
+- **mode**: ARCHIVE COMPLETED ✅ - Task Fully Complete
+- **completion**: 100% (All phases complete, comprehensive archive created)
+- **archive_document**: `docs/archive/archive-duplicate-tests-cleanup-2025-06-15.md`
+
+### 🎨 Creative Phase Results
+
+#### ✅ Architecture Decision: Enhanced Parallel Processing Architecture with Test Management
+
+**Chosen Solution**: Enhanced Parallel Processing Architecture with 9 specialized components
+- **C1**: Test File Scanner - File discovery and metadata extraction
+- **C2**: AST Parser & Structure Analyzer - TypeScript parsing and test hierarchy extraction
+- **C3**: Content Analyzer - File hashing and similarity analysis
+- **C4**: Duplicate Detection Engine - Multi-stage duplicate identification
+- **C5**: Risk Assessment Module - Safety evaluation and cleanup planning
+- **C6**: Cleanup Orchestrator - Safe file operations with backup/rollback
+- **C7**: Reporting Engine - Comprehensive analysis and cleanup reports
+- **C8**: Test Structure Organizer ⭐ NEW - Test hierarchy validation and reorganization
+- **C9**: Test Output Manager ⭐ NEW - Large test suite output management and analysis
+
+#### 🏗️ Key Architectural Innovations
+
+1. **Hierarchical Test Signatures** - Novel approach comparing test structure beyond string matching
+2. **Multi-factor Risk Assessment** - Comprehensive safety evaluation considering usage, coverage, history
+3. **Adaptive Worker Pool** - Dynamic scaling based on file characteristics and system resources
+4. **Incremental Processing** - Resume interrupted operations and process updates efficiently
+5. **Test Structure Organization** ⭐ NEW - Enforce `module > category > specific_test` hierarchy
+6. **File-Based Test Analysis** ⭐ NEW - Systematic analysis using `bun test > test_output.log 2>&1`
+
+#### 📊 Enhanced Performance Specifications
+
+- **Target**: Process 358+ files in under 5 minutes
+- **Accuracy**: 99%+ duplicate detection accuracy
+- **Safety**: Zero data loss with comprehensive backup mechanisms
+- **Scalability**: Scales with available CPU cores
+- **Test Structure**: Enforce 3-level hierarchy across all test files ⭐ NEW
+- **Large Suite Management**: File-based analysis for 358+ test files ⭐ NEW
+
+#### 🔧 Enhanced Technical Implementation
+
+**Core Technologies**:
+- TypeScript compiler API for AST parsing
+- Node.js worker threads for parallel processing
+- Fast hashing algorithms (xxHash/Blake3) for content analysis
+- Git integration for backup and rollback operations
+- **Bun test runner** with file-based output management ⭐ NEW
+- **Grep-based analysis** for large test suite processing ⭐ NEW
+
+**Architecture Pattern**: Component-based parallel processing with test structure organization and comprehensive output management
+
+#### 📋 Test Structure Requirements ⭐ NEW
+
+**Required Hierarchy**: `module > category > specific_test`
+
+**Example Structure**:
+```typescript
+describe('core', () => {
+  describe('performance', () => {
+    it('should process 1000 files under 5 minutes', () => {
+      // Test implementation
+    })
+  })
+
+  describe('duplicate-detection', () => {
+    it('should identify exact duplicates with 100% accuracy', () => {
+      // Test implementation
+    })
+  })
+})
+```
+
+**Test Output Management**:
+```bash
+# Mandatory logging pattern
+bun test > test_output.log 2>&1
+
+# Required analysis commands
+grep "(fail)" test_output.log
+grep "(fail)" test_output.log | cut -d'>' -f1 | sort | uniq
+bun test -t "core > performance"
+```
+
+#### ✅ Enhanced Implementation Readiness
+
+- **Design Completeness**: 100% - All 9 components and interfaces defined
+- **Technical Feasibility**: High - Proven patterns and technologies
+- **Risk Assessment**: Low - Comprehensive safety measures designed
+- **Performance Confidence**: High - Parallel architecture meets requirements
+- **Test Structure Compliance**: 100% - Clear hierarchy requirements defined ⭐ NEW
+- **Large Suite Management**: 100% - File-based analysis system designed ⭐ NEW
+
+### 🚀 Ready for Implementation
+
+**Creative Document**: `memory-bank/creative/creative-duplicate-tests-detection-system.md`
+**Architecture Status**: ✅ Complete and validated
+**Next Recommended Mode**: 🔨 **IMPLEMENT MODE**
+
+### Problem Statement
+После реструктуризации проекта обнаружены дублирующиеся тестовые файлы в разных директориях. Необходимо найти тесты, которые совпадают по имени и структуре describe блоков, проанализировать их содержимое и удалить дубликаты.
+
+### Initial Analysis - Detected Duplicates
+
+#### 🔍 Confirmed Duplicate Test Files
+
+**1. TypedCollection Tests**
+- `src/core/__test__/typed-collection.test.ts` (1388 lines)
+- `src/collection/__test__/typed-collection.test.ts` (1388 lines)
+- **Status**: Identical content detected
+- **Describe blocks**: "TypedCollection", "Schema Integration", "Type-Safe Queries"
+
+**2. TypedCollection Updates Tests**
+- `src/core/__test__/typed-collection-updates.test.ts`
+- `src/collection/__test__/typed-collection-updates.test.ts`
+- **Status**: Identical describe block "TypedCollection Type-safe Update Operations"
+
+**3. Query Advanced Tests**
+- `src/query/query-advanced.test.ts`
+- `src/query/__tests__/query-advanced.test.ts`
+- **Status**: Identical describe block "Query Advanced Features Tests"
+
+### Planning Phase Requirements
+
+#### Phase 1: Comprehensive Duplicate Detection
+- [ ] Scan all test files in project (358+ files detected)
+- [ ] Extract describe block hierarchies from each test file
+- [ ] Compare test structures by name and nesting
+- [ ] Generate duplicate detection report
+- [ ] Identify file size and content similarities
+
+#### Phase 2: Content Analysis
+- [ ] Compare actual test content for suspected duplicates
+- [ ] Analyze test data and assertions
+- [ ] Check for functional differences between duplicates
+- [ ] Document which files are canonical vs duplicates
+
+#### Phase 3: Safe Cleanup Strategy
+- [ ] Determine which duplicate files to remove
+- [ ] Verify test coverage is maintained
+- [ ] Create backup of files before deletion
+- [ ] Update any import references if needed
+
+#### Phase 4: Validation
+- [ ] Run full test suite after cleanup
+- [ ] Verify no tests are lost or broken
+- [ ] Document cleanup results
+- [ ] Update project documentation
+
+### Technical Approach
+
+#### Detection Strategy
+1. **File Pattern Analysis**: Find files with identical names in different directories
+2. **Describe Block Extraction**: Parse all describe() calls and create hierarchy maps
+3. **Content Comparison**: Use file hashing and diff analysis for suspected duplicates
+4. **Import Analysis**: Check if duplicate files are actually imported/used
+
+#### Tools and Methods
+- Regex pattern matching for describe blocks
+- File content hashing for exact duplicates
+- AST parsing for structural comparison
+- Test runner validation for functionality
+
+### Detailed Implementation Plan
+
+#### 🔍 Phase 1: Comprehensive Duplicate Detection (Estimated: 2 hours)
+
+**Step 1.1: Create Test File Inventory**
+- [ ] Generate complete list of all .test.ts files in project
+- [ ] Extract file paths, sizes, and modification dates
+- [ ] Group files by basename (e.g., "typed-collection.test.ts")
+- [ ] Create initial duplicate candidates list
+
+**Step 1.2: Extract Test Structure Signatures**
+- [ ] Parse each test file for describe() blocks
+- [ ] Create hierarchical test structure maps
+- [ ] Generate "test signatures" based on describe block names and nesting
+- [ ] Compare signatures to identify structural duplicates
+
+**Step 1.3: Content Hash Analysis**
+- [ ] Generate MD5/SHA256 hashes for each test file
+- [ ] Identify files with identical hashes (exact duplicates)
+- [ ] Create similarity matrix for files with similar hashes
+- [ ] Flag high-similarity files for manual review
+
+**Tools for Phase 1:**
+```bash
+# Find all test files
+find src/ -name "*.test.ts" -type f
+
+# Extract describe blocks
+grep -r "describe(" src/ --include="*.test.ts"
+
+# Generate file hashes
+find src/ -name "*.test.ts" -exec md5sum {} \;
+```
+
+#### 🔬 Phase 2: Content Analysis (Estimated: 3 hours)
+
+**Step 2.1: Detailed Content Comparison**
+- [ ] Compare suspected duplicate files line by line
+- [ ] Identify functional differences vs cosmetic differences
+- [ ] Analyze test data, assertions, and setup code
+- [ ] Document differences and their significance
+
+**Step 2.2: Import and Usage Analysis**
+- [ ] Check which duplicate files are actually imported
+- [ ] Analyze test runner configuration for included files
+- [ ] Identify "dead" test files that aren't executed
+- [ ] Map dependencies and references
+
+**Step 2.3: Test Coverage Analysis**
+- [ ] Run test coverage reports for each duplicate file
+- [ ] Identify unique test cases in each duplicate
+- [ ] Ensure no test coverage is lost during cleanup
+- [ ] Create test coverage preservation plan
+
+**Tools for Phase 2:**
+```bash
+# Compare files
+diff -u file1.test.ts file2.test.ts
+
+# Find imports
+grep -r "import.*test" src/
+
+# Test coverage
+bun test --coverage
+```
+
+#### 🧹 Phase 3: Safe Cleanup Strategy (Estimated: 2 hours)
+
+**Step 3.1: Cleanup Decision Matrix**
+- [ ] Categorize duplicates by risk level (Low/Medium/High)
+- [ ] Determine canonical file for each duplicate group
+- [ ] Create removal priority list
+- [ ] Plan merge strategy for files with unique content
+
+**Step 3.2: Backup and Safety Measures**
+- [ ] Create git branch for cleanup work
+- [ ] Backup all files to be modified/deleted
+- [ ] Create rollback plan
+- [ ] Set up automated test validation
+
+**Step 3.3: Systematic Cleanup Execution**
+- [ ] Remove exact duplicates (Low Risk)
+- [ ] Merge unique content from duplicates (Medium Risk)
+- [ ] Manual review for complex cases (High Risk)
+- [ ] Update import statements if needed
+
+**Cleanup Priority Order:**
+1. **Exact Duplicates** (identical hashes) - Safe to remove
+2. **Structural Duplicates** (same describe blocks, different content) - Merge unique parts
+3. **Name Duplicates** (same filename, different structure) - Manual review
+
+#### ✅ Phase 4: Validation (Estimated: 1 hour)
+
+**Step 4.1: Test Suite Validation**
+- [ ] Run complete test suite after each cleanup batch
+- [ ] Verify test count and coverage metrics
+- [ ] Check for broken imports or missing tests
+- [ ] Validate performance impact
+
+**Step 4.2: Documentation and Reporting**
+- [ ] Document all removed files and reasons
+- [ ] Update project documentation
+- [ ] Create cleanup summary report
+- [ ] Update test organization guidelines
+
+**Validation Commands:**
+```bash
+# Run all tests
+bun test
+
+# Check test count
+find src/ -name "*.test.ts" | wc -l
+
+# Verify no broken imports
+bun run build
+```
+
+### Implementation Tools and Scripts
+
+#### Duplicate Detection Script
+```typescript
+// duplicate-detector.ts
+interface TestFile {
+  path: string;
+  hash: string;
+  size: number;
+  describeBlocks: string[];
+  signature: string;
+}
+
+class DuplicateDetector {
+  async scanTestFiles(): Promise<TestFile[]> {
+    // Implementation for scanning and analyzing test files
+  }
+
+  findDuplicates(files: TestFile[]): DuplicateGroup[] {
+    // Implementation for finding duplicate groups
+  }
+}
+```
+
+#### Test Structure Analyzer
+```typescript
+// test-analyzer.ts
+class TestStructureAnalyzer {
+  extractDescribeBlocks(filePath: string): string[] {
+    // Parse TypeScript AST to extract describe blocks
+  }
+
+  generateTestSignature(describeBlocks: string[]): string {
+    // Create unique signature for test structure
+  }
+}
+```
+
+### Risk Assessment
+- **Low Risk**: Removing exact duplicates with no functional differences
+- **Medium Risk**: Files with subtle differences that might be intentional
+- **High Risk**: Files that appear duplicate but serve different purposes
+
+### Expected Outcomes
+
+#### Immediate Benefits
+- Reduced codebase size and complexity
+- Eliminated confusion from duplicate tests
+- Improved test maintenance efficiency
+- Cleaner project structure
+
+#### Long-term Benefits
+- Easier navigation for developers
+- Reduced CI/CD execution time
+- Better test organization
+- Improved code quality metrics
+
+### Success Criteria
+- [ ] All duplicate test files identified and catalogued
+- [ ] Duplicate files safely removed without losing test coverage
+- [ ] Test suite continues to pass at 100% rate
+- [ ] Project structure is cleaner and more maintainable
+- [ ] Documentation updated to reflect changes
+
+### Estimated Timeline
+- **Total Effort**: 8 hours
+- **Phase 1**: 2 hours (Detection)
+- **Phase 2**: 3 hours (Analysis)
+- **Phase 3**: 2 hours (Cleanup)
+- **Phase 4**: 1 hour (Validation)
+
+### Next Steps
+1. Begin with Phase 1: Comprehensive Duplicate Detection
+2. Create automated tools for duplicate detection
+3. Generate detailed duplicate analysis report
+4. Proceed with safe cleanup based on analysis results
+
+### 🎨 Creative Phase Requirements
+
+#### Components Requiring Creative Design
+
+**1. Duplicate Detection Algorithm Design**
+- **Challenge**: Efficiently compare 358+ test files for structural and content similarities
+- **Design Decisions**:
+  - Algorithm for test signature generation
+  - Similarity threshold determination
+  - Performance optimization for large file sets
+- **Creative Phase**: Algorithm Architecture Design
+
+**2. Test Structure Analysis System**
+- **Challenge**: Parse TypeScript AST to extract meaningful test hierarchies
+- **Design Decisions**:
+  - AST parsing strategy for describe/it blocks
+  - Hierarchical signature generation
+  - Handling of nested and dynamic test structures
+- **Creative Phase**: Parser Architecture Design
+
+**3. Safe Cleanup Strategy Framework**
+- **Challenge**: Determine which duplicates to remove without breaking functionality
+- **Design Decisions**:
+  - Risk assessment criteria
+  - Merge strategy for partial duplicates
+  - Rollback and validation mechanisms
+- **Creative Phase**: Safety Framework Design
+
+### Mode Transition Recommendation
+
+Based on the complexity analysis and creative requirements identified:
+
+**🎨 RECOMMENDED NEXT MODE: CREATIVE MODE**
+
+**Rationale:**
+- Multiple architectural decisions required for duplicate detection system
+- Algorithm design needed for efficient file comparison
+- Safety framework design critical for risk-free cleanup
+- Tool architecture decisions will impact implementation success
+
+**Creative Phase Focus Areas:**
+1. **Duplicate Detection Algorithm Architecture**
+2. **Test Structure Analysis System Design**
+3. **Safe Cleanup Strategy Framework**
+
+### Planning Phase Summary
+
+#### ✅ Planning Completed
+- [x] Problem analysis and scope definition
+- [x] Initial duplicate detection (3 confirmed duplicate groups)
+- [x] Comprehensive 4-phase implementation plan
+- [x] Risk assessment and safety measures
+- [x] Timeline and resource estimation
+- [x] Success criteria definition
+- [x] Creative phase requirements identification
+
+#### 📊 Planning Metrics
+- **Complexity Level**: Level 3 (Intermediate Feature) ✅
+- **Estimated Effort**: 8 hours
+- **Risk Level**: Medium (manageable with proper safety measures)
+- **Creative Components**: 3 major design decisions required
+- **Implementation Phases**: 4 well-defined phases
+- **Success Probability**: High (with creative phase completion)
+
+#### 🎯 Key Planning Achievements
+1. **Comprehensive Scope**: Identified 358+ test files to analyze
+2. **Systematic Approach**: 4-phase plan with clear deliverables
+3. **Safety First**: Multiple backup and validation mechanisms
+4. **Tool-Driven**: Automated detection and analysis tools planned
+5. **Risk Management**: Clear categorization and handling strategies
+
+**PLAN MODE STATUS**: ✅ **COMPLETED**
+**NEXT RECOMMENDED MODE**: 🔄 **CREATIVE MODE**
 
 ---
 
@@ -10,13 +468,28 @@
 ### Task Overview
 - **id**: GOOGLESHEETSADAPTER-TEST-FIXES-2025-06-13
 - **name**: Fix GoogleSheetsAdapter Test Failures
-- **status**: COMPLETED ✅
+- **status**: ARCHIVED ✅
 - **priority**: HIGH
 - **complexity**: Level 2 (Simple Enhancement)
 - **start_date**: 2025-06-13
 - **completion_date**: 2025-06-13
-- **mode**: BUILD MODE
+- **reflection_date**: 2025-06-15
+- **archive_date**: 2025-06-15
+- **mode**: ARCHIVE MODE
 - **completion**: 100% ✅
+
+### Archive Status
+- **Archive Document**: `docs/archive/archive-test-files-migration-googlesheetsadapter-2025-06-15.md`
+- **Reflection Document**: `memory-bank/reflection/reflection-test-files-migration-2025-06-15.md`
+- **Archive Quality**: Comprehensive (Level 2)
+- **Knowledge Preserved**: Complete implementation details, lessons learned, future considerations
+- **Status**: ✅ FULLY ARCHIVED AND DOCUMENTED
+
+### Task Completion Summary
+- ✅ **Implementation**: 100% complete (37/37 tests passing)
+- ✅ **Reflection**: Comprehensive analysis completed
+- ✅ **Archive**: Full documentation preserved
+- ✅ **Knowledge Transfer**: Patterns and solutions documented for future use
 
 ### Final Results
 **Initial State**: 15 failed tests
@@ -915,7 +1388,7 @@ src/
 
 ---
 
-*Последнее обновление: 2025-06-13*
+*Последнее обновление: 2025-06-15*
 *CREATIVE Mode: Bun Testing Architecture Complete*
 *Implementation Status: 85% Complete*
 *Ready for Bun Testing Migration*
