@@ -1,0 +1,41 @@
+core:
+  name: test-store
+  version: 1.0.0
+  environment: development
+  nodeId: test-node-1
+  clusterId: test-cluster
+
+adapters:
+  file:
+    type: markdown
+    enabled: true
+    priority: 1
+    role: primary
+    config:
+      basePath: ./data
+      filePattern: "**/*.md"
+      encoding: utf8
+
+features:
+  replication:
+    enabled: false
+  realtime:
+    enabled: false
+  offline:
+    enabled: false
+  analytics:
+    enabled: false
+
+indexManager:
+  enabled: true
+  btreeOptions:
+    degree: 3
+    unique: false
+  performance:
+    cacheSize: 1000
+    enableProfiling: false
+    slowQueryThreshold: 100
+  transactions:
+    enabled: true
+    timeout: 5000
+    maxConcurrent: 100

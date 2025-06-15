@@ -3,6 +3,7 @@
 
 import { ExternalAdapter } from '../base/ExternalAdapter';
 import {
+  AdapterConfig,
   AdapterQuery,
   AdapterData,
   AdapterResult,
@@ -23,7 +24,7 @@ export class EnhancedMongoDBAdapter extends ExternalAdapter {
   private activeSessions: Map<string, ClientSession> = new Map();
 
   constructor(config: MongoDBAdapterConfig) {
-    super(config.id, config.type, config);
+    super(config.id, config.type, config as AdapterConfig);
   }
 
   // Abstract method implementations

@@ -1,0 +1,11 @@
+core:
+  name: test-store
+  version: 1.0.0
+  environment: development
+  invalid_yaml_syntax: [
+    - item1
+    - item2
+  # Missing closing bracket
+adapters:
+  file:
+    type: markdown

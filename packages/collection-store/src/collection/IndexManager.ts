@@ -1,7 +1,7 @@
 import { BPlusTree, ValueType, TransactionContext } from 'b-pl-tree';
 import { IIndexManager, IndexDefinition } from './IIndexManager';
 import { v4 as uuidv4 } from 'uuid';
-import { ITransactionResource } from '../../transactions/interfaces/ITransactionResource';
+import { ITransactionResource } from '../transactions/interfaces/ITransactionResource';
 
 interface Index<T> {
   tree: BPlusTree<T, ValueType>;

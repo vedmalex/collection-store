@@ -1,0 +1,21 @@
+core:
+  name: test-store
+  version: 1.0.0
+  environment: invalid_environment  # Invalid environment value
+
+adapters:
+  file:
+    type: invalid_type  # Invalid adapter type
+    enabled: "not_boolean"  # Should be boolean
+    priority: "not_number"  # Should be number
+    role: invalid_role  # Invalid role
+
+features:
+  replication:
+    enabled: "not_boolean"  # Should be boolean
+  realtime:
+    enabled: false
+  offline:
+    enabled: false
+  analytics:
+    enabled: false

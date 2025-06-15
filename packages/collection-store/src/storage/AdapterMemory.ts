@@ -1,6 +1,6 @@
 import { IStorageAdapter } from './IGenericStorageAdapter';
 import { v4 as uuidv4 } from 'uuid';
-import { ITransactionResource } from '../../transactions/interfaces/ITransactionResource';
+import { ITransactionResource } from '../transactions/interfaces/ITransactionResource';
 
 interface DocumentWithId<T> extends Record<string, any> {
   _id: string;
@@ -52,8 +52,6 @@ export class AdapterMemory<T> implements IStorageAdapter<T>, ITransactionResourc
     targetStore.set(key, value);
   }
 
-  async delete(key: string, tmTxId?: string): Promise<void>;
-  async delete(collection: string, id: string): Promise<void>;
   async delete(keyOrCollection: string, tmTxIdOrId?: string): Promise<void> {
     // If no second parameter, treat as key-value delete
     if (!tmTxIdOrId) {
@@ -61,7 +59,26 @@ export class AdapterMemory<T> implements IStorageAdapter<T>, ITransactionResourc
       return;
     }
 
-    // Try to resolve as a TM txId first
+    // Check if this is a collection operation by checking if the collection exists
+    // and the second parameter doesn't look like a transaction ID
+    const isCollectionOperation = this.collections.has(keyOrCollection) &&
+      !this._tmTxToInternalTxMap.has(tmTxIdOrId) &&
+      !this.transactions.has(tmTxIdOrId);
+
+    if (isCollectionOperation) {
+      // This is a collection delete operation (collection, id)
+      const collection = keyOrCollection;
+      const id = tmTxIdOrId;
+
+      const collectionStore = this.collections.get(collection);
+      if (!collectionStore) {
+        return;
+      }
+      collectionStore.delete(id);
+      return;
+    }
+
+    // Try to resolve as a TM txId
     let internalTxId: string | undefined;
     if (this._tmTxToInternalTxMap.has(tmTxIdOrId)) {
       internalTxId = this._tmTxToInternalTxMap.get(tmTxIdOrId)!;
@@ -81,15 +98,8 @@ export class AdapterMemory<T> implements IStorageAdapter<T>, ITransactionResourc
       return;
     }
 
-    // Otherwise, treat as collection delete (collection, id) if it's not a transaction ID
-    const collection = keyOrCollection;
-    const id = tmTxIdOrId;
-
-    const collectionStore = this.collections.get(collection);
-    if (!collectionStore) {
-      return;
-    }
-    collectionStore.delete(id);
+    // If we reach here, treat as key-value delete
+    this.store.delete(keyOrCollection);
   }
 
   async keys(tmTxId?: string): Promise<string[]> {

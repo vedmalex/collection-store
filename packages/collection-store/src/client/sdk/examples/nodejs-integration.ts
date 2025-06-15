@@ -2,8 +2,12 @@
  * Phase 5: Client Integration - Node.js Integration Example
  *
  * Пример интеграции Client SDK с Node.js приложением (Express.js)
+ *
+ * Note: This example requires optional dependencies:
+ * npm install express @types/express socket.io @types/socket.io
  */
 
+// @ts-ignore - Optional dependency for example
 import express from 'express'
 import { ClientSDK } from '../core/ClientSDK'
 import { ClientSDKConfig } from '../interfaces/IClientSDK'
@@ -517,6 +521,7 @@ app.get('/api/sdk/stats', requireSDK, authenticate, async (req, res) => {
  * WebSocket для real-time обновлений
  */
 import { createServer } from 'http'
+// @ts-ignore - Optional dependency for example
 import { Server as SocketIOServer } from 'socket.io'
 
 const server = createServer(app)

@@ -4,6 +4,7 @@
 import { MongoClient, Db, Collection, ChangeStream, ChangeStreamDocument } from 'mongodb';
 import { ExternalAdapter } from '../base/ExternalAdapter';
 import {
+  AdapterConfig,
   AdapterQuery,
   AdapterData,
   AdapterResult,
@@ -22,7 +23,7 @@ export class MongoDBAdapter extends ExternalAdapter {
   private collections: Map<string, Collection> = new Map();
 
   constructor(config: MongoDBAdapterConfig) {
-    super(config.id, config.type, config);
+    super(config.id, config.type, config as AdapterConfig);
   }
 
   // Abstract method implementations
