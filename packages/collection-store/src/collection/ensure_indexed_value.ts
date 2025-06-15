@@ -1,6 +1,6 @@
 import { get, set } from 'lodash-es'
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { IdGeneratorFunction } from '../types/IdGeneratorFunction'
 import { ValueType } from 'b-pl-tree'
 

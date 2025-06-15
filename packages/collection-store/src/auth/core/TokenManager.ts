@@ -1,8 +1,8 @@
 // Token Manager Implementation for Collection Store Auth System
 // Handles JWT token generation, validation, and management
 
-import { CSDatabase } from '../../CSDatabase'
-import { IDataCollection } from '../../IDataCollection'
+import { CSDatabase } from '../../core/Database'
+import { IDataCollection } from '../../types/IDataCollection'
 import {
   ITokenManager,
   ITokenStorage,

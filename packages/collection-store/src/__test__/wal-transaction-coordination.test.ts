@@ -6,10 +6,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
-import { WALTransactionManager } from '../WALTransactionManager'
-import TransactionalAdapterFile from '../TransactionalAdapterFile'
-import TransactionalAdapterMemory from '../TransactionalAdapterMemory'
-import Collection from '../collection'
+import { WALTransactionManager } from '../core/wal/WALTransactionManager'
+import TransactionalAdapterFile from '../storage/adapters/TransactionalAdapterFile'
+import TransactionalAdapterMemory from '../storage/adapters/TransactionalAdapterMemory'
+import Collection from '../core/Collection'
 
 describe('WAL Transaction Coordination', () => {
   const testDir = './test-data/wal-coordination-test'

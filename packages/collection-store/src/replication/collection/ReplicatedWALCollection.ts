@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'events'
-import { WALCollection } from '../../WALCollection'
+import { WALCollection } from '../../core/wal/WALCollection'
 import { ReplicatedWALManager, ReplicatedWALOptions } from '../wal/ReplicatedWALManager'
 import { NetworkManager } from '../network/NetworkManager'
 import { ClusterConfig } from '../types/ReplicationTypes'

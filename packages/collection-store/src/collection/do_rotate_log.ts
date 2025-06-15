@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { copy_collection } from './copy_collection'
 
 export async function do_rotate_log<T extends Item>(

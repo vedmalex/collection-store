@@ -2,12 +2,12 @@ import { Item } from '../types/Item'
 import {
   ICollectionConfig,
   ISerializedCollectionConfig,
-} from '../ICollectionConfig'
+} from '../types/ICollectionConfig'
 import { List } from '../storage/List'
-import AdapterMemory from '../AdapterMemory'
-import AdapterFile from '../AdapterFile'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
+import AdapterFile from '../storage/adapters/AdapterFile'
 import { FileStorage } from '../storage/FileStorage'
-import { deserializeIndex } from '../collection'
+import { deserializeIndex } from '../core/Collection'
 
 export function deserialize_collection_config<T extends Item>(
   config: ISerializedCollectionConfig,

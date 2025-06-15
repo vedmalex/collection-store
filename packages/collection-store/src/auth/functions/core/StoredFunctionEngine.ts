@@ -5,7 +5,7 @@ import { EventEmitter } from 'events'
 import { performance } from 'perf_hooks'
 import { createHash } from 'crypto'
 
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type { IAuthManager } from '../../interfaces/IAuthManager'
 import type { IAuditLogger } from '../../interfaces/IAuditLogger'
 

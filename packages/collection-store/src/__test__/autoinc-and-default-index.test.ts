@@ -1,5 +1,5 @@
-import Collection from '../collection'
-import AdapterMemory from '../AdapterMemory'
+import Collection from '../core/Collection'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { List } from '../storage/List'
 import { Item } from '../types/Item'
 import { cleanupTestDirectory, createTestDir } from './test-utils'

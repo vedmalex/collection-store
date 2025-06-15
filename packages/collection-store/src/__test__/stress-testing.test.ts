@@ -7,8 +7,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
 import { performance } from 'perf_hooks'
-import { WALCollection, WALCollectionConfig } from '../WALCollection'
-import { WALDatabase, WALDatabaseConfig } from '../WALDatabase'
+import { WALCollection, WALCollectionConfig } from '../core/wal/WALCollection'
+import { WALDatabase, WALDatabaseConfig } from '../core/wal/WALDatabase'
 import { Item } from '../types/Item'
 
 interface TestItem extends Item {

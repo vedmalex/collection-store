@@ -10,8 +10,8 @@
  */
 
 import { EventEmitter } from 'events'
-import type { CSDatabase } from '../../CSDatabase'
-import type { IDataCollection } from '../../IDataCollection'
+import type { CSDatabase } from '../../core/Database'
+import type { IDataCollection } from '../../types/IDataCollection'
 import {
   FileMetadata,
   FileListFilters,

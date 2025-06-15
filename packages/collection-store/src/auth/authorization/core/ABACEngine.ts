@@ -1,4 +1,4 @@
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type { User } from '../../interfaces/types'
 import type {
   ResourceDescriptor,

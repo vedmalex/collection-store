@@ -4,11 +4,11 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
-import Collection from '../collection'
-import { TransactionalCollection, TransactionalListWrapper } from '../TransactionalCollection'
+import Collection from '../core/Collection'
+import { TransactionalCollection, TransactionalListWrapper } from '../transactions/TransactionalCollection'
 import { Item } from '../types/Item'
 import { List } from '../storage/List'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { z } from 'zod'
 import { cleanupTestDirectory, createTestDir } from './test-utils'
 

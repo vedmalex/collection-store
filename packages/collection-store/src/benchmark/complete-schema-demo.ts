@@ -2,11 +2,11 @@
 
 import { readFileSync } from 'fs'
 import * as path from 'path'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { List } from '../storage/List'
 import {
   createTypedCollection
-} from '../TypedCollection'
+} from '../core/TypedCollection'
 import { TypedSchemaDefinition } from '../types/typed-schema'
 import { Item } from '../types/Item'
 import {

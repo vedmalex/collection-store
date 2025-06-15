@@ -1,5 +1,5 @@
-import { ICollectionConfig } from '../ICollectionConfig'
-import Collection from '../collection'
+import { ICollectionConfig } from '../types/ICollectionConfig'
+import Collection from '../core/Collection'
 import { Person } from './Person'
 
 export const create = async (config: ICollectionConfig<Person>) => {

@@ -1,4 +1,4 @@
-import Collection from '../collection'
+import Collection from '../core/Collection'
 
 interface Product {
   id: number
@@ -23,7 +23,7 @@ export async function singleKeySortOrderDemo() {
     id: 'id',
     root: './data/',
     list: new (await import('../storage/List')).List<Product>(),
-    adapter: new (await import('../AdapterMemory')).default<Product>()
+    adapter: new (await import('../storage/adapters/AdapterMemory')).default<Product>()
   })
 
   // Create indexes with different sort orders

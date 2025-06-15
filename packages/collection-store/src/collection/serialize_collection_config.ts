@@ -1,6 +1,6 @@
 import { Item } from '../types/Item'
-import { ISerializedCollectionConfig } from '../ICollectionConfig'
-import Collection, { serializeIndex } from '../collection'
+import { ISerializedCollectionConfig } from '../types/ICollectionConfig'
+import Collection, { serializeIndex } from '../core/Collection'
 
 export function serialize_collection_config<T extends Item>(
   collection: Collection<T>,

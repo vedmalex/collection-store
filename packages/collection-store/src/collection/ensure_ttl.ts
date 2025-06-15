@@ -1,6 +1,6 @@
 import { Item } from '../types/Item'
 import { ValueType } from 'b-pl-tree'
-import Collection, { ttl_key } from '../collection'
+import Collection, { ttl_key } from '../core/Collection'
 
 export async function ensure_ttl<T extends Item>(collection: Collection<T>) {
   if (collection.ttl) {

@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { return_list_if_valid } from './return_list_if_valid'
 import { ValueType } from 'b-pl-tree'
 

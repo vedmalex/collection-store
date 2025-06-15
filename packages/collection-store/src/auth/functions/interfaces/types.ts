@@ -1,5 +1,5 @@
 // Core types for Stored Functions & Procedures System
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type { User } from '../../interfaces/types'
 
 // ============================================================================

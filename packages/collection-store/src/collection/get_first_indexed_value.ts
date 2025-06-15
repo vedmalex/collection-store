@@ -1,6 +1,6 @@
 import { Paths } from '../types/Paths'
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { return_one_if_valid } from './return_one_if_valid'
 import { ValueType } from 'b-pl-tree'
 

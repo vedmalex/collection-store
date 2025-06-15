@@ -11,7 +11,7 @@ import {
   LogIndex,
   RaftError
 } from './types'
-import { WALDatabase } from '../../WALDatabase'
+import { WALDatabase } from '../../core/wal/WALDatabase'
 
 export interface RaftStateMachineConfig {
   nodeId: string

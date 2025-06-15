@@ -3,8 +3,8 @@
 
 import { simpleGit, SimpleGit, StatusResult, LogResult, BranchSummary } from 'simple-git';
 import { EventEmitter } from 'events';
-import fs from 'fs-extra';
-import path from 'path';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export interface GitIntegrationConfig {
   enabled: boolean;
@@ -78,6 +78,12 @@ export class GitManager extends EventEmitter {
       this.config.enabled = false;
       this.git = null as any; // Will be handled by enabled check
       this.resourceManager = new ResourceManager(this.config.limits, this.config.performance);
+
+      // Create dummy components to prevent undefined errors
+      this.statusMonitor = null as any;
+      this.historyTracker = null as any;
+      this.branchWatcher = null as any;
+      this.conflictDetector = null as any;
 
       // Emit error but don't throw - allow adapter to continue without git
       process.nextTick(() => {
@@ -239,27 +245,37 @@ export class GitManager extends EventEmitter {
   }
 
   async startMonitoring(): Promise<void> {
+    if (!this.config.enabled || !this.git) {
+      return; // Silently return if git is not available
+    }
+
     if (!this.isInitialized) {
       throw new Error('GitManager not initialized');
     }
 
-    if (this.config.features.statusMonitoring) {
+    if (this.config.features.statusMonitoring && this.statusMonitor) {
       this.statusMonitor.startMonitoring();
     }
 
-    if (this.config.features.branchWatching) {
+    if (this.config.features.branchWatching && this.branchWatcher) {
       this.branchWatcher.startMonitoring();
     }
 
-    if (this.config.features.conflictDetection) {
+    if (this.config.features.conflictDetection && this.conflictDetector) {
       this.conflictDetector.startMonitoring();
     }
   }
 
   async stopMonitoring(): Promise<void> {
-    this.statusMonitor.stopMonitoring();
-    this.branchWatcher.stopMonitoring();
-    this.conflictDetector.stopMonitoring();
+    if (this.statusMonitor) {
+      this.statusMonitor.stopMonitoring();
+    }
+    if (this.branchWatcher) {
+      this.branchWatcher.stopMonitoring();
+    }
+    if (this.conflictDetector) {
+      this.conflictDetector.stopMonitoring();
+    }
   }
 
   getStatus(): {

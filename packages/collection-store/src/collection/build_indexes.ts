@@ -1,7 +1,7 @@
 import { IndexDef } from '../types/IndexDef'
 import { Item } from '../types/Item'
 import { Dictionary } from '../types/Dictionary'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { create_index } from './create_index'
 
 export function build_indexes<T extends Item>(

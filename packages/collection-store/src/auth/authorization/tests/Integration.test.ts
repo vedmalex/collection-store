@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
-import { CSDatabase } from '../../../CSDatabase'
+import { CSDatabase } from '../../../core/Database'
 import { AuthorizationEngine } from '../core/AuthorizationEngine'
 import { RBACEngine } from '../core/RBACEngine'
 import { ABACEngine } from '../core/ABACEngine'

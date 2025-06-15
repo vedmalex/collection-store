@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { AdapterMemory } from '../AdapterMemory';
+import { AdapterMemory }  from '../AdapterMemory';
 
 describe('AdapterMemory', () => {
-  let adapter: AdapterMemory;
+  let adapter: AdapterMemory<any>;
 
   beforeEach(async () => {
-    adapter = new AdapterMemory();
+    adapter = new AdapterMemory<any>();
     await adapter.init();
   });
 

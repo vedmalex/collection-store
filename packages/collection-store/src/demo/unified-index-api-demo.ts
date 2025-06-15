@@ -1,6 +1,6 @@
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { List } from '../storage/List'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { IndexDef } from '../types/IndexDef'
 
 interface Product {

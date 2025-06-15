@@ -1,8 +1,8 @@
 // User Manager Implementation for Collection Store Auth System
 // Handles user CRUD operations, password management, and security
 
-import { CSDatabase } from '../../CSDatabase'
-import { IDataCollection } from '../../IDataCollection'
+import { CSDatabase } from '../../core/Database'
+import { IDataCollection } from '../../types/IDataCollection'
 import {
   IUserManager,
   User,

@@ -1,6 +1,6 @@
 import { Item } from '../types/Item'
 import { ValueType } from 'b-pl-tree'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 
 export async function validate_indexed_value_for_update<T extends Item>(
   collection: Collection<T>,

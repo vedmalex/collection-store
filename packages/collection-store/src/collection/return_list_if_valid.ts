@@ -1,6 +1,6 @@
 import { Item } from '../types/Item'
 import { ensure_ttl } from './ensure_ttl'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { is_valid_ttl } from './is_valid_ttl'
 
 export async function return_list_if_valid<T extends Item>(

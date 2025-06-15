@@ -1,6 +1,7 @@
 import { BPlusTree, ValueType, TransactionContext } from 'b-pl-tree';
 import { IIndexManager, IndexDefinition } from './IIndexManager';
 import { v4 as uuidv4 } from 'uuid';
+import { ITransactionResource } from '../../transactions/interfaces/ITransactionResource';
 
 interface Index<T> {
   tree: BPlusTree<T, ValueType>;
@@ -16,10 +17,11 @@ interface TransactionChange {
   docId: string;
 }
 
-export class IndexManager<T> implements IIndexManager<T> {
+export class IndexManager<T> implements IIndexManager<T>, ITransactionResource {
   private indexes: Map<keyof T, Index<T>> = new Map();
   private transactions: Map<string, TransactionContext<T, ValueType>[]> = new Map();
   private transactionChanges: Map<string, TransactionChange[]> = new Map();
+  private _tmTxToInternalTxMap = new Map<string, string>(); // Map TransactionManager's txId to IndexManager's internal txId
 
   public async createIndex(field: keyof T, unique: boolean): Promise<void> {
     if (this.indexes.has(field)) {
@@ -34,20 +36,22 @@ export class IndexManager<T> implements IIndexManager<T> {
     const index = this.indexes.get(field);
     if (!index) return;
 
-    if (txId) {
+    const internalTxId = txId ? this._tmTxToInternalTxMap.get(txId) || txId : undefined; // Resolve TM txId to internal
+
+    if (internalTxId) {
       // Track transaction changes for proper isolation
-      const changes = this.transactionChanges.get(txId) || [];
+      const changes = this.transactionChanges.get(internalTxId) || [];
       changes.push({ type: 'add', field, value, docId });
-      this.transactionChanges.set(txId, changes);
+      this.transactionChanges.set(internalTxId, changes);
 
       // Get or create transaction context for this index
-      const txContexts = this.transactions.get(txId) || [];
-      let txContext = txContexts.find(ctx => ctx === txContexts.find(c => c instanceof TransactionContext));
+      const txContexts = this.transactions.get(internalTxId) || [];
+      let txContext = txContexts.find(ctx => ctx instanceof TransactionContext);
 
       if (!txContext) {
         txContext = new TransactionContext(index.tree);
         txContexts.push(txContext);
-        this.transactions.set(txId, txContexts);
+        this.transactions.set(internalTxId, txContexts);
       }
 
       // b-pl-tree v1.3.1 handles both unique and non-unique indexes correctly
@@ -72,20 +76,22 @@ export class IndexManager<T> implements IIndexManager<T> {
     const index = this.indexes.get(field);
     if (!index) return;
 
-    if (txId) {
+    const internalTxId = txId ? this._tmTxToInternalTxMap.get(txId) || txId : undefined; // Resolve TM txId to internal
+
+    if (internalTxId) {
       // Track transaction changes for proper isolation
-      const changes = this.transactionChanges.get(txId) || [];
+      const changes = this.transactionChanges.get(internalTxId) || [];
       changes.push({ type: 'remove', field, value, docId });
-      this.transactionChanges.set(txId, changes);
+      this.transactionChanges.set(internalTxId, changes);
 
       // Get or create transaction context for this index
-      const txContexts = this.transactions.get(txId) || [];
-      let txContext = txContexts.find(ctx => ctx === txContexts.find(c => c instanceof TransactionContext));
+      const txContexts = this.transactions.get(internalTxId) || [];
+      let txContext = txContexts.find(ctx => ctx instanceof TransactionContext);
 
       if (!txContext) {
         txContext = new TransactionContext(index.tree);
         txContexts.push(txContext);
-        this.transactions.set(txId, txContexts);
+        this.transactions.set(internalTxId, txContexts);
       }
 
       // b-pl-tree v1.3.1 handles removal correctly for both unique and non-unique indexes
@@ -175,8 +181,9 @@ export class IndexManager<T> implements IIndexManager<T> {
   }
 
   public async commit(txId: string): Promise<void> {
-    const txContexts = this.transactions.get(txId);
-    if (!txContexts) throw new Error(`Transaction ${txId} not found.`);
+    const internalTxId = this._tmTxToInternalTxMap.has(txId) ? this._tmTxToInternalTxMap.get(txId)! : txId;
+    const txContexts = this.transactions.get(internalTxId);
+    if (!txContexts) throw new Error(`Transaction ${internalTxId} not found.`);
 
     // b-pl-tree v1.3.1 has fully working transaction commit mechanism
     // Use proper 2PC protocol for ACID compliance
@@ -198,14 +205,24 @@ export class IndexManager<T> implements IIndexManager<T> {
       throw error;
     } finally {
       // Cleanup transaction state
-      this.transactions.delete(txId);
-      this.transactionChanges.delete(txId);
+      this.transactions.delete(internalTxId);
+      this.transactionChanges.delete(internalTxId);
+      if (this._tmTxToInternalTxMap.has(txId)) {
+        this._tmTxToInternalTxMap.delete(txId);
+      }
     }
   }
 
   public async rollback(txId: string): Promise<void> {
-    const txContexts = this.transactions.get(txId);
-    if (!txContexts) throw new Error(`Transaction ${txId} not found.`);
+    const internalTxId = this._tmTxToInternalTxMap.has(txId) ? this._tmTxToInternalTxMap.get(txId)! : txId;
+    const txContexts = this.transactions.get(internalTxId);
+    if (!txContexts) {
+      console.warn(`Transaction ${internalTxId} not found during rollback. It might have already been cleaned up.`);
+      if (this._tmTxToInternalTxMap.has(txId)) {
+        this._tmTxToInternalTxMap.delete(txId);
+      }
+      return;
+    }
 
     // b-pl-tree v1.3.1 has fully working rollback mechanism
     for (const txContext of txContexts) {
@@ -213,7 +230,25 @@ export class IndexManager<T> implements IIndexManager<T> {
     }
 
     // Cleanup transaction state
-    this.transactions.delete(txId);
-    this.transactionChanges.delete(txId);
+    this.transactions.delete(internalTxId);
+    this.transactionChanges.delete(internalTxId);
+    if (this._tmTxToInternalTxMap.has(txId)) {
+      this._tmTxToInternalTxMap.delete(txId);
+    }
+  }
+
+  // ITransactionResource specific methods
+  public async prepareCommit(tmTxId: string): Promise<boolean> {
+    const internalTxId = await this.beginTransaction();
+    this._tmTxToInternalTxMap.set(tmTxId, internalTxId);
+    return true; // IndexManager can always prepare for now
+  }
+
+  public async finalizeCommit(tmTxId: string): Promise<void> {
+    const internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+    if (!internalTxId) {
+      throw new Error(`Internal transaction for TM TxId ${tmTxId} not found during finalizeCommit.`);
+    }
+    await this.commit(internalTxId);
   }
 }

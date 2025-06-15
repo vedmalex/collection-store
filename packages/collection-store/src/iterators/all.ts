@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { query } from '../query'
 import { TraverseCondition } from '../types/TraverseCondition'
 

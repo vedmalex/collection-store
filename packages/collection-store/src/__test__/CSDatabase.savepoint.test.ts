@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
-import { CSDatabase } from '../CSDatabase'
+import { CSDatabase } from '../core/Database'
 import path from 'path'
 import fs from 'fs-extra'
 

@@ -5,11 +5,11 @@
  * that provides MongoDB-style operators with full TypeScript support.
  */
 
-import { createTypedCollection } from '../TypedCollection'
+import { createTypedCollection } from '../core/TypedCollection'
 import { TypedSchemaDefinition } from '../types/typed-schema'
 import { Item } from '../types/Item'
 import { List } from '../storage/List'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 
 // Example interface
 interface User extends Item {

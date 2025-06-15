@@ -1,4 +1,4 @@
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type { User, AuthContext } from '../../interfaces/types'
 import type {
   IAuthorizationEngine,

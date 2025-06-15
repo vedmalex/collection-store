@@ -9,7 +9,7 @@ import {
   CollectionStoreTransaction,
   ITransactionResource,
   ChangeRecord
-} from '../TransactionManager'
+} from '../transactions/TransactionManager'
 
 // Mock resource for testing
 class MockResource implements ITransactionResource {

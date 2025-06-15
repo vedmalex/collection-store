@@ -1,7 +1,7 @@
 // Main Authentication Manager Interface for Collection Store Auth System
 // Acts as a facade for all authentication and authorization operations
 
-import { CSDatabase } from '../../CSDatabase'
+import { CSDatabase } from '../../core/Database'
 import {
   User,
   AuthCredentials,

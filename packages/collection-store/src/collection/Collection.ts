@@ -1,4 +1,4 @@
-import { IStorageAdapter } from '../storage/IStorageAdapter';
+import { IStorageAdapter } from '../storage/IGenericStorageAdapter';
 import { IIndexManager } from './IIndexManager';
 import { v4 as uuidv4 } from 'uuid';
 import { QueryEngine } from '../query/QueryEngine';

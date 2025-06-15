@@ -2,7 +2,7 @@
 // Basic functionality tests
 
 import { describe, it, expect, beforeEach } from 'bun:test'
-import { CSDatabase } from '../../CSDatabase'
+import { CSDatabase } from '../../core/Database'
 import { UserManager } from '../core/UserManager'
 import { TEST_AUTH_CONFIG } from '../config/defaults'
 import { CreateUserData, UpdateUserData } from '../interfaces/types'

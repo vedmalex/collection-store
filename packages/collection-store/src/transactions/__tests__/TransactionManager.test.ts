@@ -23,13 +23,21 @@ describe('TransactionManager', () => {
     it('should commit a successful transaction', async () => {
         const doc = { id: '1', email: 'test@example.com' };
 
-        const result = await transactionManager.execute(async (txStorage, txIndexes) => {
-            await txStorage.set(doc.id, doc);
-            await txIndexes.add('email', doc.email, doc.id);
-            return 'success';
-        });
+        const txId = await transactionManager.beginTransaction();
+        const transaction = transactionManager.getTransaction(txId);
+        transaction.addAffectedResource(storage);
+        transaction.addAffectedResource(indexes);
 
-        expect(result).toBe('success');
+        // Prepare the transaction first (2PC Phase 1)
+        const prepared = await transaction.prepare();
+        expect(prepared).toBe(true);
+
+        // Now perform operations (this will work because prepare created the internal mappings)
+        await storage.set(doc.id, doc, txId);
+        await indexes.add('email', doc.email, doc.id, txId);
+
+        // Commit the transaction (2PC Phase 2)
+        await transaction.commit();
 
         // Verify data is in the main stores
         const storedDoc = await storage.get(doc.id);
@@ -46,16 +54,25 @@ describe('TransactionManager', () => {
 
         const doc2 = { id: '2', email: 'test@example.com' }; // Duplicate email
 
-        const promise = transactionManager.execute(async (txStorage, txIndexes) => {
-            await txStorage.set(doc2.id, doc2);
-            // This should fail due to unique constraint in the real index manager logic
-            // But our transactional add in IndexManager is simplified.
-            // Let's simulate failure by throwing an error.
-            await txIndexes.add('email', doc2.email, doc2.id);
-            throw new Error("Simulated unique constraint violation");
-        });
+        const txId = await transactionManager.beginTransaction();
+        const transaction = transactionManager.getTransaction(txId);
+        transaction.addAffectedResource(storage);
+        transaction.addAffectedResource(indexes);
 
-        await expect(promise).rejects.toThrow("Simulated unique constraint violation");
+        try {
+            // Prepare the transaction first (2PC Phase 1)
+            const prepared = await transaction.prepare();
+            expect(prepared).toBe(true);
+
+            await storage.set(doc2.id, doc2, txId);
+            // This line should ideally cause a unique constraint violation in a real index manager,
+            // but we will explicitly throw an error here to simulate a transaction failure.
+            await indexes.add('email', doc2.email, doc2.id, txId);
+            throw new Error("Simulated unique constraint violation");
+        } catch (error: any) {
+            await transaction.rollback();
+            expect(error.message).toBe("Simulated unique constraint violation");
+        }
 
         // Verify the second document was not committed
         const storedDoc = await storage.get(doc2.id);
@@ -66,11 +83,21 @@ describe('TransactionManager', () => {
         const storageRollbackSpy = spyOn(storage, 'rollback');
         const indexRollbackSpy = spyOn(indexes, 'rollback');
 
-        const promise = transactionManager.execute(async (txStorage, txIndexes) => {
-            throw new Error("Failure");
-        });
+        const txId = await transactionManager.beginTransaction();
+        const transaction = transactionManager.getTransaction(txId);
+        transaction.addAffectedResource(storage);
+        transaction.addAffectedResource(indexes);
 
-        await expect(promise).rejects.toThrow("Failure");
+        try {
+            // Prepare the transaction first (2PC Phase 1)
+            const prepared = await transaction.prepare();
+            expect(prepared).toBe(true);
+
+            throw new Error("Failure");
+        } catch (error: any) {
+            await transaction.rollback();
+            expect(error.message).toBe("Failure");
+        }
 
         expect(storageRollbackSpy).toHaveBeenCalledTimes(1);
         expect(indexRollbackSpy).toHaveBeenCalledTimes(1);

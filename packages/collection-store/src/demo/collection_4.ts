@@ -1,6 +1,6 @@
-import { ICollectionConfig } from '../ICollectionConfig'
+import { ICollectionConfig } from '../types/ICollectionConfig'
 import { Person } from './Person'
-import AdapterFile from '../AdapterFile'
+import AdapterFile from '../storage/adapters/AdapterFile'
 import { List } from '../storage/List'
 
 export const collection_config: ICollectionConfig<Person> = {

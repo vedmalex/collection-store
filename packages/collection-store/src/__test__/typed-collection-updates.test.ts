@@ -1,9 +1,9 @@
 import { describe, test, expect, beforeEach, afterEach, afterAll } from 'bun:test'
-import { TypedCollection, createTypedCollection } from '../TypedCollection'
+import { TypedCollection, createTypedCollection } from '../core/TypedCollection'
 import { TypedSchemaDefinition } from '../types/typed-schema'
 import { Item } from '../types/Item'
 import { List } from '../storage/List'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { cleanupTestDirectory, cleanupTestDirectories, createTestDir } from './test-utils'
 
 // Test interfaces

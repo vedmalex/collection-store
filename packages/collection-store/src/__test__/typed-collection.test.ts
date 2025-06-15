@@ -1,9 +1,9 @@
 // Tests for TypedCollection - demonstrating type safety and schema integration
 import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
-import { TypedCollection, createTypedCollection } from '../TypedCollection'
+import { TypedCollection, createTypedCollection } from '../core/TypedCollection'
 import { TypedSchemaDefinition, CompleteTypedSchema } from '../types/typed-schema'
 import { Item } from '../types/Item'
-import AdapterMemory from '../AdapterMemory'
+import AdapterMemory from '../storage/adapters/AdapterMemory'
 import { List } from '../storage/List'
 import { cleanupTestDirectory, cleanupTestDirectories, createTestDir } from './test-utils'
 

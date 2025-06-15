@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
-import { CSDatabase } from '../CSDatabase'
-import { ChangeRecord } from '../TransactionManager'
+import { CSDatabase } from '../core/Database'
+import { ChangeRecord } from '../transactions/TransactionManager'
 import fs from 'node:fs'
 import path from 'node:path'
 

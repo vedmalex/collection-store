@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
-import { CSDatabase } from '../../CSDatabase'
+import { CSDatabase } from '../../core/Database'
 import { FileMetadataManager } from '../core/FileMetadataManager'
 import { FileMetadata, FileListFilters, FileSearchQuery } from '../interfaces/types'
 import { FileNotFoundError, FileValidationError } from '../interfaces/errors'

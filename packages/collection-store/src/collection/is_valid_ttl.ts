@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection, { ttl_key } from '../collection'
+import Collection, { ttl_key } from '../core/Collection'
 
 export function is_valid_ttl<T extends Item>(
   collection: Collection<T>,

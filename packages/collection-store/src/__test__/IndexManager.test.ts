@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach } from 'bun:test'
 import { BPlusTree } from 'b-pl-tree'
-import { IndexManager, IndexChange } from '../IndexManager'
+import { IndexManager, IndexChange } from '../core/IndexManager'
 
 describe('IndexManager', () => {
   let btree: BPlusTree<string, string>

@@ -1,21 +1,33 @@
-import { IStorageAdapter } from './IStorageAdapter';
+import { IStorageAdapter } from './IGenericStorageAdapter';
 import { v4 as uuidv4 } from 'uuid';
+import { ITransactionResource } from '../../transactions/interfaces/ITransactionResource';
 
 interface DocumentWithId<T> extends Record<string, any> {
   _id: string;
 }
 
-export class AdapterMemory<T> implements IStorageAdapter<T> {
+export class AdapterMemory<T> implements IStorageAdapter<T>, ITransactionResource {
   private store: Map<string, T> = new Map();
   private transactions: Map<string, Map<string, T | null>> = new Map();
+  private _tmTxToInternalTxMap = new Map<string, string>(); // Map TransactionManager's txId to AdapterMemory's internal txId
 
   // Collection-based storage: collection -> id -> document
   private collections: Map<string, Map<string, DocumentWithId<T>>> = new Map();
   private collectionTransactions: Map<string, Map<string, Map<string, DocumentWithId<T> | null>>> = new Map();
 
-  async get(key: string, txId?: string): Promise<T | null> {
-    if (txId && this.transactions.has(txId)) {
-      const txStore = this.transactions.get(txId)!;
+  async get(key: string, tmTxId?: string): Promise<T | null> {
+    let internalTxId: string | undefined;
+    if (tmTxId) {
+      internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+      if (!internalTxId) {
+        // If TM txId is provided but no internal tx is mapped, it means prepareCommit was not called.
+        // For read operations, we can fall back to the main store.
+        return this.store.get(key) ?? null;
+      }
+    }
+
+    if (internalTxId && this.transactions.has(internalTxId)) {
+      const txStore = this.transactions.get(internalTxId)!;
       if (txStore.has(key)) {
         return txStore.get(key) ?? null;
       }
@@ -23,63 +35,97 @@ export class AdapterMemory<T> implements IStorageAdapter<T> {
     return this.store.get(key) ?? null;
   }
 
-  async set(key: string, value: T, txId?: string): Promise<void> {
-    const targetStore = txId ? this.transactions.get(txId) : this.store;
+  async set(key: string, value: T, tmTxId?: string): Promise<void> {
+    let internalTxId: string | undefined;
+    if (tmTxId) {
+      internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+      if (!internalTxId) {
+        throw new Error(`Transaction with id ${tmTxId} not found. Call prepareCommit first.`);
+      }
+    }
+
+    const targetStore = internalTxId ? this.transactions.get(internalTxId) : this.store;
     if (!targetStore) {
-        if(txId) throw new Error(`Transaction with id ${txId} not found.`);
-        return;
+        // This case should ideally not happen if internalTxId is properly managed
+        throw new Error(`Internal transaction store for id ${internalTxId} not found.`);
     }
     targetStore.set(key, value);
   }
 
-  async delete(key: string, txId?: string): Promise<void>;
+  async delete(key: string, tmTxId?: string): Promise<void>;
   async delete(collection: string, id: string): Promise<void>;
-  async delete(keyOrCollection: string, txIdOrId?: string): Promise<void> {
+  async delete(keyOrCollection: string, tmTxIdOrId?: string): Promise<void> {
     // If no second parameter, treat as key-value delete
-    if (!txIdOrId) {
+    if (!tmTxIdOrId) {
       this.store.delete(keyOrCollection);
       return;
     }
 
-    // Check if we have an active transaction with this ID
-    if (this.transactions.has(txIdOrId)) {
-      // This is a transaction ID, treat as key-value delete
-      const txStore = this.transactions.get(txIdOrId)!;
+    // Try to resolve as a TM txId first
+    let internalTxId: string | undefined;
+    if (this._tmTxToInternalTxMap.has(tmTxIdOrId)) {
+      internalTxId = this._tmTxToInternalTxMap.get(tmTxIdOrId)!;
+    } else if (this.transactions.has(tmTxIdOrId)) {
+      // It might be an internal txId directly passed (e.g., from AdapterMemory's own calls)
+      internalTxId = tmTxIdOrId;
+    }
+
+    if (tmTxIdOrId && !internalTxId) {
+      // If a tmTxId was provided but no internalTxId was resolved, it means prepareCommit wasn't called.
+      throw new Error(`Transaction with id ${tmTxIdOrId} not found. Call prepareCommit first.`);
+    }
+
+    if (internalTxId) {
+      const txStore = this.transactions.get(internalTxId)!;
       txStore.set(keyOrCollection, null); // Mark as deleted in transaction
       return;
     }
 
-    // Otherwise, treat as collection delete (collection, id)
+    // Otherwise, treat as collection delete (collection, id) if it's not a transaction ID
     const collection = keyOrCollection;
-    const id = txIdOrId;
+    const id = tmTxIdOrId;
 
     const collectionStore = this.collections.get(collection);
     if (!collectionStore) {
-      // Silently ignore deletes from non-existent collections
       return;
     }
-
     collectionStore.delete(id);
   }
 
-  async keys(txId?: string): Promise<string[]> {
-    // This is a simplification. A real implementation would need to merge
-    // keys from the main store and the transaction store.
-    if(txId) console.warn('keys() in a transaction is not fully supported and may yield inconsistent results.');
+  async keys(tmTxId?: string): Promise<string[]> {
+    let internalTxId: string | undefined;
+    if (tmTxId) {
+      internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+      if (!internalTxId) {
+        // If TM txId is provided but no internal tx is mapped, we can't implicitly start a tx for reads.
+        // Just proceed with main store or return null if no main store entry.
+        return Array.from(this.store.keys());
+      }
+    }
+
+    if(internalTxId) console.warn('keys() in a transaction is not fully supported and may yield inconsistent results.');
     return Array.from(this.store.keys());
   }
 
-  async clear(txId?: string): Promise<void> {
-    if(txId){
-        const txStore = this.transactions.get(txId);
-        if(!txStore) throw new Error(`Transaction with id ${txId} not found.`);
-        txStore.clear(); // This might not be what we want. Needs careful thought.
-                         // For now, it clears the transaction context.
+  async clear(tmTxId?: string): Promise<void> {
+    let internalTxId: string | undefined;
+    if (tmTxId) {
+      internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+      if (!internalTxId) {
+        throw new Error(`Transaction with id ${tmTxId} not found. Call prepareCommit first.`);
+      }
+    }
+
+    if(internalTxId){
+        const txStore = this.transactions.get(internalTxId);
+        if(!txStore) throw new Error(`Transaction with id ${internalTxId} not found.`);
+        txStore.clear();
     } else {
         this.store.clear();
     }
   }
 
+  // IStorageAdapter's beginTransaction method
   async beginTransaction(): Promise<string> {
     const txId = uuidv4();
     this.transactions.set(txId, new Map());
@@ -87,10 +133,14 @@ export class AdapterMemory<T> implements IStorageAdapter<T> {
     return txId;
   }
 
+  // Unified commit method satisfying IStorageAdapter and used by ITransactionResource's finalizeCommit
   async commit(txId: string): Promise<void> {
-    const txStore = this.transactions.get(txId);
+    // Determine the actual internal txId to commit
+    const internalTxId = this._tmTxToInternalTxMap.has(txId) ? this._tmTxToInternalTxMap.get(txId)! : txId;
+
+    const txStore = this.transactions.get(internalTxId);
     if (!txStore) {
-      throw new Error(`Transaction with id ${txId} not found.`);
+      throw new Error(`Transaction with id ${internalTxId} not found.`);
     }
 
     // Commit key-value store changes
@@ -103,7 +153,7 @@ export class AdapterMemory<T> implements IStorageAdapter<T> {
     }
 
     // Commit collection changes
-    const collectionTxStore = this.collectionTransactions.get(txId);
+    const collectionTxStore = this.collectionTransactions.get(internalTxId);
     if (collectionTxStore) {
       for (const [collectionName, collectionChanges] of collectionTxStore.entries()) {
         if (!this.collections.has(collectionName)) {
@@ -121,16 +171,49 @@ export class AdapterMemory<T> implements IStorageAdapter<T> {
       }
     }
 
-    this.transactions.delete(txId);
-    this.collectionTransactions.delete(txId);
+    this.transactions.delete(internalTxId);
+    // Clean up mapping if it was a TM transaction
+    if (this._tmTxToInternalTxMap.has(txId)) {
+      this._tmTxToInternalTxMap.delete(txId);
+    }
   }
 
+  // Unified rollback method satisfying IStorageAdapter and ITransactionResource
   async rollback(txId: string): Promise<void> {
-    if (!this.transactions.has(txId)) {
-      throw new Error(`Transaction with id ${txId} not found.`);
+    // Determine the actual internal txId to rollback
+    const internalTxId = this._tmTxToInternalTxMap.has(txId) ? this._tmTxToInternalTxMap.get(txId)! : txId;
+
+    if (!this.transactions.has(internalTxId)) {
+      console.warn(`Transaction with id ${internalTxId} not found during rollback. It might have already been cleaned up.`);
+      // Clean up mapping if it was a TM transaction and still exists
+      if (this._tmTxToInternalTxMap.has(txId)) {
+        this._tmTxToInternalTxMap.delete(txId);
+      }
+      return; // Already rolled back or never started
     }
-    this.transactions.delete(txId);
-    this.collectionTransactions.delete(txId);
+
+    this.transactions.delete(internalTxId);
+    this.collectionTransactions.delete(internalTxId);
+
+    // Clean up mapping if it was a TM transaction
+    if (this._tmTxToInternalTxMap.has(txId)) {
+      this._tmTxToInternalTxMap.delete(txId);
+    }
+  }
+
+  // ITransactionResource specific methods
+  async prepareCommit(tmTxId: string): Promise<boolean> {
+    const internalTxId = await this.beginTransaction();
+    this._tmTxToInternalTxMap.set(tmTxId, internalTxId);
+    return true; // Memory adapter can always prepare
+  }
+
+  async finalizeCommit(tmTxId: string): Promise<void> {
+    const internalTxId = this._tmTxToInternalTxMap.get(tmTxId);
+    if (!internalTxId) {
+      throw new Error(`Internal transaction for TM TxId ${tmTxId} not found during finalizeCommit.`);
+    }
+    await this.commit(internalTxId);
   }
 
   async init(): Promise<void> {

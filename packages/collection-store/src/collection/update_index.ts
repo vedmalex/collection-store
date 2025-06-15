@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { ValueType } from 'b-pl-tree'
 
 export async function update_index<T extends Item>(

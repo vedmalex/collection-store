@@ -5,7 +5,7 @@
 
 import { EventEmitter } from 'events'
 import type { User } from '../../auth/interfaces/types'
-import type { CSDatabase } from '../../CSDatabase'
+import type { CSDatabase } from '../../core/Database'
 // import type { AuthorizationEngine } from '../../auth/core/AuthorizationEngine'
 // import type { AuditLogger } from '../../auth/core/AuditLogger'
 import type {

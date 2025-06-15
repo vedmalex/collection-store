@@ -17,6 +17,7 @@ import {
   AdapterEvent,
   AdapterEventHandler
 } from './types/AdapterTypes';
+import { merge } from 'lodash-es'; // Import merge for deep cloning
 
 export abstract class ExternalAdapter extends EventEmitter implements IExternalAdapter {
   protected _state: AdapterState = AdapterState.INACTIVE;
@@ -57,8 +58,8 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
       this.setState(AdapterState.INACTIVE);
       this.emit('STATE_CHANGE', { type: 'STATE_CHANGE', adapterId: this.id, timestamp: new Date(), data: { state: this._state } });
     } catch (error) {
-      this.setState(AdapterState.ERROR);
       this.recordError(error as Error);
+      this.setState(AdapterState.ERROR);
       throw error;
     }
   }
@@ -119,17 +120,28 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
 
   async restart(): Promise<void> {
     await this.stop();
+    await this.initialize();
     await this.start();
   }
 
   // Health monitoring
   async getHealth(): Promise<AdapterHealth> {
     try {
-      const health = await this.doHealthCheck();
+      const healthDetails = await this.doHealthCheck();
+      let status: AdapterHealth['status'];
+
+      if (this.isHealthy()) {
+        status = 'healthy';
+      } else if (healthDetails.status) { // Use status from doHealthCheck if adapter is not healthy
+        status = healthDetails.status;
+      } else {
+        status = 'unhealthy';
+      }
+
       return {
-        status: this.isHealthy() ? 'healthy' : 'unhealthy',
+        status: status,
         lastCheck: new Date(),
-        details: health
+        details: healthDetails
       };
     } catch (error) {
       return {
@@ -146,7 +158,8 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
 
   // Configuration management
   async updateConfig(config: Partial<AdapterConfig>): Promise<void> {
-    const newConfig = { ...this._config, ...config };
+    const newConfig = merge({}, this._config, config);
+
     if (await this.validateConfig(newConfig)) {
       this._config = newConfig;
       await this.doConfigUpdate(config);
@@ -155,7 +168,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
     }
   }
 
-  async validateConfig(config: AdapterConfig): Promise<boolean> {
+  async validateConfig(config: Partial<AdapterConfig>): Promise<boolean> {
     return this.doValidateConfig(config);
   }
 
@@ -269,7 +282,7 @@ export abstract class ExternalAdapter extends EventEmitter implements IExternalA
   protected abstract doStop(): Promise<void>;
   protected abstract doHealthCheck(): Promise<Record<string, any>>;
   protected abstract doConfigUpdate(config: Partial<AdapterConfig>): Promise<void>;
-  protected abstract doValidateConfig(config: AdapterConfig): Promise<boolean>;
+  protected abstract doValidateConfig(config: Partial<AdapterConfig>): Promise<boolean>;
   protected abstract doPing(): Promise<boolean>;
   protected abstract doUnsubscribe(subscriptionId: string): Promise<void>;
 

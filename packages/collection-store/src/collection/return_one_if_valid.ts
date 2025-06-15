@@ -1,5 +1,5 @@
 import { Item } from '../types/Item'
-import Collection from '../collection'
+import Collection from '../core/Collection'
 import { ensure_ttl } from './ensure_ttl'
 import { is_valid_ttl } from './is_valid_ttl'
 

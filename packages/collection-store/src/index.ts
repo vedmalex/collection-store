@@ -1,18 +1,50 @@
-import AdapterFile from './AdapterFile'
-import Collection from './collection'
-import { IDataCollection } from './IDataCollection'
+// NEW MODULAR STRUCTURE - Recommended for all new projects
+
+// Core Module - Main collection classes and database
+export * from './core'
+
+// Storage Module - Adapters and storage components
+export * from './storage'
+
+// Transactions Module - Transaction management
+export * from './transactions'
+
+// Query Module - Query processing and utilities
+export * from './query'
+
+// Client Module - Client-side functionality
+export * from './client'
+
+// Browser SDK Module
+export * from './browser-sdk'
+
+// Monitoring Module
+export * from './monitoring'
+
+// Types Module - Shared types and interfaces
+export * from './types'
+
+// Utils Module - Utility functions
+export * from './utils'
+
+// LEGACY COMPATIBILITY LAYER - For backward compatibility
+// These imports maintain the old API structure
+
+import AdapterFile from './storage/adapters/AdapterFile'
+import Collection from './core/Collection'
+import { IDataCollection } from './types/IDataCollection'
 import { List } from './storage/List'
 import { copy_collection } from './collection/copy_collection'
-import AdapterMemory from './AdapterMemory'
+import AdapterMemory from './storage/adapters/AdapterMemory'
 import { FileStorage } from './storage/FileStorage'
 import type { Item } from './types/Item'
 
 // Main TypedCollection API - recommended for all new projects
-export { TypedCollection, createTypedCollection, createSchemaCollection } from './TypedCollection'
+export { TypedCollection, createTypedCollection, createSchemaCollection } from './core/TypedCollection'
 export type {
   TypedCollectionConfig,
   TypedSchemaValidationResult
-} from './TypedCollection'
+} from './core/TypedCollection'
 
 // Typed Schema System
 export type {
@@ -42,24 +74,24 @@ export { FileStorage }
 
 // WAL and Transactional Storage
 export * from './wal'
-export { WALTransactionManager } from './WALTransactionManager'
-export { default as TransactionalAdapterFile } from './TransactionalAdapterFile'
-export { default as TransactionalAdapterMemory } from './TransactionalAdapterMemory'
-export type { ITransactionalStorageAdapter } from './ITransactionalStorageAdapter'
-export type { WALTransactionOptions } from './WALTransactionManager'
+export { WALTransactionManager } from './core/wal/WALTransactionManager'
+export { default as TransactionalAdapterFile } from './storage/adapters/TransactionalAdapterFile'
+export { default as TransactionalAdapterMemory } from './storage/adapters/TransactionalAdapterMemory'
+export type { ITransactionalStorageAdapter } from './types/ITransactionalStorageAdapter'
+export type { WALTransactionOptions } from './core/wal/WALTransactionManager'
 
 // WAL-Enhanced Collection and Database (PHASE 3)
-export { WALCollection } from './WALCollection'
-export { WALDatabase } from './WALDatabase'
-export type { WALCollectionConfig } from './WALCollection'
-export type { WALDatabaseConfig } from './WALDatabase'
+export { WALCollection } from './core/wal/WALCollection'
+export { WALDatabase } from './core/wal/WALDatabase'
+export type { WALCollectionConfig } from './core/wal/WALCollection'
+export type { WALDatabaseConfig } from './core/wal/WALDatabase'
 
 // Utilities
 export { copy_collection }
 
 // Database and Transactions
-export { CSDatabase } from './CSDatabase'
-export type { CSTransaction, SavepointInfo, CSDBSavepointData, TransactionOptions } from './TransactionManager'
+export { CSDatabase } from './core/Database'
+export type { CSTransaction, SavepointInfo, CSDBSavepointData, TransactionOptions } from './transactions/TransactionManager'
 
 // Types
 export type { Item, IDataCollection }

@@ -1,4 +1,4 @@
-import { IList } from '../IList'
+import { IList } from '../types/IList'
 import { Item } from './Item'
 
 export type IdGeneratorFunction<T extends Item> = (

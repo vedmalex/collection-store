@@ -1,7 +1,7 @@
 import { FileStorage } from '../storage/FileStorage'
-import { ICollectionConfig } from '../ICollectionConfig'
+import { ICollectionConfig } from '../types/ICollectionConfig'
 import { Person } from './Person'
-import AdapterFile from '../AdapterFile'
+import AdapterFile from '../storage/adapters/AdapterFile'
 
 export const collection_config: ICollectionConfig<Person> = {
   root: './data',

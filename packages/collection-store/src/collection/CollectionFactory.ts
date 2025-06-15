@@ -1,10 +1,11 @@
-import { Collection } from './Collection';
-import { IStorageAdapter } from '../storage/IStorageAdapter';
+import Collection from '../core/Collection';
+import { IStorageAdapter } from '../types/IStorageAdapter';
 import { IIndexManager, IndexDefinition } from './IIndexManager';
-import { AdapterMemory } from '../storage/AdapterMemory';
+import AdapterMemory from '../storage/adapters/AdapterMemory';
 import { IndexManager } from './IndexManager';
+import { Item } from '../types/Item';
 
-export class CollectionFactory<T extends { id: string }> {
+export class CollectionFactory<T extends Item> {
   private readonly storageAdapter: IStorageAdapter<T>;
   private readonly collections: Map<string, Collection<T>> = new Map();
 
@@ -25,7 +26,11 @@ export class CollectionFactory<T extends { id: string }> {
       await indexManager.createIndex(def.field, def.unique);
     }
 
-    const collection = new Collection<T>(name, this.storageAdapter, indexManager);
+    const collection = Collection.create<T>({
+      name,
+      adapter: this.storageAdapter,
+      indexList: indexDefs.map(def => ({ key: def.field, unique: def.unique }))
+    });
     this.collections.set(name, collection);
 
     return collection;

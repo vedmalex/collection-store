@@ -1,5 +1,5 @@
-import { ICollectionConfig } from '../ICollectionConfig'
-import Collection from '../collection'
+import { ICollectionConfig } from '../types/ICollectionConfig'
+import Collection from '../core/Collection'
 import { do_rotate_log } from '../collection/do_rotate_log'
 import { Person } from './Person'
 

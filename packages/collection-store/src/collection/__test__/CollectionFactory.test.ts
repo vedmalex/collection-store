@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { CollectionFactory } from '../CollectionFactory';
-import { Collection } from '../Collection';
-import { AdapterMemory } from '../../storage/AdapterMemory';
+import Collection from '../../core/Collection';
+import AdapterMemory from '../../storage/adapters/AdapterMemory';
 
-interface TestDoc {
+import { Item } from '../../types/Item';
+
+interface TestDoc extends Item {
   id: string;
   name: string;
   email: string;
@@ -36,10 +38,10 @@ describe('CollectionFactory', () => {
     ]);
 
     // Test inserting data that would violate a unique index
-    await collection.insert({ name: 'Laptop', email: 'prod1@a.com' });
-    const promise = collection.insert({ name: 'Laptop2', email: 'prod1@a.com' });
+    await collection.create({ id: '1', name: 'Laptop', email: 'prod1@a.com' });
+    const promise = collection.create({ id: '2', name: 'Laptop2', email: 'prod1@a.com' });
 
-    await expect(promise).rejects.toThrow('Unique constraint violation');
+    await expect(promise).rejects.toThrow('unique index email already contains value prod1@a.com');
   });
 
   it('should use a default AdapterMemory if none is provided', () => {

@@ -151,6 +151,7 @@ export const GoogleSheetsAdapterConfigSchema = BaseAdapterConfigSchema.extend({
     spreadsheets: z.record(z.string(), z.object({
       spreadsheetId: z.string().min(1, 'Spreadsheet ID is required'),
       sheets: z.record(z.string(), z.object({
+        sheetName: z.string().min(1, 'Sheet name is required'),
         range: z.string().default('A:Z'),
         headerRow: z.number().min(1).default(1),
         dataStartRow: z.number().min(1).default(2),
@@ -168,6 +169,14 @@ export const GoogleSheetsAdapterConfigSchema = BaseAdapterConfigSchema.extend({
       enabled: z.boolean().default(false),
       intervalMs: z.number().min(1000).default(30000), // 30 seconds
       changeDetection: z.enum(['revision', 'content_hash']).default('revision')
+    }).default({}),
+
+    // Quota management
+    quota: z.object({
+      dailyQuota: z.number().min(1).default(1000),
+      quotaResetHour: z.number().min(0).max(23).default(0),
+      quotaWarningThreshold: z.number().min(0).max(100).default(80),
+      quotaBuffer: z.number().min(0).default(100)
     }).default({})
   })
 });

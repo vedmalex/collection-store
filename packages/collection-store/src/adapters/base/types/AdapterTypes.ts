@@ -15,6 +15,13 @@ export enum AdapterState {
   STOPPING = 'STOPPING'
 }
 
+export enum AdapterOperationType {
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  QUERY = 'QUERY',
+}
+
 export interface AdapterCapabilities {
   read: boolean;
   write: boolean;
@@ -91,7 +98,7 @@ export interface AdapterTransaction {
 
 export interface AdapterOperation {
   id: string;
-  type: 'INSERT' | 'UPDATE' | 'DELETE' | 'QUERY';
+  type: AdapterOperationType;
   collection: string;
   data?: any;
   filter?: Record<string, any>;

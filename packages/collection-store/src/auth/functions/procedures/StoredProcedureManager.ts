@@ -1,7 +1,7 @@
 // Stored Procedure Manager - Placeholder Implementation
 // Phase 1.6 Implementation
 
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type {
   ProcedureResult,
   FunctionExecutionContext

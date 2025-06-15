@@ -24,7 +24,7 @@ import type {
   RestrictedConsole
 } from '../interfaces'
 
-import type { CSDatabase } from '../../../CSDatabase'
+import type { CSDatabase } from '../../../core/Database'
 import type { User } from '../../interfaces/types'
 import { ResourceLimitExceededError, FunctionCompilationError } from '../interfaces/types'
 
