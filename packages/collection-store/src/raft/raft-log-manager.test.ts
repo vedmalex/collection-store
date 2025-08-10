@@ -31,6 +31,8 @@ describe('Raft Log Manager', () => {
 
   afterEach(async () => {
     try {
+      // Clear any on-disk state between tests to avoid cross-test interference
+      await logManager.reset()
       await logManager.close()
     } catch (error) {
       console.warn('Cleanup error:', error)

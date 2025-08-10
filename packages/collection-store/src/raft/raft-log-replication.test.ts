@@ -54,6 +54,8 @@ describe('Raft Log Replication', () => {
   afterEach(async () => {
     try {
       await logReplication.reset()
+      // Ensure on-disk state is cleared between tests to avoid leak
+      await logManager.reset()
       await logManager.close()
     } catch (error) {
       console.warn('Cleanup error:', error)
