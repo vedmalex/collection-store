@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import { ClientSubscriptionManager } from '../client/ClientSubscriptionManager'
 import type { SubscriptionFilter, ChangeRecord } from '../interfaces/types'
 
-describe('ClientSubscriptionManager', () => {
+describe('Subscriptions Client Subscription Manager', () => {
   let clientManager: ClientSubscriptionManager
 
   beforeEach(() => {

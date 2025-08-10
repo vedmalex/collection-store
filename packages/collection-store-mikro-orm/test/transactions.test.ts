@@ -2,7 +2,7 @@ import { describe, it, expect } from 'bun:test'
 import { initTestORM } from './setup'
 import { TestUser, TestPost } from './entities'
 
-describe('CollectionStore MikroORM - Transactions', () => {
+describe('MikroORM Transactions', () => {
   it('should commit transaction successfully', async () => {
     const orm = await initTestORM([TestUser, TestPost])
     const em = orm.em.fork()

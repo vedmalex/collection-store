@@ -1,0 +1,83 @@
+{
+  "config": {
+    "root": "data/:memory:",
+    "name": "Comment",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "text",
+        "required": true
+      },
+      {
+        "key": "createdAt",
+        "required": true
+      },
+      {
+        "key": "updatedAt",
+        "required": true
+      }
+    ]
+  },
+  "list": {
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
+  },
+  "indexes": {
+    "id": {
+      "size": 0
+    },
+    "createdAt": {
+      "size": 0
+    },
+    "updatedAt": {
+      "size": 0
+    },
+    "text": {
+      "size": 0
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)",
+      "gen": "autoIncIdGen"
+    },
+    "text": {
+      "key": "text",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "createdAt": {
+      "key": "createdAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "updatedAt": {
+      "key": "updatedAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  }
+}

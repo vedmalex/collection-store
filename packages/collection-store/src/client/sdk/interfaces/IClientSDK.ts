@@ -18,6 +18,7 @@ import {
   FilterOptions,
   CacheConfig
 } from './types'
+import { IOfflineManager } from '../../offline/interfaces'
 
 /**
  * Конфигурация Client SDK
@@ -140,6 +141,29 @@ export interface ICollectionManager {
     query?: QueryOptions,
     options?: SDKOperationOptions
   ): Promise<SDKResult<number>>
+
+  /**
+   * Подготовить данные коллекции для оффлайн-режима (кэширование)
+   */
+  cacheForOffline(
+    collection: string,
+    query?: QueryOptions,
+    options?: SDKOperationOptions
+  ): Promise<SDKResult<void>>
+
+  /**
+   * Получить закэшированные оффлайн-данные коллекции
+   */
+  getCachedData<T = any>(
+    collection: string,
+    query?: QueryOptions,
+    options?: SDKOperationOptions
+  ): Promise<SDKResult<T[]>>
+
+  /**
+   * Принудительная синхронизация ожидающих оффлайн-операций
+   */
+  syncPendingChanges(): Promise<SDKResult<boolean>>
 }
 
 /**
@@ -313,6 +337,11 @@ export interface IClientSDK {
    * Менеджер кэша
    */
   readonly cache: ICacheManager
+
+  /**
+   * Менеджер оффлайн-режима (Phase 5.3)
+   */
+  readonly offline: IOfflineManager
 
   /**
    * Инициализация SDK

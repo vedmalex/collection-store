@@ -108,7 +108,7 @@ class MockWebSocket {
   }
 }
 
-describe('Subscription System Integration', () => {
+describe('Subscriptions Subscription System Integration', () => {
   let subscriptionEngine: SubscriptionEngine
   let connectionManager: ConnectionManager
   let notificationManager: NotificationManager

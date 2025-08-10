@@ -92,7 +92,7 @@ const createMockDataChange = (): DataChange => ({
   timestamp: Date.now()
 })
 
-describe('NotificationManager', () => {
+describe('Subscriptions Notification Manager', () => {
   let notificationManager: NotificationManager
   let config: NotificationConfig
 

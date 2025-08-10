@@ -8,7 +8,7 @@ import type {
   ABACConfig
 } from '../interfaces'
 
-describe('ABACEngine', () => {
+describe('ABAC Engine', () => {
   let database: CSDatabase
   let abacEngine: ABACEngine
   let testUser: User

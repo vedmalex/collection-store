@@ -63,7 +63,7 @@
     "access": "public"
   },
   "dependencies": {
-    "collection-store": "^3.0.0-beta.23"
+    "collection-store": "file:../collection-store"
   },
   "devDependencies": {
     "@mikro-orm/core": "^6.4.15",

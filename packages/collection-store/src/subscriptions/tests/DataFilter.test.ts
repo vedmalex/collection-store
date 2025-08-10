@@ -23,7 +23,7 @@ class MockAuthorizationEngine {
   }
 }
 
-describe('DataFilter', () => {
+describe('Subscriptions Data Filter', () => {
   let filter: DataFilter
   let config: DataFilterConfig
   let mockAuthEngine: MockAuthorizationEngine

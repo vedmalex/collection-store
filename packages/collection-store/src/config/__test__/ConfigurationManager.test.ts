@@ -3,11 +3,11 @@ import * as path from 'path';
 import { ConfigurationManager } from '../ConfigurationManager';
 
 describe('ConfigurationManager', () => {
-  const validYamlPath = path.join(import.meta.dir, '../../../test-data/config/valid.yml');
-  const validJsonPath = path.join(import.meta.dir, '../../../test-data/config/valid.json');
-  const invalidStructurePath = path.join(import.meta.dir, '../../../test-data/config/invalid-structure.yml');
-  const invalidSyntaxPath = path.join(import.meta.dir, '../../../test-data/config/invalid-syntax.yml');
-  const nonExistentPath = path.join(import.meta.dir, '../../../test-data/config/non-existent.yml');
+  const validYamlPath = path.join(import.meta.dir, './config/valid.yml');
+  const validJsonPath = path.join(import.meta.dir, './config/valid.json');
+  const invalidStructurePath = path.join(import.meta.dir, './config/invalid-structure.yml');
+  const invalidSyntaxPath = path.join(import.meta.dir, './config/invalid-syntax.yml');
+  const nonExistentPath = path.join(import.meta.dir, './config/non-existent.yml');
 
   // Reset the manager's state before each test
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('ConfigurationManager', () => {
     });
 
     it('should throw an error for unsupported file formats', () => {
-      const unsupportedPath = path.join(import.meta.dir, '../../../test-data/config/valid.yml').replace('.yml', '.txt');
+      const unsupportedPath = path.join(import.meta.dir, './config/valid.yml').replace('.yml', '.txt');
       require('fs').copyFileSync(validYamlPath, unsupportedPath);
 
       expect(() => {

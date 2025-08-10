@@ -7,7 +7,7 @@ import { SessionManager } from '../core/SessionManager'
 import { AuthContext } from '../interfaces/types'
 import { CreateSessionData, SessionPolicy } from '../session/types'
 
-describe('SessionManager', () => {
+describe('Session Manager', () => {
   let database: CSDatabase
   let sessionManager: SessionManager
   let testContext: AuthContext

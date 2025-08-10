@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { NetworkProfiler } from '../monitoring/NetworkProfiler';
 import type { ProfilerConfig } from '../testing/interfaces';
 
-describe('NetworkProfiler', () => {
+describe('Network Profiler', () => {
   let profiler: NetworkProfiler;
   let testConfig: ProfilerConfig;
 

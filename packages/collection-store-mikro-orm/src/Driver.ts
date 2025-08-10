@@ -40,7 +40,16 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
       return this.findVirtual(entityName, where, {})
     }
 
-    const res = await this.connection.db.collection<T>(entityName)?.find(where as any)
+    // Handle empty where clause for collection-store compatibility
+    let whereClause: any
+    if (!where || (typeof where === 'object' && Object.keys(where).length === 0)) {
+      // For empty where, use function that always returns true
+      whereClause = () => true
+    } else {
+      whereClause = where
+    }
+
+    const res = await this.connection.db.collection<T>(entityName)?.find(whereClause)
     if (res) {
       //@ts-ignore
       return res.reduce((res, cur) => {
@@ -128,6 +137,7 @@ export class CollectionStoreDriver extends DatabaseDriver<CollectionStoreConnect
   }
 
   override async count<T extends Item>(entityName: string, where: FilterQuery<T>): Promise<number> {
+    // Use find method which already handles empty where clauses
     const res = await this.find(entityName, where)
     return res.length
   }

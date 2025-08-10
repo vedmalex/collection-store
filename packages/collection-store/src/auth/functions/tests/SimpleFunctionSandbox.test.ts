@@ -9,7 +9,7 @@ import type {
   ResourceLimits
 } from '../interfaces'
 
-describe('SimpleFunctionSandbox', () => {
+describe('Function Sandbox (Simple)', () => {
   let sandbox: SimpleFunctionSandbox
   let config: SandboxConfig
   let executionContext: FunctionExecutionContext

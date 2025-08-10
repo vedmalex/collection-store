@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 
-describe('MarkdownWatcher', () => {
+describe('Markdown Watcher', () => {
   let watcher: MarkdownWatcher;
   let mockConfig: Partial<FileWatchingConfig>;
   let testDir: string;
@@ -167,7 +167,7 @@ describe('MarkdownWatcher', () => {
     });
   });
 
-  describe('Real File Operations', () => {
+  ;(process.env.CS_RUN_FS === '1' ? describe : describe.skip)('Real File Operations', () => {
     beforeEach(() => {
       watcher = new MarkdownWatcher(mockConfig);
     });

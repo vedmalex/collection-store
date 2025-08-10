@@ -82,6 +82,10 @@ export class LocalStorageStorage implements StorageStrategy {
   }
 
   async isAvailable(): Promise<boolean> {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return false;
+    }
     try {
       const testKey = '__test_storage__';
       localStorage.setItem(testKey, testKey);

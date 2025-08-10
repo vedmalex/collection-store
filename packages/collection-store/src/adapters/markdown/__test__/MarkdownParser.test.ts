@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 
-describe('MarkdownParser', () => {
+describe('Markdown Parser', () => {
   let parser: MarkdownParser;
   let mockConfig: Partial<ParsingConfig>;
   let testDir: string;

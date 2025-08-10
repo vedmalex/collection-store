@@ -49,7 +49,7 @@ export class User extends BaseEntity<'bio' | 'social'> {
   @Property({ type: 'string', nullable: true })
   token?: string
 
-  @Embedded(() => Social, { object: true })
+  @Embedded(() => Social, { object: true, nullable: true })
   social?: Social
 
   constructor(fullName: string, email: string, password: string) {

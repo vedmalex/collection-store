@@ -47,7 +47,7 @@ class MockConnection implements Connection {
   }
 }
 
-describe('SubscriptionEngine', () => {
+describe('Subscriptions Subscription Engine', () => {
   let engine: SubscriptionEngine
   let mockDatabase: MockCSDatabase
   let mockAuthEngine: MockAuthorizationEngine

@@ -5,7 +5,7 @@ import {
   CrossComponentCorrelationConfig
 } from '../monitoring/CrossComponentCorrelationAnalyzer';
 
-describe('CrossComponentCorrelationAnalyzer', () => {
+describe('Cross-Component Correlation Analyzer', () => {
   let analyzer: CrossComponentCorrelationAnalyzer;
   let config: Partial<CrossComponentCorrelationConfig>;
 

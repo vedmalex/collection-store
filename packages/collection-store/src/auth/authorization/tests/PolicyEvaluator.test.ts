@@ -8,7 +8,7 @@ import type {
   SecurityPoliciesConfig
 } from '../interfaces'
 
-describe('PolicyEvaluator', () => {
+describe('Policy Evaluator', () => {
   let policyEvaluator: PolicyEvaluator
   let testUser: User
   let adminUser: User

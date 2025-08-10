@@ -27,7 +27,7 @@ const TestItemSchema = z.object({
   value: z.number()
 })
 
-describe('TransactionalCollection', () => {
+describe('Transactional Collection', () => {
   let collection: Collection<TestItem>
   let transactionalCollection: TransactionalCollection<TestItem>
   let testDir: string

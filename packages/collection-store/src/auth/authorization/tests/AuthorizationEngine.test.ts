@@ -7,7 +7,7 @@ import type {
   AuthorizationConfig
 } from '../interfaces'
 
-describe('AuthorizationEngine', () => {
+describe('Authorization Engine', () => {
   let database: CSDatabase
   let authEngine: AuthorizationEngine
   let testUser: User

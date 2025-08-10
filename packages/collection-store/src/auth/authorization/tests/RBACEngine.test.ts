@@ -8,7 +8,7 @@ import type {
   RBACConfig
 } from '../interfaces'
 
-describe('RBACEngine', () => {
+describe('RBAC Engine', () => {
   let database: CSDatabase
   let rbacEngine: RBACEngine
   let testUser: User

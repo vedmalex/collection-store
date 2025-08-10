@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'bun:test'
 import { CompositeKeyUtils } from '../utils/CompositeKeyUtils'
 
-describe('Composite Index Basic Functionality', () => {
+describe('Composite Index Basics', () => {
   describe('CompositeKeyUtils Core Functions', () => {
     it('should serialize and deserialize composite keys correctly', () => {
       const values = ['Electronics', 999, 'Apple']

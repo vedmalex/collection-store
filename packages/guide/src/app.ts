@@ -8,7 +8,7 @@ import { AuthError } from './modules/common/utils.js'
 import { TestSeeder } from './seeders/TestSeeder.js'
 import { User } from './modules/user/user.entity.js'
 
-export async function bootstrap(port = 3001, seed = false) {
+export async function bootstrap(port = 3001, seed = false, listen: boolean = true) {
   const db = await initORM()
 
   if (seed) {
@@ -73,7 +73,11 @@ export async function bootstrap(port = 3001, seed = false) {
   app.register(registerUserRoutes, { prefix: 'user' })
   app.register(registerArticleRoutes, { prefix: 'article' })
 
-  const url = await app.listen({ port })
+  let url: string | undefined
+  if (listen) {
+    // Start listening only when explicitly requested (tests can skip network listen)
+    url = await app.listen({ port })
+  }
 
   return { app, url }
 }

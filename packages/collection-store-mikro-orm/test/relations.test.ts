@@ -2,7 +2,7 @@ import { describe, it, expect } from 'bun:test'
 import { initTestORM } from './setup'
 import { TestUser, TestPost } from './entities'
 
-describe('CollectionStore MikroORM - Relations', () => {
+describe('MikroORM Relations', () => {
   it('should create entities with ManyToOne relation', async () => {
     const orm = await initTestORM([TestUser, TestPost])
     const em = orm.em.fork()

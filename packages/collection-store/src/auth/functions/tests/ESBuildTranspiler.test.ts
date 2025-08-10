@@ -4,7 +4,7 @@ import { ESBuildTranspiler } from '../transpilers/ESBuildTranspiler'
 import { getDefaultTranspilerConfig } from '../transpilers/TypeScriptTranspilerFactory'
 import type { TypeScriptTranspilerConfig } from '../interfaces/ITypeScriptTranspiler'
 
-describe('ESBuildTranspiler', () => {
+describe('ESBuild Transpiler', () => {
   let transpiler: ESBuildTranspiler
   let config: TypeScriptTranspilerConfig
 

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { FileOperationsProfiler } from '../monitoring/FileOperationsProfiler';
 import type { ProfilerConfig } from '../testing/interfaces';
 
-describe('FileOperationsProfiler', () => {
+describe('File Operations Profiler', () => {
   let profiler: FileOperationsProfiler;
   let testConfig: ProfilerConfig;
 

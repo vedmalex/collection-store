@@ -6,7 +6,7 @@
 
 import { describe, test, expect } from 'bun:test';
 
-describe('Phase 5.3 Day 1: Compilation Test', () => {
+describe('Offline Compilation', () => {
   test('should import types successfully', async () => {
     const {
       OfflineManager

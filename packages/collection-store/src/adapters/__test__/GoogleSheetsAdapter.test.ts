@@ -54,7 +54,7 @@ const MockedGoogleSheetsAPIConstructor = mock((auth: GoogleSheetsAuth, apiConfig
   return instance;
 });
 
-describe('GoogleSheetsAdapter', () => {
+describe('Google Sheets Adapter', () => {
   beforeAll(() => {
     const newConfig: GoogleSheetsAdapterConfig = {
       id: 'test-google-sheets-adapter',

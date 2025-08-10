@@ -7,7 +7,7 @@
 import { QueryOptimizer } from '../../../client/pagination/QueryOptimizer'
 import { SortConfig, PaginationConfig } from '../../../client/pagination/interfaces/types'
 
-describe('QueryOptimizer', () => {
+describe('Query Optimizer', () => {
   let queryOptimizer: QueryOptimizer
 
   beforeEach(() => {

@@ -1,93 +1,79 @@
 /**
- * Common utilities for Collection Store test applications.
+ * Shared Test Utilities for Collection Store V6.0
+ * Provides common testing utilities across all packages
  */
 
-// 1. Common Test Scenarios
-export const createCommonItem = (id: string, name: string) => ({
-  id,
-  name,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-});
+// Export existing utilities
+export * from './testHelpers';
+export * from './mockData';
+export * from './testUtils';
 
-export const updateCommonItem = (item: any, newName: string) => ({
-  ...item,
-  name: newName,
-  updatedAt: new Date().toISOString(),
-});
+// Export new Bun test utilities
+export * from './utils/bunTestUtils';
+export * from './utils/testTypes';
 
-export const deleteCommonItem = (id: string) => ({
-  id,
-});
+// Re-export commonly used test functions
+export {
+  createBunMocks,
+  setupIndexedDBMock,
+  cleanupIndexedDBMock,
+  createTestDataHelpers
+} from './utils/bunTestUtils';
 
-// 2. Performance Tracking Utilities
-export class PerformanceTracker {
-  private marks: Map<string, number> = new Map();
+export {
+  createTestSyncOperation,
+  createTestChangeSet,
+  createTestStorageConfig,
+  createTestCollection,
+  createTestDocument,
+  createTestUser,
+  createTestBatchOperation,
+  createTestError,
+  type SyncOperation,
+  type ChangeSet,
+  type StorageType,
+  type SyncOperationType,
+  type TestCollection,
+  type TestDocument,
+  type TestUser,
+  type BatchOperation,
+  type TestError
+} from './utils/testTypes';
 
-  start(name: string): void {
-    this.marks.set(name, performance.now());
-  }
+// Import utilities for default export
+import {
+  createBunMocks,
+  setupIndexedDBMock,
+  cleanupIndexedDBMock,
+  createTestDataHelpers
+} from './utils/bunTestUtils';
 
-  end(name: string): number | undefined {
-    const start = this.marks.get(name);
-    if (start !== undefined) {
-      const duration = performance.now() - start;
-      this.marks.delete(name);
-      return duration;
-    }
-    return undefined;
-  }
+import {
+  createTestSyncOperation,
+  createTestChangeSet,
+  createTestStorageConfig,
+  createTestCollection,
+  createTestDocument,
+  createTestUser,
+  createTestBatchOperation,
+  createTestError
+} from './utils/testTypes';
 
-  measure(name: string, startMark: string, endMark: string): number | undefined {
-    const start = this.marks.get(startMark);
-    const end = this.marks.get(endMark);
-    if (start !== undefined && end !== undefined) {
-      return end - start;
-    }
-    return undefined;
-  }
-}
+// Default export with all utilities
+export default {
+  // Bun utilities
+  createBunMocks,
+  setupIndexedDBMock,
+  cleanupIndexedDBMock,
+  createTestDataHelpers,
 
-// 3. Mock Data Generators
-export const generateMockUsers = (count: number) => {
-  const users = [];
-  for (let i = 0; i < count; i++) {
-    users.push({
-      id: `user-${i + 1}`,
-      name: `User ${i + 1}`,
-      email: `user${i + 1}@example.com`,
-      age: 20 + (i % 50),
-    });
-  }
-  return users;
-};
-
-export const generateMockProducts = (count: number) => {
-  const products = [];
-  for (let i = 0; i < count; i++) {
-    products.push({
-      id: `product-${i + 1}`,
-      name: `Product ${i + 1}`,
-      price: parseFloat((Math.random() * 1000).toFixed(2)),
-      category: `Category ${(i % 5) + 1}`,
-    });
-  }
-  return products;
-};
-
-export const generateMockOrders = (count: number, users: any[], products: any[]) => {
-  const orders = [];
-  for (let i = 0; i < count; i++) {
-    const user = users[Math.floor(Math.random() * users.length)];
-    const product = products[Math.floor(Math.random() * products.length)];
-    orders.push({
-      id: `order-${i + 1}`,
-      userId: user.id,
-      productId: product.id,
-      quantity: Math.floor(Math.random() * 5) + 1,
-      orderDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      status: ['pending', 'completed', 'shipped'][Math.floor(Math.random() * 3)],
-    });
-  }
-  return orders;
+  // Type factories
+  createTestSyncOperation,
+  createTestChangeSet,
+  createTestStorageConfig,
+  createTestCollection,
+  createTestDocument,
+  createTestUser,
+  createTestBatchOperation,
+  createTestError
 };

@@ -1,7 +1,7 @@
 import { SingleKeyUtils } from "../utils/SingleKeyUtils"
 import { describe, test, expect } from "bun:test";
 
-describe("Single Key Sort Order Tests", () => {
+describe("Single Key Sort Order", () => {
     describe("Sort Order Validation", () => {
     test("should validate ascending sort order", () => {
       expect(SingleKeyUtils.validateSortOrder("asc")).toBe(true);

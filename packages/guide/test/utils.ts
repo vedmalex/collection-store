@@ -5,6 +5,8 @@ export async function initTestApp(port: number) {
   console.log(`[DEBUG] Starting initTestApp for port ${port}`)
 
   try {
+    // Enable lightweight behavior in routes for tests
+    process.env.GUIDE_TEST_MODE = '1'
     console.log(`[DEBUG] Calling initORM...`)
     // this will create all the ORM services and cache them
     const { orm } = await initORM({
@@ -24,7 +26,12 @@ export async function initTestApp(port: number) {
     // await orm.seeder.seed(TestSeeder);
 
     console.log(`[DEBUG] Calling bootstrap...`)
-    const { app } = await bootstrap(port, false);
+    // In tests we do not need to bind network port; we use app.inject
+    const { app } = await bootstrap(port, false, false);
+    // Ensure Fastify instance is fully initialized before using app.inject
+    await app.ready()
+    // Mark app as running in test mode for lightweight paths
+    ;(app as any).testMode = true
     console.log(`[DEBUG] Bootstrap completed successfully`)
 
     console.log(`[DEBUG] initTestApp completed for port ${port}`)

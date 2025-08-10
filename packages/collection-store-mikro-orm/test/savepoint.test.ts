@@ -35,7 +35,7 @@ class Order {
   status?: string
 }
 
-describe('MikroORM Savepoint Support', () => {
+describe('MikroORM Savepoint', () => {
   let orm: MikroORM
   let em: EntityManager
 

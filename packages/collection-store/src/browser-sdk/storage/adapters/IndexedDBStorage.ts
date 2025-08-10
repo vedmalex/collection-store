@@ -25,6 +25,12 @@ export class IndexedDBStorage implements StorageStrategy {
         return;
       }
 
+      // Check if we're in a browser environment
+      if (typeof window === 'undefined' || !('indexedDB' in window)) {
+        reject(new Error('IndexedDB is not available in this environment'));
+        return;
+      }
+
       const request = indexedDB.open(this.dbName, 1);
 
       request.onupgradeneeded = (event) => {
@@ -119,7 +125,8 @@ export class IndexedDBStorage implements StorageStrategy {
   }
 
   async isAvailable(): Promise<boolean> {
-    if (!('indexedDB' in window)) {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || !('indexedDB' in window)) {
       return false;
     }
     try {
@@ -134,7 +141,7 @@ export class IndexedDBStorage implements StorageStrategy {
     // IndexedDB does not directly expose usage per object store easily without iterating.
     // This is a placeholder; a more accurate implementation would iterate through all records
     // or use StorageManager.estimate() if available and appropriate.
-    if (!('indexedDB' in window && navigator.storage && navigator.storage.estimate)) {
+    if (typeof window === 'undefined' || !('indexedDB' in window) || typeof navigator === 'undefined' || !navigator.storage || !navigator.storage.estimate) {
       return 0;
     }
     try {

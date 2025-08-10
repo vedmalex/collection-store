@@ -7,7 +7,7 @@
 import { SessionManager } from '../SessionManager'
 import { SessionConfig, SessionState } from '../../interfaces/types'
 
-describe('SessionManager', () => {
+describe('Client Session Manager', () => {
   let sessionManager: SessionManager
 
   beforeEach(() => {

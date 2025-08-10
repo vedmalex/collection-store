@@ -113,7 +113,9 @@ describe('Performance Benchmarks', () => {
 
   afterEach(async () => {
     await fs.remove(testDir)
-    benchmark.printResults()
+    try {
+      benchmark.printResults()
+    } catch {}
   })
 
   describe('WAL Manager Performance', () => {
@@ -282,7 +284,9 @@ describe('Performance Benchmarks', () => {
     })
 
     afterEach(async () => {
-      await walCollection.reset()
+      if (walCollection && typeof walCollection.reset === 'function') {
+        await walCollection.reset()
+      }
     })
 
     it('should benchmark collection create operations', async () => {
@@ -398,7 +402,9 @@ describe('Performance Benchmarks', () => {
     })
 
     afterEach(async () => {
-      await walDatabase.close()
+      if (walDatabase && typeof walDatabase.close === 'function') {
+        await walDatabase.close()
+      }
     })
 
     it('should benchmark database collection creation', async () => {

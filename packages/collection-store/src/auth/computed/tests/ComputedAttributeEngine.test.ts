@@ -50,7 +50,7 @@ function createTestContext(
   }
 }
 
-describe('ComputedAttributeEngine', () => {
+describe('Computed Attribute Engine', () => {
   let engine: ComputedAttributeEngine
 
   beforeEach(async () => {

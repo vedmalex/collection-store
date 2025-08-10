@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 
-describe('MarkdownAdapter', () => {
+describe('Markdown Adapter', () => {
   let adapter: MarkdownAdapter;
   let mockConfig: Partial<MarkdownAdapterConfig>;
   let testDir: string;

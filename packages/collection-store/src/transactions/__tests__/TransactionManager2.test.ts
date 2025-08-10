@@ -67,7 +67,7 @@ class MockResource implements ITransactionResource {
   }
 }
 
-describe('TransactionManager', () => {
+describe('Transaction Manager', () => {
   let transactionManager: TransactionManager
   let mockResource1: MockResource
   let mockResource2: MockResource

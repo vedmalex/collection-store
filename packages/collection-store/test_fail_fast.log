@@ -1,0 +1,19 @@
+bun test v1.2.19 (aad3abea)
+
+test/user.test.ts:
+[TEST] Starting beforeAll...
+[DEBUG] Starting initTestApp for port 30002
+[DEBUG] Calling initORM...
+[DEBUG] initORM completed successfully
+[DEBUG] Creating schema...
+[DEBUG] Schema created successfully
+[DEBUG] Calling bootstrap...
+[DEBUG] Bootstrap completed successfully
+[DEBUG] initTestApp completed for port 30002
+[TEST] beforeAll completed
+[TEST] Starting sign-up test...
+[TEST] Making HTTP request...
+error: Test "sign-up new user" timed out after 5000ms
+(fail) sign-up new user [5002.09ms]
+Ran 1 test across 1 file. [5.97s]
+Bailed out after 1 failure

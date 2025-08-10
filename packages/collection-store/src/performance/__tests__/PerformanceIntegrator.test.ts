@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { PerformanceIntegrator } from '../testing/PerformanceIntegrator';
 import type { BaselineMetrics, ComparisonReport, IntegrationConfig } from '../testing/interfaces';
 
-describe('Phase 6: PerformanceIntegrator', () => {
+describe('Performance Integrator', () => {
   let integrator: PerformanceIntegrator;
 
   beforeEach(() => {

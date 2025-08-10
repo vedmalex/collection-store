@@ -53,7 +53,7 @@ export class NetworkDetector implements INetworkDetector {
   private eventListeners: Map<string, ((networkInfo: NetworkInfo) => void)[]> = new Map();
 
   private currentNetworkInfo: NetworkInfo = {
-    isOnline: navigator.onLine,
+    isOnline: typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean' ? navigator.onLine : false,
     quality: 'offline',
     lastChecked: Date.now(),
     connectionType: 'unknown'
@@ -80,7 +80,9 @@ export class NetworkDetector implements INetworkDetector {
 
   constructor() {
     this.config = this.getDefaultConfig();
-    this.setupBrowserEventListeners();
+    if (typeof window !== 'undefined' && typeof addEventListener === 'function') {
+      this.setupBrowserEventListeners();
+    }
   }
 
   /**
@@ -147,8 +149,11 @@ export class NetworkDetector implements INetworkDetector {
 
     // Return cached info if recent enough
     const now = Date.now();
-    if (now - this.currentNetworkInfo.lastChecked < 5000) { // 5 seconds cache
-      return { ...this.currentNetworkInfo };
+    const isBrowser = typeof window !== 'undefined' && typeof navigator !== 'undefined'
+    if (isBrowser) {
+      if (now - this.currentNetworkInfo.lastChecked < 5000) { // 5 seconds cache
+        return { ...this.currentNetworkInfo };
+      }
     }
 
     // Perform fresh check
@@ -162,7 +167,7 @@ export class NetworkDetector implements INetworkDetector {
   async testNetworkQuality(): Promise<NetworkQuality> {
     const startTime = performance.now();
 
-    if (!navigator.onLine) {
+    if (typeof navigator === 'undefined' || !navigator.onLine) {
       return 'offline';
     }
 
@@ -214,7 +219,7 @@ export class NetworkDetector implements INetworkDetector {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutDuration);
 
-      const response = await fetch(testUrl, {
+      const response = await fetch(testUrl || 'https://example.com', {
         method: 'HEAD',
         mode: 'no-cors',
         cache: 'no-cache',
@@ -493,7 +498,7 @@ export class NetworkDetector implements INetworkDetector {
     this.stats.totalChecks++;
 
     try {
-      const isOnline = navigator.onLine;
+      const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : false;
       let quality: NetworkQuality = 'offline';
       let latency: number | undefined;
       let bandwidth: number | undefined;
@@ -585,7 +590,7 @@ export class NetworkDetector implements INetworkDetector {
    * Get connection type
    */
   async getConnectionType(): Promise<string> {
-    if ('connection' in navigator) {
+    if (typeof navigator !== 'undefined' && 'connection' in navigator) {
       const connection = (navigator as any).connection;
       if (connection && connection.effectiveType) {
         return connection.effectiveType;
@@ -595,7 +600,7 @@ export class NetworkDetector implements INetworkDetector {
   }
 
   private getConnectionTypeSync(): string {
-    if ('connection' in navigator) {
+    if (typeof navigator !== 'undefined' && 'connection' in navigator) {
       const connection = (navigator as any).connection;
       if (connection && connection.effectiveType) {
         return connection.effectiveType;

@@ -8,7 +8,7 @@ interface TestDoc {
   email: string;
 }
 
-describe('IndexManager', () => {
+describe('Index Manager', () => {
   let indexManager: IndexManager<TestDoc>;
 
   beforeEach(() => {

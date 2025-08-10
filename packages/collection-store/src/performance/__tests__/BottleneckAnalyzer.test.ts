@@ -9,7 +9,7 @@ import type {
   DatabaseOptimizations
 } from '../testing/interfaces';
 
-describe('Phase 6: BottleneckAnalyzer', () => {
+describe('Bottleneck Analyzer', () => {
   let analyzer: BottleneckAnalyzer;
 
   beforeEach(() => {

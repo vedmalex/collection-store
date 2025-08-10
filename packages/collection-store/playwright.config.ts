@@ -1,4 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -84,16 +89,11 @@ export default defineConfig({
       port: 3001,
       reuseExistingServer: !process.env.CI,
     },
-    {
-      command: 'npm run dev:extjs-test-app',
-      port: 3002,
-      reuseExistingServer: !process.env.CI,
-    },
   ],
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/ui/global-setup.ts'),
-  globalTeardown: require.resolve('./tests/ui/global-teardown.ts'),
+  globalSetup: path.resolve(__dirname, './tests/ui/global-setup.ts'),
+  globalTeardown: path.resolve(__dirname, './tests/ui/global-teardown.ts'),
 
   /* Test timeout */
   timeout: 30000,

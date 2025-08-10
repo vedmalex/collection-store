@@ -8,7 +8,7 @@ interface SampleDoc {
   active: boolean;
 }
 
-describe('QueryEngine', () => {
+describe('Query Engine', () => {
   let engine: QueryEngine<SampleDoc>;
   let docs: SampleDoc[];
 

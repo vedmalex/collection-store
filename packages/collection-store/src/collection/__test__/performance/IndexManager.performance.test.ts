@@ -9,7 +9,7 @@ interface TestDoc {
   category: string;
 }
 
-describe('IndexManager Performance Tests', () => {
+describe('Index Manager Performance', () => {
   let indexManager: IndexManager<TestDoc>;
 
   beforeEach(async () => {

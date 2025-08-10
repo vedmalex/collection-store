@@ -12,7 +12,7 @@ const testData = [
   { id: 7, name: 'Grace', age: 33, status: 'inactive', tags: ['qa', 'automation'], score: 82.4 }
 ]
 
-describe('Query Integration Tests', () => {
+describe('Query Integration', () => {
   describe('Basic Field Equality', () => {
     test('should find users by exact name match', () => {
       const condition = query({ name: 'Alice' })

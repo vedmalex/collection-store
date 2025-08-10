@@ -7,7 +7,7 @@ import { UserManager } from '../core/UserManager'
 import { TEST_AUTH_CONFIG } from '../config/defaults'
 import { CreateUserData, UpdateUserData } from '../interfaces/types'
 
-describe('UserManager', () => {
+describe('User Manager', () => {
   let database: CSDatabase
   let userManager: UserManager
   let testUserData: CreateUserData

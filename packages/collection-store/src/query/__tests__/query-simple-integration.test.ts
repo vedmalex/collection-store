@@ -90,7 +90,7 @@ const products: Product[] = [
   }
 ]
 
-describe('Query Simple Integration Tests', () => {
+describe('Query Simple Integration', () => {
   describe('Real-world Query Scenarios', () => {
     test('should find products in stock under $50', () => {
       const condition = query({

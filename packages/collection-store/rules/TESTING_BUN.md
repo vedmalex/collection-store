@@ -1416,3 +1416,26 @@ Tests are run in the following order:
 
 1. Test files are executed sequentially (not in parallel)
 2. Within each file, tests run sequentially based on their definition order
+
+---
+
+## Offline-First Test Suite (Phase 5.3)
+
+- Script: `bun run --cwd packages/collection-store test:offline`
+- Purpose: run Node-friendly SDK Offline E2E, CollectionManager offline API, and browser smoke (IndexedDB shim)
+- Includes:
+  - `src/client/sdk/core/__test__/SDK.offline.e2e.test.ts`
+  - `src/client/sdk/core/__test__/CollectionManager.offline.test.ts`
+  - `src/client/offline/core/__test__/LocalDataCache.browser.smoke.test.ts`
+
+### Environment notes
+- Node/Bun: offline helpers run in graceful-degradation mode.
+- Browser smoke uses `fake-indexeddb` shim (dev dependency) via `import 'fake-indexeddb/auto'`.
+
+### Troubleshooting
+- Error: `IndexedDB not supported in this environment`
+  - Expected in Node for cache usage without shim. This is normal in SDK/CollectionManager tests and does not fail them.
+  - For browser smoke tests ensure the shim import is present at test top.
+- If tests are not discovered:
+  - Run from package root: `bun run --cwd packages/collection-store test:offline`.
+  - Or run individually: `bun test <path-to-test>.ts`.

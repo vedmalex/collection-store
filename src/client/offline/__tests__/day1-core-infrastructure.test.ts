@@ -17,7 +17,7 @@ import type {
   StorageOptimizationStrategy
 } from '../interfaces';
 
-describe('Phase 5.3 Day 1: Core Offline Infrastructure', () => {
+describe('Offline Core Infrastructure', () => {
   let offlineManager: OfflineManager;
   let localCache: LocalDataCache;
   let storageOptimizer: StorageOptimizer;
@@ -317,7 +317,7 @@ describe('Phase 5.3 Day 1: Core Offline Infrastructure', () => {
 
       expect(storageOptimizer.isOptimizationNeeded(mockStats)).toBe(true);
 
-      mockStats.usedSize = 70 * 1024 * 1024; // Under 80% target
+      mockStats.usedSize = 35 * 1024 * 1024; // Under 80% target (50MB * 0.8 = 40MB)
       expect(storageOptimizer.isOptimizationNeeded(mockStats)).toBe(false);
     });
   });

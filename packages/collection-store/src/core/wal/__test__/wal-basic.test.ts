@@ -10,7 +10,7 @@ import { FileWALManager } from '../../../wal/FileWALManager'
 import { MemoryWALManager } from '../../../wal/MemoryWALManager'
 import { WALEntry } from '../../../wal/WALTypes'
 
-describe('WAL Basic Functionality', () => {
+describe('WAL Basic', () => {
   const testDir = './test-data/wal-test'
   const walPath = path.join(testDir, 'test.wal')
 

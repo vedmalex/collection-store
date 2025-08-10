@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 import { BPlusTree } from 'b-pl-tree'
 import { IndexManager, IndexChange } from '../IndexManager'
 
-describe('IndexManager', () => {
+describe('Index Manager', () => {
   let btree: BPlusTree<string, string>
   let indexManager: IndexManager
   const transactionId = 'test-tx-1'

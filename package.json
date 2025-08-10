@@ -12,6 +12,7 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
+    "fake-indexeddb": "^6.0.1",
     "lerna": "^8.0.0"
   }
 }

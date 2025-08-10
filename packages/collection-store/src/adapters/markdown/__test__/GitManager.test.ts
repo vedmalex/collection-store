@@ -4,7 +4,7 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
 import { GitManager, type GitIntegrationConfig, type GitEvent } from '../git/GitManager';
 
-describe('GitManager', () => {
+describe('Git Manager', () => {
   let gitManager: GitManager;
   let mockConfig: Partial<GitIntegrationConfig>;
   const currentProjectPath = process.cwd(); // Use current project which is a git repo

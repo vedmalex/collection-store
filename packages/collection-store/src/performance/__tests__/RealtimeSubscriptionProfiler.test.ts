@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { RealtimeSubscriptionProfiler } from '../monitoring/RealtimeSubscriptionProfiler';
 
-describe('RealtimeSubscriptionProfiler', () => {
+describe('Realtime Subscription Profiler', () => {
   let profiler: RealtimeSubscriptionProfiler;
 
   beforeEach(() => {

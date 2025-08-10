@@ -2,7 +2,7 @@ import { describe, it, expect } from 'bun:test'
 import { initTestORM } from './setup'
 import { TestUser, TestPost } from './entities'
 
-describe('CollectionStore MikroORM - Schema Operations', () => {
+describe('MikroORM Schema', () => {
   it('should create schema successfully', async () => {
     const orm = await initTestORM([TestUser, TestPost])
 

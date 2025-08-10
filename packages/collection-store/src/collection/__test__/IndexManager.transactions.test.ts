@@ -11,7 +11,7 @@ interface TestDoc {
   email: string;
 }
 
-describe('IndexManager Transactions', () => {
+describe('Index Manager Transactions', () => {
   let indexManager: IndexManager<TestDoc>;
 
   beforeEach(async () => {

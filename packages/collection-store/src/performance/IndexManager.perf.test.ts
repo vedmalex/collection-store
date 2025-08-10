@@ -8,7 +8,7 @@ interface PerfTestDoc {
 
 const NUM_DOCS = 10000;
 
-describe('IndexManager Performance', () => {
+describe('Index Manager Performance', () => {
     let indexManager: IndexManager<PerfTestDoc>;
 
     // Setup a single manager for all tests to avoid re-creation overhead

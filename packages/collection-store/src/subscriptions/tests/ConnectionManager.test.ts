@@ -99,7 +99,7 @@ class MockSSEResponse {
   }
 }
 
-describe('ConnectionManager', () => {
+describe('Subscriptions Connection Manager', () => {
   let connectionManager: ConnectionManager
   let config: ConnectionConfig
   let mockUser: User

@@ -16,7 +16,7 @@ interface TestItem extends Item {
 // Глобальный счетчик для уникальных имен
 let testCounter = 0
 
-describe('Memory Adapter Selection Tests', () => {
+describe('Memory Adapter', () => {
   let testId: number
 
   beforeEach(() => {

@@ -54,13 +54,14 @@ describe('Replication WAL Streaming Integration', () => {
 
   beforeEach(async () => {
     // Create network managers with unique ports to avoid conflicts
-    const basePort = 8100 + Math.floor(Math.random() * 1000)
+    // Use time-based deterministic port range to reduce collisions under parallel runs
+    const basePort = 8100 + (Date.now() % 500)
     networkManager1 = new NetworkManager('leader', basePort)
     networkManager2 = new NetworkManager('follower-1', basePort + 1)
     networkManager3 = new NetworkManager('follower-2', basePort + 2)
 
     // Wait for servers to start
-    await new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise(resolve => setTimeout(resolve, 300))
 
     // Create replicated WAL managers
     const baseOptions: ReplicatedWALOptions = {
@@ -77,7 +78,7 @@ describe('Replication WAL Streaming Integration', () => {
           asyncTimeout: 2000, // Reduced timeout for faster tests
           heartbeatInterval: 500,
           electionTimeout: 2000,
-          maxRetries: 2
+           maxRetries: 1
         },
         role: 'LEADER'
       }
@@ -122,7 +123,7 @@ describe('Replication WAL Streaming Integration', () => {
         ]),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
       ])
-      await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 300))
     } catch (error) {
       console.warn('Connection setup failed:', error)
     }

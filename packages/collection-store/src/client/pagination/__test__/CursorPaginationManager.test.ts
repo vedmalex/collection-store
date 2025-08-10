@@ -7,7 +7,7 @@
 import { CursorPaginationManager } from '../../../client/pagination/CursorPaginationManager'
 import { SortConfig, PaginationConfig, CursorInfo } from '../../../client/pagination/interfaces/types'
 
-describe('CursorPaginationManager', () => {
+describe('Cursor Pagination Manager', () => {
   let paginationManager: CursorPaginationManager
 
   beforeEach(() => {

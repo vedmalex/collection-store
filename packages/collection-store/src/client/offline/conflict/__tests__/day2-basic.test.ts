@@ -9,7 +9,7 @@
 
 import { describe, test, expect } from 'bun:test';
 
-describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
+describe('Offline Conflict Resolution - Basic', () => {
   test('should import ConflictDetector successfully', async () => {
     const { ConflictDetector } = await import('../conflict-detector');
     expect(ConflictDetector).toBeDefined();

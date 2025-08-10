@@ -84,7 +84,7 @@ class MockBroadcastChannel {
 // Mock global BroadcastChannel
 (global as any).BroadcastChannel = MockBroadcastChannel
 
-describe('CrossTabSynchronizer', () => {
+describe('Subscriptions Cross Tab Synchronizer', () => {
   let synchronizer: CrossTabSynchronizer
   let synchronizer2: CrossTabSynchronizer
   let originalBroadcastChannel: any

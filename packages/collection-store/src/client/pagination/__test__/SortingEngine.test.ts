@@ -7,7 +7,7 @@
 import { SortingEngine } from '../../../client/pagination/SortingEngine'
 import { SortConfig } from '../../../client/pagination/interfaces/types'
 
-describe('SortingEngine', () => {
+describe('Sorting Engine', () => {
   let sortingEngine: SortingEngine
 
   beforeEach(() => {

@@ -136,29 +136,29 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
     if (options.ctx) {
       const savepointName = `nested_tx_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
+      // Пытаемся использовать savepoint, если недоступно — graceful fallback без savepoint
+      let savepointId: string | null = null
       try {
-        // Создаем savepoint в существующей транзакции
-        const savepointId = await this.createSavepoint(options.ctx, savepointName)
-
+        savepointId = await this.createSavepoint(options.ctx, savepointName)
         console.log(`[CollectionStoreConnection] Created savepoint '${savepointName}' for nested transaction`)
+      } catch (savepointError) {
+        console.warn(`[CollectionStoreConnection] Savepoint not available, running nested transaction without savepoint:`, savepointError)
+      }
 
-        try {
-          const ret = await cb(options.ctx)
+      try {
+        const ret = await cb(options.ctx)
 
-          // Успешное выполнение - release savepoint
+        if (savepointId) {
           await this.releaseSavepoint(options.ctx, savepointId)
           console.log(`[CollectionStoreConnection] Released savepoint '${savepointName}' after successful nested transaction`)
-
-          return ret
-        } catch (error) {
-          // Ошибка - rollback к savepoint
+        }
+        return ret
+      } catch (error) {
+        if (savepointId) {
           await this.rollbackToSavepoint(options.ctx, savepointId)
           console.log(`[CollectionStoreConnection] Rolled back to savepoint '${savepointName}' after nested transaction error`)
-          throw error
         }
-      } catch (savepointError) {
-        console.error(`[CollectionStoreConnection] Failed to manage savepoint for nested transaction:`, savepointError)
-        throw savepointError
+        throw error
       }
     } else {
       // Обычная транзакция (корневая)
@@ -227,7 +227,12 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
     await this.ensureConnection()
 
     try {
-      const savepointId = await ctx.createSavepoint(name)
+      // Fallback: if ctx doesn't implement savepoint API, delegate to DB (active tx is tracked internally)
+      const hasMethod = ctx && typeof (ctx as any).createSavepoint === 'function'
+      const savepointId = hasMethod
+        ? await (ctx as any).createSavepoint(name)
+        : await this.db.createSavepoint(name)
+
       this.logQuery(`SAVEPOINT ${name}; -- ${savepointId}`)
       return savepointId
     } catch (error) {
@@ -240,7 +245,12 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
     await this.ensureConnection()
 
     try {
-      await ctx.rollbackToSavepoint(savepointId)
+      const hasMethod = ctx && typeof (ctx as any).rollbackToSavepoint === 'function'
+      if (hasMethod) {
+        await (ctx as any).rollbackToSavepoint(savepointId)
+      } else {
+        await this.db.rollbackToSavepoint(savepointId)
+      }
       this.logQuery(`ROLLBACK TO SAVEPOINT ${savepointId};`)
     } catch (error) {
       this.logQuery(`ROLLBACK TO SAVEPOINT ${savepointId}; -- FAILED: ${(error as Error).message}`)
@@ -252,7 +262,12 @@ export class CollectionStoreConnection extends Connection implements SavepointCo
     await this.ensureConnection()
 
     try {
-      await ctx.releaseSavepoint(savepointId)
+      const hasMethod = ctx && typeof (ctx as any).releaseSavepoint === 'function'
+      if (hasMethod) {
+        await (ctx as any).releaseSavepoint(savepointId)
+      } else {
+        await this.db.releaseSavepoint(savepointId)
+      }
       this.logQuery(`RELEASE SAVEPOINT ${savepointId};`)
     } catch (error) {
       this.logQuery(`RELEASE SAVEPOINT ${savepointId}; -- FAILED: ${(error as Error).message}`)

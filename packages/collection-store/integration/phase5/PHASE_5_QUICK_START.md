@@ -138,3 +138,56 @@ tests/client/
 *Quick start guide by: AI Development Assistant*
 *Based on: Complete Phase 1-4 success*
 *Ready for: Immediate implementation*
+
+---
+
+## 🔌 Offline-First Quick Usage (Phase 5.3)
+
+> Node среда: IndexedDB недоступен, поэтому реализация работает в режиме graceful-degradation.
+
+```ts
+// Example: Using Offline Manager and collection offline helpers
+import { ClientSDK } from '../../src/client/sdk/core/ClientSDK'
+
+async function run() {
+  const sdk = new ClientSDK({
+    baseUrl: 'http://localhost:3000',
+    apiKey: 'demo-api-key',
+    session: { persistState: true },
+    logging: { enabled: false, level: 'error' }
+  })
+
+  // Initialize SDK (also initializes OfflineManager)
+  await sdk.initialize()
+
+  // Offline manager availability
+  if (sdk.offline) {
+    // Toggle offline mode (internal state-only in Node)
+    await sdk.offline.enableOfflineMode()
+  }
+
+  // Prepare collection data for offline (graceful no-op in Node)
+  await sdk.collections.cacheForOffline('articles')
+
+  // Read cached data (returns [] in Node without IndexedDB)
+  const cached = await sdk.collections.getCachedData('articles')
+  console.log('cached success:', cached.success, 'items:', cached.data?.length ?? 0)
+
+  // Force sync pending changes (no-op without SyncManager)
+  const synced = await sdk.collections.syncPendingChanges()
+  console.log('sync result:', synced.success)
+
+  await sdk.shutdown()
+}
+
+run().catch(console.error)
+```
+
+### What to expect in Node environment
+- `cacheForOffline`: stores mock data only if IndexedDB available; otherwise silently skips.
+- `getCachedData`: returns `{ success: true, data: [] }` without IndexedDB.
+- `syncPendingChanges`: always returns success; in browser will use real SyncManager.
+
+### Browser notes
+- В браузере `LocalDataCache` использует IndexedDB.
+- `OfflineManager` автоматически отслеживает сеть и может запускать авто-синхронизацию при переходе offline → online.

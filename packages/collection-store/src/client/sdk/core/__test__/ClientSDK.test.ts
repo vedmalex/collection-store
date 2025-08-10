@@ -8,7 +8,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
 import { ClientSDK } from '../ClientSDK'
 import { ClientSDKConfig } from '../../interfaces/IClientSDK'
 
-describe('ClientSDK', () => {
+describe('Client SDK', () => {
   let sdk: ClientSDK
   let config: ClientSDKConfig
 

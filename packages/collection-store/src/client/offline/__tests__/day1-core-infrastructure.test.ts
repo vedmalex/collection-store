@@ -17,7 +17,7 @@ import type {
   StorageOptimizationStrategy
 } from '../interfaces';
 
-describe('Phase 5.3 Day 1: Core Offline Infrastructure', () => {
+describe('Offline Core Infrastructure', () => {
   let offlineManager: OfflineManager;
   let localCache: LocalDataCache;
   let storageOptimizer: StorageOptimizer;
@@ -317,6 +317,7 @@ describe('Phase 5.3 Day 1: Core Offline Infrastructure', () => {
         collections: {}
       };
 
+      // In CI, treat borderline sizes as optimization needed to ensure cleanup kicks in
       expect(storageOptimizer.isOptimizationNeeded(mockStats)).toBe(true);
 
       mockStats.usedSize = 35 * 1024 * 1024; // Under 40MB target (35MB < 40MB)

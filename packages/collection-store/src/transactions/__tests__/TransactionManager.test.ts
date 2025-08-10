@@ -8,7 +8,7 @@ interface TestDoc {
     email: string;
 }
 
-describe('TransactionManager', () => {
+describe('Transaction Manager', () => {
     let storage: AdapterMemory<TestDoc>;
     let indexes: IndexManager<TestDoc>;
     let transactionManager: TransactionManager;

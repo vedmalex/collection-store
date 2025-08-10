@@ -14,7 +14,7 @@ import type {
   CustomFilter
 } from '../interfaces/types'
 
-describe('QueryParser', () => {
+describe('Subscriptions Query Parser', () => {
   let parser: QueryParser
   let config: QueryParserConfig
 

@@ -12,7 +12,7 @@
 import { PerformanceScenarios } from '../testing/PerformanceScenarios'
 import { LoadTestScenario } from '../testing/interfaces'
 
-describe('Phase 6: PerformanceScenarios', () => {
+describe('Performance Scenarios', () => {
   let scenarios: PerformanceScenarios
 
   beforeEach(() => {

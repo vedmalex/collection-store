@@ -69,7 +69,7 @@ const advancedTestData = [
   }
 ]
 
-describe('Query Advanced Features Tests', () => {
+describe('Query Advanced Features', () => {
   describe('Regular Expression Queries', () => {
     test('should find users by email domain using regex', () => {
       const condition = query({

@@ -7,7 +7,7 @@ import { TokenManager } from '../core/TokenManager'
 import { TEST_AUTH_CONFIG } from '../config/defaults'
 import { User } from '../interfaces/types'
 
-describe('TokenManager', () => {
+describe('Token Manager', () => {
   let database: CSDatabase
   let tokenManager: TokenManager
   let testUser: User

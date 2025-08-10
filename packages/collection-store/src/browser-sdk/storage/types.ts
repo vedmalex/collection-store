@@ -54,3 +54,17 @@ export interface SyncResult {
   itemsSynced?: number;
   errors?: string[];
 }
+
+/**
+ * Core integration configuration for BrowserStorageManager
+ */
+export interface CoreIntegrationOptions {
+  /** Enable integration with core storage adapters */
+  enableCoreIntegration?: boolean;
+  /** Core storage adapters to integrate with */
+  coreAdapters?: any[];
+  /** Sync strategy for core integration */
+  syncStrategy?: 'manual' | 'automatic' | 'on-demand';
+  /** Sync interval in milliseconds (for automatic sync) */
+  syncInterval?: number;
+}

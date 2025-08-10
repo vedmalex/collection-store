@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { PerformanceProfiler } from '../monitoring/PerformanceProfiler';
 import type { ProfilerConfig, BottleneckReport, HotspotAnalysis } from '../testing/interfaces';
 
-describe('Phase 6: PerformanceProfiler', () => {
+describe('PerformanceProfiler', () => {
   let profiler: PerformanceProfiler;
 
   beforeEach(() => {

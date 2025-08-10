@@ -1,0 +1,1838 @@
+[
+  {
+    "file": "conflict/__tests__/day2-basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/src/Connection.ts",
+    "describeCount": 0,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/src/Driver.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/src/EntityManager.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/src/EntityRepository.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/src/MikroORM.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/compatibility.test.ts",
+    "describeCount": 4,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/custom-methods.test.ts",
+    "describeCount": 1,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/relations.test.ts",
+    "describeCount": 1,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/savepoint.test.ts",
+    "describeCount": 4,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/schema.test.ts",
+    "describeCount": 1,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/setup.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/simple.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/test/transactions.test.ts",
+    "describeCount": 1,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/types/Connection.d.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/types/Driver.d.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/types/EntityManager.d.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store-mikro-orm/types/EntityRepository.d.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/integration/subscriptions/PHASE_3_INTEGRATION_EXAMPLE.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/packages/qwik-test-app/src/tests/integration/useCollectionSignal.test.ts",
+    "describeCount": 1,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/packages/qwik-test-app/vite.config.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/packages/react-test-app/src/tests/integration/useCollection.test.tsx",
+    "describeCount": 1,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/packages/shared-test-utils/src/tests/core/BrowserStorageManager.test.ts",
+    "describeCount": 6,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/packages/shared-test-utils/src/tests/core/OfflineSyncEngine.test.ts",
+    "describeCount": 9,
+    "caseCount": 18,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/adapters/__test__/AdapterFoundation.test.ts",
+    "describeCount": 5,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/__test__/GoogleSheetsAdapter.test.ts",
+    "describeCount": 6,
+    "caseCount": 37,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/__test__/MongoDBEnhancement.test.ts",
+    "describeCount": 4,
+    "caseCount": 22,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/base/ExternalAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/base/interfaces/IExternalAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/googlesheets/api/GoogleSheetsAPI.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/googlesheets/auth/GoogleSheetsAuth.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/googlesheets/GoogleSheetsAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/__test__/GitManager.test.ts",
+    "describeCount": 13,
+    "caseCount": 40,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/__test__/MarkdownAdapter.test.ts",
+    "describeCount": 11,
+    "caseCount": 33,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/__test__/MarkdownParser.test.ts",
+    "describeCount": 12,
+    "caseCount": 32,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/__test__/MarkdownWatcher.test.ts",
+    "describeCount": 10,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/git/GitManager.ts",
+    "describeCount": 0,
+    "caseCount": 18,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/MarkdownAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 27,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/parser/MarkdownParser.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/markdown/watcher/MarkdownWatcher.ts",
+    "describeCount": 0,
+    "caseCount": 17,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/mongodb/connection/MongoConnectionManager.ts",
+    "describeCount": 0,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/mongodb/EnhancedMongoDBAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/mongodb/MongoDBAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/mongodb/streams/ChangeStreamManager.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/registry/core/AdapterCoordinator.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/adapters/registry/core/AdapterRegistry.ts",
+    "describeCount": 0,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/core/ABACEngine.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/core/AuthorizationEngine.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/tests/ABACEngine.test.ts",
+    "describeCount": 13,
+    "caseCount": 19,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/tests/AuthorizationEngine.test.ts",
+    "describeCount": 6,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/tests/Integration.test.ts",
+    "describeCount": 11,
+    "caseCount": 17,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/tests/PolicyEvaluator.test.ts",
+    "describeCount": 10,
+    "caseCount": 26,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/authorization/tests/RBACEngine.test.ts",
+    "describeCount": 8,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/cache/CacheInvalidator.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/cache/ComputedAttributeCache.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/core/ComputedAttributeEngine.ts",
+    "describeCount": 0,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/core/DependencyTracker.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/core/MemoryLimitManager.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/schema/AttributeValidator.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/ComputedAttributeEngine.test.ts",
+    "describeCount": 10,
+    "caseCount": 26,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/Day4Components.test.ts",
+    "describeCount": 5,
+    "caseCount": 25,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/Day5Cache.test.ts",
+    "describeCount": 11,
+    "caseCount": 42,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/Day6Invalidator.test.ts",
+    "describeCount": 11,
+    "caseCount": 39,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/Day8Schema.test.ts",
+    "describeCount": 25,
+    "caseCount": 54,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/interfaces.test.ts",
+    "describeCount": 4,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/computed/tests/types.test.ts",
+    "describeCount": 6,
+    "caseCount": 19,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/core/SessionManager.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/core/TokenManager.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/core/FunctionSandbox.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/core/SimpleFunctionSandbox.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/core/StoredFunctionEngine.ts",
+    "describeCount": 0,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/interfaces/IFunctionSandbox.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/interfaces/IStoredFunctionEngine.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/interfaces/types.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/tests/ESBuildTranspiler.test.ts",
+    "describeCount": 8,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/tests/SimpleFunctionSandbox.test.ts",
+    "describeCount": 8,
+    "caseCount": 23,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/tests/StoredFunctionEngine.test.ts",
+    "describeCount": 7,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/functions/transpilers/ESBuildTranspiler.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/interfaces/ISessionManager.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/interfaces/ITokenManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/tests/AuditLogger.test.ts",
+    "describeCount": 9,
+    "caseCount": 33,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/tests/RoleManager.test.ts",
+    "describeCount": 5,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/tests/SessionManager.test.ts",
+    "describeCount": 7,
+    "caseCount": 21,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/tests/TokenManager.test.ts",
+    "describeCount": 7,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/tests/UserManager.test.ts",
+    "describeCount": 11,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/auth/utils/validation.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/benchmark/complete-schema-demo.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/benchmark/generate_data.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/benchmark/simple_performance_check.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/benchmark/unified-performance-benchmark.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/browser-sdk/core-integration/__test__/CoreIntegrationLayer.test.ts",
+    "describeCount": 8,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/browser-sdk/core-integration/CoreIntegrationLayer.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/browser-sdk/storage/__test__/BrowserStorageManager.test.ts",
+    "describeCount": 7,
+    "caseCount": 18,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/browser-sdk/storage/BrowserStorageManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/__tests__/compilation.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/__tests__/day1-core-infrastructure.test.ts",
+    "describeCount": 6,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/conflict/__tests__/day2-basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/conflict/strategies/merge.strategy.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/core/__test__/LocalDataCache.browser.smoke.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/core/offline-manager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/day1-summary.test.ts",
+    "describeCount": 1,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/interfaces/offline-manager.interface.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/sync/__tests__/day3-basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/offline/sync/__tests__/network-detector-mocks.test.ts",
+    "describeCount": 5,
+    "caseCount": 14,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/__test__/CursorPaginationManager.test.ts",
+    "describeCount": 8,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/__test__/FactoryFunction.test.ts",
+    "describeCount": 1,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/__test__/Integration.test.ts",
+    "describeCount": 7,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/__test__/QueryOptimizer.test.ts",
+    "describeCount": 8,
+    "caseCount": 27,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/__test__/SortingEngine.test.ts",
+    "describeCount": 8,
+    "caseCount": 27,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/CursorPaginationManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/pagination/SortingEngine.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/core/__test__/ClientSDK.test.ts",
+    "describeCount": 10,
+    "caseCount": 28,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/core/__test__/CollectionManager.offline.test.ts",
+    "describeCount": 1,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/core/__test__/SDK.offline.e2e.test.ts",
+    "describeCount": 1,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/core/ClientSDK.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/examples/basic-usage.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/sdk/examples/nodejs-integration.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/session/connections/ConnectionManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/session/core/__test__/SessionManager.test.ts",
+    "describeCount": 13,
+    "caseCount": 28,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/session/core/SessionManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/client/session/state/StateManager.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/__test__/Collection.test.ts",
+    "describeCount": 2,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/__test__/CollectionFactory.test.ts",
+    "describeCount": 1,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/__test__/IndexManager.test.ts",
+    "describeCount": 4,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/__test__/IndexManager.transactions.test.ts",
+    "describeCount": 1,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/__test__/performance/IndexManager.performance.test.ts",
+    "describeCount": 7,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/IIndexManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/collection/IndexManager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/ConfigurationIntegration.test.ts",
+    "describeCount": 3,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/ConfigurationManager.hotreload.test.ts",
+    "describeCount": 7,
+    "caseCount": 14,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/ConfigurationManager.test.ts",
+    "describeCount": 3,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/ConfigWatcher.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/NodeRoleManager.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/__test__/QuotaManager.test.ts",
+    "describeCount": 3,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/adapters/__test__/AdapterFactoryManager.test.ts",
+    "describeCount": 9,
+    "caseCount": 23,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/browser/__test__/BrowserFallbackManager.test.ts",
+    "describeCount": 12,
+    "caseCount": 36,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/browser/BrowserFallbackManager.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/browser/interfaces/IBrowserFallbackManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/collections/__test__/ReadOnlyCollectionManager.test.ts",
+    "describeCount": 10,
+    "caseCount": 28,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/conflicts/__test__/ConflictResolutionManager.test.ts",
+    "describeCount": 12,
+    "caseCount": 45,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/conflicts/ConflictResolutionManager.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/conflicts/interfaces/IConflictResolutionManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/database/__test__/DatabaseInheritanceManager.test.ts",
+    "describeCount": 14,
+    "caseCount": 33,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/database/DatabaseInheritanceManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/features/__test__/FeatureToggleManager.test.ts",
+    "describeCount": 11,
+    "caseCount": 27,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/registry/__test__/ComponentRegistry.test.ts",
+    "describeCount": 7,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/config/registry/ComponentRegistry.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/__test__/CSDatabase.savepoint.test.ts",
+    "describeCount": 7,
+    "caseCount": 21,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/__test__/CSDatabase.transaction.test.ts",
+    "describeCount": 8,
+    "caseCount": 16,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/core/__test__/IndexManager.test.ts",
+    "describeCount": 8,
+    "caseCount": 44,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/Collection.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/Database.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/IndexManager.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/__test__/wal-basic.test.ts",
+    "describeCount": 4,
+    "caseCount": 12,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/__test__/wal-storage-integration.test.ts",
+    "describeCount": 4,
+    "caseCount": 19,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/__test__/wal-transaction-coordination.test.ts",
+    "describeCount": 6,
+    "caseCount": 19,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/WALCollection.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/WALDatabase.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/core/wal/WALTransactionManager.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/demo/quick-test.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/features/advanced-features.test.ts",
+    "describeCount": 12,
+    "caseCount": 23,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/backends/BackendManager.ts",
+    "describeCount": 0,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/compression/CompressionEngine.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/core/FileIdGenerator.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/core/FileMetadataManager.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/core/FileStorageManager.ts",
+    "describeCount": 0,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/core/FileValidator.ts",
+    "describeCount": 0,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/core/StreamingManager.ts",
+    "describeCount": 0,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/monitoring/PerformanceMonitor.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/replication/FileReplicationManager.ts",
+    "describeCount": 0,
+    "caseCount": 14,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/replication/FileSyncManager.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/replication/ReplicationHealthMonitor.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/CompressionEngine.test.ts",
+    "describeCount": 16,
+    "caseCount": 41,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileIdGenerator.test.ts",
+    "describeCount": 7,
+    "caseCount": 19,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileMetadataManager.test.ts",
+    "describeCount": 16,
+    "caseCount": 50,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileReplicationManager.test.ts",
+    "describeCount": 11,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileStorageIntegration.test.ts",
+    "describeCount": 7,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileStorageManager.test.ts",
+    "describeCount": 9,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/FileValidator.test.ts",
+    "describeCount": 17,
+    "caseCount": 42,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/PerformanceMonitor.test.ts",
+    "describeCount": 12,
+    "caseCount": 40,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/StreamingManager.test.ts",
+    "describeCount": 10,
+    "caseCount": 31,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/tests/ThumbnailGenerator.test.ts",
+    "describeCount": 12,
+    "caseCount": 36,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/filestorage/thumbnails/ThumbnailGenerator.ts",
+    "describeCount": 0,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/index/autoinc-and-default-index.test.ts",
+    "describeCount": 5,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/index/composite-index-basic.test.ts",
+    "describeCount": 8,
+    "caseCount": 20,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/index/single-key-sort-order.test.ts",
+    "describeCount": 5,
+    "caseCount": 13,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/monitoring/PerformanceMonitor.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/AutomatedOptimizationEngine.test.ts",
+    "describeCount": 8,
+    "caseCount": 29,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/AutomatedOptimizationIntegration.test.ts",
+    "describeCount": 6,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/BottleneckAnalyzer.test.ts",
+    "describeCount": 5,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/ComputedAttributesProfiler.test.ts",
+    "describeCount": 9,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/CrossComponentCorrelationAnalyzer.test.ts",
+    "describeCount": 11,
+    "caseCount": 31,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/FileOperationsProfiler.test.ts",
+    "describeCount": 9,
+    "caseCount": 22,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/LoadTestManager.test.ts",
+    "describeCount": 14,
+    "caseCount": 34,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/MetricsCollector.test.ts",
+    "describeCount": 17,
+    "caseCount": 33,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/NetworkProfiler.test.ts",
+    "describeCount": 7,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/performance.test.ts",
+    "describeCount": 5,
+    "caseCount": 13,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/PerformanceIntegrator.test.ts",
+    "describeCount": 7,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/PerformanceProfiler.test.ts",
+    "describeCount": 9,
+    "caseCount": 25,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/PerformanceScenarios.test.ts",
+    "describeCount": 23,
+    "caseCount": 37,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/PredictivePerformanceAnalyzer.test.ts",
+    "describeCount": 14,
+    "caseCount": 37,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/RealTimeOptimizer.test.ts",
+    "describeCount": 9,
+    "caseCount": 33,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/RealtimeSubscriptionProfiler.test.ts",
+    "describeCount": 8,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/stress-testing.test.ts",
+    "describeCount": 5,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/__tests__/TestScenarioBuilder.test.ts",
+    "describeCount": 21,
+    "caseCount": 41,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/IndexManager.perf.test.ts",
+    "describeCount": 2,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/performance/monitoring/MetricsCollector.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/array.test.ts",
+    "describeCount": 4,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/bitwise.test.ts",
+    "describeCount": 5,
+    "caseCount": 24,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/comparison.test.ts",
+    "describeCount": 12,
+    "caseCount": 67,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/compile_query.test.ts",
+    "describeCount": 22,
+    "caseCount": 90,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/compile-query-compatibility.test.ts",
+    "describeCount": 11,
+    "caseCount": 62,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/element.test.ts",
+    "describeCount": 5,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/evaluation.test.ts",
+    "describeCount": 4,
+    "caseCount": 17,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/logical.test.ts",
+    "describeCount": 5,
+    "caseCount": 22,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/operators.test.ts",
+    "describeCount": 21,
+    "caseCount": 30,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/query-advanced.test.ts",
+    "describeCount": 9,
+    "caseCount": 27,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/query-integration.test.ts",
+    "describeCount": 9,
+    "caseCount": 28,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/query-simple-integration.test.ts",
+    "describeCount": 6,
+    "caseCount": 18,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/query/__tests__/QueryEngine.test.ts",
+    "describeCount": 3,
+    "caseCount": 14,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/build_query.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/comparison.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/compile_query.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/evaluation.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/schema-aware-query.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/query/text.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/raft/raft-leader-election.test.ts",
+    "describeCount": 9,
+    "caseCount": 19,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/raft/raft-log-manager.test.ts",
+    "describeCount": 4,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/raft/raft-log-replication.test.ts",
+    "describeCount": 7,
+    "caseCount": 12,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/raft/raft-network-layer.test.ts",
+    "describeCount": 11,
+    "caseCount": 20,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/raft/raft-state-machine.test.ts",
+    "describeCount": 9,
+    "caseCount": 16,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/collection/ReplicatedWALCollection.ts",
+    "describeCount": 0,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/network/NetworkManager.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/raft/LeaderElection.ts",
+    "describeCount": 0,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/raft/LogReplication.ts",
+    "describeCount": 0,
+    "caseCount": 10,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/raft/RaftLogManager.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/raft/RaftNetworkLayer.ts",
+    "describeCount": 0,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/raft/RaftStateMachine.ts",
+    "describeCount": 0,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/replication-network.test.ts",
+    "describeCount": 6,
+    "caseCount": 14,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/replication/replication-wal-streaming.test.ts",
+    "describeCount": 6,
+    "caseCount": 11,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/replication/types/ReplicationTypes.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/wal/ReplicatedWALManager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/replication/wal/WALReplicationManager.ts",
+    "describeCount": 0,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/__test__/AdapterMemory.test.ts",
+    "describeCount": 1,
+    "caseCount": 10,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/storage/AdapterMemory.ts",
+    "describeCount": 0,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/adapters/__test__/memory-adapter.test.ts",
+    "describeCount": 4,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/adapters/AdapterFile.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/adapters/AdapterMemory.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/adapters/TransactionalAdapterFile.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/adapters/TransactionalAdapterMemory.ts",
+    "describeCount": 0,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/FileStorage.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/IGenericStorageAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/storage/List.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/auth/AuthenticationManager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/client/ClientSubscriptionManager.ts",
+    "describeCount": 0,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/connections/ConnectionManager.ts",
+    "describeCount": 0,
+    "caseCount": 9,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/core/DataFilter.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/core/SubscriptionEngine.ts",
+    "describeCount": 0,
+    "caseCount": 11,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/notifications/NotificationManager.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/sync/CrossTabSynchronizer.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/ClientSubscriptionManager.test.ts",
+    "describeCount": 11,
+    "caseCount": 22,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/ConnectionManager.test.ts",
+    "describeCount": 8,
+    "caseCount": 32,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/CrossTabSynchronizer.test.ts",
+    "describeCount": 7,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/DataFilter.test.ts",
+    "describeCount": 9,
+    "caseCount": 23,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/Integration.test.ts",
+    "describeCount": 5,
+    "caseCount": 12,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/NotificationManager.test.ts",
+    "describeCount": 11,
+    "caseCount": 24,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/QueryParser.test.ts",
+    "describeCount": 8,
+    "caseCount": 33,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/subscriptions/tests/SubscriptionEngine.test.ts",
+    "describeCount": 8,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/transactions/__tests__/TransactionalCollection.test.ts",
+    "describeCount": 10,
+    "caseCount": 28,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/transactions/__tests__/TransactionManager.test.ts",
+    "describeCount": 1,
+    "caseCount": 4,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/transactions/__tests__/TransactionManager2.test.ts",
+    "describeCount": 8,
+    "caseCount": 18,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/transactions/interfaces/ITransactionResource.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/transactions/TransactionalCollection.ts",
+    "describeCount": 0,
+    "caseCount": 8,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/transactions/TransactionManager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/types/field-types.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/types/IDataCollection.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/types/IList.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/types/IndexManager.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/types/IStorageAdapter.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/utils/__test__/CompositeKeyUtils.test.ts",
+    "describeCount": 11,
+    "caseCount": 49,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/utils/__test__/CompositeKeyUtils.unified.test.ts",
+    "describeCount": 9,
+    "caseCount": 28,
+    "hasTagged": true
+  },
+  {
+    "file": "packages/collection-store/src/utils/__test__/global-cleanup.test.ts",
+    "describeCount": 1,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/utils/__test__/SingleKeyUtils.test.ts",
+    "describeCount": 7,
+    "caseCount": 15,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/src/wal/FileWALManager.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/tools/duplicate-cleaner.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/tools/duplicate-detector.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/tools/system-validator.ts",
+    "describeCount": 0,
+    "caseCount": 2,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/tools/test-output-manager.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/collection-store/tools/test-structure-validator.ts",
+    "describeCount": 7,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/guide/src/db.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/guide/test/compatibility.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/guide/test/user.test.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/mikro-orm-demo/src/ensureDb.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/mikro-orm-demo/src/server.ts",
+    "describeCount": 0,
+    "caseCount": 4,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/origina_guide/src/db.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/origina_guide/test/article.test.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "packages/origina_guide/test/user.test.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/__tests__/compilation.test.ts",
+    "describeCount": 1,
+    "caseCount": 3,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/__tests__/day1-core-infrastructure.test.ts",
+    "describeCount": 6,
+    "caseCount": 20,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/conflict/__tests__/day2-basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 7,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/conflict/strategies/merge.strategy.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/core/offline-manager.ts",
+    "describeCount": 0,
+    "caseCount": 6,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/day1-summary.test.ts",
+    "describeCount": 1,
+    "caseCount": 5,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/interfaces/offline-manager.interface.ts",
+    "describeCount": 0,
+    "caseCount": 1,
+    "hasTagged": false
+  },
+  {
+    "file": "src/client/offline/sync/__tests__/day3-basic.test.ts",
+    "describeCount": 1,
+    "caseCount": 9,
+    "hasTagged": false
+  }
+]

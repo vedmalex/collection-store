@@ -24,7 +24,7 @@ import {
   SuccessCriteria
 } from '../testing/interfaces'
 
-describe('Phase 6: TestScenarioBuilder', () => {
+describe('Test Scenario Builder', () => {
   let builder: TestScenarioBuilder
 
   beforeEach(() => {

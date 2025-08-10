@@ -12,7 +12,7 @@
 import { LoadTestManager } from '../testing/LoadTestManager'
 import { LoadTestScenario, SuccessCriteria, TestOperation } from '../testing/interfaces'
 
-describe('Phase 6: LoadTestManager', () => {
+describe('Load Test Manager', () => {
   let manager: LoadTestManager
 
   beforeEach(() => {

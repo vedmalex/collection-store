@@ -90,7 +90,7 @@ function compareQueryResults(queryObj: any, testDescription: string) {
   })
 }
 
-describe('Compile Query Compatibility Tests', () => {
+describe('Compile Query Compatibility', () => {
   describe('Basic Field Equality', () => {
     test('should match simple string equality', () => {
       compareQueryResults({ name: 'Alice' }, 'string equality')

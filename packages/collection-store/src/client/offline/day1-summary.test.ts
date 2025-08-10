@@ -8,7 +8,7 @@
 
 import { describe, test, expect } from 'bun:test';
 
-describe('Phase 5.3 Day 1: Core Offline Infrastructure - Summary', () => {
+describe('Offline Core Infrastructure - Summary', () => {
   test('should have all required exports', async () => {
     // Test that we can import all the main components
     try {

@@ -1,0 +1,181 @@
+{
+  "config": {
+    "root": "data/:memory:",
+    "name": "User",
+    "adapter": "AdapterFile",
+    "list": "List",
+    "id": "id",
+    "auto": true,
+    "indexList": [
+      {
+        "key": "id",
+        "auto": true,
+        "unique": true,
+        "required": true,
+        "gen": "autoIncIdGen",
+        "process": "(item) => get(item, field.key)"
+      },
+      {
+        "key": "fullName",
+        "required": true
+      },
+      {
+        "key": "email",
+        "required": true
+      },
+      {
+        "key": "password",
+        "required": true
+      },
+      {
+        "key": "bio",
+        "required": true
+      },
+      {
+        "key": "token",
+        "sparse": true
+      },
+      {
+        "key": "social.twitter",
+        "sparse": true
+      },
+      {
+        "key": "social.facebook",
+        "sparse": true
+      },
+      {
+        "key": "social.linkedin",
+        "sparse": true
+      },
+      {
+        "key": "createdAt",
+        "required": true
+      },
+      {
+        "key": "updatedAt",
+        "required": true
+      }
+    ]
+  },
+  "list": {
+    "_count": 0,
+    "_counter": 0,
+    "hash": {}
+  },
+  "indexes": {
+    "id": {
+      "size": 0
+    },
+    "createdAt": {
+      "size": 0
+    },
+    "updatedAt": {
+      "size": 0
+    },
+    "fullName": {
+      "size": 0
+    },
+    "email": {
+      "size": 0
+    },
+    "password": {
+      "size": 0
+    },
+    "bio": {
+      "size": 0
+    },
+    "token": {
+      "size": 0
+    },
+    "social.twitter": {
+      "size": 0
+    },
+    "social.facebook": {
+      "size": 0
+    },
+    "social.linkedin": {
+      "size": 0
+    }
+  },
+  "indexDefs": {
+    "id": {
+      "key": "id",
+      "auto": true,
+      "unique": true,
+      "sparse": false,
+      "required": true,
+      "process": "(item) => get(item, field.key)",
+      "gen": "autoIncIdGen"
+    },
+    "fullName": {
+      "key": "fullName",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "email": {
+      "key": "email",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "password": {
+      "key": "password",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "bio": {
+      "key": "bio",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "token": {
+      "key": "token",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false
+    },
+    "social.twitter": {
+      "key": "social.twitter",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false
+    },
+    "social.facebook": {
+      "key": "social.facebook",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false
+    },
+    "social.linkedin": {
+      "key": "social.linkedin",
+      "auto": false,
+      "unique": false,
+      "sparse": true,
+      "required": false
+    },
+    "createdAt": {
+      "key": "createdAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    },
+    "updatedAt": {
+      "key": "updatedAt",
+      "auto": false,
+      "unique": false,
+      "sparse": false,
+      "required": true
+    }
+  }
+}

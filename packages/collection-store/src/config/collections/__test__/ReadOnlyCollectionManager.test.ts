@@ -9,7 +9,7 @@ import {
   AutoDetectionRule
 } from '../interfaces/IReadOnlyCollectionManager';
 
-describe('ReadOnlyCollectionManager', () => {
+describe('Read-only Collection Manager', () => {
   let manager: ReadOnlyCollectionManager;
 
   beforeEach(async () => {

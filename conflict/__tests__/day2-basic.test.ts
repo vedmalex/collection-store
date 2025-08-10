@@ -9,9 +9,9 @@
 
 import { describe, test, expect } from 'bun:test';
 
-describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
+describe('Conflict Resolution System - Basic', () => {
   test('should import ConflictDetector successfully', async () => {
-    const { ConflictDetector } = await import('../conflict-detector');
+    const { ConflictDetector } = await import('../../packages/collection-store/src/client/offline/conflict/conflict-detector');
     expect(ConflictDetector).toBeDefined();
 
     const detector = new ConflictDetector();
@@ -19,7 +19,7 @@ describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
   });
 
   test('should import all strategies successfully', async () => {
-    const strategies = await import('../strategies');
+    const strategies = await import('../../packages/collection-store/src/client/offline/conflict/strategies');
 
     expect(strategies.ClientWinsStrategy).toBeDefined();
     expect(strategies.ServerWinsStrategy).toBeDefined();
@@ -29,7 +29,7 @@ describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
   });
 
   test('should create strategy instances', () => {
-    const { StrategyFactory } = require('../strategies');
+    const { StrategyFactory } = require('../../packages/collection-store/src/client/offline/conflict/strategies');
 
     const clientWins = StrategyFactory.createStrategy('client-wins');
     const serverWins = StrategyFactory.createStrategy('server-wins');
@@ -43,7 +43,7 @@ describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
   });
 
   test('should detect basic conflicts', async () => {
-    const { ConflictDetector } = await import('../conflict-detector');
+    const { ConflictDetector } = await import('../../packages/collection-store/src/client/offline/conflict/conflict-detector');
     const detector = new ConflictDetector();
 
     const localData = { name: 'John', age: 30, timestamp: Date.now() };
@@ -57,7 +57,7 @@ describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
   });
 
   test('should resolve conflicts with client-wins strategy', async () => {
-    const { ClientWinsStrategy } = await import('../strategies');
+    const { ClientWinsStrategy } = await import('../../packages/collection-store/src/client/offline/conflict/strategies');
     const strategy = new ClientWinsStrategy();
 
     const conflict = {
@@ -89,7 +89,7 @@ describe('Phase 5.3 Day 2: Conflict Resolution System - Basic Tests', () => {
   });
 
   test('should meet performance targets', async () => {
-    const { ConflictDetector } = await import('../conflict-detector');
+    const { ConflictDetector } = await import('../../packages/collection-store/src/client/offline/conflict/conflict-detector');
     const detector = new ConflictDetector({ performanceTarget: 5 });
 
     const localData = { name: 'John', age: 30, timestamp: Date.now() };

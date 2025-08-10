@@ -16,7 +16,7 @@ interface TestItemCustomId extends Item {
   value?: number
 }
 
-describe('AutoInc and Default Index Tests', () => {
+describe('Auto-inc and Default Index', () => {
   let testDir: string
 
   beforeEach(() => {

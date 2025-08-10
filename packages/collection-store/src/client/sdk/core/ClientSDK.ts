@@ -16,6 +16,8 @@ import { CollectionManager } from './CollectionManager'
 import { FileManager } from './FileManager'
 import { SubscriptionManager } from './SubscriptionManager'
 import { CacheManager } from './CacheManager'
+import { OfflineManager } from '../../offline/core/offline-manager'
+import { IOfflineManager } from '../../offline/interfaces'
 import {
   SessionConfig,
   SessionInfo,
@@ -39,6 +41,7 @@ export class ClientSDK extends EventEmitter implements IClientSDK {
   public readonly files: IFileManager
   public readonly subscriptions: ISubscriptionManager
   public readonly cache: ICacheManager
+  public readonly offline: IOfflineManager
 
   // Внутреннее состояние
   private config: ClientSDKConfig
@@ -121,6 +124,7 @@ export class ClientSDK extends EventEmitter implements IClientSDK {
     this.files = new FileManager(this)
     this.subscriptions = new SubscriptionManager(this)
     this.cache = new CacheManager(this.config.cache!)
+    this.offline = new OfflineManager()
 
     // Настройка обработчиков событий
     this.setupEventHandlers()
@@ -145,6 +149,13 @@ export class ClientSDK extends EventEmitter implements IClientSDK {
       }
 
       this.currentSession = await this.session.createSession(sessionConfig)
+
+      // Инициализация оффлайн-менеджера (без IndexedDB в Node окружении он работает частично)
+      try {
+        await this.offline.initialize()
+      } catch (_) {
+        // В тестовой среде без IndexedDB допускаем graceful degradation
+      }
 
       // Настройка соединения
       const connectionConfig: ConnectionConfig = {

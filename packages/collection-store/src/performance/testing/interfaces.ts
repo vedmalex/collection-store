@@ -1210,6 +1210,8 @@ export interface RealTimeConfig {
   enableDynamicAdjustment: boolean
   adjustmentSensitivity: number // 0-1
   cooldownPeriod: number // seconds
+  // Optional: control failure injection for deterministic tests
+  failureChance?: number // 0-1, default 0.02 in prod, 0 in tests
 }
 
 export interface EmergencyThresholds {

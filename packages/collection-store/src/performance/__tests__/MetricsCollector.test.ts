@@ -12,7 +12,7 @@
 import { MetricsCollector, Alert, MetricsCollectionConfig } from '../monitoring/MetricsCollector'
 import { AlertThreshold } from '../testing/interfaces'
 
-describe('Phase 6: MetricsCollector', () => {
+describe('MetricsCollector', () => {
   let collector: MetricsCollector
 
   beforeEach(() => {
@@ -22,8 +22,13 @@ describe('Phase 6: MetricsCollector', () => {
 
   afterEach(async () => {
     // Cleanup resources after each test
-    await collector.stopCollection()
-    collector = null as any
+    try {
+      if (collector && typeof collector.stopCollection === 'function') {
+        await collector.stopCollection()
+      }
+    } finally {
+      collector = null as any
+    }
   })
 
   // ============================================================================

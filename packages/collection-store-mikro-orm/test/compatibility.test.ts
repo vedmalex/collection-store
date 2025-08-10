@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test'
 
-describe('Collection Store MikroORM Compatibility', () => {
+describe('MikroORM Compatibility', () => {
   describe('Core MikroORM Exports', () => {
     it('should export all essential MikroORM decorators', async () => {
       const {

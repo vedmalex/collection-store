@@ -6,7 +6,7 @@ import { CSDatabase } from '../../'
 import { AuditLogger } from '../core/AuditLogger'
 import { AuthContext } from '../interfaces/types'
 
-describe('AuditLogger', () => {
+describe('Audit Logger', () => {
   let database: CSDatabase
   let auditLogger: AuditLogger
   let testContext: AuthContext

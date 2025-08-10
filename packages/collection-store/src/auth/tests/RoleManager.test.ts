@@ -8,7 +8,7 @@ import { TEST_AUTH_CONFIG } from '../config/defaults'
 import { Role, CreateRoleData, AuthContext } from '../interfaces/types'
 import { SYSTEM_ROLES } from '../rbac/types'
 
-describe('RoleManager', () => {
+describe('Role Manager', () => {
   let database: CSDatabase
   let roleManager: RoleManager
   let testContext: AuthContext
