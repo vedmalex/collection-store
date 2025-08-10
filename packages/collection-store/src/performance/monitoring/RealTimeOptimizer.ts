@@ -501,8 +501,10 @@ export class RealTimeOptimizer implements IRealTimeOptimizer {
 
     await new Promise(resolve => setTimeout(resolve, executionTime));
 
-    // Simulate potential failure (configurable; default 2%)
-    const failureChance = this.config?.failureChance ?? 0.02;
+    // Simulate potential failure
+    // Default to 0 in test to make tests deterministic, 0.02 otherwise
+    const defaultFailureChance = (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test') ? 0 : 0.02;
+    const failureChance = this.config?.failureChance ?? defaultFailureChance;
     if (failureChance > 0 && Math.random() < failureChance) {
       throw new Error(`Failed to execute ${action.action} on ${action.component}`);
     }

@@ -2,6 +2,9 @@
 
 Scope: Based on the latest audit and test run (bun test: 3014 pass, 2 fail, 3 skip). Focus is to get all MUST items green and reduce risk before extending optional features.
 
+Out of scope:
+- Do not modify or run tests in `packages/origina_guide/` (reference only).
+
 ## P0 – Immediate (blocking)
 
 - Stabilize Performance Optimization Engines

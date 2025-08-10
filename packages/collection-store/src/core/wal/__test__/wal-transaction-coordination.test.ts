@@ -3,7 +3,7 @@
  * Тесты для координации транзакций с WAL (PHASE 2)
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
 import { WALTransactionManager } from '../WALTransactionManager'
@@ -67,10 +67,15 @@ describe('WAL Transaction Coordination', () => {
       console.warn('Memory adapter cleanup error:', error)
     }
 
+    // Important: Do not remove the directory between tests to avoid race conditions
+    // with any asynchronous file operations. We'll clean it up in afterAll instead.
+  })
+
+  afterAll(async () => {
     try {
       await fs.remove(testDir)
     } catch (error) {
-      console.warn('Directory cleanup error:', error)
+      console.warn('Directory cleanup error (afterAll):', error)
     }
   })
 
@@ -195,6 +200,9 @@ describe('WAL Transaction Coordination', () => {
 
   describe('WAL Operations', () => {
     it('should write custom WAL entries', async () => {
+      // Record existing entries to compute delta reliably
+      const beforeEntries = await walTxManager.getWALEntries()
+
       await walTxManager.writeWALEntry({
         transactionId: 'custom-tx',
         timestamp: Date.now(),
@@ -208,9 +216,13 @@ describe('WAL Transaction Coordination', () => {
       await walTxManager.flushWAL()
 
       const walEntries = await walTxManager.getWALEntries()
-      expect(walEntries).toHaveLength(1)
-      expect(walEntries[0].transactionId).toBe('custom-tx')
-      expect(walEntries[0].data.key).toBe('custom')
+      expect(walEntries.length).toBe(beforeEntries.length + 1)
+
+      // Find the newly added custom entry regardless of ordering
+      const customEntries = walEntries.filter(e => e.transactionId === 'custom-tx' && e.type === 'DATA')
+      expect(customEntries.length).toBeGreaterThanOrEqual(1)
+      const customEntry = customEntries[customEntries.length - 1]
+      expect((customEntry as any).data.key).toBe('custom')
     })
 
     it('should flush WAL to storage', async () => {

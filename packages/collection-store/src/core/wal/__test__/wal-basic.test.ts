@@ -3,7 +3,7 @@
  * Базовые тесты для системы журналирования транзакций
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
 import { FileWALManager } from '../../../wal/FileWALManager'
@@ -19,7 +19,9 @@ describe('WAL Basic', () => {
     await fs.remove(walPath)
   })
 
-  afterEach(async () => {
+  // Use afterAll to avoid race conditions with parallel tests that may still
+  // be accessing files under the test directory.
+  afterAll(async () => {
     await fs.remove(testDir)
   })
 

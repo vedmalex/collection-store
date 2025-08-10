@@ -1,0 +1,14 @@
+[test]
+# Limit Bun's test discovery to explicit test files in allowed packages only
+match = [
+  "packages/collection-store/**/*.test.{ts,tsx,js,jsx}",
+  "packages/collection-store/**/*.spec.{ts,tsx,js,jsx}",
+  "packages/collection-store-mikro-orm/**/*.test.{ts,tsx,js,jsx}",
+  "packages/collection-store-mikro-orm/**/*.spec.{ts,tsx,js,jsx}",
+  "packages/guide/**/*.test.{ts,tsx,js,jsx}",
+  "packages/guide/**/*.spec.{ts,tsx,js,jsx}",
+  "src/**/*.test.{ts,tsx,js,jsx}",
+  "src/**/*.spec.{ts,tsx,js,jsx}",
+  "conflict/**/*.test.{ts,tsx,js,jsx}",
+  "conflict/**/*.spec.{ts,tsx,js,jsx}"
+]

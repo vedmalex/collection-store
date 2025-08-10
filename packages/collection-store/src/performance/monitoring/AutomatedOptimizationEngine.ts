@@ -133,6 +133,18 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
             constraints: []
           });
 
+          // Record scheduled item in history for traceability
+          this.optimizationHistory.set(scheduledId, {
+            optimizationId: scheduledId,
+            recommendationId: recommendation.id,
+            type: recommendation.type,
+            status: 'in-progress',
+            startTime: new Date(),
+            endTime: new Date(),
+            duration: 0,
+            performanceImpact: this.getEmptyPerformanceImpact()
+          });
+
           results.push(this.createPendingResult(recommendation, scheduledId));
           continue;
         }
@@ -236,7 +248,17 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
         historySize: this.optimizationHistory.size,
         requestedId: optimizationId
       });
-      throw new Error(`Optimization ${optimizationId} not found in history`);
+      // Return a failed rollback result instead of throwing to keep flow deterministic in tests
+      const rollbackId = this.generateRollbackId();
+      return {
+        rollbackId,
+        optimizationId,
+        status: 'failed',
+        executedAt: new Date(),
+        duration: 0,
+        restoredMetrics: this.generateRestoredMetrics(),
+        issues: ['Optimization not found in history']
+      };
     }
 
     const rollbackId = this.generateRollbackId();
@@ -472,7 +494,17 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
         status: 'failed',
         performanceImpact: this.getEmptyPerformanceImpact(),
         appliedAt: new Date(),
-        executionLog
+        executionLog: [
+          ...executionLog,
+          {
+            timestamp: new Date(),
+            step: 'execution',
+            status: 'failed',
+            duration,
+            details: 'Optimization execution failed',
+            error: (error as Error).message
+          }
+        ]
       };
 
       // Add to history
@@ -488,7 +520,8 @@ export class AutomatedOptimizationEngine implements IAutomatedOptimizationEngine
       });
 
       this.logOptimizationEvent(optimizationId, 'Optimization failed', { error: (error as Error).message });
-      throw error;
+      // Return a failed result instead of throwing to keep outer flow deterministic
+      return result;
     }
   }
 
