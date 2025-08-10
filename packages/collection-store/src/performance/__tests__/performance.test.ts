@@ -3,7 +3,7 @@
  * Comprehensive performance testing suite для PHASE 4.1
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
 import { performance } from 'perf_hooks'
@@ -112,10 +112,13 @@ describe('Performance Benchmarks', () => {
   })
 
   afterEach(async () => {
-    await fs.remove(testDir)
     try {
       benchmark.printResults()
     } catch {}
+  })
+
+  afterAll(async () => {
+    await fs.remove(testDir)
   })
 
   describe('WAL Manager Performance', () => {

@@ -3,7 +3,7 @@
  * Tests for Raft log management with WAL integration
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach, afterAll } from 'bun:test'
 import fs from 'fs-extra'
 import path from 'path'
 import { RaftLogManager, RaftLogManagerConfig } from '../replication/raft/RaftLogManager'
@@ -35,11 +35,13 @@ describe('Raft Log Manager', () => {
     } catch (error) {
       console.warn('Cleanup error:', error)
     }
+  })
 
+  afterAll(async () => {
     try {
       await fs.remove(testDir)
     } catch (error) {
-      console.warn('Directory cleanup error:', error)
+      console.warn('Directory cleanup error (afterAll):', error)
     }
   })
 
