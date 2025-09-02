@@ -5,7 +5,7 @@ export function get_value(
   item: any,
   key: unknown,
   process?: (value: any) => any,
-): ValueType {
+): ValueType | ValueType[] {
   if (process) {
     // If process function exists, it handles both single and composite keys
     return process(item)

@@ -27,6 +27,9 @@ export * from './types'
 // Utils Module - Utility functions
 export * from './utils'
 
+// Embeddings Module - Text embeddings
+export * from './embeddings'
+
 // LEGACY COMPATIBILITY LAYER - For backward compatibility
 // These imports maintain the old API structure
 

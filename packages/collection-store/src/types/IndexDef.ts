@@ -46,6 +46,8 @@ export interface IndexDef<T extends Item> {
   required?: boolean
   ignoreCase?: boolean
   gen?: IdGeneratorFunction<T>
+  // Custom algorithm to transform values before indexing.
+  // May return a single value or an array to create multiple index entries.
   process?: (value: any) => any
 }
 
