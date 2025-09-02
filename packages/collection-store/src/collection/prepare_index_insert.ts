@@ -13,7 +13,12 @@ export function prepare_index_insert<T extends Item>(
   const result: Array<any> = []
   // for is used to provide dynamic indexes add on create
   for (let i = 0; i < collection.inserts?.length; i += 1) {
-    result.push(collection.inserts[i](val))
+    const inserts = collection.inserts[i](val)
+    if (Array.isArray(inserts)) {
+      result.push(...inserts)
+    } else {
+      result.push(inserts)
+    }
   }
 
   return (i: any) => {

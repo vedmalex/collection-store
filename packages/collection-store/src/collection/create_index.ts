@@ -89,12 +89,16 @@ export function create_index<T extends Item>(
             unique,
           )
           if (!valid) throw new Error(message)
-          if (!(sparse && value == null)) {
-            return (record_link: ValueType) =>
-              collection.indexes[key].insert(
-                value !== undefined ? value : null,
-                record_link,
+          const values = Array.isArray(value) ? value : [value]
+          if (!(sparse && values.every((v) => v == null))) {
+            return (record_link: ValueType) => {
+              values.forEach((v) =>
+                collection.indexes[key].insert(
+                  v !== undefined ? v : null,
+                  record_link,
+                ),
               )
+            }
           }
         }
       : (item: T) => {
@@ -144,23 +148,22 @@ export function create_index<T extends Item>(
               ov ? (ov as any)[collection.id] : undefined,
             )
             if (!valid) throw new Error(message)
-            if (valueOld !== valueNew) {
-              if (unique) {
-                collection.indexes[key].remove(valueOld)
-              } else {
-                collection.indexes[key].remove(valueOld)
-              }
-              collection.indexes[key].insert(
-                valueNew !== undefined ? valueNew : null,
-                index_payload,
+            const oldValues = Array.isArray(valueOld) ? valueOld : [valueOld]
+            const newValues = Array.isArray(valueNew) ? valueNew : [valueNew]
+            const changed =
+              JSON.stringify(oldValues) !== JSON.stringify(newValues)
+            if (changed) {
+              oldValues.forEach((v) => collection.indexes[key].remove(v))
+              newValues.forEach((v) =>
+                collection.indexes[key].insert(
+                  v !== undefined ? v : null,
+                  index_payload,
+                ),
               )
             }
           } else {
-            if (unique) {
-              collection.indexes[key].remove(valueOld)
-            } else {
-              collection.indexes[key].remove(valueOld)
-            }
+            const oldValues = Array.isArray(valueOld) ? valueOld : [valueOld]
+            oldValues.forEach((v) => collection.indexes[key].remove(v))
           }
         }
       : undefined
@@ -169,7 +172,8 @@ export function create_index<T extends Item>(
     key !== '*'
       ? (item: T) => {
           const value = process ? process(item) : get(item, key) ?? null
-          collection.indexes[key].remove(value)
+          const values = Array.isArray(value) ? value : [value]
+          values.forEach((v) => collection.indexes[key].remove(v))
         }
       : undefined
 

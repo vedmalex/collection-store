@@ -11,8 +11,8 @@ export function ensure_indexed_value<T extends Item>(
   gen?: IdGeneratorFunction<T> | undefined,
   auto?: boolean,
   process?: (value: any) => any,
-): ValueType {
-  let value: ValueType
+): ValueType | ValueType[] {
+  let value: ValueType | ValueType[]
 
   // Check if this is a composite index by looking at the indexDef
   // const indexDef = collection.indexDefs[key as string]
