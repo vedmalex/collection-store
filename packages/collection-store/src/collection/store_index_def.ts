@@ -7,9 +7,22 @@ export function store_index_def<T extends Item>(
   collection: Collection<T>,
   input: IndexDef<T>,
 ): IndexStored<T> {
-  const { key, auto, unique, sparse, required, ignoreCase } = input
+  const {
+    key,
+    type,
+    vector,
+    fulltext,
+    auto,
+    unique,
+    sparse,
+    required,
+    ignoreCase,
+  } = input
   return {
     key,
+    type,
+    vector,
+    fulltext,
     auto,
     unique,
     sparse,

@@ -3,7 +3,9 @@ import { Paths } from './Paths'
 
 export interface IndexStored<T extends Item> {
   key: string | Paths<T>
-  // type?: ValueType
+  type?: 'btree' | 'vector' | 'fulltext'
+  vector?: { dimensions: number; metric?: 'cosine' | 'l2' }
+  fulltext?: { tokenizer?: 'simple' | 'porter'; language?: string }
   auto?: boolean
   unique?: boolean
   sparse?: boolean
