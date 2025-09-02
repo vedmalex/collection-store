@@ -34,6 +34,11 @@ export interface IndexDef<T extends Item> {
   // Composite key separator (default: '\u0000')
   separator?: string
 
+  // Index type and options
+  type?: 'btree' | 'vector' | 'fulltext'
+  vector?: { dimensions: number; metric?: 'cosine' | 'l2' }
+  fulltext?: { tokenizer?: 'simple' | 'porter'; language?: string }
+
   // Standard index options
   auto?: boolean
   unique?: boolean
@@ -59,6 +64,9 @@ export interface SerializedIndexDef {
   keys?: Array<string | SerializedIndexField>
   order?: SortOrder
   separator?: string
+  type?: 'btree' | 'vector' | 'fulltext'
+  vector?: { dimensions: number; metric?: 'cosine' | 'l2' }
+  fulltext?: { tokenizer?: 'simple' | 'porter'; language?: string }
   auto?: boolean
   unique?: boolean
   sparse?: boolean
